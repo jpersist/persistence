@@ -1,0 +1,21 @@
+plugins {
+    id 'java-gradle-plugin'
+    id 'groovy'
+}
+
+dependencies {
+    implementation 'org.hibernate.orm:hibernate-gradle-plugin:6.6.56.Final'
+}
+
+gradlePlugin {
+    plugins {
+        register('hibernateJpamodelgen') {
+            id = 'io.github.jpersist.hibernate-jpamodelgen'
+            implementationClass = 'persist.hibernate.gradle.plugin.HibernateJpamodelgenPlugin'
+        }
+        register('hibernatePersistence') {
+            id = 'io.github.jpersist.hibernate-persistence'
+            implementationClass = 'persist.hibernate.gradle.plugin.HibernatePersistencePlugin'
+        }
+    }
+}

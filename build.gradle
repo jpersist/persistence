@@ -1,0 +1,70 @@
+plugins {
+    id 'eclipse'
+}
+
+subprojects {
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+    }
+
+    // Apply the Java Gradle Plugin development environment to all plugin modules
+    plugins.withType(JavaGradlePluginPlugin) {
+        dependencies {
+            implementation localGroovy()
+        }
+
+        testing {
+            suites {
+                // Configure a functional test suite separate from standard unit tests
+                functionalTest(JvmTestSuite) {
+                    dependencies {
+                        // Automatically depend on the main plugin code
+                        implementation project()
+
+                        // Set up Spock for functional testing across modules
+                        implementation 'org.spockframework:spock-core:2.3-groovy-3.0'
+                    }
+
+                    targets {
+                        all {
+                            testTask.configure {
+                                // Ensure that when functional tests run, the plugin classpath is generated first
+                                shouldRunAfter(tasks.named('pluginUnderTestMetadata'))
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Map the custom test suite directly to the java-gradle-plugin lifecycle
+        // This tells Gradle to output the metadata necessary for `.withPluginClasspath()` to function
+        gradlePlugin {
+            testSourceSets(sourceSets.functionalTest)
+        }
+
+        tasks.named('check') {
+            // Run the functional tests as part of `check`
+            dependsOn testing.suites.functionalTest
+        }
+    }
+
+    plugins.withType(JavaPlugin) {
+        project.sourceCompatibility = '17'
+        project.targetCompatibility = '17'
+    }
+
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+        options.release = 17
+    }
+
+    tasks.withType(GroovyCompile) {
+        options.encoding = 'UTF-8'
+    }
+
+    tasks.withType(Test) {
+        systemProperty 'file.encoding', 'UTF-8'
+    }
+}

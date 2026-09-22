@@ -1,0 +1,4 @@
+rootProject.name = 'jpersist'
+
+include 'plugins:eclipse-persistence-gradle-plugin'
+include 'plugins:hibernate-persistence-gradle-plugin'

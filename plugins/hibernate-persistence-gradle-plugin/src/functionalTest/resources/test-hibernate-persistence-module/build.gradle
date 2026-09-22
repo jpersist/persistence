@@ -1,0 +1,13 @@
+plugins {
+    id 'java-library'
+    id 'io.github.jpersist.hibernate-persistence'
+    id 'com.netflix.nebula.dependency-recommender' version '12.2.0'
+}
+
+dependencyRecommendations {
+    mavenBom module: 'org.hibernate.orm:hibernate-platform:6.6.56.Final'
+}
+
+repositories {
+    mavenCentral()
+}

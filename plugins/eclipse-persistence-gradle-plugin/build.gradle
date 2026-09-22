@@ -1,0 +1,21 @@
+plugins {
+    id 'java-gradle-plugin'
+    id 'groovy'
+}
+
+gradlePlugin {
+    plugins {
+        register('eclipseJpamodelgen') {
+            id = 'io.github.jpersist.eclipse-jpa-modelgen'
+            implementationClass = 'persist.eclipse.gradle.plugin.EclipseJpaModelgenPlugin'
+        }
+        register('eclipseStaticWeave') {
+            id = 'io.github.jpersist.eclipse-static-weave'
+            implementationClass = 'persist.eclipse.gradle.plugin.EclipseStaticWeavePlugin'
+        }
+        register('eclipsePersistence') {
+            id = 'io.github.jpersist.eclipse-persistence'
+            implementationClass = 'persist.eclipse.gradle.plugin.EclipsePersistencePlugin'
+        }
+    }
+}
