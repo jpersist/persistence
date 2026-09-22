@@ -1,0 +1,7 @@
+[versions]
+hibernate = "6.6.56.Final"
+spock = "2.3-groovy-3.0"
+
+[libraries]
+hibernate-gradle-plugin = { group = "org.hibernate.orm", name = "hibernate-gradle-plugin", version.ref = "hibernate" }
+spock-core = { group = "org.spockframework", name = "spock-core", version.ref = "spock" }

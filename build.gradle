@@ -23,7 +23,7 @@ subprojects {
                         implementation project()
 
                         // Set up Spock for functional testing across modules
-                        implementation 'org.spockframework:spock-core:2.3-groovy-3.0'
+                        implementation libs.spock.core
                     }
 
                     targets {
