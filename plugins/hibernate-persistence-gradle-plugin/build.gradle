@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    implementation libs.hibernate.gradle.plugin
+    implementation libs.hibernate.core
 }
 
 gradlePlugin {
@@ -12,6 +12,10 @@ gradlePlugin {
         register('hibernateJpamodelgen') {
             id = 'io.github.jpersist.hibernate-jpamodelgen'
             implementationClass = 'persist.hibernate.gradle.plugin.HibernateJpamodelgenPlugin'
+        }
+        register('hibernateEnhancement') {
+            id = 'io.github.jpersist.hibernate-enhancement'
+            implementationClass = 'persist.hibernate.gradle.plugin.HibernateEnhancementPlugin'
         }
         register('hibernatePersistence') {
             id = 'io.github.jpersist.hibernate-persistence'

@@ -67,13 +67,13 @@ class HibernatePersistencePluginFunctionalSpec extends Specification {
         then:
         firstResult.task(":compileJava").outcome == TaskOutcome.SUCCESS
         firstResult.task(":jar").outcome == TaskOutcome.SUCCESS
-        // firstResult.output.contains("Configuration cache entry stored.")
+        firstResult.output.contains("Configuration cache entry stored.")
 
         when: "Second run with zero modification boundaries"
         def secondResult = runner.build()
 
         then: "Incremental tracking bypasses overhead execution loops cleanly"
-        // secondResult.output.contains("Configuration cache entry reused.")
+        secondResult.output.contains("Configuration cache entry reused.")
         secondResult.task(":compileJava").outcome == TaskOutcome.UP_TO_DATE
         secondResult.task(":jar").outcome == TaskOutcome.UP_TO_DATE
     }
@@ -81,7 +81,7 @@ class HibernatePersistencePluginFunctionalSpec extends Specification {
     private GradleRunner createRunner() {
         return GradleRunner.create()
             .withProjectDir(projectDir.toFile())
-            .withArguments('jar', '--stacktrace')
+            .withArguments('jar', '--configuration-cache', '--stacktrace')
             .withPluginClasspath()
     }
 

@@ -8,6 +8,10 @@ dependencyRecommendations {
     mavenBom module: 'org.hibernate.orm:hibernate-platform:6.6.56.Final'
 }
 
+dependencies {
+    implementation 'org.hibernate.orm:hibernate-core'
+}
+
 repositories {
     mavenCentral()
 }
