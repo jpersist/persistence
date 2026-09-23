@@ -45,6 +45,9 @@ class HibernatePersistencePluginFunctionalSpec extends Specification {
 
         then:
         result.task(":compileJava").outcome == TaskOutcome.SUCCESS
+        result.task(":compileTestJava").outcome == TaskOutcome.NO_SOURCE
+        result.task(":hibernateEnhanceClasses").outcome == TaskOutcome.SUCCESS
+        result.task(":hibernateEnhanceTestClasses").outcome == TaskOutcome.NO_SOURCE
         result.task(":jar").outcome == TaskOutcome.SUCCESS
 
         // Verify distribution archive layout paths
@@ -66,6 +69,9 @@ class HibernatePersistencePluginFunctionalSpec extends Specification {
 
         then:
         firstResult.task(":compileJava").outcome == TaskOutcome.SUCCESS
+        firstResult.task(":compileTestJava").outcome == TaskOutcome.NO_SOURCE
+        firstResult.task(":hibernateEnhanceClasses").outcome == TaskOutcome.SUCCESS
+        firstResult.task(":hibernateEnhanceTestClasses").outcome == TaskOutcome.NO_SOURCE
         firstResult.task(":jar").outcome == TaskOutcome.SUCCESS
         firstResult.output.contains("Configuration cache entry stored.")
 
@@ -75,6 +81,9 @@ class HibernatePersistencePluginFunctionalSpec extends Specification {
         then: "Incremental tracking bypasses overhead execution loops cleanly"
         secondResult.output.contains("Configuration cache entry reused.")
         secondResult.task(":compileJava").outcome == TaskOutcome.UP_TO_DATE
+        secondResult.task(":compileTestJava").outcome == TaskOutcome.NO_SOURCE
+        secondResult.task(":hibernateEnhanceClasses").outcome == TaskOutcome.UP_TO_DATE
+        secondResult.task(":hibernateEnhanceTestClasses").outcome == TaskOutcome.NO_SOURCE
         secondResult.task(":jar").outcome == TaskOutcome.UP_TO_DATE
     }
 

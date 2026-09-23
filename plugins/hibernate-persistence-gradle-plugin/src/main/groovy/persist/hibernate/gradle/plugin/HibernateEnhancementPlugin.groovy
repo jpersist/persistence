@@ -7,6 +7,7 @@ import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.jvm.tasks.Jar
+import org.gradle.language.base.plugins.LifecycleBasePlugin
 import persist.hibernate.gradle.extension.HibernateExtension
 import persist.hibernate.gradle.task.HibernateEnhancementTask
 
@@ -26,8 +27,9 @@ class HibernateEnhancementPlugin implements Plugin<Project> {
 
         project.getExtensions().getByType(SourceSetContainer).configureEach { sourceSet ->
             // Dynamic task naming based on the source set context (e.g., main -> compileJava)
+            String classesTaskName = sourceSet.getClassesTaskName()
             String compileTaskName = sourceSet.getCompileJavaTaskName()
-            String enhanceTaskName = "hibernateEnhance${compileTaskName.capitalize()}"
+            String enhanceTaskName = "hibernateEnhance${classesTaskName.capitalize()}"
             def enhancement = hibernate.enhancement
 
             // Fetch the compilation task lazily using provider mappings to prevent premature instantiation
@@ -38,6 +40,9 @@ class HibernateEnhancementPlugin implements Plugin<Project> {
 
             // Register the task completely outside the compile task configuration execution context
             def enhanceTaskProvider = project.tasks.register(enhanceTaskName, HibernateEnhancementTask) { enhanceTask ->
+                enhanceTask.group = LifecycleBasePlugin.BUILD_GROUP
+                enhanceTask.description = "Enhances entity ${classesTaskName}."
+
                 // Pass the complete compilation classpath directly to the task input property
                 enhanceTask.compileClasspath.from(sourceSet.compileClasspath)
 
@@ -50,19 +55,17 @@ class HibernateEnhancementPlugin implements Plugin<Project> {
                 enhanceTask.dirtyTrackingEnabled.set(enhancement.enableDirtyTracking)
                 enhanceTask.associationManagementEnabled.set(enhancement.enableAssociationManagement)
                 enhanceTask.extendedEnhancementEnabled.set(enhancement.enableExtendedEnhancement)
+
+                // Hook the lifecycle dependencies safely
+                enhanceTask.mustRunAfter(compileTaskProvider)
             }
 
-            // Hook the lifecycle dependencies safely at the top-level project scope
-            compileTaskProvider.configure { compileTask ->
-                compileTask.finalizedBy(enhanceTaskProvider)
+            project.tasks.named(classesTaskName).configure { task ->
+                task.dependsOn(enhanceTaskProvider)
             }
 
-            // Enforce that any task packaging classes (like :jar) must wait for enhancement to finish
             // Re-route the packaging steps to collect classes from the enhanced directory
-            // This guarantees both standard classes AND generated metamodel classes (Person_) are present.
             project.tasks.withType(Jar).configureEach { jarTask ->
-                jarTask.mustRunAfter(enhanceTaskProvider)
-
                 // 1. Tell Gradle how to resolve duplicate file conflicts
                 jarTask.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
