@@ -79,31 +79,10 @@ class HibernatePersistencePluginFunctionalSpec extends Specification {
     }
 
     private GradleRunner createRunner() {
-        def runner = GradleRunner.create()
+        return GradleRunner.create()
             .withProjectDir(projectDir.toFile())
             .withArguments('jar', '--stacktrace')
             .withPluginClasspath()
-
-        // Map system corporate proxy properties safely from environment references
-        def proxyHost = System.getProperty('http.proxyHost')
-        def proxyPort = System.getProperty('http.proxyPort')
-        def nonProxyHosts = System.getProperty('http.nonProxyHosts')
-
-        if (proxyHost && proxyPort) {
-            File sandboxProperties = projectDir.resolve('gradle.properties').toFile()
-            sandboxProperties << """
-                systemProp.http.proxyHost=${proxyHost}
-                systemProp.http.proxyPort=${proxyPort}
-                systemProp.https.proxyHost=${proxyHost}
-                systemProp.https.proxyPort=${proxyPort}
-            """.stripIndent().trim()
-
-            if (nonProxyHosts) {
-                sandboxProperties << "\nsystemProp.http.nonProxyHosts=${nonProxyHosts}"
-            }
-        }
-
-        return runner
     }
 
 }

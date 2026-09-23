@@ -12,7 +12,7 @@ class EclipseStaticWeavePlugin implements Plugin<Project> {
 
     @Override
     void apply(Project project) {
-        project.plugins.apply('java')
+        project.plugins.apply(JavaPlugin)
 
         def weaveConfig = project.configurations.register('weave')
 
