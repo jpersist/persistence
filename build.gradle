@@ -1,6 +1,7 @@
 plugins {
     id 'eclipse'
     id 'com.gradle.plugin-publish' version '2.0.0' apply false
+    id 'org.sonarqube' version '5.1.0.4882'
 }
 
 subprojects {
@@ -39,6 +40,16 @@ subprojects {
             }
         }
 
+        plugins.withType(GroovyPlugin) {
+            sonar {
+                properties {
+                    // Ensure Sonar scans both standard production code and your functional Spock tests
+                    property "sonar.sources", "src/main/groovy"
+                    property "sonar.tests", "src/test/groovy,src/functionalTest/groovy"
+                }
+            }
+        }
+
         // Map the custom test suite directly to the java-gradle-plugin lifecycle
         // This tells Gradle to output the metadata necessary for `.withPluginClasspath()` to function
         gradlePlugin {
@@ -67,5 +78,13 @@ subprojects {
 
     tasks.withType(Test) {
         systemProperty 'file.encoding', 'UTF-8'
+    }
+}
+
+sonar {
+    properties {
+        property "sonar.projectKey", "jpersist_persistence"
+        property "sonar.organization", "jpersist"
+        property "sonar.host.url", "https://sonarcloud.io"
     }
 }
