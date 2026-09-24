@@ -1,0 +1,61 @@
+name: Trigger Automated Framework Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      releaseVersion:
+        description: 'Target Release Version (e.g., 1.0.0)'
+        required: false
+      nextVersion:
+        description: 'Next Snapshot Version (e.g., 1.0.1-SNAPSHOT)'
+        required: false
+
+permissions:
+  contents: write # Crucial permission: allows the pipeline runner to push Git tags and commits
+
+jobs:
+  release:
+    name: Execute Release Automation
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Check out Repository
+        uses: actions/checkout@v4
+        with:
+          # Fetch entire history and authentication scopes to allow the runner to push Git hooks
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure Git Author Profile
+        # The release plugin expects a git identity to execute automated release commits
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Set up Java Development Kit
+        uses: actions/setup-java@v5
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Execute Gradle Release Automation
+        env:
+          GRADLE_PUBLISH_KEY: ${{ secrets.GRADLE_PUBLISH_KEY }}
+          GRADLE_PUBLISH_SECRET: ${{ secrets.GRADLE_PUBLISH_SECRET }}
+        run: |
+          # Construct arguments if manual variables are provided via the UI
+          RELEASE_ARGS=""
+          if [ ! -z "${{ github.event.inputs.releaseVersion }}" ]; then
+            RELEASE_ARGS="$RELEASE_ARGS -Prelease.releaseVersion=${{ github.event.inputs.releaseVersion }}"
+          fi
+          if [ ! -z "${{ github.event.inputs.nextVersion }}" ]; then
+            RELEASE_ARGS="$RELEASE_ARGS -Prelease.newVersion=${{ github.event.inputs.nextVersion }}"
+          fi
+
+          # CRUCIAL: Pass '--no-configuration-cache' explicitly because
+          # net.researchgate.release modifies task topologies and spawns git sub-processes.
+          ./gradlew release $RELEASE_ARGS -Prelease.useAutomaticVersion=true --no-configuration-cache

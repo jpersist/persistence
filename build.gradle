@@ -6,9 +6,17 @@ plugins {
 }
 
 release {
+    tagTemplate = 'v${version}'
     git {
         requireBranch.set('main')
     }
+}
+
+// CRUCIAL STEP: Tie the portal deployment directly into the release process loop.
+// This ensures that when the release plugin strips the snapshot and triggers a build,
+// it immediately deploys the finalized stable artifacts before shifting versions.
+tasks.named('afterReleaseBuild') {
+    dependsOn subprojects.collect { it.tasks.matching { task -> task.name == 'publishPlugins' } }
 }
 
 subprojects {
