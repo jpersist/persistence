@@ -14,20 +14,21 @@ abstract class EclipseWeaveTask extends DefaultTask {
     @PathSensitive(PathSensitivity.RELATIVE)
     abstract DirectoryProperty getResourcesDir()
 
-    @CompileClasspath
-    abstract ConfigurableFileCollection getWeaveClasspath()
-
-    @CompileClasspath
-    abstract ConfigurableFileCollection getCompileClasspath()
-
     // Source directory holds clean compiled files (Read-Only Input)
     @InputDirectory
     @PathSensitive(PathSensitivity.RELATIVE)
+    @SkipWhenEmpty
     abstract DirectoryProperty getSourceClassesDir()
 
     // Target directory holds newly generated woven outputs
     @OutputDirectory
     abstract DirectoryProperty getTargetClassesDir()
+
+    @CompileClasspath
+    abstract ConfigurableFileCollection getWeaveClasspath()
+
+    @CompileClasspath
+    abstract ConfigurableFileCollection getCompileClasspath()
 
     private ExecOperations execOperations
 

@@ -1,12 +1,14 @@
 package persist.eclipse.gradle.plugin
 
-import persist.eclipse.gradle.task.EclipseWeaveTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.plugins.JavaPlugin
-import org.gradle.api.tasks.bundling.Jar
+import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.compile.JavaCompile
+import org.gradle.jvm.tasks.Jar
+import org.gradle.language.base.plugins.LifecycleBasePlugin
+import persist.eclipse.gradle.task.EclipseWeaveTask
 
 class EclipseStaticWeavePlugin implements Plugin<Project> {
 
@@ -14,54 +16,64 @@ class EclipseStaticWeavePlugin implements Plugin<Project> {
     void apply(Project project) {
         project.plugins.apply(JavaPlugin)
 
-        def weaveConfig = project.configurations.register('weave')
+        def weaveConfig = project.configurations.maybeCreate('weave')
 
         project.dependencies.add('weave', 'jakarta.persistence:jakarta.persistence-api')
         project.dependencies.add('weave', 'org.eclipse.persistence:org.eclipse.persistence.jpa')
 
-        def compileClasspathConfig = project.configurations.named('compileClasspath')
+        project.extensions.getByType(SourceSetContainer).configureEach { sourceSet ->
+            // Dynamic task naming based on the source set context (e.g., main -> compileJava)
+            String classesTaskName = sourceSet.getClassesTaskName()
+            String compileTaskName = sourceSet.getCompileJavaTaskName()
+            String weaveTaskName = "eclipseWeave${classesTaskName.capitalize()}"
 
-        // Fetch the compileJava task provider safely
-        def compileJavaProvider = project.tasks.named(JavaPlugin.COMPILE_JAVA_TASK_NAME, JavaCompile)
+            // Fetch the compileJava task provider safely
+            def compileJavaProvider = project.tasks.named(compileTaskName, JavaCompile)
 
-        // Register your weaving task at the PROJECT level (Fixed Context!)
-        def weaveTaskProvider = project.tasks.register('weaveEntityClasses', EclipseWeaveTask) { task ->
-            task.description = 'Performs EclipseLink static weaving of entity classes'
-            task.group = 'build'
+            // Map to an explicitly isolated woven directory
+            def wovenClassesDir = project.layout.buildDirectory.dir("classes/java/woven/${sourceSet.name}")
 
-            // Source comes directly from the compile output directory
-            task.getSourceClassesDir().set(compileJavaProvider.flatMap { it.destinationDirectory })
+            def resourcesDir = project.layout.projectDirectory.dir("src/${sourceSet.name}/resources")
 
-            // Target goes to a brand new isolated directory
-            task.getTargetClassesDir().set(project.layout.buildDirectory.dir('classes/java/woven'))
+            // Register your weaving task at the PROJECT level (Fixed Context!)
+            def weaveTaskProvider = project.tasks.register(weaveTaskName, EclipseWeaveTask) { task ->
+                task.group = LifecycleBasePlugin.BUILD_GROUP
+                task.description = "Performs EclipseLink static weaving of entity ${classesTaskName}"
 
-            // Wire the resources directory using layout properties
-            task.getResourcesDir().set(project.layout.projectDirectory.dir('src/main/resources'))
+                // Source comes directly from the compile output directory
+                task.sourceClassesDir.set(compileJavaProvider.flatMap { it.destinationDirectory })
 
-            // Wire the classpaths safely using lazy FileCollections
-            task.getWeaveClasspath().from(weaveConfig)
-            task.getCompileClasspath().from(compileClasspathConfig)
+                // Target goes to a brand new isolated directory
+                task.targetClassesDir.set(wovenClassesDir)
 
-            // Explicitly dictate that weaving runs after compilation
-            task.mustRunAfter(compileJavaProvider)
-        }
+                // Wire the resources directory using layout properties
+                task.resourcesDir.set(resourcesDir)
 
-        // Safely feed both directories to the jar task and prioritize woven outputs
-        project.tasks.named(JavaPlugin.JAR_TASK_NAME, Jar) { jarTask ->
+                // Wire the classpaths safely using lazy FileCollections
+                task.weaveClasspath.from(weaveConfig)
+                task.compileClasspath.from(sourceSet.compileClasspath)
 
-            // 1. Tell Gradle how to resolve duplicate file conflicts
-            jarTask.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+                // Explicitly dictate that weaving runs after compilation
+                task.mustRunAfter(compileJavaProvider)
+            }
 
-            // 2. Add the WOVEN classes FIRST so they take precedence
-            jarTask.from(weaveTaskProvider.flatMap { task -> task.getTargetClassesDir() })
+            // Safely feed both directories to the jar task and prioritize woven outputs
+            project.tasks.withType(Jar).configureEach { jarTask ->
 
-            // 3. Add the ORIGINAL classes SECOND (Duplicates matching woven classes will be ignored)
-            jarTask.from(compileJavaProvider.flatMap { task -> task.destinationDirectory })
-        }
+                // 1. Tell Gradle how to resolve duplicate file conflicts
+                jarTask.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
-        // Hook the weaving task back into the build lifecycle
-        project.tasks.named(JavaPlugin.CLASSES_TASK_NAME) { classesTask ->
-            classesTask.dependsOn(weaveTaskProvider)
+                // 2. Add the WOVEN classes FIRST so they take precedence
+                jarTask.from(weaveTaskProvider.flatMap { task -> task.getTargetClassesDir() })
+
+                // 3. Add the ORIGINAL classes SECOND (Duplicates matching woven classes will be ignored)
+                jarTask.from(compileJavaProvider.flatMap { task -> task.destinationDirectory })
+            }
+
+            // Hook the weaving task back into the build lifecycle
+            project.tasks.named(classesTaskName) { classesTask ->
+                classesTask.dependsOn(weaveTaskProvider)
+            }
         }
     }
 

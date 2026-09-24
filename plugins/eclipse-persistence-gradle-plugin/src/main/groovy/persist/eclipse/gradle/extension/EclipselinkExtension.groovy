@@ -9,7 +9,7 @@ import javax.inject.Inject
 
 abstract class JpaModelgenExtension {
 
-    RegularFileProperty persistenceXml
+    final RegularFileProperty persistenceXml
 
     private final ProjectLayout layout
 
@@ -27,10 +27,12 @@ abstract class JpaModelgenExtension {
 
 abstract class EclipselinkExtension {
 
-    JpaModelgenExtension jpaModelgen
+    final String name
+    final JpaModelgenExtension jpaModelgen
 
     @Inject
-    EclipselinkExtension(ObjectFactory objects) {
+    EclipselinkExtension(String name, ObjectFactory objects) {
+        this.name = name
         this.jpaModelgen = objects.newInstance(JpaModelgenExtension)
     }
 

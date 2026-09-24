@@ -33,7 +33,7 @@ class EclipsePersistencePluginFunctionalSpec extends Specification {
         }
     }
 
-    def "plugin executes weaveEntityClasses task successfully and modifies classes"() {
+    def "plugin executes eclipseWeaveClasses task successfully and modifies classes"() {
         given:
         def runner = createRunner()
 
@@ -43,7 +43,8 @@ class EclipsePersistencePluginFunctionalSpec extends Specification {
         then:
         // Verify that both compilation and our custom weaving tasks run successfully
         result.task(":compileJava").outcome == TaskOutcome.SUCCESS
-        result.task(":weaveEntityClasses").outcome == TaskOutcome.SUCCESS
+        result.task(":eclipseWeaveClasses").outcome == TaskOutcome.SUCCESS
+        result.task(":eclipseWeaveTestClasses").outcome == TaskOutcome.NO_SOURCE
         result.task(":jar").outcome == TaskOutcome.SUCCESS
 
         // Asserting against real logs intercepted from EclipseLink processing
@@ -71,7 +72,8 @@ class EclipsePersistencePluginFunctionalSpec extends Specification {
         def firstResult = runner.build()
 
         then:
-        firstResult.task(":weaveEntityClasses").outcome == TaskOutcome.SUCCESS
+        firstResult.task(":eclipseWeaveClasses").outcome == TaskOutcome.SUCCESS
+        firstResult.task(":eclipseWeaveTestClasses").outcome == TaskOutcome.NO_SOURCE
         firstResult.output.contains("Configuration cache entry stored.")
 
         when: "Second execution with no code changes"
@@ -80,7 +82,8 @@ class EclipsePersistencePluginFunctionalSpec extends Specification {
         then: "Every step checks green and is safely bypassed"
         secondResult.output.contains("Configuration cache entry reused.")
         secondResult.task(":compileJava").outcome == TaskOutcome.UP_TO_DATE
-        secondResult.task(":weaveEntityClasses").outcome == TaskOutcome.UP_TO_DATE
+        secondResult.task(":eclipseWeaveClasses").outcome == TaskOutcome.UP_TO_DATE
+        secondResult.task(":eclipseWeaveTestClasses").outcome == TaskOutcome.NO_SOURCE
         secondResult.task(":jar").outcome == TaskOutcome.UP_TO_DATE
     }
 

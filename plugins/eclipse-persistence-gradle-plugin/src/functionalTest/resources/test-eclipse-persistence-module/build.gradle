@@ -20,8 +20,10 @@ dependencies {
 }
 
 eclipselink {
-    jpaModelgen {
-        persistenceXml = 'src/main/resources/META-INF/persistence.xml'
+    main {
+        jpaModelgen {
+            persistenceXml = 'src/main/resources/META-INF/persistence.xml'
+        }
     }
 }
 
