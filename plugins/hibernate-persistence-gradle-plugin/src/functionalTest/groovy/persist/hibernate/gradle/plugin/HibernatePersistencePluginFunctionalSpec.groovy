@@ -50,6 +50,11 @@ class HibernatePersistencePluginFunctionalSpec extends Specification {
         result.task(":hibernateEnhanceTestClasses").outcome == TaskOutcome.NO_SOURCE
         result.task(":jar").outcome == TaskOutcome.SUCCESS
 
+        // Asserting against real logs intercepted from enhancement task
+        result.output.contains('Successfully enhanced class : org.hibernate.persistence.entity.Person.class')
+        result.output.contains('Skipping class : org.hibernate.persistence.entity.Person_.class')
+        result.output.contains('Skipping class : org.hibernate.persistence.entity.Person$Gender.class')
+
         // Verify distribution archive layout paths
         File jarFile = new File(projectDir.toFile(), "build/libs/test-hibernate-persistence-module.jar")
         jarFile.exists()

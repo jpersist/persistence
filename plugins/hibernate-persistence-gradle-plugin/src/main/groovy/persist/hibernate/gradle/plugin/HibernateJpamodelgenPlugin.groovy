@@ -33,9 +33,7 @@ class HibernateJpamodelgenPlugin implements Plugin<Project> {
         // Automatically and lazily iterate over all source sets configured in the module
         sourceSets.configureEach { sourceSet ->
             // Determine the matching annotation processor configuration name.
-            // - If the source set name is 'main', the configuration is 'annotationProcessor'
-            // - For any other source set (e.g. 'test'), it becomes '${name}AnnotationProcessor' (e.g. 'testAnnotationProcessor')
-            String configName = sourceSet.name == 'main' ? 'annotationProcessor' : "${sourceSet.name}AnnotationProcessor"
+            String configName = sourceSet.annotationProcessorConfigurationName
 
             // Inject the dependency dynamically into the calculated configuration name
             project.dependencies.add(configName, 'org.hibernate.orm:hibernate-jpamodelgen')
