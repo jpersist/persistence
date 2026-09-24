@@ -1,15 +1,15 @@
 version: 2
 updates:
-    # 1. Automatically monitor and update Gradle Version Catalog dependencies
-    - package-ecosystem: "gradle"
-      directory: "/"
-      schedule:
-          interval: "daily"
-      open-pull-requests-limit: 5
+  # 1. Automatically monitor and update Gradle Version Catalog dependencies
+  - package-ecosystem: "gradle"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 5
 
-    # 2. Automatically monitor and update GitHub Actions workflows
-    - package-ecosystem: "github-actions"
-      directory: "/"
-      schedule:
-          interval: "weekly"
-      open-pull-requests-limit: 3
+  # 2. Automatically monitor and update GitHub Actions workflows
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 3
