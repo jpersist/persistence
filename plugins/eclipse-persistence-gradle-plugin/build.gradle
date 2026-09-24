@@ -3,18 +3,29 @@ plugins {
     id 'groovy'
 }
 
+apply from: "${rootDir}/gradle/plugin-portal-publishing.gradle"
+
 gradlePlugin {
     plugins {
         register('eclipseJpamodelgen') {
             id = 'io.github.jpersist.eclipse-jpa-modelgen'
+            displayName = 'EclipseLink JPA Modelgen Processor Plugin'
+            description = 'Modern, cache-compliant plugin to automatically configure the EclipseLink Canonical Model Generator.'
+            tags = ['jpa', 'jakarta-persistence', 'eclipselink', 'modelgen']
             implementationClass = 'persist.eclipse.gradle.plugin.EclipseJpaModelgenPlugin'
         }
         register('eclipseStaticWeave') {
             id = 'io.github.jpersist.eclipse-static-weave'
+            displayName = 'EclipseLink Static Weaving Plugin'
+            description = 'Executes incremental compile-time bytecode weaving for EclipseLink entity performance enhancement.'
+            tags = ['jpa', 'jakarta-persistence', 'eclipselink', 'bytecode-weaving']
             implementationClass = 'persist.eclipse.gradle.plugin.EclipseStaticWeavePlugin'
         }
         register('eclipsePersistence') {
             id = 'io.github.jpersist.eclipse-persistence'
+            displayName = 'EclipseLink Persistence Aggregate Plugin'
+            description = 'Aggregate plugin that automatically applies both the model generator and compile-time static weaving.'
+            tags = ['jpa', 'jakarta-persistence', 'eclipselink', 'modelgen', 'bytecode-weaving']
             implementationClass = 'persist.eclipse.gradle.plugin.EclipsePersistencePlugin'
         }
     }

@@ -1,0 +1,6 @@
+apply plugin: 'com.gradle.plugin-publish'
+
+gradlePlugin {
+    website = 'https://github.com/jpersist/persistence'
+    vcsUrl = 'https://github.com/jpersist/persistence.git'
+}

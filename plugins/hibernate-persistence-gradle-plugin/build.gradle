@@ -3,6 +3,8 @@ plugins {
     id 'groovy'
 }
 
+apply from: "${rootDir}/gradle/plugin-portal-publishing.gradle"
+
 dependencies {
     implementation libs.hibernate.core
 }
@@ -11,14 +13,23 @@ gradlePlugin {
     plugins {
         register('hibernateJpamodelgen') {
             id = 'io.github.jpersist.hibernate-jpamodelgen'
+            displayName = 'Hibernate JPA Modelgen Processor Plugin'
+            description = 'Modern, cache-compliant plugin to automatically configure the Hibernate static annotation generator.'
+            tags = ['jpa', 'jakarta-persistence', 'hibernate', 'modelgen']
             implementationClass = 'persist.hibernate.gradle.plugin.HibernateJpamodelgenPlugin'
         }
         register('hibernateEnhancement') {
             id = 'io.github.jpersist.hibernate-enhancement'
+            displayName = 'Hibernate Bytecode Enhancement Plugin'
+            description = 'High-performance, cache-compliant plugin that executes programmatic compile-time bytecode enhancement for Hibernate entities.'
+            tags = ['jpa', 'jakarta-persistence', 'hibernate', 'bytecode-enhancement']
             implementationClass = 'persist.hibernate.gradle.plugin.HibernateEnhancementPlugin'
         }
         register('hibernatePersistence') {
             id = 'io.github.jpersist.hibernate-persistence'
+            displayName = 'Hibernate Persistence Aggregate Plugin'
+            description = 'Aggregate plugin providing corporate standard Hibernate configuration, binding jpamodelgen and bytecode enhancement out-of-the-box.'
+            tags = ['jpa', 'jakarta-persistence', 'hibernate', 'modelgen', 'bytecode-enhancement']
             implementationClass = 'persist.hibernate.gradle.plugin.HibernatePersistencePlugin'
         }
     }
