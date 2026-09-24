@@ -52,7 +52,7 @@ subprojects {
                 properties {
                     // Ensure Sonar scans both standard production code and your functional Spock tests
                     property "sonar.sources", "src/main/groovy"
-                    property "sonar.tests", "src/test/groovy,src/functionalTest/groovy"
+                    property "sonar.tests", "src/functionalTest/groovy"
                 }
             }
         }
