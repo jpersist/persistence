@@ -10,6 +10,16 @@ import org.gradle.plugins.ide.eclipse.model.Classpath
 import org.gradle.plugins.ide.eclipse.model.EclipseModel
 import org.gradle.plugins.ide.eclipse.model.SourceFolder
 
+/**
+ * Main entry point for the Hibernate JPA Modelgen Processor Plugin.
+ * <p>
+ * This plugin registers the Hibernate JPA Annotation Processor configuration engines, helping
+ * engineers build type-safe Criteria API queries. It tracks active project source sets, lazily wires
+ * the unversioned <code>hibernate-jpamodelgen</code> framework dependency directly onto the targeted
+ * <code>annotationProcessor</code> configurations, and ensures version suggestions play seamlessly
+ * alongside upstream platform BOM definitions or corporate Gradle Version Catalogs.
+ * </p>
+ */
 class HibernateJpamodelgenPlugin implements Plugin<Project> {
 
     @Override

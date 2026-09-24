@@ -12,6 +12,22 @@ import org.gradle.plugins.ide.eclipse.model.EclipseModel
 import org.gradle.plugins.ide.eclipse.model.SourceFolder
 import persist.eclipse.gradle.extension.EclipselinkExtension
 
+/**
+ * Main entry point for the EclipseLink JPA Modelgen Processor Plugin.
+ * <p>
+ * This plugin automates the generation of the JPA static canonical metamodel using
+ * the EclipseLink JpaModelgen Annotation Processor. It dynamically applies the standard
+ * Gradle 'java' and 'eclipse' development environments, provisions the required processing
+ * dependencies safely using a lazy version fallback mechanism, and dynamically injects
+ * compiler arguments targeting the appropriate <code>persistence.xml</code> configuration file path.
+ * </p>
+ * <p>
+ * Additionally, it integrates with Eclipse Buildship's synchronization engine via a strongly-typed
+ * hook to register non-empty generated source directories directly into the Eclipse IDE <code>.classpath</code> file.
+ * </p>
+ *
+ * @see EclipselinkExtension
+ */
 class EclipseJpaModelgenPlugin implements Plugin<Project> {
 
     @Override

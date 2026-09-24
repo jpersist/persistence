@@ -19,33 +19,101 @@ import org.hibernate.bytecode.enhance.spi.UnloadedField
 
 import static org.hibernate.bytecode.internal.BytecodeProviderInitiator.buildDefaultBytecodeProvider
 
+/**
+ * A custom Gradle task that programmatically performs compile-time bytecode enhancement on Hibernate entities.
+ * <p>
+ * This task parses a directory of raw compiled classes and runs Hibernate's internal {@link Enhancer} engine.
+ * It rewrites entity class definitions to support optimizations such as lazy initialization at the field level,
+ * inline change tracking (dirty checking), and automatic bidirectional association management. By writing
+ * enhanced results out to an isolated target directory, the task preserves full compatibility with
+ * Gradle's Configuration Cache and incremental build system.
+ * </p>
+ *
+ * @since 1.0.0
+ */
 abstract class HibernateEnhancementTask extends DefaultTask {
 
+    /**
+     * The full compilation dependencies classpath necessary for Hibernate to inspect, resolve,
+     * and validate complex relationships, types, or embedded enums (e.g., {@code Person$Gender})
+     * during the bytecode analysis phase.
+     *
+     * @return The file collection managing the project's compilation dependencies.
+     */
     @CompileClasspath
     abstract ConfigurableFileCollection getCompileClasspath()
 
+    /**
+     * Toggles whether to enhance entities to support field-level lazy initialization.
+     * Evaluated lazily via a reactive property state to prevent premature lifecycle reads.
+     *
+     * @return The property wrapping the lazy initialization toggle.
+     */
     @Input
     abstract Property<Boolean> getLazyInitializationEnabled()
 
+    /**
+     * Toggles whether to inject inline dirty tracking code directly into entity fields,
+     * allowing Hibernate to manage changes without relying on heavy reflections during transaction flush phases.
+     *
+     * @return The property wrapping the dirty tracking toggle.
+     */
     @Input
     abstract Property<Boolean> getDirtyTrackingEnabled()
 
+    /**
+     * Toggles whether to automatically manage bidirectional associations across mapped relationship bounds.
+     *
+     * @return The property wrapping the association management toggle.
+     */
     @Input
     abstract Property<Boolean> getAssociationManagementEnabled()
 
+    /**
+     * Toggles whether to enable advanced extended bytecode enhancement strategies.
+     *
+     * @return The property wrapping the extended enhancement toggle.
+     */
     @Input
     abstract Property<Boolean> getExtendedEnhancementEnabled()
 
-    // Source directory holds clean compiled files (Read-Only Input)
+    /**
+     * The read-only input source directory containing the clean, raw compiled Java class files before enhancement.
+     * <p>
+     * Employs {@link PathSensitivity#RELATIVE} to ensure path-agnostic remote build caching capabilities.
+     * The {@link SkipWhenEmpty} annotation ensures that if no classes are present, the execution engine skips
+     * this task automatically with a true {@code NO-SOURCE} outcome status.
+     * </p>
+     *
+     * @return The directory property containing un-enhanced bytecode source elements.
+     */
     @InputDirectory
     @PathSensitive(PathSensitivity.RELATIVE)
     @SkipWhenEmpty
     abstract DirectoryProperty getSourceClassesDir()
 
-    // Target directory holds newly generated woven outputs
+    /**
+     * The target output directory where the modified and enhanced class files will be generated.
+     * <p>
+     * Isolating this folder guarantees strict incremental snapshot compliance (subsequent build executions
+     * evaluate successfully as {@code UP-TO-DATE} if no changes occur). Downstream archive operations
+     * like the standard {@code Jar} task will consume from this location.
+     * </p>
+     *
+     * @return The destination directory property for enhanced output bytecode.
+     */
     @OutputDirectory
     abstract DirectoryProperty getTargetClassesDir()
 
+    /**
+     * The main execution block for the task.
+     * <p>
+     * Constructs a specialized, isolated {@link URLClassLoader} linking the raw class sources and the
+     * complete compile classpath. It establishes a custom {@link DefaultEnhancementContext} mapping your
+     * configuration flags, invokes the multi-pass Hibernate toolbelt (performing both type discovery
+     * and byte transformation), and populates the separate target directory with copy/rewrite results.
+     * </p>
+     */
     @TaskAction
     void enhance() {
         def src = sourceClassesDir.get().asFile
@@ -56,8 +124,6 @@ abstract class HibernateEnhancementTask extends DefaultTask {
                 dst.mkdirs()
             }
 
-            // Build a classloader pointing to our output classes folder.
-            // This allows ByteBuddy to load inner classes/enums like Person$Gender.class cleanly.
             URL[] urls = [src.toURI().toURL()] as URL[]
             compileClasspath.files.forEach { file ->
                 urls += file.toURI().toURL()
@@ -65,9 +131,7 @@ abstract class HibernateEnhancementTask extends DefaultTask {
 
             def classLoader = new URLClassLoader(urls, Enhancer.class.classLoader)
 
-            // 1. Construct a clean Hibernate enhancement context
             def enhancementContext = new DefaultEnhancementContext() {
-                // Explicitly bind the classloader context to this worker thread runtime execution
                 @Override
                 ClassLoader getLoadingClassLoader() {
                     return classLoader
@@ -97,13 +161,10 @@ abstract class HibernateEnhancementTask extends DefaultTask {
                 boolean doExtendedEnhancement(UnloadedClass classDescriptor) {
                     return extendedEnhancementEnabled.get()
                 }
-
             }
 
-            // 2. Instantiate the programmatic Hibernate Enhancer tool
             Enhancer enhancer = buildDefaultBytecodeProvider().getEnhancer(enhancementContext)
 
-            // 3. Process files iteratively (In-place enhancement safe for Gradle's tracking engines)
             src.eachFileRecurse { file ->
                 if (file.isFile() && file.name.endsWith('.class')) {
                     def relativePath = src.toPath().relativize(file.toPath()).toString()
@@ -112,9 +173,7 @@ abstract class HibernateEnhancementTask extends DefaultTask {
                     outputFile.parentFile.mkdirs()
 
                     def originalBytes = file.bytes
-                    // Discover types prior enhancement
                     enhancer.discoverTypes(className, originalBytes)
-                    // Perform the transformation
                     def enhancedBytes = enhancer.enhance(className, originalBytes)
 
                     if (enhancedBytes != null) {

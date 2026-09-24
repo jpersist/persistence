@@ -10,6 +10,21 @@ import org.gradle.jvm.tasks.Jar
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import persist.eclipse.gradle.task.EclipseWeaveTask
 
+/**
+ * Main entry point for the EclipseLink Static Weaving Plugin.
+ * <p>
+ * This plugin registers a high-performance, incremental bytecode modification task for every
+ * discovered source set container in the project. It programmatically triggers EclipseLink's
+ * <code>StaticWeave</code> execution framework post-compilation, transforming standard JPA
+ * entities in-place within the compilation pipeline output boundaries.
+ * </p>
+ * <p>
+ * This enables performance optimizations such as strict lazy loading, fetch graph mechanics,
+ * and advanced inline dirty tracking without requiring an active <code>-javaagent</code> JVM argument at runtime.
+ * </p>
+ *
+ * @see EclipseWeaveTask
+ */
 class EclipseStaticWeavePlugin implements Plugin<Project> {
 
     @Override

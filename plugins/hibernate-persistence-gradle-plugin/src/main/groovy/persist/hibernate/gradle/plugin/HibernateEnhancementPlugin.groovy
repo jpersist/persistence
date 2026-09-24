@@ -11,7 +11,21 @@ import org.gradle.language.base.plugins.LifecycleBasePlugin
 import persist.hibernate.gradle.extension.HibernateExtension
 import persist.hibernate.gradle.task.HibernateEnhancementTask
 
-class HibernateEnhancementPlugin implements Plugin<Project> {
+/**
+ * Main entry point for the Hibernate Bytecode Enhancement Plugin.
+ * <p>
+ * This plugin registers a customizable <code>hibernate</code> configuration extension block and
+ * dynamically instantiates an independent {@link HibernateEnhancementTask}
+ * for every active project source set layout.
+ * </p>
+ * <p>
+ * To ensure absolute compliance with the Gradle Configuration Cache and incremental verification states,
+ * this plugin manages separate input/output staging directory targets, safeguarding compilation
+ * <code>UP-TO-DATE</code> checking parameters across multi-module build paths.
+ * </p>
+ *
+ * @see HibernateExtension
+ */class HibernateEnhancementPlugin implements Plugin<Project> {
 
     @Override
     void apply(Project project) {
