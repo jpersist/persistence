@@ -25,6 +25,10 @@ subprojects {
         gradlePluginPortal()
     }
 
+    if (name.endsWith('-gradle-plugin')) {
+        apply from: "${rootDir}/gradle/plugin-portal-publishing.gradle"
+    }
+
     // Apply the Java Gradle Plugin development environment to all plugin modules
     plugins.withType(JavaGradlePluginPlugin) {
         dependencies {
@@ -55,16 +59,6 @@ subprojects {
             }
         }
 
-        plugins.withType(GroovyPlugin) {
-            sonar {
-                properties {
-                    // Ensure Sonar scans both standard production code and your functional Spock tests
-                    property "sonar.sources", "src/main/groovy"
-                    property "sonar.tests", "src/functionalTest/groovy"
-                }
-            }
-        }
-
         // Map the custom test suite directly to the java-gradle-plugin lifecycle
         // This tells Gradle to output the metadata necessary for `.withPluginClasspath()` to function
         gradlePlugin {
@@ -74,6 +68,16 @@ subprojects {
         tasks.named('check') {
             // Run the functional tests as part of `check`
             dependsOn testing.suites.functionalTest
+        }
+    }
+
+    plugins.withType(GroovyPlugin) {
+        sonar {
+            properties {
+                // Ensure Sonar scans both standard production code and your functional Spock tests
+                property "sonar.sources", "src/main/groovy"
+                property "sonar.tests", "src/functionalTest/groovy"
+            }
         }
     }
 

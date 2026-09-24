@@ -3,8 +3,6 @@ plugins {
     id 'groovy'
 }
 
-apply from: "${rootDir}/gradle/plugin-portal-publishing.gradle"
-
 gradlePlugin {
     plugins {
         register('eclipseJpamodelgen') {
