@@ -55,6 +55,14 @@ subprojects {
 
     if (name.endsWith('-gradle-plugin')) {
         apply from: "${rootDir}/gradle/plugin-portal-publishing.gradle"
+
+        sonar {
+            properties {
+                property "sonar.sources", "src/main/groovy"
+                property "sonar.tests", "src/test/groovy"
+                property "sonar.junit.reportPaths", "${project.layout.buildDirectory.get().asFile}/test-results/test"
+            }
+        }
     }
 
     // Apply the Java Gradle Plugin development environment to all plugin modules
@@ -96,16 +104,6 @@ subprojects {
                         }
                     }
                 }
-            }
-        }
-
-        sonar {
-            properties {
-                // Ensure Sonar scans both standard production code and your functional Spock tests
-                property "sonar.sources", "src/main/groovy"
-                property "sonar.tests", "src/test/groovy,src/functionalTest/groovy"
-                property "sonar.junit.reportPaths", "${project.layout.buildDirectory.get().asFile}/test-results/test,${project.layout.buildDirectory.get().asFile}/test-results/functionalTest"
-                property "sonar.coverage.jacoco.xmlReportPaths", "${project.layout.buildDirectory.get().asFile}/reports/jacoco/test/jacocoTestReport.xml"
             }
         }
     }

@@ -34,3 +34,10 @@ configurations.matching { it.name == 'functionalTestJaCoCoReportElements' }.all 
     // Ensures the data is published cleanly on the internal project classpath exchange
     it.visible = true
 }
+
+sonar {
+    properties {
+        property "sonar.tests", "src/functionalTest/groovy"
+        property "sonar.junit.reportPaths", "${project.layout.buildDirectory.get().asFile}/test-results/functionalTest"
+    }
+}
