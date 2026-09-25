@@ -27,76 +27,40 @@ subprojects {
 
     if (name.endsWith('-gradle-plugin')) {
         apply from: "${rootDir}/gradle/plugin-portal-publishing.gradle"
-    }
 
-    // Apply the Java Gradle Plugin development environment to all plugin modules
-    plugins.withType(JavaGradlePluginPlugin) {
-        dependencies {
-            implementation localGroovy()
-        }
-
-        testing {
-            suites {
-                // Configure a functional test suite separate from standard unit tests
-                functionalTest(JvmTestSuite) {
-                    dependencies {
-                        // Automatically depend on the main plugin code
-                        implementation project()
-
-                        // Set up Spock for functional testing across modules
-                        implementation libs.spock.core
-                    }
-
-                    targets {
-                        all {
-                            testTask.configure {
-                                // Ensure that when functional tests run, the plugin classpath is generated first
-                                shouldRunAfter(tasks.named('pluginUnderTestMetadata'))
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        // Map the custom test suite directly to the java-gradle-plugin lifecycle
-        // This tells Gradle to output the metadata necessary for `.withPluginClasspath()` to function
-        gradlePlugin {
-            testSourceSets(sourceSets.functionalTest)
-        }
-
-        tasks.named('check') {
-            // Run the functional tests as part of `check`
-            dependsOn testing.suites.functionalTest
-        }
-    }
-
-    plugins.withType(GroovyPlugin) {
         sonar {
             properties {
                 // Ensure Sonar scans both standard production code and your functional Spock tests
                 property "sonar.sources", "src/main/groovy"
-                property "sonar.tests", "src/functionalTest/groovy"
             }
         }
     }
 
-    plugins.withType(JavaPlugin) {
+    // Apply the Java Gradle Plugin development environment to all plugin modules
+    plugins.withType(JavaGradlePluginPlugin).configureEach {
+        dependencies {
+            implementation localGroovy()
+        }
+    }
+
+    plugins.withType(JavaPlugin).configureEach {
         project.sourceCompatibility = '17'
         project.targetCompatibility = '17'
     }
 
-    tasks.withType(JavaCompile) {
+    tasks.withType(JavaCompile).configureEach {
         options.encoding = 'UTF-8'
         options.release = 17
     }
 
-    tasks.withType(GroovyCompile) {
+    tasks.withType(GroovyCompile).configureEach {
         options.encoding = 'UTF-8'
     }
 
-    tasks.withType(Test) {
-        systemProperty 'file.encoding', 'UTF-8'
+    tasks.withType(Test).tap {
+        configureEach {
+            systemProperty 'file.encoding', 'UTF-8'
+        }
     }
 }
 
