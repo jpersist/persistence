@@ -59,3 +59,16 @@ jobs:
           # CRUCIAL: Pass '--no-configuration-cache' explicitly because
           # net.researchgate.release modifies task topologies and spawns git sub-processes.
           ./gradlew release $RELEASE_ARGS -Prelease.useAutomaticVersion=true --no-configuration-cache
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          # Automatically uses the tag created by the net.researchgate.release plugin
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          # Tells GitHub to automatically generate the Markdown notes using the release.yml categories
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

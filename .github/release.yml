@@ -1,0 +1,27 @@
+changelog:
+  exclude:
+    labels:
+      - duplicate
+      - question
+    authors: []
+  categories:
+    - title: "🚀 New Features"
+      labels:
+        - enhancement
+        - feature
+    - title: "🐛 Bug Fixes"
+      labels:
+        - bug
+        - fix
+    - title: "📦 Dependency Updates"
+      labels:
+        - dependencies
+    - title: "🤖 Automated Dependency Cleanups"
+      labels:
+        - dependencies
+      authors:
+        - dependabot[bot] # Explicitly groups Dependabot-authored PRs here
+    - title: "🛠️ Build & Maintenance"
+      labels:
+        - chore
+        - documentation
