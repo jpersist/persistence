@@ -1,5 +1,7 @@
 plugins {
     id 'eclipse'
+    id 'jacoco'
+    id 'jacoco-report-aggregation'
     id 'com.gradle.plugin-publish' version '2.0.0' apply false
     id 'net.researchgate.release' version '3.1.0'
     id 'org.sonarqube' version '5.1.0.4882'
@@ -19,27 +21,92 @@ tasks.named('afterReleaseBuild') {
     dependsOn subprojects.collect { it.tasks.matching { task -> task.name == 'publishPlugins' } }
 }
 
-subprojects {
+// Declare dependencies for the aggregator so it links JVM test suites together
+dependencies {
+    // Collects standard unit tests and custom JvmTestSuites (like functionalTest) from subprojects
+    subprojects.forEach { subproject ->
+        jacocoAggregation(subproject)
+    }
+}
+
+reporting {
+    reports {
+        testCodeCoverageReport(JacocoCoverageReport) {
+            testSuiteName = 'test'
+        }
+    }
+}
+
+allprojects {
     repositories {
         mavenCentral()
         gradlePluginPortal()
     }
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'jacoco'
+
+    jacoco {
+        // Keeps code-coverage engine aligned with modern environments
+        toolVersion = '0.8.12'
+    }
 
     if (name.endsWith('-gradle-plugin')) {
         apply from: "${rootDir}/gradle/plugin-portal-publishing.gradle"
-
-        sonar {
-            properties {
-                // Ensure Sonar scans both standard production code and your functional Spock tests
-                property "sonar.sources", "src/main/groovy"
-            }
-        }
     }
 
     // Apply the Java Gradle Plugin development environment to all plugin modules
     plugins.withType(JavaGradlePluginPlugin).configureEach {
         dependencies {
             implementation localGroovy()
+
+            testImplementation platform('org.junit:junit-bom:5.10.0')
+            testImplementation 'org.junit.jupiter:junit-jupiter'
+            testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+        }
+
+        testing {
+            suites {
+                test {
+                    useJUnitJupiter()
+
+                    dependencies {
+                        // Set up Spock for functional testing across modules
+                        implementation libs.spock.core
+                    }
+                }
+
+                // Configure a functional test suite separate from standard unit tests
+                functionalTest(JvmTestSuite) {
+                    dependencies {
+                        implementation gradleTestKit()
+
+                        // Set up Spock for functional testing across modules
+                        implementation libs.spock.core
+                    }
+
+                    targets {
+                        all {
+                            testTask.configure {
+                                // Ensure that when functional tests run, the plugin classpath is generated first
+                                mustRunAfter(tasks.named('pluginUnderTestMetadata'))
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        sonar {
+            properties {
+                // Ensure Sonar scans both standard production code and your functional Spock tests
+                property "sonar.sources", "src/main/groovy"
+                property "sonar.tests", "src/test/groovy,src/functionalTest/groovy"
+                property "sonar.junit.reportPaths", "${project.layout.buildDirectory.get().asFile}/test-results/test,${project.layout.buildDirectory.get().asFile}/test-results/functionalTest"
+                property "sonar.coverage.jacoco.xmlReportPaths", "${project.layout.buildDirectory.get().asFile}/reports/jacoco/test/jacocoTestReport.xml"
+            }
         }
     }
 
@@ -63,7 +130,27 @@ subprojects {
     tasks.withType(Test).tap {
         configureEach {
             systemProperty 'file.encoding', 'UTF-8'
+            // Configure all verification test tasks to auto-generate coverage execution data (.exec)
+            finalizedBy { rootProject.tasks.named('testCodeCoverageReport', JacocoReport) }
         }
+    }
+
+    // Configure the JaCoCo report generation behavior per module
+    tasks.withType(JacocoReport).configureEach {
+        dependsOn tasks.withType(Test)
+
+        reports {
+            xml.required = true  // Crucial for SonarCloud ingestion
+            html.required = true // Optional: for local browser viewing
+        }
+
+        // Exclude JPA Metamodel classes from the JaCoCo XML Coverage Report calculations
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                "**/*_.*",               // Matches JPA metamodel bytecode fields (e.g., User_.class)
+                "**/persist/generated/**" // Clear path fallback for pre-generated structures
+            ])
+        }))
     }
 }
 
@@ -72,5 +159,11 @@ sonar {
         property "sonar.projectKey", "jpersist_persistence"
         property "sonar.organization", "jpersist"
         property "sonar.host.url", "https://sonarcloud.io"
+
+        property "sonar.coverage.jacoco.xmlReportPaths", "${layout.buildDirectory.get().asFile}/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml"
     }
+}
+
+tasks.named('check') {
+    dependsOn tasks.named('testCodeCoverageReport', JacocoReport)
 }

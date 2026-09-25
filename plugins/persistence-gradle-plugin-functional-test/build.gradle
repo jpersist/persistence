@@ -6,38 +6,7 @@ plugins {
 def submodules = rootProject.subprojects.findAll { it.name.endsWith('-gradle-plugin') }
 
 dependencies {
-    testImplementation platform('org.junit:junit-bom:5.10.0')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
     submodules.forEach { implementation(it) }
-}
-
-test {
-    useJUnitPlatform()
-}
-
-testing {
-    suites {
-        // Configure a functional test suite separate from standard unit tests
-        functionalTest(JvmTestSuite) {
-            dependencies {
-                implementation gradleTestKit()
-
-                // Set up Spock for functional testing across modules
-                implementation libs.spock.core
-            }
-
-            targets {
-                all {
-                    testTask.configure {
-                        // Ensure that when functional tests run, the plugin classpath is generated first
-                        mustRunAfter(tasks.named('pluginUnderTestMetadata'))
-                    }
-                }
-            }
-        }
-    }
 }
 
 // Map the custom test suite directly to the java-gradle-plugin lifecycle
@@ -60,8 +29,8 @@ tasks.named('check') {
     dependsOn testing.suites.functionalTest
 }
 
-sonar {
-    properties {
-        property "sonar.tests", "src/functionalTest/groovy"
-    }
+// Expose the functionalTest execution data to the root aggregator
+configurations.matching { it.name == 'functionalTestJaCoCoReportElements' }.all {
+    // Ensures the data is published cleanly on the internal project classpath exchange
+    it.visible = true
 }
