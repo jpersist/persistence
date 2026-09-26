@@ -176,6 +176,9 @@ tasks.named('check') {
     finalizedBy tasks.named('functionalTestCodeCoverageReport', JacocoReport)
 }
 
+// Apply Groovydoc tasks
+apply from: "gradle/groovydoc.gradle"
+
 sonar {
     properties {
         property "sonar.projectKey", "jpersist_persistence"
