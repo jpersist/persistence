@@ -24,6 +24,7 @@ The `persistence-gradle-plugin` module provides a foundational plugin for centra
 ### `io.github.jpersist.persistence-platform`
 Introduces a dedicated `persistence` configuration that allows you to declare a JPA implementation platform (BOM) dependency. Version constraints from the declared platform are automatically propagated into all standard Java configurations (`implementation`, `compileOnly`, `annotationProcessor`, `runtimeOnly`, and `testImplementation`), so individual JPA dependencies no longer need explicit version strings.
 
+**Groovy DSL:**
 ```groovy
 plugins {
     id 'io.github.jpersist.hibernate-persistence'  // or 'io.github.jpersist.eclipse-persistence'
@@ -31,6 +32,17 @@ plugins {
 
 dependencies {
     persistence platform('org.hibernate.orm:hibernate-platform:6.6.5.Final')
+}
+```
+
+**Kotlin DSL:**
+```kotlin
+plugins {
+    id("io.github.jpersist.hibernate-persistence")  // or "io.github.jpersist.eclipse-persistence"
+}
+
+dependencies {
+    persistence(platform("org.hibernate.orm:hibernate-platform:6.6.5.Final"))
 }
 ```
 
@@ -54,6 +66,7 @@ An aggregate utility plugin designed for maximum simplicity. Applying this singl
 #### EclipseLink DSL Customization
 By default, the plugin isolates contexts per source set and maps conventions natively. If your target configuration file lives in a non-standard path, you can easily override it inside your `build.gradle`:
 
+**Groovy DSL:**
 ```groovy
 eclipselink {
     main {
@@ -65,6 +78,20 @@ eclipselink {
         jpaModelgen {
             persistenceXml = 'src/test/resources/custom/persistence.xml'
         }
+    }
+}
+```
+
+**Kotlin DSL:**
+```kotlin
+the<NamedDomainObjectContainer<persist.eclipse.gradle.extension.EclipselinkExtension>>().named("main") {
+    jpaModelgen {
+        persistenceXml = "src/main/resources/custom/persistence.xml"
+    }
+}
+the<NamedDomainObjectContainer<persist.eclipse.gradle.extension.EclipselinkExtension>>().named("test") {
+    jpaModelgen {
+        persistenceXml = "src/test/resources/custom/persistence.xml"
     }
 }
 ```
@@ -87,6 +114,7 @@ An aggregate utility plugin that configures a complete standard Hibernate baseli
 #### Hibernate DSL Customization
 Sane optimization defaults are configured automatically. You can cleanly adjust or override enhancement behaviors via the following block:
 
+**Groovy DSL:**
 ```groovy
 hibernate {
     enhancement {
@@ -94,6 +122,18 @@ hibernate {
         enableDirtyTracking = true
         enableAssociationManagement = true
         enableExtendedEnhancement = false
+    }
+}
+```
+
+**Kotlin DSL:**
+```kotlin
+hibernate {
+    enhancement {
+        enableLazyInitialization.set(true)
+        enableDirtyTracking.set(true)
+        enableAssociationManagement.set(true)
+        enableExtendedEnhancement.set(false)
     }
 }
 ```
@@ -107,6 +147,7 @@ hibernate {
 ### Option A: Using the `persistence` Configuration (Recommended)
 The simplest and recommended approach — declare a platform BOM on the `persistence` configuration. Versions are automatically aligned across all configurations:
 
+**Groovy DSL:**
 ```groovy
 plugins {
     id 'io.github.jpersist.hibernate-persistence'
@@ -118,6 +159,21 @@ dependencies {
 
     // For EclipseLink ecosystems
     // persistence platform('org.eclipse.persistence:org.eclipse.persistence.parent:4.0.9')
+}
+```
+
+**Kotlin DSL:**
+```kotlin
+plugins {
+    id("io.github.jpersist.hibernate-persistence")
+}
+
+dependencies {
+    // For Hibernate ecosystems
+    persistence(platform("org.hibernate.orm:hibernate-platform:6.6.5.Final"))
+
+    // For EclipseLink ecosystems
+    // persistence(platform("org.eclipse.persistence:org.eclipse.persistence.parent:4.0.9"))
 }
 ```
 
@@ -135,18 +191,35 @@ hibernate-core = { group = "org.hibernate.orm", name = "hibernate-core", version
 ```
 
 Then apply them inside your submodule dependencies:
+
+**Groovy DSL:**
 ```groovy
 dependencies {
     implementation libs.eclipselink.jpa // or libs.hibernate.core
 }
 ```
 
+**Kotlin DSL:**
+```kotlin
+dependencies {
+    implementation(libs.eclipselink.jpa) // or libs.hibernate.core
+}
+```
+
 ### Option C: Using an Official Platform / BOM Directly
 Enforce consistency using an upstream Bill of Materials platform on `implementation`:
 
+**Groovy DSL:**
 ```groovy
 dependencies {
     implementation platform('org.hibernate.orm:hibernate-platform:6.6.5.Final')
+}
+```
+
+**Kotlin DSL:**
+```kotlin
+dependencies {
+    implementation(platform("org.hibernate.orm:hibernate-platform:6.6.5.Final"))
 }
 ```
 
@@ -165,6 +238,19 @@ When applying any of the scoped plugins, the system hooks into Eclipse Buildship
 
 ### 3. Comprehensive IDE Quick-Doc Support
 Every public API boundary—including all Plugin classes, independent Task structures, and nested DSL Extension properties—carries explicit, strongly-typed Groovydoc declarations. This ensures immediate type safety, strict compile-time validation, and detailed inline helper tooltips when developing inside IntelliJ IDEA or Eclipse.
+
+---
+
+## Usage Examples
+
+Complete, ready-to-use example projects are available in the [`examples/`](examples/) directory:
+
+| Example | Description |
+|---------|-------------|
+| [`hibernate-example/`](examples/hibernate-example/) | Hibernate ORM with metamodel generation, bytecode enhancement, and platform BOM |
+| [`eclipselink-example/`](examples/eclipselink-example/) | EclipseLink with metamodel generation, static weaving, and platform BOM |
+
+Each example includes both **Groovy DSL** (`build.gradle`) and **Kotlin DSL** (`build.gradle.kts`) build files.
 
 ---
 
