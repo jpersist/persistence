@@ -3,6 +3,10 @@ plugins {
     id 'groovy'
 }
 
+dependencies {
+    implementation project(':plugins:persistence-gradle-plugin')
+}
+
 gradlePlugin {
     plugins {
         register('eclipseJpamodelgen') {

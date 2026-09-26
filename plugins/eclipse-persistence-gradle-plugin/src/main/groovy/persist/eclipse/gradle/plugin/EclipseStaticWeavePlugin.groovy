@@ -3,12 +3,12 @@ package persist.eclipse.gradle.plugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.file.DuplicatesStrategy
-import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.jvm.tasks.Jar
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import persist.eclipse.gradle.task.EclipseWeaveTask
+import persist.platform.gradle.plugin.PersistencePlatformPlugin
 
 /**
  * Main entry point for the EclipseLink Static Weaving Plugin.
@@ -29,9 +29,12 @@ class EclipseStaticWeavePlugin implements Plugin<Project> {
 
     @Override
     void apply(Project project) {
-        project.plugins.apply(JavaPlugin)
+        project.plugins.apply(PersistencePlatformPlugin)
 
         def weaveConfig = project.configurations.maybeCreate('weave')
+        project.configurations.named('persistence').configure {
+            weaveConfig.extendsFrom(it)
+        }
 
         project.dependencies.add('weave', 'jakarta.persistence:jakarta.persistence-api')
         project.dependencies.add('weave', 'org.eclipse.persistence:org.eclipse.persistence.jpa')

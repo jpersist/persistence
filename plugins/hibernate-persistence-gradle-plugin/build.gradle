@@ -4,6 +4,7 @@ plugins {
 }
 
 dependencies {
+    implementation project(':plugins:persistence-gradle-plugin')
     implementation libs.hibernate.core
 }
 
