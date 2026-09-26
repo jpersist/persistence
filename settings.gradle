@@ -2,5 +2,6 @@ rootProject.name = 'jpersist'
 
 include 'plugins:eclipse-persistence-gradle-plugin'
 include 'plugins:hibernate-persistence-gradle-plugin'
+include 'plugins:persistence-gradle-plugin'
 
 include 'plugins:persistence-gradle-plugin-functional-test'

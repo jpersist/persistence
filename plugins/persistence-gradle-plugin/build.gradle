@@ -1,0 +1,16 @@
+plugins {
+    id 'java-gradle-plugin'
+    id 'groovy'
+}
+
+gradlePlugin {
+    plugins {
+        register('persistencePlatform') {
+            id = 'io.github.jpersist.persistence-platform'
+            displayName = 'JPA Persistence Platform Plugin'
+            description = 'Allows users to declare a JPA implementation platform (BOM) dependency that provides version alignment across all configurations.'
+            tags = ['jpa', 'jakarta-persistence', 'platform', 'bom']
+            implementationClass = 'persist.platform.gradle.plugin.PersistencePlatformPlugin'
+        }
+    }
+}

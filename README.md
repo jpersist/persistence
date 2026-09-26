@@ -4,13 +4,37 @@ A suite of modern, lightweight, high-performance, and **Gradle Configuration Cac
 
 The goal of this ecosystem is to decouple boilerplate configuration, automate static metamodel generation, and support compile-time bytecode enhancement seamlessly without violating incremental build integrity.
 
+> 📖 **API Documentation:** Browse the full Groovydoc at [jpersist.github.io/persistence](https://jpersist.github.io/persistence/)
+
 ---
 
 ## Repository Structure
 
-The suite is organized into two primary submodules, each containing fully documented, type-safe Gradle plugins:
+The suite is organized into three primary submodules, each containing fully documented, type-safe Gradle plugins:
+* **`persistence-gradle-plugin`** — Platform alignment plugin for centralized JPA dependency version management.
 * **`eclipse-persistence-gradle-plugin`** — Houses all EclipseLink-related tooling and processing enhancements.
 * **`hibernate-persistence-gradle-plugin`** — Houses all Hibernate-related static generation and enhancement utilities.
+
+---
+
+## Platform Plugin
+
+The `persistence-gradle-plugin` module provides a foundational plugin for centralized dependency version management:
+
+### `io.github.jpersist.persistence-platform`
+Introduces a dedicated `persistence` configuration that allows you to declare a JPA implementation platform (BOM) dependency. Version constraints from the declared platform are automatically propagated into all standard Java configurations (`implementation`, `compileOnly`, `annotationProcessor`, `runtimeOnly`, and `testImplementation`), so individual JPA dependencies no longer need explicit version strings.
+
+```groovy
+plugins {
+    id 'io.github.jpersist.hibernate-persistence'  // or 'io.github.jpersist.eclipse-persistence'
+}
+
+dependencies {
+    persistence platform('org.hibernate.orm:hibernate-platform:6.6.5.Final')
+}
+```
+
+> **Note:** The aggregate plugins (`hibernate-persistence` and `eclipse-persistence`) automatically apply the platform plugin, so you only need to declare the `persistence` dependency.
 
 ---
 
@@ -76,19 +100,34 @@ hibernate {
 
 ---
 
-## IMPORTANT: Dependency & Version Resolution Requirements
+## Dependency & Version Resolution
 
-⚠️ **Crucial Requirement:** To prevent library and runtime conflicts within your application, these plugins add underlying engine dependencies (such as `hibernate-core`, `eclipselink`, or `jakarta.persistence-api`) **WITHOUT hardcoded version strings**.
+⚠️ **Important:** These plugins add underlying engine dependencies (such as `hibernate-core`, `eclipselink`, or `jakarta.persistence-api`) **without hardcoded version strings**. The consuming project **must** explicitly provide version information. If you omit versions, Gradle will fail with a resolution error.
 
-The consuming project **MUST** explicitly manage and resolve version numbers using one of the standard Gradle dependency management strategies outlined below. If you omit versions in your project, Gradle will fail with a resolution error.
+### Option A: Using the `persistence` Configuration (Recommended)
+The simplest and recommended approach — declare a platform BOM on the `persistence` configuration. Versions are automatically aligned across all configurations:
 
-### Option A: Using a Gradle Version Catalog (Recommended)
+```groovy
+plugins {
+    id 'io.github.jpersist.hibernate-persistence'
+}
+
+dependencies {
+    // For Hibernate ecosystems
+    persistence platform('org.hibernate.orm:hibernate-platform:6.6.5.Final')
+
+    // For EclipseLink ecosystems
+    // persistence platform('org.eclipse.persistence:org.eclipse.persistence.parent:4.0.9')
+}
+```
+
+### Option B: Using a Gradle Version Catalog
 Define explicit versions in your project's `gradle/libs.versions.toml`:
 
 ```toml
 [versions]
 eclipselink = "4.0.9"
-hibernate = "6.6.56.Final"
+hibernate = "6.6.5.Final"
 
 [libraries]
 eclipselink-jpa = { group = "org.eclipse.persistence", name = "org.eclipse.persistence.jpa", version.ref = "eclipselink" }
@@ -102,16 +141,12 @@ dependencies {
 }
 ```
 
-### Option B: Using an Official Platform / BOM
-Enforce consistency across your entire project configurations using an upstream Bill of Materials platform:
+### Option C: Using an Official Platform / BOM Directly
+Enforce consistency using an upstream Bill of Materials platform on `implementation`:
 
 ```groovy
 dependencies {
-    // For Hibernate ecosystems
-    implementation platform('org.hibernate.orm:hibernate-platform:6.6.56.Final')
-
-    // For EclipseLink ecosystems
-    implementation platform('org.eclipse.persistence:org.eclipse.persistence.parent:4.0.9')
+    implementation platform('org.hibernate.orm:hibernate-platform:6.6.5.Final')
 }
 ```
 

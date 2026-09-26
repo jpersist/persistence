@@ -3,13 +3,13 @@ package persist.hibernate.gradle.plugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.file.DuplicatesStrategy
-import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.jvm.tasks.Jar
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import persist.hibernate.gradle.extension.HibernateExtension
 import persist.hibernate.gradle.task.HibernateEnhancementTask
+import persist.platform.gradle.plugin.PersistencePlatformPlugin
 
 /**
  * Main entry point for the Hibernate Bytecode Enhancement Plugin.
@@ -29,7 +29,7 @@ import persist.hibernate.gradle.task.HibernateEnhancementTask
 
     @Override
     void apply(Project project) {
-        project.plugins.apply(JavaPlugin)
+        project.plugins.apply(PersistencePlatformPlugin)
 
         def hibernate = project.extensions.create('hibernate', HibernateExtension)
         hibernate.enhancement { enhancement ->

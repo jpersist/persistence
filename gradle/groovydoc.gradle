@@ -1,0 +1,50 @@
+// Aggregated Groovydoc task collecting sources from all plugin subprojects
+tasks.register('groovydocAll', Groovydoc) {
+    group = 'documentation'
+    description = 'Generates aggregated Groovydoc API documentation for all plugin modules.'
+
+    docTitle = 'jPersist \u2014 Jakarta Persistence Gradle Plugins'
+    windowTitle = 'jPersist API'
+    header = 'jPersist'
+    footer = 'Copyright &copy; jPersist contributors. All rights reserved.'
+    overviewText = resources.text.fromFile(file('src/docs/overview.html'))
+
+    destinationDir = file("${layout.buildDirectory.get().asFile}/docs/groovydoc")
+    access = GroovydocAccess.PUBLIC
+    includeAuthor = false
+    includeMainForScripts = true
+    processScripts = true
+    noTimestamp = true
+    noVersionStamp = true
+}
+
+// Wire subproject sources into the aggregated Groovydoc task after evaluation
+subprojects.findAll { it.name.endsWith('-gradle-plugin') }.each { subproject ->
+    subproject.afterEvaluate {
+        if (subproject.plugins.hasPlugin(GroovyPlugin)) {
+            tasks.named('groovydocAll', Groovydoc) {
+                dependsOn subproject.tasks.named('compileGroovy')
+                source subproject.sourceSets.main.groovy
+            }
+        }
+    }
+}
+
+// Resolve groovyClasspath and classpath lazily via providers to avoid
+// cross-project configuration resolution errors during the configuration phase
+tasks.named('groovydocAll', Groovydoc) {
+    groovyClasspath = files(subprojects.findAll { it.name.endsWith('-gradle-plugin') }.collect { subproject ->
+        subproject.provider {
+            subproject.plugins.hasPlugin(GroovyPlugin) ? subproject.sourceSets.main.compileClasspath : files()
+        }
+    })
+    classpath = files(subprojects.findAll { it.name.endsWith('-gradle-plugin') }.collect { subproject ->
+        subproject.provider {
+            if (subproject.plugins.hasPlugin(GroovyPlugin)) {
+                subproject.sourceSets.main.output + subproject.sourceSets.main.compileClasspath
+            } else {
+                files()
+            }
+        }
+    })
+}

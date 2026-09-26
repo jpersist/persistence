@@ -1,0 +1,101 @@
+<html>
+<body>
+<h1>jPersist &mdash; Jakarta Persistence Gradle Plugins</h1>
+<p>
+    <strong>jPersist</strong> is a suite of Gradle plugins that simplify development with
+    Jakarta Persistence API (JPA) frameworks. It automates two key build-time tasks &mdash;
+    <em>static metamodel generation</em> and <em>bytecode enhancement/weaving</em> &mdash;
+    for both <strong>EclipseLink</strong> and <strong>Hibernate</strong>.
+</p>
+
+<h2>Available Plugins</h2>
+
+<h3>Platform</h3>
+<table border="1" cellpadding="4" cellspacing="0">
+    <tr><th>Plugin ID</th><th>Description</th></tr>
+    <tr>
+        <td><code>io.github.jpersist.persistence-platform</code></td>
+        <td>Declares a JPA implementation platform (BOM) dependency for centralized version alignment
+            across all configurations. See
+            {@link persist.platform.gradle.plugin.PersistencePlatformPlugin}.</td>
+    </tr>
+</table>
+
+<h3>EclipseLink</h3>
+<table border="1" cellpadding="4" cellspacing="0">
+    <tr><th>Plugin ID</th><th>Description</th></tr>
+    <tr>
+        <td><code>io.github.jpersist.eclipse-jpa-modelgen</code></td>
+        <td>Generates JPA static canonical metamodel classes using the EclipseLink annotation processor.
+            See {@link persist.eclipse.gradle.plugin.EclipseJpaModelgenPlugin}.</td>
+    </tr>
+    <tr>
+        <td><code>io.github.jpersist.eclipse-static-weave</code></td>
+        <td>Performs compile-time bytecode weaving via the EclipseLink StaticWeave tool.
+            See {@link persist.eclipse.gradle.plugin.EclipseStaticWeavePlugin}.</td>
+    </tr>
+    <tr>
+        <td><code>io.github.jpersist.eclipse-persistence</code></td>
+        <td>Aggregate plugin applying both EclipseLink modelgen and static weave plugins.
+            See {@link persist.eclipse.gradle.plugin.EclipsePersistencePlugin}.</td>
+    </tr>
+</table>
+
+<h3>Hibernate</h3>
+<table border="1" cellpadding="4" cellspacing="0">
+    <tr><th>Plugin ID</th><th>Description</th></tr>
+    <tr>
+        <td><code>io.github.jpersist.hibernate-jpamodelgen</code></td>
+        <td>Registers the Hibernate JPA annotation processor for static metamodel generation.
+            See {@link persist.hibernate.gradle.plugin.HibernateJpamodelgenPlugin}.</td>
+    </tr>
+    <tr>
+        <td><code>io.github.jpersist.hibernate-enhancement</code></td>
+        <td>Performs compile-time bytecode enhancement using Hibernate's Enhancer engine.
+            See {@link persist.hibernate.gradle.plugin.HibernateEnhancementPlugin}.</td>
+    </tr>
+    <tr>
+        <td><code>io.github.jpersist.hibernate-persistence</code></td>
+        <td>Aggregate plugin applying both Hibernate modelgen and enhancement plugins.
+            See {@link persist.hibernate.gradle.plugin.HibernatePersistencePlugin}.</td>
+    </tr>
+</table>
+
+<h2>Quick Start</h2>
+<pre>
+plugins {
+    id 'io.github.jpersist.hibernate-persistence'  // or 'io.github.jpersist.eclipse-persistence'
+}
+
+dependencies {
+    persistence platform('org.hibernate.orm:hibernate-platform:6.6.5.Final')
+}
+</pre>
+
+<h2>Key Design Principles</h2>
+<ul>
+    <li><strong>No hardcoded dependency versions</strong> &mdash; The plugins add JPA engine dependencies
+        without version strings. Use the <code>persistence</code> configuration with a platform BOM
+        to centrally manage versions.</li>
+    <li><strong>Configuration Cache compliant</strong> &mdash; All plugins and tasks are fully compatible
+        with Gradle's Configuration Cache for maximum build performance.</li>
+    <li><strong>Incremental build support</strong> &mdash; Tasks use proper input/output tracking and
+        produce <code>UP-TO-DATE</code> or <code>NO-SOURCE</code> outcomes when appropriate.</li>
+    <li><strong>Per-source-set configuration</strong> &mdash; Plugins automatically configure tasks
+        for every source set (<code>main</code>, <code>test</code>, custom variants).</li>
+    <li><strong>Eclipse IDE integration</strong> &mdash; Plugins hook into Eclipse Buildship to register
+        generated source directories in the IDE classpath.</li>
+</ul>
+
+<h2>Package Organization</h2>
+<ul>
+    <li>{@link persist.platform.gradle.plugin} &mdash; Platform alignment plugin for centralized version management.</li>
+    <li>{@link persist.eclipse.gradle.plugin} &mdash; EclipseLink plugin implementations.</li>
+    <li>{@link persist.eclipse.gradle.extension} &mdash; EclipseLink DSL extension configuration model.</li>
+    <li>{@link persist.eclipse.gradle.task} &mdash; EclipseLink build-time task implementations.</li>
+    <li>{@link persist.hibernate.gradle.plugin} &mdash; Hibernate plugin implementations.</li>
+    <li>{@link persist.hibernate.gradle.extension} &mdash; Hibernate DSL extension configuration model.</li>
+    <li>{@link persist.hibernate.gradle.task} &mdash; Hibernate build-time task implementations.</li>
+</ul>
+</body>
+</html>
