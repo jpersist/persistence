@@ -60,12 +60,16 @@ jobs:
           # net.researchgate.release modifies task topologies and spawns git sub-processes.
           ./gradlew release $RELEASE_ARGS -Prelease.useAutomaticVersion=true --no-configuration-cache
 
+      - name: Resolve Release Tag
+        id: release_tag
+        run: echo "tag=$(git describe --tags --abbrev=0)" >> "$GITHUB_OUTPUT"
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          # Automatically uses the tag created by the net.researchgate.release plugin
-          tag_name: ${{ github.ref_name }}
-          name: Release ${{ github.ref_name }}
+          # Uses the tag created by the net.researchgate.release plugin
+          tag_name: ${{ steps.release_tag.outputs.tag }}
+          name: Release ${{ steps.release_tag.outputs.tag }}
           draft: false
           prerelease: false
           # Tells GitHub to automatically generate the Markdown notes using the release.yml categories
