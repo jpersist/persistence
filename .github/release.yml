@@ -13,15 +13,18 @@ changelog:
       labels:
         - bug
         - fix
-    - title: "📦 Dependency Updates"
-      labels:
-        - dependencies
     - title: "🤖 Automated Dependency Cleanups"
       labels:
         - dependencies
       authors:
         - dependabot[bot] # Explicitly groups Dependabot-authored PRs here
+    - title: "📦 Dependency Updates"
+      labels:
+        - dependencies
     - title: "🛠️ Build & Maintenance"
       labels:
         - chore
         - documentation
+    - title: "📝 Other Changes"
+      labels:
+        - "*"
