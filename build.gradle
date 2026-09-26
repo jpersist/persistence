@@ -34,6 +34,9 @@ reporting {
         testCodeCoverageReport(JacocoCoverageReport) {
             testSuiteName = 'test'
         }
+        functionalTestCodeCoverageReport(JacocoCoverageReport) {
+            testSuiteName = 'functionalTest'
+        }
     }
 }
 
@@ -100,6 +103,21 @@ subprojects {
                             testTask.configure {
                                 // Ensure that when functional tests run, the plugin classpath is generated first
                                 mustRunAfter(tasks.named('pluginUnderTestMetadata'))
+                                finalizedBy { rootProject.tasks.named('functionalTestCodeCoverageReport', JacocoReport) }
+
+                                // Forward the JaCoCo agent JVM argument to the functional test process
+                                // so it can be passed to GradleRunner, enabling coverage collection
+                                // on the isolated TestKit Gradle builds
+                                doFirst {
+                                    def jacocoAgent = extensions.getByType(JacocoTaskExtension)
+                                    if (jacocoAgent.enabled) {
+                                        // Pass the fully resolved JaCoCo agent JVM arg and the destination
+                                        // file path so the functional test specs can forward them to the
+                                        // TestKit GradleRunner, collecting coverage on the plugin code
+                                        systemProperty 'jacocoAgentJvmArg', jacocoAgent.asJvmArg
+                                        systemProperty 'jacocoDestFile', jacocoAgent.destinationFile.absolutePath
+                                    }
+                                }
                             }
                         }
                     }
@@ -158,10 +176,9 @@ sonar {
         property "sonar.organization", "jpersist"
         property "sonar.host.url", "https://sonarcloud.io"
 
-        property "sonar.coverage.jacoco.xmlReportPaths", "${layout.buildDirectory.get().asFile}/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml"
+        property "sonar.coverage.jacoco.xmlReportPaths", [
+            "${layout.buildDirectory.get().asFile}/reports/jacoco/testCoverageReport/testCoverageReport.xml",
+            "${layout.buildDirectory.get().asFile}/reports/jacoco/functionalTestCoverageReport/functionalTestCoverageReport.xml"
+        ].join(",")
     }
-}
-
-tasks.named('check') {
-    dependsOn tasks.named('testCodeCoverageReport', JacocoReport)
 }

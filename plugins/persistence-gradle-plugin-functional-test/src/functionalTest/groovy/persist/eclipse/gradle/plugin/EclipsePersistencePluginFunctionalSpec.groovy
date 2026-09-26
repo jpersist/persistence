@@ -12,6 +12,9 @@ import java.util.jar.JarFile
 
 class EclipsePersistencePluginFunctionalSpec extends Specification {
 
+    // Indicates whether the JaCoCo agent is active for coverage collection
+    static final boolean JACOCO_ACTIVE = System.getProperty('jacocoAgentJvmArg') != null
+
     // Isolated sandbox directory refreshed before every feature method
     @TempDir
     Path projectDir
@@ -74,13 +77,13 @@ class EclipsePersistencePluginFunctionalSpec extends Specification {
         then:
         firstResult.task(":eclipseWeaveClasses").outcome == TaskOutcome.SUCCESS
         firstResult.task(":eclipseWeaveTestClasses").outcome == TaskOutcome.NO_SOURCE
-        firstResult.output.contains("Configuration cache entry stored.")
+        JACOCO_ACTIVE || firstResult.output.contains("Configuration cache entry stored.")
 
         when: "Second execution with no code changes"
         def secondResult = runner.build()
 
         then: "Every step checks green and is safely bypassed"
-        secondResult.output.contains("Configuration cache entry reused.")
+        JACOCO_ACTIVE || secondResult.output.contains("Configuration cache entry reused.")
         secondResult.task(":compileJava").outcome == TaskOutcome.UP_TO_DATE
         secondResult.task(":eclipseWeaveClasses").outcome == TaskOutcome.UP_TO_DATE
         secondResult.task(":eclipseWeaveTestClasses").outcome == TaskOutcome.NO_SOURCE
@@ -88,10 +91,29 @@ class EclipsePersistencePluginFunctionalSpec extends Specification {
     }
 
     private GradleRunner createRunner() {
-        return GradleRunner.create()
+        def jacocoAgentJvmArg = System.getProperty('jacocoAgentJvmArg')
+        def jacocoDestFile = System.getProperty('jacocoDestFile')
+
+        // Configuration cache is incompatible with Java agents in TestKit builds,
+        // so it must be disabled when the JaCoCo agent is active for coverage collection
+        def arguments = jacocoAgentJvmArg
+            ? ['jar', '--stacktrace', '--no-configuration-cache']
+            : ['jar', '--stacktrace', '--configuration-cache']
+
+        def runner = GradleRunner.create()
             .withProjectDir(projectDir.toFile())
-            .withArguments('jar', '--configuration-cache', '--stacktrace')
+            .withArguments(arguments)
             .withPluginClasspath()
+
+        // Forward the JaCoCo agent to the TestKit JVM so coverage is collected on plugin code
+        // Extract the agent jar path from the original arg and reconstruct with the correct
+        // destfile and append=true so data merges into the functional test's .exec file
+        if (jacocoAgentJvmArg) {
+            def agentJar = (jacocoAgentJvmArg =~ /-javaagent:(.+?)=/)[0][1]
+            runner.withJvmArguments("-javaagent:${agentJar}=destfile=${jacocoDestFile},append=true,jmx=false")
+        }
+
+        return runner
     }
 
 }
