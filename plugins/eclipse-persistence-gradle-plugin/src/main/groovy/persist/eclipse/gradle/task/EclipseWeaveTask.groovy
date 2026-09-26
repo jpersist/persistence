@@ -1,6 +1,7 @@
 package persist.eclipse.gradle.task
 
 import org.gradle.api.DefaultTask
+import org.gradle.work.DisableCachingByDefault
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.tasks.*
@@ -23,6 +24,7 @@ import javax.inject.Inject
  *
  * @since 1.0.0
  */
+@DisableCachingByDefault(because = "Weaving modifies classes in place")
 abstract class EclipseWeaveTask extends DefaultTask {
 
     /**

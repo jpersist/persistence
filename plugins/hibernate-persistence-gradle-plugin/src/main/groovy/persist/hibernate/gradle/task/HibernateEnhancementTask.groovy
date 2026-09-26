@@ -5,6 +5,7 @@ import org.gradle.api.tasks.CompileClasspath
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.DefaultTask
+import org.gradle.work.DisableCachingByDefault
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
@@ -31,6 +32,7 @@ import static org.hibernate.bytecode.internal.BytecodeProviderInitiator.buildDef
  *
  * @since 1.0.0
  */
+@DisableCachingByDefault(because = "Enhancement modifies classes in place")
 abstract class HibernateEnhancementTask extends DefaultTask {
 
     /**

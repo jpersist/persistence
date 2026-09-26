@@ -20,8 +20,8 @@ tasks.named('pluginUnderTestMetadata') {
     submodules.forEach { module ->
         def mainSourceSet = module.extensions.getByType(SourceSetContainer).named('main')
         pluginClasspath.from(mainSourceSet.map { it.output })
-        pluginClasspath.from(module.configurations.named('runtimeClasspath'))
     }
+    pluginClasspath.from(configurations.named('runtimeClasspath'))
 }
 
 tasks.named('check') {
