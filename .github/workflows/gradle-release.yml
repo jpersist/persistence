@@ -28,10 +28,48 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Configure Git Author Profile
-        # The release plugin expects a git identity to execute automated release commits
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Resolve Release and Next Versions
+        id: versions
+        run: |
+          # Read the current version from gradle.properties
+          CURRENT_VERSION=$(grep '^version=' gradle.properties | cut -d'=' -f2)
+
+          # Determine the release version (strip -SNAPSHOT suffix if not provided)
+          if [ -n "${{ github.event.inputs.releaseVersion }}" ]; then
+            RELEASE_VERSION="${{ github.event.inputs.releaseVersion }}"
+          else
+            RELEASE_VERSION="${CURRENT_VERSION%-SNAPSHOT}"
+          fi
+
+          # Determine the next development version
+          if [ -n "${{ github.event.inputs.nextVersion }}" ]; then
+            NEXT_VERSION="${{ github.event.inputs.nextVersion }}"
+          else
+            # Auto-increment the patch segment: 1.2.3 -> 1.2.4-SNAPSHOT
+            MAJOR=$(echo "$RELEASE_VERSION" | cut -d. -f1)
+            MINOR=$(echo "$RELEASE_VERSION" | cut -d. -f2)
+            PATCH=$(echo "$RELEASE_VERSION" | cut -d. -f3)
+            NEXT_PATCH=$((PATCH + 1))
+            NEXT_VERSION="${MAJOR}.${MINOR}.${NEXT_PATCH}-SNAPSHOT"
+          fi
+
+          echo "release_version=${RELEASE_VERSION}" >> "$GITHUB_OUTPUT"
+          echo "next_version=${NEXT_VERSION}" >> "$GITHUB_OUTPUT"
+          echo "Release version: ${RELEASE_VERSION}"
+          echo "Next development version: ${NEXT_VERSION}"
+
+      - name: Verify No SNAPSHOT Dependencies
+        run: |
+          # Fail if any build file references SNAPSHOT dependencies (excluding the project version itself)
+          if grep -r --include='*.gradle' --include='*.gradle.kts' --include='*.toml' \
+              'SNAPSHOT' --exclude='gradle.properties' . | grep -v '^Binary' | grep -v '^\./\.'; then
+            echo "::error::SNAPSHOT dependencies detected. Please resolve them before releasing."
+            exit 1
+          fi
 
       - name: Set up Java Development Kit
         uses: actions/setup-java@v5
@@ -42,40 +80,59 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Execute Gradle Release Automation
-        env:
-          GRADLE_PUBLISH_KEY: ${{ secrets.GRADLE_PUBLISH_KEY }}
-          GRADLE_PUBLISH_SECRET: ${{ secrets.GRADLE_PUBLISH_SECRET }}
+      - name: Set Release Version and Build
         run: |
-          # Construct arguments if manual variables are provided via the UI
-          RELEASE_ARGS=""
-          if [ ! -z "${{ github.event.inputs.releaseVersion }}" ]; then
-            RELEASE_ARGS="$RELEASE_ARGS -Prelease.releaseVersion=${{ github.event.inputs.releaseVersion }}"
-          fi
-          if [ ! -z "${{ github.event.inputs.nextVersion }}" ]; then
-            RELEASE_ARGS="$RELEASE_ARGS -Prelease.newVersion=${{ github.event.inputs.nextVersion }}"
-          fi
+          RELEASE_VERSION="${{ steps.versions.outputs.release_version }}"
 
-          # CRUCIAL: Pass '--no-configuration-cache' explicitly because
-          # net.researchgate.release modifies task topologies and spawns git sub-processes.
-          ./gradlew release $RELEASE_ARGS -Prelease.useAutomaticVersion=true --no-configuration-cache
+          # Update gradle.properties with the release version
+          sed -i "s/^version=.*/version=${RELEASE_VERSION}/" gradle.properties
 
-      - name: Resolve Release Tag
-        id: release_tag
-        run: echo "tag=$(git describe --tags --abbrev=0)" >> "$GITHUB_OUTPUT"
+          # Run the full build to validate the release
+          chmod +x ./gradlew
+          ./gradlew build
+
+      - name: Commit and Tag Release
+        run: |
+          RELEASE_VERSION="${{ steps.versions.outputs.release_version }}"
+
+          git add gradle.properties
+          git commit -m "[Release] - pre tag commit: '${RELEASE_VERSION}'."
+          git tag -a "v${RELEASE_VERSION}" -m "Release v${RELEASE_VERSION}"
+
+      - name: Set Next Development Version
+        run: |
+          NEXT_VERSION="${{ steps.versions.outputs.next_version }}"
+
+          # Update gradle.properties with the next snapshot version
+          sed -i "s/^version=.*/version=${NEXT_VERSION}/" gradle.properties
+
+          git add gradle.properties
+          git commit -m "[Release] - new version commit: '${NEXT_VERSION}'."
+
+      - name: Push Changes and Tag
+        run: |
+          git push origin main
+          git push origin "v${{ steps.versions.outputs.release_version }}"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          # Uses the tag created by the net.researchgate.release plugin
-          tag_name: ${{ steps.release_tag.outputs.tag }}
-          name: Release ${{ steps.release_tag.outputs.tag }}
+          tag_name: v${{ steps.versions.outputs.release_version }}
+          name: Release v${{ steps.versions.outputs.release_version }}
           draft: false
           prerelease: false
           # Tells GitHub to automatically generate the Markdown notes using the release.yml categories
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  publish-plugins:
+    name: Publish Plugins to Portal
+    needs: release
+    uses: ./.github/workflows/gradle-cd.yml
+    secrets:
+      GRADLE_PUBLISH_KEY: ${{ secrets.GRADLE_PUBLISH_KEY }}
+      GRADLE_PUBLISH_SECRET: ${{ secrets.GRADLE_PUBLISH_SECRET }}
 
   publish-groovydoc:
     name: Publish Groovydoc

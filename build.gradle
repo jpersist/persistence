@@ -1,25 +1,12 @@
 plugins {
+    id 'base'
     id 'eclipse'
     id 'jacoco'
     id 'jacoco-report-aggregation'
     id 'com.gradle.plugin-publish' version '2.0.0' apply false
-    id 'net.researchgate.release' version '3.1.0'
     id 'org.sonarqube' version '5.1.0.4882'
 }
 
-release {
-    tagTemplate = 'v${version}'
-    git {
-        requireBranch.set('main')
-    }
-}
-
-// CRUCIAL STEP: Tie the portal deployment directly into the release process loop.
-// This ensures that when the release plugin strips the snapshot and triggers a build,
-// it immediately deploys the finalized stable artifacts before shifting versions.
-tasks.named('afterReleaseBuild') {
-    dependsOn subprojects.collect { it.tasks.matching { task -> task.name == 'publishPlugins' } }
-}
 
 // Declare dependencies for the aggregator so it links JVM test suites together
 dependencies {
