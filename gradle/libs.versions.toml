@@ -1,5 +1,5 @@
 [versions]
-hibernate = "6.6.56.Final"
+hibernate = "7.4.10.Final"
 spock = "2.3-groovy-3.0"
 
 [libraries]
