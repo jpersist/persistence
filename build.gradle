@@ -103,19 +103,23 @@ subprojects {
                             testTask.configure {
                                 // Ensure that when functional tests run, the plugin classpath is generated first
                                 mustRunAfter(tasks.named('pluginUnderTestMetadata'))
-                                finalizedBy { rootProject.tasks.named('functionalTestCodeCoverageReport', JacocoReport) }
 
                                 // Forward the JaCoCo agent JVM argument to the functional test process
                                 // so it can be passed to GradleRunner, enabling coverage collection
-                                // on the isolated TestKit Gradle builds
+                                // on the isolated TestKit Gradle builds.
+                                // Values are captured at configuration time to remain compatible
+                                // with Gradle's Configuration Cache.
+                                def jacocoAgent = extensions.getByType(JacocoTaskExtension)
+                                def jacocoEnabled = jacocoAgent.enabled
+                                def jacocoJvmArg = providers.provider { jacocoAgent.asJvmArg }
+                                def jacocoDestFilePath = jacocoAgent.destinationFile.absolutePath
                                 doFirst {
-                                    def jacocoAgent = extensions.getByType(JacocoTaskExtension)
-                                    if (jacocoAgent.enabled) {
+                                    if (jacocoEnabled) {
                                         // Pass the fully resolved JaCoCo agent JVM arg and the destination
                                         // file path so the functional test specs can forward them to the
                                         // TestKit GradleRunner, collecting coverage on the plugin code
-                                        systemProperty 'jacocoAgentJvmArg', jacocoAgent.asJvmArg
-                                        systemProperty 'jacocoDestFile', jacocoAgent.destinationFile.absolutePath
+                                        systemProperty 'jacocoAgentJvmArg', jacocoJvmArg.get()
+                                        systemProperty 'jacocoDestFile', jacocoDestFilePath
                                     }
                                 }
                             }
@@ -143,18 +147,12 @@ subprojects {
         options.encoding = 'UTF-8'
     }
 
-    tasks.withType(Test).tap {
-        configureEach {
-            systemProperty 'file.encoding', 'UTF-8'
-            // Configure all verification test tasks to auto-generate coverage execution data (.exec)
-            finalizedBy { rootProject.tasks.named('testCodeCoverageReport', JacocoReport) }
-        }
+    tasks.withType(Test).configureEach {
+        systemProperty 'file.encoding', 'UTF-8'
     }
 
     // Configure the JaCoCo report generation behavior per module
     tasks.withType(JacocoReport).configureEach {
-        dependsOn tasks.withType(Test)
-
         reports {
             xml.required = true  // Crucial for SonarCloud ingestion
             html.required = true // Optional: for local browser viewing
@@ -168,6 +166,14 @@ subprojects {
             ])
         }))
     }
+}
+
+// Wire aggregated coverage reports into the root check lifecycle
+// Using finalizedBy avoids circular dependency issues since the report
+// tasks implicitly depend on test execution data via jacoco-report-aggregation
+tasks.named('check') {
+    finalizedBy tasks.named('testCodeCoverageReport', JacocoReport)
+    finalizedBy tasks.named('functionalTestCodeCoverageReport', JacocoReport)
 }
 
 sonar {
