@@ -76,3 +76,12 @@ jobs:
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  publish-groovydoc:
+    name: Publish Groovydoc
+    needs: release
+    uses: ./.github/workflows/groovydoc.yml
+    permissions:
+      contents: read
+      pages: write
+      id-token: write

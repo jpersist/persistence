@@ -1,8 +1,9 @@
 name: Publish Groovydoc
 
 on:
+  workflow_call:  # Called from gradle-release.yml after a release
   push:
-    tags: ['*']  # Publish on every release tag
+    tags: ['*']  # Also publish on manually pushed tags
 
 permissions:
   contents: read
