@@ -1,0 +1,4 @@
+rootProject.name = 'test-multi-module-project'
+
+include 'common-persistence-module'
+include 'bookstore-persistence-module'

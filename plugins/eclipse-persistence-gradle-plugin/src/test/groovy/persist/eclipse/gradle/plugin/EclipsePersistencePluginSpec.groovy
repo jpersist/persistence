@@ -12,7 +12,6 @@ class EclipsePersistencePluginSpec extends Specification {
         Project project = ProjectBuilder.builder().build()
 
         when: "The java plugin and our eclipse-persistence plugin are applied"
-        project.plugins.apply('java')
         project.plugins.apply('io.github.jpersist.eclipse-persistence')
 
         then: "The annotation processor configuration is registered"

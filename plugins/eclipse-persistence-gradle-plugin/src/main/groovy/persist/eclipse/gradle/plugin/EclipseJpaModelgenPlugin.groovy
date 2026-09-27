@@ -10,7 +10,7 @@ import org.gradle.plugins.ide.eclipse.model.Classpath
 import org.gradle.plugins.ide.eclipse.model.EclipseModel
 import org.gradle.plugins.ide.eclipse.model.SourceFolder
 import persist.eclipse.gradle.extension.EclipselinkExtension
-import persist.platform.gradle.plugin.PersistencePlatformPlugin
+import persist.jakarta.gradle.plugin.JakartaPersistencePlugin
 
 /**
  * Main entry point for the EclipseLink JPA Modelgen Processor Plugin.
@@ -32,7 +32,7 @@ class EclipseJpaModelgenPlugin implements Plugin<Project> {
 
     @Override
     void apply(Project project) {
-        project.plugins.apply(PersistencePlatformPlugin)
+        project.plugins.apply(JakartaPersistencePlugin)
         project.plugins.apply(EclipsePlugin)
 
         // 1. Create a NamedDomainObjectContainer using Gradle's ObjectFactory

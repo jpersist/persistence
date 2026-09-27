@@ -16,6 +16,12 @@ tasks.register('groovydocAll', Groovydoc) {
     processScripts = true
     noTimestamp = true
     noVersionStamp = true
+    noDeprecatedList = false
+    noHelp = false
+    noIndex = false
+    showInternal = false
+    syntaxHighlighter = 'none'
+    theme = 'auto'
 }
 
 // Wire subproject sources into the aggregated Groovydoc task after evaluation

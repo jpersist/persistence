@@ -1,7 +1,9 @@
 [versions]
+jakarta-persistence = "3.1.0"
 hibernate = "6.6.56.Final"
 spock = "2.3-groovy-4.0"
 
 [libraries]
+jakarta-persistence-api = { group = "jakarta.persistence", name = "jakarta.persistence-api", version.ref = "jakarta-persistence" }
 hibernate-core = { group = "org.hibernate.orm", name = "hibernate-core", version.ref = "hibernate" }
 spock-core = { group = "org.spockframework", name = "spock-core", version.ref = "spock" }

@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    persistence platform('org.eclipse.persistence:org.eclipse.persistence.parent:4.0.9')
+    jpa platform('org.eclipse.persistence:org.eclipse.persistence.parent:4.0.9')
 
     compileOnlyApi 'jakarta.persistence:jakarta.persistence-api'
 

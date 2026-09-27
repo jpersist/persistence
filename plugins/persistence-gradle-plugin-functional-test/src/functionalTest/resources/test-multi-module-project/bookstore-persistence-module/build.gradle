@@ -1,0 +1,22 @@
+plugins {
+    id 'java-library'
+    id 'io.github.jpersist.jpa'
+}
+
+dependencies {
+    compileOnly libs.jakarta.persistence.api
+
+    jarFile project(':common-persistence-module')
+}
+
+persistence {
+    persistenceUnits {
+        'bookstore-persistence-unit' {
+            provider = 'org.hibernate.jpa.HibernatePersistenceProvider'
+
+            properties {
+                property 'hibernate.show_sql', 'false'
+            }
+        }
+    }
+}

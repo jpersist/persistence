@@ -12,7 +12,6 @@ class HibernatePersistencePluginSpec extends Specification {
         Project project = ProjectBuilder.builder().build()
 
         when: "The java plugin and our hibernate-persistence plugin are applied"
-        project.plugins.apply('java')
         project.plugins.apply('io.github.jpersist.hibernate-persistence')
 
         then: "The annotation processor configuration is registered"
