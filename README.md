@@ -10,8 +10,9 @@ The goal of this ecosystem is to decouple boilerplate configuration, automate st
 
 ## Repository Structure
 
-The suite is organized into three primary submodules, each containing fully documented, type-safe Gradle plugins:
+The suite is organized into four primary submodules, each containing fully documented, type-safe Gradle plugins:
 * **`persistence-gradle-plugin`** — Platform alignment plugin for centralized JPA dependency version management.
+* **`jakarta-persistence-gradle-plugin`** — Generates or merges `persistence.xml` descriptors using a declarative DSL.
 * **`eclipse-persistence-gradle-plugin`** — Houses all EclipseLink-related tooling and processing enhancements.
 * **`hibernate-persistence-gradle-plugin`** — Houses all Hibernate-related static generation and enhancement utilities.
 
@@ -20,6 +21,8 @@ The suite is organized into three primary submodules, each containing fully docu
 ## Platform Plugin
 
 The `persistence-gradle-plugin` module provides a foundational plugin for centralized dependency version management:
+
+> ⚠️ **Deprecation Notice:** Starting from version **1.2.0**, the `persistence-gradle-plugin` and its `persistence` configuration will be deprecated in favor of the `jakarta-persistence-gradle-plugin`, which provides the same functionality through the `jpa` configuration. Users are encouraged to migrate to the `io.github.jpersist.jpa` plugin.
 
 ### `io.github.jpersist.persistence-platform`
 Introduces a dedicated `persistence` configuration that allows you to declare a JPA implementation platform (BOM) dependency. Version constraints from the declared platform are automatically propagated into all standard Java configurations (`implementation`, `compileOnly`, `annotationProcessor`, `runtimeOnly`, and `testImplementation`), so individual JPA dependencies no longer need explicit version strings.
@@ -47,6 +50,65 @@ dependencies {
 ```
 
 > **Note:** The aggregate plugins (`hibernate-persistence` and `eclipse-persistence`) automatically apply the platform plugin, so you only need to declare the `persistence` dependency.
+
+---
+
+## Jakarta Persistence Plugin
+
+The `jakarta-persistence-gradle-plugin` module provides a plugin for generating and processing JPA `persistence.xml` descriptors:
+
+### `io.github.jpersist.jpa`
+Registers a `processPersistenceDescriptor` task that either generates a complete `persistence.xml` from scratch using the `persistence` DSL, or merges extension-defined overrides (provider, data source, properties, jar-file entries) into an existing user-provided template. It also introduces a `jpa` configuration for declaring JAR file dependencies that are injected as `<jar-file>` elements.
+
+The plugin also provides a `jarFile` configuration that allows you to declare project or external dependencies whose resolved artifact names are automatically injected as `<jar-file>` elements in the generated `persistence.xml`. This is particularly useful in multi-module projects where a persistence unit needs to reference entity classes packaged in separate JAR modules.
+
+**Groovy DSL:**
+```groovy
+plugins {
+    id 'io.github.jpersist.jpa'
+}
+
+dependencies {
+    compileOnly 'jakarta.persistence:jakarta.persistence-api:3.1.0'
+    jarFile project(':common-persistence-module')
+}
+
+persistence {
+    persistenceUnits {
+        'example-persistence-unit' {
+            provider = 'org.hibernate.jpa.HibernatePersistenceProvider'
+
+            properties {
+                property 'hibernate.show_sql', 'true'
+            }
+        }
+    }
+}
+```
+
+**Kotlin DSL:**
+```kotlin
+plugins {
+    id("io.github.jpersist.jpa")
+}
+
+dependencies {
+    compileOnly("jakarta.persistence:jakarta.persistence-api:3.1.0")
+    "jarFile"(project(":common-persistence-module"))
+}
+
+persistence {
+    persistenceUnits {
+        create("example-persistence-unit") {
+            provider.set("org.hibernate.jpa.HibernatePersistenceProvider")
+
+            properties {
+                property("hibernate.show_sql", "true")
+            }
+        }
+    }
+}
+```
 
 ---
 
@@ -146,6 +208,8 @@ hibernate {
 
 ### Option A: Using the `persistence` Configuration (Recommended)
 The simplest and recommended approach — declare a platform BOM on the `persistence` configuration. Versions are automatically aligned across all configurations:
+
+> 📌 **Note:** Starting from version **1.2.0**, the `persistence` configuration will become `jpa`, providing the same functionality through the `jakarta-persistence-gradle-plugin`.
 
 **Groovy DSL:**
 ```groovy
@@ -247,8 +311,9 @@ Complete, ready-to-use example projects are available in the [`examples/`](examp
 
 | Example | Description |
 |---------|-------------|
-| [`hibernate-example/`](examples/hibernate-example/) | Hibernate ORM with metamodel generation, bytecode enhancement, and platform BOM |
 | [`eclipselink-example/`](examples/eclipselink-example/) | EclipseLink with metamodel generation, static weaving, and platform BOM |
+| [`hibernate-example/`](examples/hibernate-example/) | Hibernate ORM with metamodel generation, bytecode enhancement, and platform BOM |
+| [`jakarta-persistence-example/`](examples/jakarta-persistence-example/) | Jakarta Persistence descriptor generation and merging with the `io.github.jpersist.jpa` plugin |
 
 Each example includes both **Groovy DSL** (`build.gradle`) and **Kotlin DSL** (`build.gradle.kts`) build files.
 
