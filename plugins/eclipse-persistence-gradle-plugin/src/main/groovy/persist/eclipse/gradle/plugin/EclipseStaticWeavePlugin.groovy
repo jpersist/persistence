@@ -49,7 +49,7 @@ class EclipseStaticWeavePlugin implements Plugin<Project> {
             def compileJavaProvider = project.tasks.named(compileTaskName, JavaCompile)
 
             // Map to an explicitly isolated woven directory
-            def wovenClassesDir = project.layout.buildDirectory.dir("classes/java/woven/${sourceSet.name}")
+            def wovenClassesDir = project.layout.buildDirectory.dir("woven/classes/java/${sourceSet.name}")
 
             def resourcesDir = project.layout.projectDirectory.dir("src/${sourceSet.name}/resources")
 

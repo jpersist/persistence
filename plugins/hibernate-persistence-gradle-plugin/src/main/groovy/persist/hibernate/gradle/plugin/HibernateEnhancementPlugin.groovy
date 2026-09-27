@@ -50,7 +50,7 @@ import persist.platform.gradle.plugin.PersistencePlatformPlugin
             def compileTaskProvider = project.tasks.named(compileTaskName, JavaCompile)
 
             // Map to an explicitly isolated enhanced directory
-            def enhancedClassesDir = project.layout.buildDirectory.dir("classes/java/enhanced/${sourceSet.getName()}")
+            def enhancedClassesDir = project.layout.buildDirectory.dir("enhanced/classes/java/${sourceSet.name}")
 
             // Register the task completely outside the compile task configuration execution context
             def enhanceTaskProvider = project.tasks.register(enhanceTaskName, HibernateEnhancementTask) { enhanceTask ->
