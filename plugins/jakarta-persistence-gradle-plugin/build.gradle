@@ -1,0 +1,19 @@
+plugins {
+    id 'java-gradle-plugin'
+    id 'groovy'
+}
+dependencies {
+    implementation libs.jakarta.persistence.api
+}
+
+gradlePlugin {
+    plugins {
+        register('jakartaPersistence') {
+            id = 'io.github.jpersist.jpa'
+            displayName = 'Jakarta Persistence Plugin'
+            description = 'A modern Gradle plugin to manage, generate, and intelligently merge persistence.xml descriptors for Jakarta Persistence (JPA). Automatically updates external jar-file declarations based on project dependencies, eliminating hardcoded artifact versions.'
+            tags = ['jpa', 'jakarta-persistence', 'persistence-xml', 'hibernate', 'eclipselink', 'database']
+            implementationClass = 'persist.jakarta.gradle.plugin.JakartaPersistencePlugin'
+        }
+    }
+}
