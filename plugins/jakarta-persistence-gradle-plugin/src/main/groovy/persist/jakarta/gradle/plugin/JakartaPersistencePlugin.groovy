@@ -3,6 +3,7 @@ package persist.jakarta.gradle.plugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin
+import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.language.jvm.tasks.ProcessResources
 import persist.jakarta.gradle.extension.PersistenceExtension
 import persist.jakarta.gradle.task.ProcessPersistenceDescriptor
@@ -11,6 +12,9 @@ class JakartaPersistencePlugin implements Plugin<Project> {
 
     @Override
     void apply(Project project) {
+        project.plugins.apply(JavaPlugin)
+
+        configureJpaConfiguration(project)
 
         // 1. Create native dependency configuration
         def jarFileConfig = project.configurations.create("jarFile") {
@@ -60,6 +64,28 @@ class JakartaPersistencePlugin implements Plugin<Project> {
                 // Place the generated file into META-INF/ within the resources output
                 resourceTask.from(processTask.flatMap { it.destinationFile }) {
                     into("META-INF")
+                }
+            }
+        }
+    }
+
+    private static void configureJpaConfiguration(Project project) {
+        def persistence = project.configurations.register('jpa') { config ->
+            config.visible = false
+            config.canBeConsumed = false
+            config.canBeResolved = false
+        }
+
+        // Propagate platform version constraints into all standard Java configurations
+        project.extensions.getByType(SourceSetContainer).configureEach { sourceSet ->
+            [
+                sourceSet.implementationConfigurationName,
+                sourceSet.compileOnlyConfigurationName,
+                sourceSet.annotationProcessorConfigurationName,
+                sourceSet.runtimeOnlyConfigurationName
+            ].forEach { configName ->
+                project.configurations.named(configName) {
+                    it.extendsFrom(persistence.get())
                 }
             }
         }

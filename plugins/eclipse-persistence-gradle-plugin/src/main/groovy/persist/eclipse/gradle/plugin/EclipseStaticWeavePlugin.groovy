@@ -8,7 +8,7 @@ import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.jvm.tasks.Jar
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import persist.eclipse.gradle.task.EclipseWeaveTask
-import persist.platform.gradle.plugin.PersistencePlatformPlugin
+import persist.jakarta.gradle.plugin.JakartaPersistencePlugin
 
 /**
  * Main entry point for the EclipseLink Static Weaving Plugin.
@@ -29,10 +29,10 @@ class EclipseStaticWeavePlugin implements Plugin<Project> {
 
     @Override
     void apply(Project project) {
-        project.plugins.apply(PersistencePlatformPlugin)
+        project.plugins.apply(JakartaPersistencePlugin)
 
         def weaveConfig = project.configurations.maybeCreate('weave')
-        project.configurations.named('persistence').configure {
+        project.configurations.named('jpa').configure {
             weaveConfig.extendsFrom(it)
         }
 

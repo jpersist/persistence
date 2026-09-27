@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    implementation project(':plugins:persistence-gradle-plugin')
+    implementation project(':plugins:jakarta-persistence-gradle-plugin')
 }
 
 gradlePlugin {

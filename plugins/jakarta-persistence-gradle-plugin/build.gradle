@@ -2,6 +2,7 @@ plugins {
     id 'java-gradle-plugin'
     id 'groovy'
 }
+
 dependencies {
     implementation libs.jakarta.persistence.api
 }

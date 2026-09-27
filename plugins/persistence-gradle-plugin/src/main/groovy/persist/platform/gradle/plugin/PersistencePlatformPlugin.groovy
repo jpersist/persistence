@@ -28,6 +28,11 @@ class PersistencePlatformPlugin implements Plugin<Project> {
 
     @Override
     void apply(Project project) {
+        project.getLogger().lifecycle("""
+            WARNING: 'io.github.jpersist:persistence-gradle-plugin' has been renamed.
+            Please migrate to 'io.github.jpersist:jakarta-persistence-gradle-plugin' in your plugins block.
+        """.stripIndent());
+
         project.plugins.apply(JavaPlugin)
 
         def persistence = project.configurations.register('persistence') { config ->

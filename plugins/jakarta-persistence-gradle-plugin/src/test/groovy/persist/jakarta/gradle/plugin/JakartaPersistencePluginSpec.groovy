@@ -12,11 +12,13 @@ class JakartaPersistencePluginSpec extends Specification {
         Project project = ProjectBuilder.builder().build()
 
         when: "The java plugin and our jakarta-persistence plugin are applied"
-        project.plugins.apply('java')
         project.plugins.apply('io.github.jpersist.jpa')
 
         then: "The persistence extension is initialized"
         project.extensions.getByName('persistence') != null
+
+        and: "The jpa configuration is registered"
+        project.configurations.named('jpa') != null
 
         and: "The jar file configuration is registered"
         project.configurations.named('jarFile') != null
