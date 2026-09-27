@@ -8,6 +8,33 @@ import org.gradle.language.jvm.tasks.ProcessResources
 import persist.jakarta.gradle.extension.PersistenceExtension
 import persist.jakarta.gradle.task.ProcessPersistenceDescriptor
 
+/**
+ * Gradle plugin that manages Jakarta Persistence (JPA) descriptor generation.
+ * <p>
+ * Registered with plugin id {@code io.github.jpersist.jpa}, this plugin:
+ * </p>
+ * <ol>
+ *     <li>Applies the {@link org.gradle.api.plugins.JavaPlugin}.</li>
+ *     <li>Creates a {@code jpa} dependency configuration for propagating
+ *         platform/BOM version constraints into standard Java configurations.</li>
+ *     <li>Creates a {@code jarFile} dependency configuration for declaring
+ *         module JARs to be injected as {@code <jar-file>} entries.</li>
+ *     <li>Registers the {@code persistence}
+ *         {@link persist.jakarta.gradle.extension.PersistenceExtension} DSL
+ *         extension.</li>
+ *     <li>Registers the {@code processPersistenceDescriptor}
+ *         {@link ProcessPersistenceDescriptor} task that generates or merges
+ *         the final {@code persistence.xml}.</li>
+ *     <li>Wires the task output into {@code processResources} so the
+ *         generated descriptor ends up in the JAR.</li>
+ * </ol>
+ * <p>
+ * This plugin replaces the deprecated {@code persistence-gradle-plugin}
+ * ({@code io.github.jpersist.persistence}).
+ * </p>
+ *
+ * @since 1.1.0
+ */
 class JakartaPersistencePlugin implements Plugin<Project> {
 
     @Override
@@ -69,6 +96,13 @@ class JakartaPersistencePlugin implements Plugin<Project> {
         }
     }
 
+    /**
+     * Creates the {@code jpa} dependency configuration and extends all
+     * standard Java source-set configurations from it, so that platform/BOM
+     * constraints declared in {@code jpa} propagate automatically.
+     *
+     * @param project The Gradle project to configure.
+     */
     private static void configureJpaConfiguration(Project project) {
         def persistence = project.configurations.register('jpa') { config ->
             config.visible = false
