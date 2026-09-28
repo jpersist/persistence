@@ -47,6 +47,19 @@ subprojects {
     if (name.endsWith('-gradle-plugin')) {
         apply from: "${rootDir}/gradle/plugin-portal-publishing.gradle"
 
+        // Declare universal global plugin feature compatibility
+        plugins.withType(JavaGradlePluginPlugin).configureEach {
+            gradlePlugin.plugins.configureEach { pluginDescriptor ->
+                // Use the legacy syntax passing the descriptor as the receiver context
+                compatibility(pluginDescriptor) {
+                    features {
+                        configurationCache = true
+                        isolatedProjects = true
+                    }
+                }
+            }
+        }
+
         sonar {
             properties {
                 property "sonar.sources", "src/main/groovy"
