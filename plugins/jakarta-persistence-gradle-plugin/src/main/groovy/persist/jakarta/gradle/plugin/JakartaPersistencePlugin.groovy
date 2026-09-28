@@ -148,7 +148,6 @@ class JakartaPersistencePlugin implements Plugin<Project> {
      */
     private static void configureJpaConfiguration(Project project) {
         def persistence = project.configurations.register('jpa') { config ->
-            config.visible = false
             config.canBeConsumed = false
             config.canBeResolved = false
         }
