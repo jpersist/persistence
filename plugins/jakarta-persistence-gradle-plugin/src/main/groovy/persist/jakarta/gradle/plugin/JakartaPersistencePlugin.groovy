@@ -17,16 +17,27 @@ import persist.jakarta.gradle.task.ProcessPersistenceDescriptor
  *     <li>Applies the {@link org.gradle.api.plugins.JavaPlugin}.</li>
  *     <li>Creates a {@code jpa} dependency configuration for propagating
  *         platform/BOM version constraints into standard Java configurations.</li>
- *     <li>Creates a {@code jarFile} dependency configuration for declaring
- *         module JARs to be injected as {@code <jar-file>} entries.</li>
  *     <li>Registers the {@code persistence}
- *         {@link persist.jakarta.gradle.extension.PersistenceExtension} DSL
- *         extension.</li>
- *     <li>Registers the {@code processPersistenceDescriptor}
- *         {@link ProcessPersistenceDescriptor} task that generates or merges
- *         the final {@code persistence.xml}.</li>
- *     <li>Wires the task output into {@code processResources} so the
- *         generated descriptor ends up in the JAR.</li>
+ *         {@link org.gradle.api.NamedDomainObjectContainer} of
+ *         {@link persist.jakarta.gradle.extension.PersistenceExtension} as the
+ *         top-level DSL extension.</li>
+ *     <li>For each Java source set (e.g.&nbsp;{@code main}, {@code test}):
+ *         <ul>
+ *             <li>Creates a {@code jarFile} (or {@code <sourceSet>JarFile})
+ *                 dependency configuration for declaring module JARs to be
+ *                 injected as {@code <jar-file>} entries.</li>
+ *             <li>Automatically initializes a
+ *                 {@link persist.jakarta.gradle.extension.PersistenceExtension}
+ *                 instance in the container, keyed by the source set name.</li>
+ *             <li>Registers a {@code processPersistenceDescriptor} (or
+ *                 {@code process<SourceSet>PersistenceDescriptor})
+ *                 {@link ProcessPersistenceDescriptor} task that generates or
+ *                 merges the final {@code persistence.xml}.</li>
+ *             <li>Wires the task output into the source set's
+ *                 {@code processResources} so the generated descriptor ends up
+ *                 in the JAR.</li>
+ *         </ul>
+ *     </li>
  * </ol>
  * <p>
  * This plugin replaces the deprecated {@code persistence-gradle-plugin}
@@ -43,22 +54,32 @@ class JakartaPersistencePlugin implements Plugin<Project> {
 
         configureJpaConfiguration(project)
 
-        // 1. Create native dependency configuration
-        def jarFileConfig = project.configurations.create("jarFile") {
-            canBeConsumed = false
-            canBeResolved = true
-        }
+        // 1. Create a NamedDomainObjectContainer using Gradle's ObjectFactory
+        def container = project.objects.domainObjectContainer(PersistenceExtension)
 
-        // 2. Register Extension API DSL
-        def extension = project.extensions.create("persistence", PersistenceExtension)
+        // 2. Expose the container as the top-level 'persistence' extension block
+        project.extensions.add('persistence', container)
 
-        project.plugins.withType(JavaPlugin).configureEach {
-            project.configurations.named("implementation").configure {
+        project.extensions.getByType(SourceSetContainer).configureEach { sourceSet ->
+            // 1. Create native dependency configuration
+            def jarFileConfigName = sourceSet.name == 'main' ? "jarFile" : "${sourceSet.name}JarFile"
+            def jarFileConfig = project.configurations.create(jarFileConfigName) {
+                canBeConsumed = false
+                canBeResolved = true
+            }
+
+            // 2. Register Extension API DSL
+            // Automatically initialize a configuration instance inside the container matching the source set name
+            // (e.g., this instantly builds 'persistence.main' and 'persistence.test')
+            def extension = container.maybeCreate(sourceSet.name)
+
+            project.configurations.named(sourceSet.implementationConfigurationName).configure {
                 it.extendsFrom(jarFileConfig)
             }
 
             // 3. Register standard descriptors processor task
-            def processTask = project.tasks.register("processPersistenceDescriptor", ProcessPersistenceDescriptor) { task ->
+            def processTaskName = sourceSet.name == 'main' ? "processPersistenceDescriptor" : "process${sourceSet.name.capitalize()}PersistenceDescriptor"
+            def processTask = project.tasks.register(processTaskName, ProcessPersistenceDescriptor) { task ->
                 task.xmlVersion.set(extension.version)
 
                 // Lazily snapshot current domain states to prevent execution timing issues
@@ -74,17 +95,18 @@ class JakartaPersistencePlugin implements Plugin<Project> {
 
                 // Safe input lookup tracking direct source files — only set when the file exists
                 // so that @Optional @InputFile allows the task to run in generate-from-scratch mode
-                File sourceFile = project.file("src/main/resources/META-INF/persistence.xml")
+                def sourcePath = "src/${sourceSet.name}/resources/META-INF/persistence.xml"
+                def sourceFile = project.file(sourcePath)
                 if (sourceFile.exists()) {
-                    task.persistenceXml.set(project.layout.projectDirectory.file("src/main/resources/META-INF/persistence.xml"))
+                    task.persistenceXml.set(project.layout.projectDirectory.file(sourcePath))
                 }
 
                 // Direct output tracking safely to resources destination
-                task.destinationFile.set(project.layout.buildDirectory.file("generated/resources/main/META-INF/persistence.xml"))
+                task.destinationFile.set(project.layout.buildDirectory.file("generated/resources/${sourceSet.name}/META-INF/persistence.xml"))
             }
 
             // 4. Feed output securely back to resource processor as an input source!
-            project.tasks.named("processResources", ProcessResources).configure { resourceTask ->
+            project.tasks.named(sourceSet.processResourcesTaskName, ProcessResources).configure { resourceTask ->
                 // Prevent duplicate/conflict matching by excluding the un-patched original file
                 resourceTask.exclude("META-INF/persistence.xml")
 

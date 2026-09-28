@@ -58,7 +58,7 @@ dependencies {
 The `jakarta-persistence-gradle-plugin` module provides a plugin for generating and processing JPA `persistence.xml` descriptors:
 
 ### `io.github.jpersist.jpa`
-Registers a `processPersistenceDescriptor` task that either generates a complete `persistence.xml` from scratch using the `persistence` DSL, or merges extension-defined overrides (provider, data source, properties, jar-file entries) into an existing user-provided template. It also introduces a `jpa` configuration for declaring JAR file dependencies that are injected as `<jar-file>` elements.
+Registers a `processPersistenceDescriptor` task **for each Java source set** that either generates a complete `persistence.xml` from scratch using the `persistence` DSL, or merges extension-defined overrides (provider, data source, properties, jar-file entries) into an existing user-provided template. The `persistence` extension is a `NamedDomainObjectContainer` keyed by source set name (e.g. `main`, `test`), and each entry is automatically created when the source set is registered. It also introduces a `jpa` configuration for declaring platform/BOM version constraints that are injected into standard Java configurations.
 
 The plugin also provides a `jarFile` configuration that allows you to declare project or external dependencies whose resolved artifact names are automatically injected as `<jar-file>` elements in the generated `persistence.xml`. This is particularly useful in multi-module projects where a persistence unit needs to reference entity classes packaged in separate JAR modules.
 
@@ -74,12 +74,14 @@ dependencies {
 }
 
 persistence {
-    persistenceUnits {
-        'example-persistence-unit' {
-            provider = 'org.hibernate.jpa.HibernatePersistenceProvider'
+    main {
+        persistenceUnits {
+            'example-persistence-unit' {
+                provider = 'org.hibernate.jpa.HibernatePersistenceProvider'
 
-            properties {
-                property 'hibernate.show_sql', 'true'
+                properties {
+                    property 'hibernate.show_sql', 'true'
+                }
             }
         }
     }
@@ -98,12 +100,14 @@ dependencies {
 }
 
 persistence {
-    persistenceUnits {
-        create("example-persistence-unit") {
-            provider.set("org.hibernate.jpa.HibernatePersistenceProvider")
+    named("main") {
+        persistenceUnits {
+            create("example-persistence-unit") {
+                provider.set("org.hibernate.jpa.HibernatePersistenceProvider")
 
-            properties {
-                property("hibernate.show_sql", "true")
+                properties {
+                    property("hibernate.show_sql", "true")
+                }
             }
         }
     }

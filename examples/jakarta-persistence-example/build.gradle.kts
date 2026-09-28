@@ -8,12 +8,14 @@ dependencies {
 }
 
 persistence {
-    persistenceUnits {
-        create("example-persistence-unit") {
-            provider.set("org.hibernate.jpa.HibernatePersistenceProvider")
+    named("main") {
+        persistenceUnits {
+            create("example-persistence-unit") {
+                provider.set("org.hibernate.jpa.HibernatePersistenceProvider")
 
-            properties {
-                property("hibernate.show_sql", "true")
+                properties {
+                    property("hibernate.show_sql", "true")
+                }
             }
         }
     }

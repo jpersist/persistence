@@ -10,12 +10,14 @@ dependencies {
 }
 
 persistence {
-    persistenceUnits {
-        'bookstore-persistence-unit' {
-            provider = 'org.hibernate.jpa.HibernatePersistenceProvider'
+    main {
+        persistenceUnits {
+            'bookstore-persistence-unit' {
+                provider = 'org.hibernate.jpa.HibernatePersistenceProvider'
 
-            properties {
-                property 'hibernate.show_sql', 'false'
+                properties {
+                    property 'hibernate.show_sql', 'false'
+                }
             }
         }
     }
