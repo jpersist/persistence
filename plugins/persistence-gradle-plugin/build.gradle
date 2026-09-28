@@ -3,6 +3,10 @@ plugins {
     id 'groovy'
 }
 
+dependencies {
+    implementation project(':plugins:jakarta-persistence-gradle-plugin')
+}
+
 gradlePlugin {
     plugins {
         register('persistencePlatform') {

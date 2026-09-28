@@ -4,6 +4,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.SourceSetContainer
+import persist.jakarta.gradle.plugin.JakartaPersistencePlugin
 
 /**
  * A platform alignment plugin that allows users to declare a JPA implementation
@@ -28,31 +29,42 @@ class PersistencePlatformPlugin implements Plugin<Project> {
 
     @Override
     void apply(Project project) {
-        project.getLogger().lifecycle("""
-            WARNING: 'io.github.jpersist:persistence-gradle-plugin' has been renamed.
-            Please migrate to 'io.github.jpersist:jakarta-persistence-gradle-plugin' in your plugins block.
-        """.stripIndent());
+        project.logger.warn(
+            """
+            ==========================================================================
+            WARNING: Plugin 'io.github.jpersist.persistence-platform' is DEPRECATED.
+            It has been replaced by 'io.github.jpersist.jpa'.
+            Please migrate as soon as possible.
+            For migration instructions, see: https://github.com/jpersist/persistence
+            ==========================================================================
+            """.stripIndent());
 
-        project.plugins.apply(JavaPlugin)
-
-        def persistence = project.configurations.register('persistence') { config ->
-            config.visible = false
-            config.canBeConsumed = false
-            config.canBeResolved = false
+        // Apply JakartaPersistencePlugin
+        if (!project.plugins.hasPlugin(JakartaPersistencePlugin)) {
+            project.plugins.apply(JakartaPersistencePlugin)
         }
 
-        // Propagate platform version constraints into all standard Java configurations
-        project.extensions.getByType(SourceSetContainer).configureEach { sourceSet ->
-            [
-                sourceSet.implementationConfigurationName,
-                sourceSet.compileOnlyConfigurationName,
-                sourceSet.annotationProcessorConfigurationName,
-                sourceSet.runtimeOnlyConfigurationName
-            ].forEach { configName ->
-                project.configurations.named(configName) {
-                    it.extendsFrom(persistence.get())
-                }
+        // Allow user to still use 'persistence' configuration
+        def persistence = project.configurations.register('persistence') { config ->
+            config.canBeConsumed = false
+            config.canBeResolved = false
+
+            config.dependencies.configureEach { dependency ->
+                project.logger.warn(
+                    """
+                    ======================================================================
+                    WARNING: The 'persistence' configuration is DEPRECATED.
+                    You are adding a dependency on '${dependency.group}:${dependency.name}'.
+                    Please migrate this dependency to 'jpa' instead.
+                    ======================================================================
+                    """.stripIndent()
+                )
             }
+        }
+
+        // Delegate 'persistence' configuration to 'jpa' configuration
+        project.configurations.named('jpa') {
+            it.extendsFrom(persistence)
         }
     }
 
