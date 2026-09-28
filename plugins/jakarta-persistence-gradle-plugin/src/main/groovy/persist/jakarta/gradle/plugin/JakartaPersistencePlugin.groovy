@@ -1,11 +1,11 @@
 package persist.jakarta.gradle.plugin
 
 import groovy.io.FileType
-import groovyjarjarasm.asm.AnnotationVisitor
-import groovyjarjarasm.asm.ClassReader
-import groovyjarjarasm.asm.ClassVisitor
-import groovyjarjarasm.asm.Opcodes
-import groovyjarjarasm.asm.Type
+import org.objectweb.asm.AnnotationVisitor
+import org.objectweb.asm.ClassReader
+import org.objectweb.asm.ClassVisitor
+import org.objectweb.asm.Opcodes
+import org.objectweb.asm.Type
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin

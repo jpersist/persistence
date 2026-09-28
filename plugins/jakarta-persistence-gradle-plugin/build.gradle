@@ -5,6 +5,7 @@ plugins {
 
 dependencies {
     implementation libs.jakarta.persistence.api
+    implementation libs.asm
 }
 
 gradlePlugin {
