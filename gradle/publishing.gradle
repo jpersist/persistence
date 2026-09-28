@@ -1,0 +1,75 @@
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
+
+// 1. Automatically generate Source and Javadoc JARs required by Maven Central
+plugins.withType(JavaPlugin) {
+    java {
+        withSourcesJar()
+        withJavadocJar()
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            // Safely fetch the java component if it exists
+            def javaComponent = components.findByName('java')
+            if (javaComponent != null) {
+                from javaComponent
+            }
+
+            // Metadata required by Sonatype/Maven Central compliance
+            pom {
+                name = project.name
+                description = 'Modern, cache-compliant Gradle tooling for Jakarta Persistence API frameworks.'
+                url = 'https://github.com/jpersist/persistence'
+
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'https://apache.org'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = 'yannickebongue'
+                        name = 'Yannick Ebongue'
+                        email = 'yannickebongue@gmail.com'
+                    }
+                }
+
+                scm {
+                    connection = 'scm:git:git@github.com:jpersist/persistence.git'
+                    developerConnection = 'scm:git:git@github.com:jpersist/persistence.git'
+                    url = 'https://github.com/jpersist/persistence'
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            name = "MavenCentral"
+            // Toggle between Release and Snapshot repositories dynamically
+            def releasesRepoUrl = "https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/"
+            def snapshotsRepoUrl = "https://central.sonatype.com/repository/maven-snapshots/"
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+
+            credentials {
+                username = providers.environmentVariable("SONATYPE_USERNAME").orElse("").get()
+                password = providers.environmentVariable("SONATYPE_PASSWORD").orElse("").get()
+            }
+        }
+    }
+}
+
+// 2. Cryptographically sign the artifacts using GPG (Only mandatory for full Releases)
+signing {
+    required { !version.endsWith("SNAPSHOT") && gradle.taskGraph.hasTask("publish") }
+    def signingKey = providers.environmentVariable("GPG_SIGNING_KEY").orElse("").get()
+    def signingPassword = providers.environmentVariable("GPG_SIGNING_PASSWORD").orElse("").get()
+
+    useInMemoryPgpKeys(signingKey, signingPassword)
+    sign publishing.publications.mavenJava
+}
