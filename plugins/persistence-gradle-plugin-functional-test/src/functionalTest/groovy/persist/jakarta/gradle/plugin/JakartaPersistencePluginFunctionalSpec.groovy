@@ -56,6 +56,10 @@ class JakartaPersistencePluginFunctionalSpec extends Specification {
         ((Node) ((List<?>) unit.get("provider"))[0]).text() == "org.hibernate.jpa.HibernatePersistenceProvider"
         // ((Node) ((List<?>) unit.get("non-jta-data-source"))[0]).text() == "jdbc/testDb"
 
+        List<?> classesList = (List<?>) unit.get("class")
+        classesList.size() == 1
+        ((Node) classesList.get(0)).text() == "com.example.entity.Identifiable"
+
         Node props = (Node) ((List<?>) unit.get("properties"))[0]
         Node prop = (Node) ((List<?>) props.get("property"))[0]
         prop.attribute("name") == "hibernate.show_sql"
@@ -87,6 +91,12 @@ class JakartaPersistencePluginFunctionalSpec extends Specification {
         List<?> jarFilesList = (List<?>) unit.get("jar-file")
         jarFilesList.size() == 1
         ((Node) jarFilesList.get(0)).text() == "common-persistence-module-0.1-SNAPSHOT.jar"
+
+        and: "the discovered managed classes are injected dynamically"
+        List<?> classesList = (List<?>) unit.get("class")
+        classesList.size() == 2
+        ((Node) classesList.get(0)).text() == "com.example.bookstore.entity.Author"
+        ((Node) classesList.get(1)).text() == "com.example.bookstore.entity.Book"
 
         and: "non-conflicting template parameters such as native properties are safely preserved"
         Node props = (Node) ((List<?>) unit.get("properties"))[0]
