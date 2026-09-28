@@ -21,6 +21,10 @@
  * }
  * </pre>
  *
+ * @deprecated This package is deprecated. Use
+ *     {@link persist.jakarta.gradle.plugin.JakartaPersistencePlugin}
+ *     ({@code io.github.jpersist.jpa}) instead, which provides the same
+ *     functionality via the {@code jpa} configuration.
  * @since 1.1.0
  */
 package persist.platform.gradle.plugin

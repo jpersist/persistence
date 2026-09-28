@@ -10,12 +10,25 @@
 
 <h2>Available Plugins</h2>
 
-<h3>Platform</h3>
+<h3>Jakarta Persistence</h3>
+<table border="1" cellpadding="4" cellspacing="0">
+    <tr><th>Plugin ID</th><th>Description</th></tr>
+    <tr>
+        <td><code>io.github.jpersist.jpa</code></td>
+        <td>Manages Jakarta Persistence (JPA) descriptor generation, creates the {@code jpa}
+            dependency configuration for platform/BOM version alignment, and registers the
+            {@code persistence} extension DSL with {@code processPersistenceDescriptor} tasks.
+            See {@link persist.jakarta.gradle.plugin.JakartaPersistencePlugin}.</td>
+    </tr>
+</table>
+
+<h3>Platform <em>(deprecated)</em></h3>
 <table border="1" cellpadding="4" cellspacing="0">
     <tr><th>Plugin ID</th><th>Description</th></tr>
     <tr>
         <td><code>io.github.jpersist.persistence-platform</code></td>
-        <td>Declares a JPA implementation platform (BOM) dependency for centralized version alignment
+        <td><strong>Deprecated</strong> &mdash; replaced by <code>io.github.jpersist.jpa</code>.
+            Declares a JPA implementation platform (BOM) dependency for centralized version alignment
             across all configurations. See
             {@link persist.platform.gradle.plugin.PersistencePlatformPlugin}.</td>
     </tr>
@@ -68,14 +81,14 @@ plugins {
 }
 
 dependencies {
-    persistence platform('org.hibernate.orm:hibernate-platform:6.6.5.Final')
+    jpa platform('org.hibernate.orm:hibernate-platform:6.6.5.Final')
 }
 </pre>
 
 <h2>Key Design Principles</h2>
 <ul>
     <li><strong>No hardcoded dependency versions</strong> &mdash; The plugins add JPA engine dependencies
-        without version strings. Use the <code>persistence</code> configuration with a platform BOM
+        without version strings. Use the <code>jpa</code> configuration with a platform BOM
         to centrally manage versions.</li>
     <li><strong>Configuration Cache compliant</strong> &mdash; All plugins and tasks are fully compatible
         with Gradle's Configuration Cache for maximum build performance.</li>
@@ -89,7 +102,10 @@ dependencies {
 
 <h2>Package Organization</h2>
 <ul>
-    <li>{@link persist.platform.gradle.plugin} &mdash; Platform alignment plugin for centralized version management.</li>
+    <li>{@link persist.jakarta.gradle.plugin} &mdash; Jakarta Persistence plugin for JPA descriptor generation and version management.</li>
+    <li>{@link persist.jakarta.gradle.extension} &mdash; Jakarta Persistence DSL extension configuration model.</li>
+    <li>{@link persist.jakarta.gradle.task} &mdash; Jakarta Persistence build-time task implementations.</li>
+    <li>{@link persist.platform.gradle.plugin} &mdash; <em>(Deprecated)</em> Platform alignment plugin for centralized version management.</li>
     <li>{@link persist.eclipse.gradle.plugin} &mdash; EclipseLink plugin implementations.</li>
     <li>{@link persist.eclipse.gradle.extension} &mdash; EclipseLink DSL extension configuration model.</li>
     <li>{@link persist.eclipse.gradle.task} &mdash; EclipseLink build-time task implementations.</li>

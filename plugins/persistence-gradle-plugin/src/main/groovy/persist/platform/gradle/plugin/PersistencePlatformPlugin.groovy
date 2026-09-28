@@ -24,6 +24,10 @@ import persist.jakarta.gradle.plugin.JakartaPersistencePlugin
  * {@code runtimeOnly}, and {@code testImplementation} configurations, ensuring consistent
  * version alignment without requiring explicit version strings on individual dependencies.
  * </p>
+ *
+ * @deprecated Use {@link persist.jakarta.gradle.plugin.JakartaPersistencePlugin}
+ *     ({@code io.github.jpersist.jpa}) instead, which provides the same functionality
+ *     via the {@code jpa} configuration.
  */
 class PersistencePlatformPlugin implements Plugin<Project> {
 
