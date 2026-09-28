@@ -57,6 +57,15 @@ abstract class ProcessPersistenceDescriptor extends DefaultTask {
     abstract ListProperty<PersistenceUnitExtension> getUnits()
 
     /**
+     * Managed class names from the current source set to inject as
+     * {@code <class>} elements
+     *
+     * @return The lazy list property of class names.
+     */
+    @Input
+    abstract ListProperty<String> getIncludedClasses()
+
+    /**
      * Resolved JAR file names from the {@code jarFile} configuration to inject
      * as {@code <jar-file>} elements.
      *
@@ -100,11 +109,12 @@ abstract class ProcessPersistenceDescriptor extends DefaultTask {
         File destination = destinationFile.get().asFile
         File sourceFile = persistenceXml.orNull?.asFile
         List<String> resolvedJars = jarFileNames.get()
+        List<String> managedClasses = includedClasses.get()
 
         if (sourceFile != null && sourceFile.exists()) {
-            merge(sourceFile, destination, resolvedJars)
+            merge(sourceFile, destination, managedClasses, resolvedJars)
         } else {
-            generate(destination, resolvedJars)
+            generate(destination, managedClasses, resolvedJars)
         }
     }
 
@@ -112,11 +122,12 @@ abstract class ProcessPersistenceDescriptor extends DefaultTask {
      * Merges extension-defined overrides and resolved JAR entries into an
      * existing {@code persistence.xml}.
      *
-     * @param source       The user-provided source descriptor.
-     * @param target       The destination file to write.
-     * @param resolvedJars The list of resolved JAR file names.
+     * @param source         The user-provided source descriptor.
+     * @param target         The destination file to write.
+     * @param managedClasses The list of managed class names.
+     * @param resolvedJars   The list of resolved JAR file names.
      */
-    private void merge(File source, File target, List<String> resolvedJars) {
+    private void merge(File source, File target, List<String> managedClasses, List<String> resolvedJars) {
         XmlParser parser = new XmlParser(false, false)
         Node persistence = parser.parse(source)
 
@@ -169,6 +180,18 @@ abstract class ProcessPersistenceDescriptor extends DefaultTask {
                     unitNode.appendNode("jar-file", jarName)
                 }
             }
+
+            if (extensionConfig?.includeAllClasses?.orElse(false)) {
+                if (!managedClasses.isEmpty()) {
+                    List<?> classesList = (List<?>) unitNode.get("class")
+                    new ArrayList<>(classesList).each { Object jarNode ->
+                        unitNode.remove((Node) jarNode)
+                    }
+                    managedClasses.each { String className ->
+                        unitNode.appendNode("class", className)
+                    }
+                }
+            }
         }
 
         target.withWriter("UTF-8") { Writer writer ->
@@ -180,10 +203,11 @@ abstract class ProcessPersistenceDescriptor extends DefaultTask {
      * Generates a complete {@code persistence.xml} from the extension DSL
      * configuration.
      *
-     * @param target       The destination file to write.
-     * @param resolvedJars The list of resolved JAR file names.
+     * @param target         The destination file to write.
+     * @param managedClasses The list of managed class names.
+     * @param resolvedJars   The list of resolved JAR file names.
      */
-    private void generate(File target, List<String> resolvedJars) {
+    private void generate(File target, List<String> managedClasses, List<String> resolvedJars) {
         target.withWriter("UTF-8") { Writer writer ->
             MarkupBuilder xml = new MarkupBuilder(writer)
             xml.setDoubleQuotes(true)
@@ -213,6 +237,12 @@ abstract class ProcessPersistenceDescriptor extends DefaultTask {
 
                         resolvedJars.each { String jarName ->
                             "jar-file"(jarName)
+                        }
+
+                        if (unit.includeAllClasses.getOrElse(false)) {
+                            managedClasses.each { String className ->
+                                "class"(className)
+                            }
                         }
 
                         if (unit.mappingFiles.isPresent()) {

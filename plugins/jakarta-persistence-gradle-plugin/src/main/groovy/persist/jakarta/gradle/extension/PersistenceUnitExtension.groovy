@@ -39,7 +39,7 @@ abstract class PersistenceUnitExtension {
         // Set sane defaults aligning with JPA specification standards
         this.transactionType.convention("RESOURCE_LOCAL")
         this.excludedUnlistedClasses.convention(false)
-        this.includeAllClasses.convention(false)
+        this.includeAllClasses.convention(true)
         this.sharedCacheMode.convention(false)
         this.validationMode.convention("AUTO")
     }

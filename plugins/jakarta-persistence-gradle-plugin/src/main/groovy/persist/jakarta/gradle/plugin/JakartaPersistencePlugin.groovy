@@ -1,8 +1,15 @@
 package persist.jakarta.gradle.plugin
 
+import groovy.io.FileType
+import groovyjarjarasm.asm.AnnotationVisitor
+import groovyjarjarasm.asm.ClassReader
+import groovyjarjarasm.asm.ClassVisitor
+import groovyjarjarasm.asm.Opcodes
+import groovyjarjarasm.asm.Type
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin
+import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.language.jvm.tasks.ProcessResources
 import persist.jakarta.gradle.extension.PersistenceExtension
@@ -85,6 +92,11 @@ class JakartaPersistencePlugin implements Plugin<Project> {
                 // Lazily snapshot current domain states to prevent execution timing issues
                 task.units.set(project.provider { new ArrayList<>(extension.persistenceUnits) })
 
+                // Dynamically fetch annotated class names lazily at execution time
+                task.includedClasses.set(project.provider {
+                    discoverJpaClasses(sourceSet)
+                })
+
                 // Resolve first level declared jars
                 task.jarFileNames.set(project.provider {
                     if (jarFileConfig.isEmpty()) return []
@@ -92,6 +104,15 @@ class JakartaPersistencePlugin implements Plugin<Project> {
                         dep.moduleArtifacts.collect { artifact -> artifact.file.name }
                     }
                 })
+
+                // Safely hook into the sibling compilation task output lazily using Provider map arrays
+                def compileJavaTaskProvider = project.tasks.named(sourceSet.compileJavaTaskName)
+
+                // Explicitly enforce that compilation completes BEFORE this task runs
+                task.mustRunAfter(compileJavaTaskProvider)
+
+                // Natively bind compilation outputs as inputs to trigger accurate incremental build caching
+                task.inputs.files(compileJavaTaskProvider.map { it.outputs.files })
 
                 // Safe input lookup tracking direct source files — only set when the file exists
                 // so that @Optional @InputFile allows the task to run in generate-from-scratch mode
@@ -147,4 +168,53 @@ class JakartaPersistencePlugin implements Plugin<Project> {
         }
     }
 
+    /**
+     * Scans the output classes directories of a SourceSet and returns fully qualified class names
+     * containing targeted Jakarta Persistence annotations.
+     */
+    private static List<String> discoverJpaClasses(SourceSet sourceSet) {
+        Set<String> targetAnnotations = [
+            'Ljakarta/persistence/Entity;',
+            'Ljakarta/persistence/Embeddable;',
+            'Ljakarta/persistence/MappedSuperclass;',
+            'Ljakarta/persistence/Converter;'
+        ] as Set<String>
+
+        List<String> jpaClasses = []
+
+        sourceSet.output.classesDirs.each { File classesDir ->
+            if (!classesDir.exists()) return
+
+            classesDir.traverse(type: FileType.FILES, nameFilter: ~/.*\.class$/) { File classFile ->
+                classFile.withInputStream { InputStream is ->
+                    try {
+                        ClassReader reader = new ClassReader(is)
+                        boolean hasJpaAnnotation = false
+
+                        // ASM custom structure lookup loop
+                        reader.accept(new ClassVisitor(Opcodes.ASM9) {
+
+                            @Override
+                            AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
+                                if (targetAnnotations.contains(descriptor)) {
+                                    hasJpaAnnotation = true
+                                }
+                                return null
+                            }
+
+                        }, ClassReader.SKIP_CODE | ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES)
+
+                        if (hasJpaAnnotation) {
+                            // Convert internal bytecode name (org/example/MyClass) to fully qualified binary name
+                            jpaClasses.add(Type.getObjectType(reader.className).className)
+                        }
+                    } catch (Exception ignored) {
+                        // Fail-safe skip for corrupt or unreadable class binaries
+                    }
+                }
+            }
+        }
+
+        return jpaClasses.sort()
+    }
 }
