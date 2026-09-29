@@ -1,5 +1,11 @@
 # jPersist: Build powerful JPA modules with ease
 
+![GitHub Release](https://img.shields.io/github/v/release/jpersist/persistence)
+![Gradle Plugin Portal Version](https://img.shields.io/gradle-plugin-portal/v/io.github.jpersist.jpa)
+[![Quality gate status](https://sonarcloud.io/api/project_badges/measure?project=jpersist_persistence&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=jpersist_persistence)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=jpersist_persistence&metric=coverage)](https://sonarcloud.io/summary/new_code?id=jpersist_persistence)
+![GitHub License](https://img.shields.io/github/license/jpersist/persistence)
+
 A suite of modern, lightweight, high-performance, and **Gradle Configuration Cache-compliant** plugins to simplify development with the most popular **Jakarta Persistence API (JPA)** frameworks: **EclipseLink** and **Hibernate**.
 
 The goal of this ecosystem is to decouple boilerplate configuration, automate static metamodel generation, and support compile-time bytecode enhancement seamlessly without violating incremental build integrity.
