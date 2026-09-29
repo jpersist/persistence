@@ -89,8 +89,16 @@ class JakartaPersistencePlugin implements Plugin<Project> {
             def processTask = project.tasks.register(processTaskName, ProcessPersistenceDescriptor) { task ->
                 task.xmlVersion.set(extension.version)
 
-                // Lazily snapshot current domain states to prevent execution timing issues
-                task.units.set(project.provider { new ArrayList<>(extension.persistenceUnits) })
+                // Lazily filter out disabled units or clear out the list if the root extension is disabled
+                task.units.set(project.provider {
+                    extension.persistenceUnits.matching { it.enabled.getOrElse(true)} as List
+                })
+
+                // Natively skip task execution when the units collection list evaluates to empty
+                task.onlyIf {
+                    // Safe lazy getter call evaluated exactly at execution time
+                    !task.units.get().isEmpty()
+                }
 
                 // Dynamically fetch annotated class names lazily at execution time
                 task.includedClasses.set(project.provider {

@@ -36,6 +36,7 @@ abstract class PersistenceUnitExtension {
     @Inject
     PersistenceUnitExtension(String name) {
         this.name = name
+        this.enabled.convention(true)
         // Set sane defaults aligning with JPA specification standards
         this.transactionType.convention("RESOURCE_LOCAL")
         this.excludedUnlistedClasses.convention(false)
@@ -57,6 +58,13 @@ abstract class PersistenceUnitExtension {
     String getName() {
         return this.name
     }
+
+    /**
+     * Controls if this specific persistence unit should be processed.
+     * Defaults to true.
+     */
+    @Input
+    abstract Property<Boolean> getEnabled()
 
     /**
      * The JPA transaction type ({@code RESOURCE_LOCAL} or {@code JTA}).

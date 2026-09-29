@@ -48,6 +48,7 @@ class EclipsePersistencePluginFunctionalSpec extends Specification {
         result.task(":compileJava").outcome == TaskOutcome.SUCCESS
         result.task(":eclipseWeaveClasses").outcome == TaskOutcome.SUCCESS
         result.task(":eclipseWeaveTestClasses").outcome == TaskOutcome.NO_SOURCE
+        result.task(":processPersistenceDescriptor").outcome == TaskOutcome.SKIPPED
         result.task(":jar").outcome == TaskOutcome.SUCCESS
 
         // Asserting against real logs intercepted from EclipseLink processing
