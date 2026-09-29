@@ -18,6 +18,9 @@
         <td>Manages Jakarta Persistence (JPA) descriptor generation, creates the {@code jpa}
             dependency configuration for platform/BOM version alignment, and registers the
             {@code persistence} extension DSL with {@code processPersistenceDescriptor} tasks.
+            Supports skipping generation of individual persistence units via the
+            {@code enabled} flag and customizing the XML output formatting through
+            configurable transformer properties.
             See {@link persist.jakarta.gradle.plugin.JakartaPersistencePlugin}.</td>
     </tr>
 </table>
@@ -103,8 +106,8 @@ dependencies {
 <h2>Package Organization</h2>
 <ul>
     <li>{@link persist.jakarta.gradle.plugin} &mdash; Jakarta Persistence plugin for JPA descriptor generation and version management.</li>
-    <li>{@link persist.jakarta.gradle.extension} &mdash; Jakarta Persistence DSL extension configuration model.</li>
-    <li>{@link persist.jakarta.gradle.task} &mdash; Jakarta Persistence build-time task implementations.</li>
+    <li>{@link persist.jakarta.gradle.extension} &mdash; Jakarta Persistence DSL extension configuration model, including XML formatting options.</li>
+    <li>{@link persist.jakarta.gradle.task} &mdash; Jakarta Persistence build-time task implementations with skip and formatting support.</li>
     <li>{@link persist.platform.gradle.plugin} &mdash; <em>(Deprecated)</em> Platform alignment plugin for centralized version management.</li>
     <li>{@link persist.eclipse.gradle.plugin} &mdash; EclipseLink plugin implementations.</li>
     <li>{@link persist.eclipse.gradle.extension} &mdash; EclipseLink DSL extension configuration model.</li>
@@ -113,5 +116,10 @@ dependencies {
     <li>{@link persist.hibernate.gradle.extension} &mdash; Hibernate DSL extension configuration model.</li>
     <li>{@link persist.hibernate.gradle.task} &mdash; Hibernate build-time task implementations.</li>
 </ul>
+
+<p>
+    For more information, visit the
+    <a href="https://github.com/jpersist/persistence">jPersist GitHub repository</a>.
+</p>
 </body>
 </html>

@@ -9,7 +9,9 @@
  *     <li>{@link persist.jakarta.gradle.task.ProcessPersistenceDescriptor} &mdash;
  *         Generates a new {@code persistence.xml} from the plugin extension DSL
  *         or merges an existing user-provided descriptor with extension-defined
- *         overrides and resolved {@code jar-file} entries.</li>
+ *         overrides and resolved {@code jar-file} entries. Disabled persistence
+ *         units are automatically excluded, and the final output is formatted
+ *         according to configurable transformer properties.</li>
  * </ul>
  *
  * @since 1.1.0

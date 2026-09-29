@@ -12,11 +12,13 @@
  * </p>
  * <ul>
  *     <li>{@link persist.jakarta.gradle.extension.PersistenceExtension} &mdash;
- *         Top-level extension providing the JPA specification version and a
- *         container of named persistence-unit configurations.</li>
+ *         Top-level extension providing the JPA specification version, XML
+ *         transformer output properties for formatting the generated descriptor,
+ *         and a container of named persistence-unit configurations.</li>
  *     <li>{@link persist.jakarta.gradle.extension.PersistenceUnitExtension} &mdash;
  *         Per-unit configuration attributes such as provider, transaction type,
- *         data source, mapping files, and JPA properties.</li>
+ *         data source, mapping files, JPA properties, and an {@code enabled}
+ *         flag to skip generation of individual persistence units.</li>
  * </ul>
  *
  * @since 1.1.0

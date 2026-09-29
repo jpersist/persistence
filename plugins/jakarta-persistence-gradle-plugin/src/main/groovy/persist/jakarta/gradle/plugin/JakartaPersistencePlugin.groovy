@@ -47,6 +47,13 @@ import persist.jakarta.gradle.task.ProcessPersistenceDescriptor
  *     </li>
  * </ol>
  * <p>
+ * Individual persistence units can be skipped by setting their
+ * {@link persist.jakarta.gradle.extension.PersistenceUnitExtension#getEnabled() enabled}
+ * property to {@code false}. The generated XML output can be customized via
+ * the {@link persist.jakarta.gradle.extension.PersistenceExtension#getOutputProperties() outputProperties}
+ * map or the {@code transformer} DSL block.
+ * </p>
+ * <p>
  * This plugin replaces the deprecated {@code persistence-gradle-plugin}
  * ({@code io.github.jpersist.persistence}).
  * </p>
@@ -88,6 +95,9 @@ class JakartaPersistencePlugin implements Plugin<Project> {
             def processTaskName = sourceSet.name == 'main' ? "processPersistenceDescriptor" : "process${sourceSet.name.capitalize()}PersistenceDescriptor"
             def processTask = project.tasks.register(processTaskName, ProcessPersistenceDescriptor) { task ->
                 task.xmlVersion.set(extension.version)
+
+                // Connect transformer properties configuration securely
+                task.transformerSettings.set(extension.outputProperties)
 
                 // Lazily filter out disabled units or clear out the list if the root extension is disabled
                 task.units.set(project.provider {

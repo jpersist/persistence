@@ -18,5 +18,8 @@ persistence {
                 }
             }
         }
+        transformer {
+            outputProperty 'indent-amount', '2'
+        }
     }
 }

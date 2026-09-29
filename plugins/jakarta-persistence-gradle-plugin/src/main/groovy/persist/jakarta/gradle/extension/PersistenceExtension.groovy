@@ -3,6 +3,7 @@ package persist.jakarta.gradle.extension
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 
@@ -53,6 +54,7 @@ abstract class PersistenceExtension {
      *
      * @return The lazy property tracking the specification version string.
      */
+    @Input
     abstract Property<String> getVersion()
 
     /**
@@ -64,6 +66,22 @@ abstract class PersistenceExtension {
      * </p>
      */
     final NamedDomainObjectContainer<PersistenceUnitExtension> persistenceUnits
+
+    /**
+     * Key-value pairs passed to the XML {@link javax.xml.transform.Transformer}
+     * that formats the generated {@code persistence.xml}.
+     * <p>
+     * Defaults include {@code indent=yes}, {@code omit-xml-declaration=no},
+     * {@code encoding=UTF-8}, and an indent amount of {@code 4} spaces.
+     * Entries can be overridden via the {@link #transformer(Closure)} DSL block
+     * or the {@link #outputProperty(String, String)} method.
+     * </p>
+     *
+     * @return The lazy map property tracking the transformer output properties.
+     * @since 1.2.2
+     */
+    @Input
+    abstract MapProperty<String, String> getOutputProperties()
 
     /**
      * Creates a new extension instance.
@@ -78,6 +96,12 @@ abstract class PersistenceExtension {
         // Default to spec version 3.0
         this.version.convention("3.0")
         this.persistenceUnits = objects.domainObjectContainer(PersistenceUnitExtension)
+
+        // Set up the default transformer properties exactly as required
+        this.outputProperties.put("indent", "yes")
+        this.outputProperties.put("omit-xml-declaration", "no")
+        this.outputProperties.put("encoding", "UTF-8")
+        this.outputProperties.put("{http://xml.apache.org/xslt}indent-amount", "4")
     }
 
     /**
@@ -114,6 +138,58 @@ abstract class PersistenceExtension {
      */
     void persistenceUnits(Action<? super NamedDomainObjectContainer<PersistenceUnitExtension>> action) {
         action.execute(persistenceUnits)
+    }
+
+    /**
+     * Sets a single XML transformer output property.
+     * <p>
+     * Convenience method typically called inside a {@link #transformer(Closure)}
+     * block:
+     * </p>
+     * <pre>
+     * persistence {
+     *     main {
+     *         transformer {
+     *             outputProperty 'indent', 'yes'
+     *             outputProperty '{http://xml.apache.org/xslt}indent-amount', '2'
+     *         }
+     *     }
+     * }
+     * </pre>
+     *
+     * @param key   The transformer output property key.
+     * @param value The transformer output property value.
+     * @since 1.2.2
+     */
+    void outputProperty(String key, String value) {
+        outputProperties.put(key, value)
+    }
+
+    /**
+     * Configures the XML transformer output properties using a closure.
+     * <p>
+     * Inside the closure, calls to {@link #outputProperty(String, String)} are
+     * delegated to this extension instance, allowing a clean DSL syntax:
+     * </p>
+     * <pre>
+     * persistence {
+     *     main {
+     *         transformer {
+     *             outputProperty 'indent', 'yes'
+     *             outputProperty '{http://xml.apache.org/xslt}indent-amount', '2'
+     *         }
+     *     }
+     * }
+     * </pre>
+     *
+     * @param closure The configuration closure applied with delegate-first strategy.
+     * @since 1.2.2
+     */
+    void transformer(Closure<?> closure) {
+        // Redirect execution scope to an isolated helper inside the extension execution matrix
+        closure.setDelegate(this)
+        closure.setResolveStrategy(Closure.DELEGATE_FIRST)
+        closure.call()
     }
 
 }

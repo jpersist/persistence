@@ -114,6 +114,64 @@ persistence {
 }
 ```
 
+#### Skipping Persistence Unit Generation
+
+Individual persistence units can be excluded from the generated `persistence.xml` by setting their `enabled` property to `false`. When all units are disabled, the `processPersistenceDescriptor` task is automatically skipped. This allows build scripts to selectively disable units without removing their configuration:
+
+**Groovy DSL:**
+```groovy
+persistence {
+    main {
+        persistenceUnits {
+            'my-unit' {
+                enabled = false
+            }
+        }
+    }
+}
+```
+
+**Kotlin DSL:**
+```kotlin
+persistence {
+    named("main") {
+        persistenceUnits {
+            named("my-unit") {
+                enabled.set(false)
+            }
+        }
+    }
+}
+```
+
+#### Formatting the Generated XML
+
+The XML output of the generated `persistence.xml` can be customized via the `transformer` DSL block or the `outputProperty` method. Default settings include `indent=yes`, `omit-xml-declaration=no`, `encoding=UTF-8`, and an indent amount of `4` spaces:
+
+**Groovy DSL:**
+```groovy
+persistence {
+    main {
+        transformer {
+            outputProperty 'indent', 'yes'
+            outputProperty '{http://xml.apache.org/xslt}indent-amount', '2'
+        }
+    }
+}
+```
+
+**Kotlin DSL:**
+```kotlin
+persistence {
+    named("main") {
+        transformer {
+            outputProperty("indent", "yes")
+            outputProperty("{http://xml.apache.org/xslt}indent-amount", "2")
+        }
+    }
+}
+```
+
 ---
 
 ## EclipseLink Plugins
@@ -317,7 +375,7 @@ Complete, ready-to-use example projects are available in the [`examples/`](examp
 |---------|-------------|
 | [`eclipselink-example/`](examples/eclipselink-example/) | EclipseLink with metamodel generation, static weaving, and platform BOM |
 | [`hibernate-example/`](examples/hibernate-example/) | Hibernate ORM with metamodel generation, bytecode enhancement, and platform BOM |
-| [`jakarta-persistence-example/`](examples/jakarta-persistence-example/) | Jakarta Persistence descriptor generation and merging with the `io.github.jpersist.jpa` plugin |
+| [`jakarta-persistence-example/`](examples/jakarta-persistence-example/) | Jakarta Persistence descriptor generation and merging with the `io.github.jpersist.jpa` plugin, including skip and formatting features |
 
 Each example includes both **Groovy DSL** (`build.gradle`) and **Kotlin DSL** (`build.gradle.kts`) build files.
 
