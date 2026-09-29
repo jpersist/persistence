@@ -1,6 +1,6 @@
 plugins {
     `java-library`
-    id("io.github.jpersist.jpa") version "1.2.0"
+    id("io.github.jpersist.jpa") version "1.3.0"
 }
 
 dependencies {

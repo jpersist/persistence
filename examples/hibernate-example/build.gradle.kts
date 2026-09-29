@@ -1,6 +1,6 @@
 plugins {
     `java-library`
-    id("io.github.jpersist.hibernate-persistence") version "1.1.0"
+    id("io.github.jpersist.hibernate-persistence") version "1.3.0"
 }
 
 dependencies {
