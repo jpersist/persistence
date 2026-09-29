@@ -67,6 +67,19 @@ abstract class PersistenceExtension {
      */
     final NamedDomainObjectContainer<PersistenceUnitExtension> persistenceUnits
 
+    /**
+     * Key-value pairs passed to the XML {@link javax.xml.transform.Transformer}
+     * that formats the generated {@code persistence.xml}.
+     * <p>
+     * Defaults include {@code indent=yes}, {@code omit-xml-declaration=no},
+     * {@code encoding=UTF-8}, and an indent amount of {@code 4} spaces.
+     * Entries can be overridden via the {@link #transformer(Closure)} DSL block
+     * or the {@link #outputProperty(String, String)} method.
+     * </p>
+     *
+     * @return The lazy map property tracking the transformer output properties.
+     * @since 1.2.2
+     */
     @Input
     abstract MapProperty<String, String> getOutputProperties()
 
@@ -127,15 +140,50 @@ abstract class PersistenceExtension {
         action.execute(persistenceUnits)
     }
 
+    /**
+     * Sets a single XML transformer output property.
+     * <p>
+     * Convenience method typically called inside a {@link #transformer(Closure)}
+     * block:
+     * </p>
+     * <pre>
+     * persistence {
+     *     main {
+     *         transformer {
+     *             outputProperty 'indent', 'yes'
+     *             outputProperty '{http://xml.apache.org/xslt}indent-amount', '2'
+     *         }
+     *     }
+     * }
+     * </pre>
+     *
+     * @param key   The transformer output property key.
+     * @param value The transformer output property value.
+     * @since 1.2.2
+     */
     void outputProperty(String key, String value) {
         outputProperties.put(key, value)
     }
 
     /**
-     * DSL Helper to allow the configuration format:
-     * transformer {
-     *     outputProperty 'indent', 'yes'
+     * Configures the XML transformer output properties using a closure.
+     * <p>
+     * Inside the closure, calls to {@link #outputProperty(String, String)} are
+     * delegated to this extension instance, allowing a clean DSL syntax:
+     * </p>
+     * <pre>
+     * persistence {
+     *     main {
+     *         transformer {
+     *             outputProperty 'indent', 'yes'
+     *             outputProperty '{http://xml.apache.org/xslt}indent-amount', '2'
+     *         }
+     *     }
      * }
+     * </pre>
+     *
+     * @param closure The configuration closure applied with delegate-first strategy.
+     * @since 1.2.2
      */
     void transformer(Closure<?> closure) {
         // Redirect execution scope to an isolated helper inside the extension execution matrix

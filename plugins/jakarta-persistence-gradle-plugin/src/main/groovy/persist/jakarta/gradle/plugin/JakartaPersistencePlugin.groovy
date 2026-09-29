@@ -47,6 +47,13 @@ import persist.jakarta.gradle.task.ProcessPersistenceDescriptor
  *     </li>
  * </ol>
  * <p>
+ * Individual persistence units can be skipped by setting their
+ * {@link persist.jakarta.gradle.extension.PersistenceUnitExtension#getEnabled() enabled}
+ * property to {@code false}. The generated XML output can be customized via
+ * the {@link persist.jakarta.gradle.extension.PersistenceExtension#getOutputProperties() outputProperties}
+ * map or the {@code transformer} DSL block.
+ * </p>
+ * <p>
  * This plugin replaces the deprecated {@code persistence-gradle-plugin}
  * ({@code io.github.jpersist.persistence}).
  * </p>

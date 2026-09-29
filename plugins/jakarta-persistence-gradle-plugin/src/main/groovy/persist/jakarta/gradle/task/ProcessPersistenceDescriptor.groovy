@@ -105,7 +105,16 @@ abstract class ProcessPersistenceDescriptor extends DefaultTask {
     abstract RegularFileProperty getDestinationFile()
 
     /**
-     * Custom user configuration overrides for the XML formatting transformer engine.
+     * Custom output properties applied to the XML {@link javax.xml.transform.Transformer}
+     * that formats the final {@code persistence.xml}.
+     * <p>
+     * These settings control indentation, encoding, XML declaration, and other
+     * serialization aspects. Values are populated from
+     * {@link persist.jakarta.gradle.extension.PersistenceExtension#getOutputProperties()}.
+     * </p>
+     *
+     * @return The lazy map property tracking the transformer output settings.
+     * @since 1.2.2
      */
     @Input
     abstract MapProperty<String, String> getTransformerSettings()
@@ -294,8 +303,18 @@ abstract class ProcessPersistenceDescriptor extends DefaultTask {
     }
 
     /**
-     * Normalizes all irregular string text formatting fragments and outputs
-     * a clean XML configuration indented by exactly 4 spaces.
+     * Normalizes whitespace in the raw XML string and writes a cleanly
+     * formatted {@code persistence.xml} to the target file.
+     * <p>
+     * The method strips extraneous whitespace between XML tags, then applies
+     * the transformer output properties (indentation, encoding, XML declaration)
+     * supplied via the {@link #getTransformerSettings()} map.
+     * </p>
+     *
+     * @param rawXml     The raw XML string to format.
+     * @param targetFile The destination file to write.
+     * @param settings   The transformer output property overrides.
+     * @since 1.2.2
      */
     private static void prettyPrint(String rawXml, File targetFile, Map<String, String> settings) {
         // Remove blank line wraps, multi-whitespaces gaps, and tab fragments

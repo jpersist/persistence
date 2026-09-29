@@ -60,8 +60,20 @@ abstract class PersistenceUnitExtension {
     }
 
     /**
-     * Controls if this specific persistence unit should be processed.
-     * Defaults to true.
+     * Controls whether this persistence unit is included during descriptor
+     * generation.
+     * <p>
+     * When set to {@code false}, the unit is excluded from the generated
+     * {@code persistence.xml}, effectively skipping its generation. This
+     * allows build scripts to selectively disable individual persistence
+     * units without removing their configuration.
+     * </p>
+     * <p>
+     * Defaults to {@code true}.
+     * </p>
+     *
+     * @return The lazy property tracking the enabled flag.
+     * @since 1.2.2
      */
     @Input
     abstract Property<Boolean> getEnabled()
