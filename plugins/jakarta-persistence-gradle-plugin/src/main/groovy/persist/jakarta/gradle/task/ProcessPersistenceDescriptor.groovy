@@ -1,11 +1,12 @@
 package persist.jakarta.gradle.task
 
+import groovy.xml.MarkupBuilder
 import groovy.xml.XmlParser
 import groovy.xml.XmlUtil
-import groovy.xml.MarkupBuilder
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
@@ -17,6 +18,12 @@ import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import org.gradle.work.DisableCachingByDefault
 import persist.jakarta.gradle.extension.PersistenceUnitExtension
+
+import javax.xml.transform.OutputKeys
+import javax.xml.transform.Transformer
+import javax.xml.transform.TransformerFactory
+import javax.xml.transform.stream.StreamResult
+import javax.xml.transform.stream.StreamSource
 
 /**
  * Gradle task that generates or merges a JPA {@code persistence.xml} descriptor.
@@ -96,6 +103,12 @@ abstract class ProcessPersistenceDescriptor extends DefaultTask {
      */
     @OutputFile
     abstract RegularFileProperty getDestinationFile()
+
+    /**
+     * Custom user configuration overrides for the XML formatting transformer engine.
+     */
+    @Input
+    abstract MapProperty<String, String> getTransformerSettings()
 
     /**
      * Executes the descriptor processing.
@@ -194,9 +207,11 @@ abstract class ProcessPersistenceDescriptor extends DefaultTask {
             }
         }
 
-        target.withWriter("UTF-8") { Writer writer ->
-            XmlUtil.serialize(persistence, writer)
-        }
+        // Serialize the Node structure to an in-memory string first, then format it
+        StringWriter rawXmlWriter = new StringWriter()
+        XmlUtil.serialize(persistence, rawXmlWriter)
+
+        prettyPrint(rawXmlWriter.toString(), target, transformerSettings.get())
     }
 
     /**
@@ -208,78 +223,127 @@ abstract class ProcessPersistenceDescriptor extends DefaultTask {
      * @param resolvedJars   The list of resolved JAR file names.
      */
     private void generate(File target, List<String> managedClasses, List<String> resolvedJars) {
-        target.withWriter("UTF-8") { Writer writer ->
-            MarkupBuilder xml = new MarkupBuilder(writer)
-            xml.setDoubleQuotes(true)
-            xml.omitEmptyAttributes = true
+        // Generate via MarkupBuilder into an in-memory string buffer instead of straight to a file writer
+        StringWriter rawXmlWriter = new StringWriter()
+        MarkupBuilder xml = new MarkupBuilder(rawXmlWriter)
+        xml.setDoubleQuotes(true)
+        xml.omitEmptyAttributes = true
 
-            Map<String, String> rootAttributes = [
-                "version": xmlVersion.get(),
-                "xmlns": "https://jakarta.ee/xml/ns/persistence",
-                "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
-                "xsi:schemaLocation": "https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_${xmlVersion.get().replace('.', '_')}.xsd"
-            ]
+        Map<String, String> rootAttributes = [
+            "version": xmlVersion.get(),
+            "xmlns": "https://jakarta.ee/xml/ns/persistence",
+            "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+            "xsi:schemaLocation": "https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_${xmlVersion.get().replace('.', '_')}.xsd"
+        ]
 
-            xml.persistence(rootAttributes) {
-                units.get().each { PersistenceUnitExtension unit ->
-                    "persistence-unit"([name: unit.name, "transaction-type": unit.transactionType.get()]) {
-                        if (unit.description.isPresent()) xml.invokeMethod("description", unit.description.get())
-                        if (unit.provider.isPresent()) xml.invokeMethod("provider", unit.provider.get())
+        xml.persistence(rootAttributes) {
+            units.get().each { PersistenceUnitExtension unit ->
+                "persistence-unit"([name: unit.name, "transaction-type": unit.transactionType.get()]) {
+                    if (unit.description.isPresent()) xml.invokeMethod("description", unit.description.get())
+                    if (unit.provider.isPresent()) xml.invokeMethod("provider", unit.provider.get())
 
-                        if (unit.dataSource.isPresent()) {
-                            boolean jta = unit.jta.getOrElse(false)
-                            if (jta) {
-                                "jta-data-source"(unit.dataSource.get())
-                            } else {
-                                "non-jta-data-source"(unit.dataSource.get())
-                            }
+                    if (unit.dataSource.isPresent()) {
+                        boolean jta = unit.jta.getOrElse(false)
+                        if (jta) {
+                            "jta-data-source"(unit.dataSource.get())
+                        } else {
+                            "non-jta-data-source"(unit.dataSource.get())
                         }
+                    }
 
-                        resolvedJars.each { String jarName ->
-                            "jar-file"(jarName)
+                    resolvedJars.each { String jarName ->
+                        "jar-file"(jarName)
+                    }
+
+                    if (unit.includeAllClasses.getOrElse(false)) {
+                        managedClasses.each { String className ->
+                            "class"(className)
                         }
+                    }
 
-                        if (unit.includeAllClasses.getOrElse(false)) {
-                            managedClasses.each { String className ->
-                                "class"(className)
-                            }
+                    if (unit.mappingFiles.isPresent()) {
+                        unit.mappingFiles.get().each { String mappingFile ->
+                            "mapping-file"(mappingFile)
                         }
+                    }
 
-                        if (unit.mappingFiles.isPresent()) {
-                            unit.mappingFiles.get().each { String mappingFile ->
-                                "mapping-file"(mappingFile)
-                            }
-                        }
+                    if (unit.excludedUnlistedClasses.isPresent() && unit.excludedUnlistedClasses.get()) {
+                        "exclude-unlisted-classes"()
+                    }
 
-                        if (unit.excludedUnlistedClasses.isPresent() && unit.excludedUnlistedClasses.get()) {
-                            "exclude-unlisted-classes"()
-                        }
+                    if (unit.sharedCacheMode.isPresent()) {
+                        "shared-cache-mode"(unit.sharedCacheMode.get().toString().toUpperCase())
+                    }
 
-                        if (unit.sharedCacheMode.isPresent()) {
-                            "shared-cache-mode"(unit.sharedCacheMode.get().toString().toUpperCase())
-                        }
+                    if (unit.validationMode.isPresent()) {
+                        "validation-mode"(unit.validationMode.get().toString().toUpperCase())
+                    }
 
-                        if (unit.validationMode.isPresent()) {
-                            "validation-mode"(unit.validationMode.get().toString().toUpperCase())
-                        }
-
-                        if (unit.properties.isPresent() && !unit.properties.get().isEmpty()) {
-                            properties {
-                                unit.properties.get().each { String propName, String propValue ->
-                                    property(name: propName, value: propValue)
-                                }
+                    if (unit.properties.isPresent() && !unit.properties.get().isEmpty()) {
+                        properties {
+                            unit.properties.get().each { String propName, String propValue ->
+                                property(name: propName, value: propValue)
                             }
                         }
                     }
                 }
             }
         }
+
+        prettyPrint(rawXmlWriter.toString(), target, transformerSettings.get())
+    }
+
+    /**
+     * Normalizes all irregular string text formatting fragments and outputs
+     * a clean XML configuration indented by exactly 4 spaces.
+     */
+    private static void prettyPrint(String rawXml, File targetFile, Map<String, String> settings) {
+        // Remove blank line wraps, multi-whitespaces gaps, and tab fragments
+        String sanitizedXml = rawXml
+            .replaceAll(/>\s+</, '><')
+            .replaceAll(/xsi:schemaLocation="\s+/, 'xsi:schemaLocation="')
+            .trim()
+
+        TransformerFactory factory = TransformerFactory.newInstance()
+
+        // Dynamic lookups for setting indentation spaces seamlessly
+        String indentAmount = settings.get("indent-amount") ?: settings.get("{http://xml.apache.org/xslt}indent-amount") ?: "4"
+        try {
+            factory.setAttribute("indent-number", Integer.parseInt(indentAmount))
+        } catch (Exception ignored) {}
+
+        Transformer transformer = factory.newTransformer()
+
+        // Dynamically apply every configured property passed via the extension DSL mapping array
+        settings.each { String key, String value ->
+            // Certain legacy implementations use custom key mappings; translate or inject them directly
+            if (key == "indent-amount") {
+                transformer.setOutputProperty(OutputKeys.INDENT, "yes")
+                transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", value)
+            } else if (key == "omit-xml-declaration") {
+                transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, value)
+            } else if (key == "encoding") {
+                transformer.setOutputProperty(OutputKeys.ENCODING, value)
+            } else if (key == "indent") {
+                transformer.setOutputProperty(OutputKeys.INDENT, value)
+            } else {
+                // Fallback for custom namespace parameters
+                transformer.setOutputProperty(key, value)
+            }
+        }
+
+        targetFile.withWriter("UTF-8") { Writer writer ->
+            transformer.transform(
+                new StreamSource(new StringReader(sanitizedXml)),
+                new StreamResult(writer)
+            )
+        }
     }
 
     /**
      * Internal utility methods for XML node manipulation during merge.
      */
-    static class Helper {
+    private static class Helper {
 
         /**
          * Appends a child element with the given tag name and text content to

@@ -64,6 +64,32 @@ class JakartaPersistencePluginFunctionalSpec extends Specification {
         Node prop = (Node) ((List<?>) props.get("property"))[0]
         prop.attribute("name") == "hibernate.show_sql"
         prop.attribute("value") == "true"
+
+        and: "the generated XML lines strictly follow the user customized two-space indentation tier"
+        List<String> lines = outputFile.readLines("UTF-8")
+        assert lines.size() > 1
+
+        lines.eachWithIndex { String line, int index ->
+            if (index == 0) return // Skip the XML header declaration block
+
+            // Ensure no trailing spaces exist
+            assert !line.endsWith(" ") : "Line ${index + 1} has trailing whitespace"
+
+            // FIX: Explicitly extract the matched string fragment using [0]
+            def matcher = (line =~ /^\s*/)
+            String leadingSpaces = matcher[0]
+
+            // Assert that the indentation is strictly a multiple of 2 spaces
+            assert leadingSpaces.length() % 2 == 0 : "Line ${index + 1} indentation is not a multiple of 2 spaces: '${line}'"
+
+            // Assert it follows the customized 2-space layout exactly
+            if (line.contains("<persistence-unit")) {
+                assert leadingSpaces.length() == 2 : "Persistence unit tag was not indented by exactly 2 spaces: '${line}'"
+            }
+            if (line.contains("<provider")) {
+                assert leadingSpaces.length() == 4 : "Nested provider tag was not indented by exactly 4 spaces: '${line}'"
+            }
+        }
     }
 
     def "should intelligently merge configuration values into an existing template persistence.xml"() {
@@ -105,6 +131,32 @@ class JakartaPersistencePluginFunctionalSpec extends Specification {
         // Assert both properties coexist peacefully
         propertyNodes.find { ((Node) it).attribute("name") == "hibernate.hbm2ddl.auto" && ((Node) it).attribute("value") == "update" } != null
         propertyNodes.find { ((Node) it).attribute("name") == "hibernate.show_sql" && ((Node) it).attribute("value") == "false" } != null
+
+        and: "the generated XML is pretty-printed with four-space indentation and no trailing spaces"
+        List<String> lines = outputFile.readLines("UTF-8")
+
+        // 1. Ensure the document isn't condensed onto a single line
+        assert lines.size() > 1
+
+        lines.eachWithIndex { String line, int index ->
+            // Skip the root XML declaration declaration line <?xml ...?>
+            if (index == 0) return
+
+            // 2. Strict Trailing Spaces Verification
+            // Checks that no line ends with a space or a hidden carriage return (\r)
+            assert !line.endsWith(" ") : "Line ${index + 1} has trailing whitespace: '${line}'"
+            assert !line.endsWith("\r") : "Line ${index + 1} contains unexpected CR line endings"
+
+            // 3. Strict 4-Space Indentation Level Verification
+            // Captures all leading whitespaces on the line
+            String leadingSpaces = (line =~ /^\s*/)[0]
+
+            // Asserts that the indentation is strictly a multiple of 4 spaces
+            assert leadingSpaces.length() % 4 == 0 : "Line ${index + 1} indentation is not a multiple of 4 spaces: '${line}'"
+
+            // Asserts that no hard literal tabs (\t) are used for padding
+            assert !leadingSpaces.contains("\t") : "Line ${index + 1} contains hard tab characters instead of spaces"
+        }
     }
 
     private GradleRunner createRunner() {

@@ -89,6 +89,9 @@ class JakartaPersistencePlugin implements Plugin<Project> {
             def processTask = project.tasks.register(processTaskName, ProcessPersistenceDescriptor) { task ->
                 task.xmlVersion.set(extension.version)
 
+                // Connect transformer properties configuration securely
+                task.transformerSettings.set(extension.outputProperties)
+
                 // Lazily filter out disabled units or clear out the list if the root extension is disabled
                 task.units.set(project.provider {
                     extension.persistenceUnits.matching { it.enabled.getOrElse(true)} as List

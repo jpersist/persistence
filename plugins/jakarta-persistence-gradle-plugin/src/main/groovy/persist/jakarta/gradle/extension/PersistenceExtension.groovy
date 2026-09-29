@@ -3,6 +3,7 @@ package persist.jakarta.gradle.extension
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 
@@ -53,6 +54,7 @@ abstract class PersistenceExtension {
      *
      * @return The lazy property tracking the specification version string.
      */
+    @Input
     abstract Property<String> getVersion()
 
     /**
@@ -64,6 +66,9 @@ abstract class PersistenceExtension {
      * </p>
      */
     final NamedDomainObjectContainer<PersistenceUnitExtension> persistenceUnits
+
+    @Input
+    abstract MapProperty<String, String> getOutputProperties()
 
     /**
      * Creates a new extension instance.
@@ -78,6 +83,12 @@ abstract class PersistenceExtension {
         // Default to spec version 3.0
         this.version.convention("3.0")
         this.persistenceUnits = objects.domainObjectContainer(PersistenceUnitExtension)
+
+        // Set up the default transformer properties exactly as required
+        this.outputProperties.put("indent", "yes")
+        this.outputProperties.put("omit-xml-declaration", "no")
+        this.outputProperties.put("encoding", "UTF-8")
+        this.outputProperties.put("{http://xml.apache.org/xslt}indent-amount", "4")
     }
 
     /**
@@ -114,6 +125,23 @@ abstract class PersistenceExtension {
      */
     void persistenceUnits(Action<? super NamedDomainObjectContainer<PersistenceUnitExtension>> action) {
         action.execute(persistenceUnits)
+    }
+
+    void outputProperty(String key, String value) {
+        outputProperties.put(key, value)
+    }
+
+    /**
+     * DSL Helper to allow the configuration format:
+     * transformer {
+     *     outputProperty 'indent', 'yes'
+     * }
+     */
+    void transformer(Closure<?> closure) {
+        // Redirect execution scope to an isolated helper inside the extension execution matrix
+        closure.setDelegate(this)
+        closure.setResolveStrategy(Closure.DELEGATE_FIRST)
+        closure.call()
     }
 
 }
