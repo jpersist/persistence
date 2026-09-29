@@ -142,7 +142,7 @@ abstract class ProcessPersistenceDescriptor extends DefaultTask {
 
     /**
      * Merges extension-defined overrides and resolved JAR entries into an
-     * existing {@code persistence.xml}.
+     * existing {@code persistence.xml}, maintaining strict XSD schema element ordering rules.
      *
      * @param source         The user-provided source descriptor.
      * @param target         The destination file to write.
@@ -162,9 +162,11 @@ abstract class ProcessPersistenceDescriptor extends DefaultTask {
 
             PersistenceUnitExtension extensionConfig = units.get().find { it.name == unitName }
 
+            // 1. Description & Provider Scalars
             Helper.mergeScalarNode(unitNode, "provider", extensionConfig?.provider?.orNull)
             Helper.mergeScalarNode(unitNode, "description", extensionConfig?.description?.orNull)
 
+            // 2. Data Sources (JTA vs non-JTA)
             if (extensionConfig?.dataSource?.isPresent()) {
                 boolean jta = extensionConfig.jta.getOrElse(false)
                 String targetNode = jta ? "jta-data-source" : "non-jta-data-source"
@@ -177,6 +179,70 @@ abstract class ProcessPersistenceDescriptor extends DefaultTask {
                 Helper.mergeScalarNode(unitNode, targetNode, extensionConfig.dataSource.get())
             }
 
+            // 3. Mapping Files Collection
+            if (extensionConfig?.mappingFiles?.isPresent() && !extensionConfig.mappingFiles.get().isEmpty()) {
+                List<?> existingMappingFiles = (List<?>) unitNode.get("mapping-file")
+                // Only fall back to extension defaults if the template layout contains no mapping file definitions
+                if (existingMappingFiles.isEmpty()) {
+                    extensionConfig.mappingFiles.get().each { String mappingFile ->
+                        unitNode.appendNode("mapping-file", mappingFile)
+                    }
+                }
+            }
+
+            // 4. Jar Files (Always override completely if our gradle configuration contains active elements)
+            if (!resolvedJars.isEmpty()) {
+                List<?> jarFilesList = (List<?>) unitNode.get("jar-file")
+                new ArrayList<>(jarFilesList).each { Object jarNode ->
+                    unitNode.remove((Node) jarNode)
+                }
+                resolvedJars.each { String jarName ->
+                    unitNode.appendNode("jar-file", jarName)
+                }
+            }
+
+            // 5. Classes (Always override completely if includeAllClasses is toggled on)
+            if (extensionConfig?.includeAllClasses?.orElse(false)) {
+                if (!managedClasses.isEmpty()) {
+                    List<?> classesList = (List<?>) unitNode.get("class")
+                    new ArrayList<>(classesList).each { Object jarNode ->
+                        unitNode.remove((Node) jarNode)
+                    }
+                    managedClasses.each { String className ->
+                        unitNode.appendNode("class", className)
+                    }
+                }
+            }
+
+            // 6. Exclude Unlisted Classes (Emits empty structural marker tag if flag matches true)
+            if (extensionConfig?.excludedUnlistedClasses?.isPresent()) {
+                List<?> existingExcludeNode = (List<?>) unitNode.get("exclude-unlisted-classes")
+                if (existingExcludeNode.isEmpty() && extensionConfig.excludedUnlistedClasses.get()) {
+                    unitNode.appendNode("exclude-unlisted-classes")
+                }
+            }
+
+            // 7. Shared Cache Mode Scalar
+            if (extensionConfig?.sharedCacheMode?.isPresent()) {
+                List<?> existingCacheNode = (List<?>) unitNode.get("shared-cache-mode")
+                if (existingCacheNode.isEmpty()) {
+                    // Standardizes string/boolean configurations into required UPPERCASE XSD enum tokens (e.g., ENABLE_SELECTIVE)
+                    String mode = extensionConfig.sharedCacheMode.get().toString().toUpperCase()
+                    unitNode.appendNode("shared-cache-mode", mode)
+                }
+            }
+
+            // 8. Validation Mode Scalar
+            if (extensionConfig?.validationMode?.isPresent()) {
+                List<?> existingValidationNode = (List<?>) unitNode.get("validation-mode")
+                if (existingValidationNode.isEmpty()) {
+                    // Standardizes configurations into required UPPERCASE XSD tokens (e.g., AUTO, CALLBACK, NONE)
+                    String mode = extensionConfig.validationMode.get().toString().toUpperCase()
+                    unitNode.appendNode("validation-mode", mode)
+                }
+            }
+
+            // 9. Vendor Specific Properties Block
             if (extensionConfig?.properties?.isPresent() && !extensionConfig.properties.get().isEmpty()) {
                 List<?> propertiesList = (List<?>) unitNode.get("properties")
                 Node propertiesNode = propertiesList.isEmpty() ? unitNode.appendNode("properties") : (Node) propertiesList.get(0)
@@ -193,30 +259,33 @@ abstract class ProcessPersistenceDescriptor extends DefaultTask {
                 }
             }
 
-            if (!resolvedJars.isEmpty()) {
-                List<?> jarFilesList = (List<?>) unitNode.get("jar-file")
-                new ArrayList<>(jarFilesList).each { Object jarNode ->
-                    unitNode.remove((Node) jarNode)
-                }
-                resolvedJars.each { String jarName ->
-                    unitNode.appendNode("jar-file", jarName)
-                }
-            }
+            // 10. Strict Schema XSD Ordering Enforcement
+            Map<String, Integer> elementOrderWeights = [
+                "description"              : 1,
+                "provider"                 : 2,
+                "jta-data-source"          : 3,
+                "non-jta-data-source"      : 3,
+                "mapping-file"             : 4,
+                "jar-file"                 : 5,
+                "class"                    : 6,
+                "exclude-unlisted-classes" : 7,
+                "shared-cache-mode"        : 8,
+                "validation-mode"          : 9,
+                "properties"               : 10
+            ]
 
-            if (extensionConfig?.includeAllClasses?.orElse(false)) {
-                if (!managedClasses.isEmpty()) {
-                    List<?> classesList = (List<?>) unitNode.get("class")
-                    new ArrayList<>(classesList).each { Object jarNode ->
-                        unitNode.remove((Node) jarNode)
-                    }
-                    managedClasses.each { String className ->
-                        unitNode.appendNode("class", className)
-                    }
-                }
+            List<?> originalChildren = new ArrayList<>(unitNode.children())
+            originalChildren.each { Object child -> unitNode.remove((Node) child) }
+
+            originalChildren.sort { Object a, Object b ->
+                int weightA = elementOrderWeights.get(((Node) a).name().toString(), 99)
+                int weightB = elementOrderWeights.get(((Node) b).name().toString(), 99)
+                return weightA <=> weightB
+            }.each { Object child ->
+                unitNode.append((Node) child)
             }
         }
 
-        // Serialize the Node structure to an in-memory string first, then format it
         StringWriter rawXmlWriter = new StringWriter()
         XmlUtil.serialize(persistence, rawXmlWriter)
 
@@ -260,6 +329,12 @@ abstract class ProcessPersistenceDescriptor extends DefaultTask {
                         }
                     }
 
+                    if (unit.mappingFiles.isPresent()) {
+                        unit.mappingFiles.get().each { String mappingFile ->
+                            "mapping-file"(mappingFile)
+                        }
+                    }
+
                     resolvedJars.each { String jarName ->
                         "jar-file"(jarName)
                     }
@@ -267,12 +342,6 @@ abstract class ProcessPersistenceDescriptor extends DefaultTask {
                     if (unit.includeAllClasses.getOrElse(false)) {
                         managedClasses.each { String className ->
                             "class"(className)
-                        }
-                    }
-
-                    if (unit.mappingFiles.isPresent()) {
-                        unit.mappingFiles.get().each { String mappingFile ->
-                            "mapping-file"(mappingFile)
                         }
                     }
 
