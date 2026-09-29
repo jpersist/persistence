@@ -1,6 +1,9 @@
 package persist.jakarta.gradle.plugin
 
 import groovy.io.FileType
+import org.gradle.api.artifacts.Configuration
+import org.gradle.api.plugins.JavaLibraryPlugin
+import org.gradle.api.provider.Provider
 import org.objectweb.asm.AnnotationVisitor
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassVisitor
@@ -23,7 +26,11 @@ import persist.jakarta.gradle.task.ProcessPersistenceDescriptor
  * <ol>
  *     <li>Applies the {@link org.gradle.api.plugins.JavaPlugin}.</li>
  *     <li>Creates a {@code jpa} dependency configuration for propagating
- *         platform/BOM version constraints into standard Java configurations.</li>
+ *         platform/BOM version constraints into standard Java configurations
+ *         ({@code implementation}, {@code compileOnly}, {@code annotationProcessor},
+ *         {@code runtimeOnly}). When the {@link org.gradle.api.plugins.JavaLibraryPlugin}
+ *         is applied, the {@code api} and {@code compileOnlyApi} configurations are
+ *         also extended from {@code jpa}.</li>
  *     <li>Registers the {@code persistence}
  *         {@link org.gradle.api.NamedDomainObjectContainer} of
  *         {@link persist.jakarta.gradle.extension.PersistenceExtension} as the
@@ -32,7 +39,9 @@ import persist.jakarta.gradle.task.ProcessPersistenceDescriptor
  *         <ul>
  *             <li>Creates a {@code jarFile} (or {@code <sourceSet>JarFile})
  *                 dependency configuration for declaring module JARs to be
- *                 injected as {@code <jar-file>} entries.</li>
+ *                 injected as {@code <jar-file>} entries. The {@code jarFile}
+ *                 configuration extends {@code implementation} (and {@code api}
+ *                 when the {@code java-library} plugin is present).</li>
  *             <li>Automatically initializes a
  *                 {@link persist.jakarta.gradle.extension.PersistenceExtension}
  *                 instance in the container, keyed by the source set name.</li>
@@ -66,7 +75,10 @@ class JakartaPersistencePlugin implements Plugin<Project> {
     void apply(Project project) {
         project.plugins.apply(JavaPlugin)
 
-        configureJpaConfiguration(project)
+        def jpaProvider = project.configurations.register('jpa') { config ->
+            config.canBeConsumed = false
+            config.canBeResolved = false
+        }
 
         // 1. Create a NamedDomainObjectContainer using Gradle's ObjectFactory
         def container = project.objects.domainObjectContainer(PersistenceExtension)
@@ -77,9 +89,9 @@ class JakartaPersistencePlugin implements Plugin<Project> {
         project.extensions.getByType(SourceSetContainer).configureEach { sourceSet ->
             // 1. Create native dependency configuration
             def jarFileConfigName = sourceSet.name == 'main' ? "jarFile" : "${sourceSet.name}JarFile"
-            def jarFileConfig = project.configurations.create(jarFileConfigName) {
-                canBeConsumed = false
-                canBeResolved = true
+            def jarFileConfigProvider = project.configurations.register(jarFileConfigName) { config ->
+                config.canBeConsumed = false
+                config.canBeResolved = true
             }
 
             // 2. Register Extension API DSL
@@ -87,8 +99,23 @@ class JakartaPersistencePlugin implements Plugin<Project> {
             // (e.g., this instantly builds 'persistence.main' and 'persistence.test')
             def extension = container.maybeCreate(sourceSet.name)
 
-            project.configurations.named(sourceSet.implementationConfigurationName).configure {
-                it.extendsFrom(jarFileConfig)
+            // Propagate platform version constraints into all standard Java configurations
+            extendProjectConfigurations(project, jpaProvider,
+                sourceSet.implementationConfigurationName,
+                sourceSet.compileOnlyConfigurationName,
+                sourceSet.annotationProcessorConfigurationName,
+                sourceSet.runtimeOnlyConfigurationName
+            )
+
+            extendProjectConfigurations(project, jarFileConfigProvider, sourceSet.implementationConfigurationName)
+
+            project.plugins.withType(JavaLibraryPlugin).configureEach {
+                extendProjectConfigurations(project, jpaProvider,
+                    sourceSet.apiConfigurationName,
+                    sourceSet.compileOnlyApiConfigurationName
+                )
+
+                extendProjectConfigurations(project, jarFileConfigProvider, sourceSet.apiConfigurationName)
             }
 
             // 3. Register standard descriptors processor task
@@ -117,6 +144,7 @@ class JakartaPersistencePlugin implements Plugin<Project> {
 
                 // Resolve first level declared jars
                 task.jarFileNames.set(project.provider {
+                    def jarFileConfig = jarFileConfigProvider.get()
                     if (jarFileConfig.isEmpty()) return []
                     jarFileConfig.resolvedConfiguration.firstLevelModuleDependencies.collectMany { dep ->
                         dep.moduleArtifacts.collect { artifact -> artifact.file.name }
@@ -152,34 +180,6 @@ class JakartaPersistencePlugin implements Plugin<Project> {
                 // Place the generated file into META-INF/ within the resources output
                 resourceTask.from(processTask.flatMap { it.destinationFile }) {
                     into("META-INF")
-                }
-            }
-        }
-    }
-
-    /**
-     * Creates the {@code jpa} dependency configuration and extends all
-     * standard Java source-set configurations from it, so that platform/BOM
-     * constraints declared in {@code jpa} propagate automatically.
-     *
-     * @param project The Gradle project to configure.
-     */
-    private static void configureJpaConfiguration(Project project) {
-        def persistence = project.configurations.register('jpa') { config ->
-            config.canBeConsumed = false
-            config.canBeResolved = false
-        }
-
-        // Propagate platform version constraints into all standard Java configurations
-        project.extensions.getByType(SourceSetContainer).configureEach { sourceSet ->
-            [
-                sourceSet.implementationConfigurationName,
-                sourceSet.compileOnlyConfigurationName,
-                sourceSet.annotationProcessorConfigurationName,
-                sourceSet.runtimeOnlyConfigurationName
-            ].forEach { configName ->
-                project.configurations.named(configName) {
-                    it.extendsFrom(persistence.get())
                 }
             }
         }
@@ -234,4 +234,29 @@ class JakartaPersistencePlugin implements Plugin<Project> {
 
         return jpaClasses.sort()
     }
+
+    /**
+     * Makes each of the named configurations extend from the given parent
+     * configuration, so that dependency constraints declared in the parent
+     * propagate automatically.
+     * <p>
+     * Only configurations that are actually registered in the project are
+     * matched, making this safe to call with names that may not yet exist
+     * (e.g.&nbsp;{@code api} before the {@code java-library} plugin is applied).
+     * </p>
+     *
+     * @param project The Gradle project whose configurations are extended.
+     * @param parent  A lazy provider for the parent configuration.
+     * @param names   The names of the configurations to extend.
+     */
+    private static void extendProjectConfigurations(Project project, Provider<Configuration> parent, String... names) {
+        Set<String> targetConfigNames = names as Set
+        // Safely match only the configurations that are actually registered
+        project.configurations.matching { config ->
+            targetConfigNames.contains(config.name)
+        }.configureEach { config ->
+            config.extendsFrom(parent.get())
+        }
+    }
+
 }
