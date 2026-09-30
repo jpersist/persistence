@@ -51,7 +51,8 @@ class HibernatePersistencePluginFunctionalSpec extends Specification {
         result.task(":compileTestJava").outcome == TaskOutcome.NO_SOURCE
         result.task(":hibernateEnhanceClasses").outcome == TaskOutcome.SUCCESS
         result.task(":hibernateEnhanceTestClasses").outcome == TaskOutcome.NO_SOURCE
-        result.task(":processPersistenceDescriptor").outcome == TaskOutcome.SKIPPED     // Because default persistence units list is empty
+        // Now persistence unit present in persistence.xml are auto-registered
+        result.task(":processPersistenceDescriptor").outcome == TaskOutcome.SUCCESS
         result.task(":jar").outcome == TaskOutcome.SUCCESS
 
         // Asserting against real logs intercepted from enhancement task

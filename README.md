@@ -64,9 +64,11 @@ dependencies {
 The `jakarta-persistence-gradle-plugin` module provides a plugin for generating and processing JPA `persistence.xml` descriptors:
 
 ### `io.github.jpersist.jpa`
-Registers a `processPersistenceDescriptor` task **for each Java source set** that either generates a complete `persistence.xml` from scratch using the `persistence` DSL, or merges extension-defined overrides (provider, data source, properties, jar-file entries) into an existing user-provided template. The `persistence` extension is a `NamedDomainObjectContainer` keyed by source set name (e.g. `main`, `test`), and each entry is automatically created when the source set is registered. It also introduces a `jpa` configuration for declaring platform/BOM version constraints that are injected into standard Java configurations.
+Registers a `processPersistenceDescriptor` task **for each Java source set** that either generates a complete `persistence.xml` from scratch using the `persistence` DSL, or merges extension-defined overrides (provider, data source, properties, jar-file entries) into an existing user-provided template. The `persistence` extension is a `NamedDomainObjectContainer` keyed by source set name (e.g. `main`, `test`), and each entry is automatically created when the source set is registered. It also introduces a `jpa` configuration for declaring platform/BOM version constraints that are injected into standard Java configurations (`implementation`, `compileOnly`, `annotationProcessor`, `runtimeOnly`). When the `java-library` plugin is applied, the `api` and `compileOnlyApi` configurations are also extended from `jpa`.
 
-The plugin also provides a `jarFile` configuration that allows you to declare project or external dependencies whose resolved artifact names are automatically injected as `<jar-file>` elements in the generated `persistence.xml`. This is particularly useful in multi-module projects where a persistence unit needs to reference entity classes packaged in separate JAR modules.
+The plugin also provides a `jarFile` configuration that allows you to declare project or external dependencies whose resolved artifact names are automatically injected as `<jar-file>` elements in the generated `persistence.xml`. The `jarFile` configuration extends `implementation` (and `api` when the `java-library` plugin is present). This is particularly useful in multi-module projects where a persistence unit needs to reference entity classes packaged in separate JAR modules.
+
+Persistence units already declared in a user-provided `persistence.xml` template are automatically registered into the extension at configuration time, allowing build scripts to customise them (e.g. disable or override properties) without re-declaring them in the DSL.
 
 **Groovy DSL:**
 ```groovy
@@ -381,7 +383,7 @@ Complete, ready-to-use example projects are available in the [`examples/`](examp
 |---------|-------------|
 | [`eclipselink-example/`](examples/eclipselink-example/) | EclipseLink with metamodel generation, static weaving, and platform BOM |
 | [`hibernate-example/`](examples/hibernate-example/) | Hibernate ORM with metamodel generation, bytecode enhancement, and platform BOM |
-| [`jakarta-persistence-example/`](examples/jakarta-persistence-example/) | Jakarta Persistence descriptor generation and merging with the `io.github.jpersist.jpa` plugin, including skip and formatting features |
+| [`jakarta-persistence-example/`](examples/jakarta-persistence-example/) | Jakarta Persistence descriptor generation and merging with the `io.github.jpersist.jpa` plugin, including skip, formatting, auto-registration, and `java-library` integration features |
 
 Each example includes both **Groovy DSL** (`build.gradle`) and **Kotlin DSL** (`build.gradle.kts`) build files.
 

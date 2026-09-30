@@ -1,10 +1,10 @@
 plugins {
     `java-library`
-    id("io.github.jpersist.eclipse-persistence") version "1.3.0"
+    id("io.github.jpersist.eclipse-persistence") version "1.3.2"
 }
 
 dependencies {
-    persistence(platform("org.eclipse.persistence:org.eclipse.persistence.parent:4.0.9"))
+    jpa(platform("org.eclipse.persistence:org.eclipse.persistence.parent:4.0.9"))
 
     compileOnly("jakarta.persistence:jakarta.persistence-api")
 

@@ -36,35 +36,48 @@ class EclipsePersistencePluginFunctionalSpec extends Specification {
         }
     }
 
-    def "plugin executes eclipseWeaveClasses task successfully and modifies classes"() {
-        given:
+    def "plugin auto-registers existing persistence units from file and executes successfully"() {
+        given: "a test runner executing against the pre-loaded resource project template"
         def runner = createRunner()
 
-        when:
+        when: "building the project lifecycle milestones"
         def result = runner.build()
 
-        then:
-        // Verify that both compilation and our custom weaving tasks run successfully
+        then: "the core java compilation and processing tasks pass cleanly"
         result.task(":compileJava").outcome == TaskOutcome.SUCCESS
         result.task(":eclipseWeaveClasses").outcome == TaskOutcome.SUCCESS
         result.task(":eclipseWeaveTestClasses").outcome == TaskOutcome.NO_SOURCE
-        result.task(":processPersistenceDescriptor").outcome == TaskOutcome.SKIPPED
         result.task(":jar").outcome == TaskOutcome.SUCCESS
 
-        // Asserting against real logs intercepted from EclipseLink processing
+        and: "the persistence descriptor task shifts from SKIPPED to SUCCESS due to auto-registration"
+        // Previously, this evaluated to SKIPPED because the DSL container was empty.
+        // Now, it detects the unit declared in the resource project's template file,
+        // initializes it, runs the ASM scanner, and outputs a success marker.
+        result.task(":processPersistenceDescriptor").outcome == TaskOutcome.SUCCESS
+
+        and: "the dynamic ASM scanner has cleanly extracted and injected compilation bytecode annotations"
+        // Read the final processed build output artifact descriptor file
+        File processedXmlFile = new File(projectDir.toFile(), 'build/generated/resources/main/META-INF/persistence.xml')
+        assert processedXmlFile.exists()
+
+        String xmlContent = processedXmlFile.text
+
+        // Assert that the processor automatically injected the discovered entity class
+        // into the parsed persistence unit structure block
+        assert xmlContent.contains("<class>org.eclipse.persistence.entity.Person</class>")
+
+        and: "standard logs intercepted from EclipseLink processing are maintained"
         result.output.contains("The access type for the persistent class [class org.eclipse.persistence.entity.Person] is set to [FIELD]")
         result.output.contains("The alias name for the entity class [class org.eclipse.persistence.entity.Person] is being defaulted to: Person")
 
         // Verify that downstream distribution output file contains our class
         File jarFile = new File(projectDir.toFile(), 'build/libs/test-eclipse-persistence-module.jar')
-        jarFile.exists()
+        assert jarFile.exists()
 
-        and: "The compiled class is present in the artifact package structure"
+        and: "the compiled class is present in the final packaged archive package structure"
         JarFile archive = new JarFile(jarFile)
-        archive.getJarEntry('org/eclipse/persistence/entity/Person.class') != null
-
-        and: "The generated static metamodel companion class file is packed"
-        archive.getJarEntry('org/eclipse/persistence/entity/Person_.class') != null
+        assert archive.getJarEntry('org/eclipse/persistence/entity/Person.class') != null
+        assert archive.getJarEntry('org/eclipse/persistence/entity/Person_.class') != null
         archive.close()
     }
 

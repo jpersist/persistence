@@ -12,10 +12,11 @@
  *         {@code processPersistenceDescriptor} task that generates or merges the
  *         final {@code persistence.xml} into the build output. Supports
  *         skipping generation of individual persistence units, customizing
- *         the XML output formatting via transformer properties, and smoothly
+ *         the XML output formatting via transformer properties, smoothly
  *         extending the extra configurations of the
  *         {@link org.gradle.api.plugins.JavaLibraryPlugin java-library} plugin
- *         when it is applied.</li>
+ *         when it is applied, and automatically registering persistence units
+ *         found in a user-provided {@code persistence.xml} template.</li>
  * </ul>
  * <p>
  * The plugin is designed as a replacement for the deprecated
