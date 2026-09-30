@@ -1,6 +1,7 @@
 package persist.jakarta.gradle.plugin
 
 import groovy.io.FileType
+import groovy.xml.XmlParser
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.plugins.JavaLibraryPlugin
 import org.gradle.api.provider.Provider
@@ -45,6 +46,11 @@ import persist.jakarta.gradle.task.ProcessPersistenceDescriptor
  *             <li>Automatically initializes a
  *                 {@link persist.jakarta.gradle.extension.PersistenceExtension}
  *                 instance in the container, keyed by the source set name.</li>
+ *             <li>Automatically parses any existing {@code persistence.xml}
+ *                 template in the source set's resources and pre-registers
+ *                 the {@code <persistence-unit>} names into the extension,
+ *                 so they can be configured from the build script without
+ *                 explicit re-declaration.</li>
  *             <li>Registers a {@code processPersistenceDescriptor} (or
  *                 {@code process<SourceSet>PersistenceDescriptor})
  *                 {@link ProcessPersistenceDescriptor} task that generates or
@@ -61,6 +67,12 @@ import persist.jakarta.gradle.task.ProcessPersistenceDescriptor
  * property to {@code false}. The generated XML output can be customized via
  * the {@link persist.jakarta.gradle.extension.PersistenceExtension#getOutputProperties() outputProperties}
  * map or the {@code transformer} DSL block.
+ * </p>
+ * <p>
+ * Persistence units already declared in a user-provided {@code persistence.xml}
+ * template are automatically registered into the extension at configuration time,
+ * allowing build scripts to customise them (e.g.&nbsp;disable or override properties)
+ * without re-declaring them.
  * </p>
  * <p>
  * This plugin replaces the deprecated {@code persistence-gradle-plugin}
@@ -98,6 +110,9 @@ class JakartaPersistencePlugin implements Plugin<Project> {
             // Automatically initialize a configuration instance inside the container matching the source set name
             // (e.g., this instantly builds 'persistence.main' and 'persistence.test')
             def extension = container.maybeCreate(sourceSet.name)
+
+            // Auto-register persistence units already declared in the user's persistence.xml file
+            autoRegisterExistingUnits(project, sourceSet, extension)
 
             // Propagate platform version constraints into all standard Java configurations
             extendProjectConfigurations(project, jpaProvider,
@@ -181,6 +196,46 @@ class JakartaPersistencePlugin implements Plugin<Project> {
                 resourceTask.from(processTask.flatMap { it.destinationFile }) {
                     into("META-INF")
                 }
+            }
+        }
+    }
+
+    /**
+     * Parses the source {@code persistence.xml} (if it exists) and automatically
+     * pre-populates the {@link PersistenceExtension#getPersistenceUnits() persistenceUnits}
+     * container with the {@code <persistence-unit>} names found inside.
+     * <p>
+     * This allows users to configure (e.g.&nbsp;enable/disable, override properties)
+     * persistence units that are already declared in their template descriptor
+     * without having to re-declare them in the build script. A non-validating,
+     * namespace-unaware parse is used so that temporarily malformed XML does not
+     * break Gradle configuration sync.
+     * </p>
+     *
+     * @param project   The Gradle project used to resolve the source file path.
+     * @param sourceSet The source set whose resources directory is inspected.
+     * @param extension The persistence extension whose unit container is populated.
+     */
+    private static void autoRegisterExistingUnits(Project project, SourceSet sourceSet, PersistenceExtension extension) {
+        def sourcePath = "src/${sourceSet.name}/resources/META-INF/persistence.xml"
+        def sourceFile = project.file(sourcePath)
+
+        if (sourceFile.exists()) {
+            try {
+                // Defensive, non-validating parse just to extract the names block during configuration phase
+                def xmlParser = new XmlParser(false, false)
+                def rootNode = xmlParser.parse(sourceFile)
+
+                List<?> unitNodes = (List<?>) rootNode.get("persistence-unit")
+                unitNodes.each { Object unitObj ->
+                    String unitName = (String) ((Node) unitObj).attribute("name")
+                    if (unitName && !unitName.trim().isEmpty()) {
+                        // Automatically register the unit in the extension container if it isn't already there
+                        extension.persistenceUnits.maybeCreate(unitName)
+                    }
+                }
+            } catch (Exception ignored) {
+                // Fail-safe skip to avoid crashing Gradle configuration sync if the user's working XML is temporarily malformed
             }
         }
     }
