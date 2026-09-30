@@ -41,8 +41,6 @@ abstract class PersistenceUnitExtension {
         this.transactionType.convention("RESOURCE_LOCAL")
         this.excludedUnlistedClasses.convention(false)
         this.includeAllClasses.convention(true)
-        this.sharedCacheMode.convention(false)
-        this.validationMode.convention("AUTO")
     }
 
     /**
@@ -168,23 +166,31 @@ abstract class PersistenceUnitExtension {
     /**
      * Whether the shared (second-level) cache is enabled.
      * <p>
-     * Defaults to {@code false}.
+     * When present, the value is emitted as a {@code <shared-cache-mode>}
+     * element using the corresponding uppercase XSD enum token. This property
+     * has no default convention and is optional; when absent, the element is
+     * omitted from the generated descriptor.
      * </p>
      *
      * @return The lazy property tracking the shared-cache-mode flag.
      */
     @Input
+    @Optional
     abstract Property<Boolean> getSharedCacheMode()
 
     /**
      * The Bean Validation mode ({@code AUTO}, {@code CALLBACK}, or {@code NONE}).
      * <p>
-     * Defaults to {@code "AUTO"}.
+     * When present, the value is emitted as a {@code <validation-mode>}
+     * element using the corresponding uppercase XSD token. This property has
+     * no default convention and is optional; when absent, the element is
+     * omitted from the generated descriptor.
      * </p>
      *
      * @return The lazy property tracking the validation mode.
      */
     @Input
+    @Optional
     abstract Property<String> getValidationMode()
 
     /**
