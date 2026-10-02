@@ -66,6 +66,10 @@ class EclipsePersistencePluginFunctionalSpec extends Specification {
         // into the parsed persistence unit structure block
         assert xmlContent.contains("<class>org.eclipse.persistence.entity.Person</class>")
 
+        and: "version and namespace are for the right descriptor processor delegate"
+        assert xmlContent.contains("version=\"2.2\"")
+        assert xmlContent.contains("xmlns=\"http://xmlns.jcp.org/xml/ns/persistence\"")
+
         and: "standard logs intercepted from EclipseLink processing are maintained"
         result.output.contains("The access type for the persistent class [class org.eclipse.persistence.entity.Person] is set to [FIELD]")
         result.output.contains("The alias name for the entity class [class org.eclipse.persistence.entity.Person] is being defaulted to: Person")

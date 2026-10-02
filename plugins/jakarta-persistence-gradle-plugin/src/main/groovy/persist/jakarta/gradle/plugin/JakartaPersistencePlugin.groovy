@@ -275,6 +275,14 @@ class JakartaPersistencePlugin implements Plugin<Project> {
                 def xmlParser = new XmlParser(false, false)
                 def rootNode = xmlParser.parse(sourceFile)
 
+                // Extract the root version attribute from the <persistence> tag
+                String xmlVersionAttr = (String) rootNode.attribute("version")
+                if (xmlVersionAttr && !xmlVersionAttr.trim().isEmpty()) {
+                    // Update the extension's version convention to match the physical XML version seamlessly
+                    extension.version.convention(xmlVersionAttr.trim())
+                }
+
+                // Process the unit elements as before
                 List<?> unitNodes = (List<?>) rootNode.get("persistence-unit")
                 unitNodes.each { Object unitObj ->
                     String unitName = (String) ((Node) unitObj).attribute("name")
