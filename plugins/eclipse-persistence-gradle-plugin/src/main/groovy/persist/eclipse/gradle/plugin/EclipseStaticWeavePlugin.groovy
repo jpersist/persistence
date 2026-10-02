@@ -36,7 +36,6 @@ class EclipseStaticWeavePlugin implements Plugin<Project> {
             weaveConfig.extendsFrom(it)
         }
 
-        project.dependencies.add('weave', 'jakarta.persistence:jakarta.persistence-api')
         project.dependencies.add('weave', 'org.eclipse.persistence:org.eclipse.persistence.jpa')
 
         project.extensions.getByType(SourceSetContainer).configureEach { sourceSet ->

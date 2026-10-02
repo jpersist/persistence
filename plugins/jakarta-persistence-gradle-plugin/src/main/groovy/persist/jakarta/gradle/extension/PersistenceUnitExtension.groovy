@@ -176,7 +176,7 @@ abstract class PersistenceUnitExtension {
      */
     @Input
     @Optional
-    abstract Property<Boolean> getSharedCacheMode()
+    abstract Property<String> getSharedCacheMode()
 
     /**
      * The Bean Validation mode ({@code AUTO}, {@code CALLBACK}, or {@code NONE}).
