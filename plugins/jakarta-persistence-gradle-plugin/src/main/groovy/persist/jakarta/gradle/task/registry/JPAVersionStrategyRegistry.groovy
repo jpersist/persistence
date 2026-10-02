@@ -9,13 +9,28 @@ import persist.jakarta.gradle.task.delegate.JPA32DescriptorProcessorDelegate
 import java.util.concurrent.ConcurrentHashMap
 
 /**
- * Registry Factory coordinating schema coordinates and mapping
- * specification version inputs to specialized Strategy Delegates.
+ * Registry factory that maps JPA specification version strings to their
+ * corresponding XML namespace, schema location, and
+ * {@link DescriptorProcessorDelegate} strategy implementation.
+ * <p>
+ * All supported versions are registered eagerly in a static initializer
+ * block. At task execution time, {@link JPAVersionStrategyRegistry#resolve(String)} performs a
+ * thread-safe lookup and returns the fully configured strategy metadata
+ * or throws a {@link org.gradle.api.GradleException} for unsupported
+ * versions.
+ * </p>
+ *
+ * @since 1.4.0
  */
 class JPAVersionStrategyRegistry {
 
+    /** The XML namespace URI for the {@code <persistence>} root element. */
     final String namespace
+
+    /** The full URL of the XSD schema used in {@code xsi:schemaLocation}. */
     final String schemaLocation
+
+    /** The version-specific strategy that performs descriptor processing. */
     final DescriptorProcessorDelegate delegate
 
     private static final Map<String, JPAVersionStrategyRegistry> REGISTRY = new ConcurrentHashMap<>()
@@ -59,7 +74,12 @@ class JPAVersionStrategyRegistry {
     }
 
     /**
-     * Special helper for registering versions where the schema name matches the version string.
+     * Registers a delegate for each of its supported versions, associating
+     * the given namespace and schema location with the version key.
+     *
+     * @param delegate        The strategy implementation to register.
+     * @param namespace       The XML namespace URI.
+     * @param schemaFileName  The XSD schema location URL.
      */
     private static void registerDelegate(DescriptorProcessorDelegate delegate, String namespace, String schemaFileName) {
         delegate.getSupportedVersions().forEach { version ->
@@ -73,7 +93,12 @@ class JPAVersionStrategyRegistry {
     }
 
     /**
-     * Resolves the complete strategy metadata matrix based on the requested version.
+     * Resolves the complete strategy metadata for the requested JPA
+     * specification version.
+     *
+     * @param version The JPA version string (e.g. {@code "3.2"}).
+     * @return The matching registry entry containing namespace, schema, and delegate.
+     * @throws org.gradle.api.GradleException if the version is not supported.
      */
     static JPAVersionStrategyRegistry resolve(String version) {
         JPAVersionStrategyRegistry strategy = REGISTRY.get(version)

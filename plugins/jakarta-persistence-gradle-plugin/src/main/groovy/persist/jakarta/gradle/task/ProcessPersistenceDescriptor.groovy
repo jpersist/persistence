@@ -114,12 +114,12 @@ abstract class ProcessPersistenceDescriptor extends DefaultTask {
     /**
      * Executes the descriptor processing.
      * <p>
-     * Delegates to {@link Helper#mergeDescriptor} when a source file exists,
-     * or to {@link Helper#generateDescriptor} otherwise. All XML node
-     * manipulation is performed inside the static {@link Helper} inner class
-     * to avoid Groovy dynamic method resolution conflicts with Gradle's
-     * decorated task subclasses.
+     * Resolves the appropriate {@link persist.jakarta.gradle.task.delegate.DescriptorProcessorDelegate}
+     * via the {@link JPAVersionStrategyRegistry} based on the configured JPA specification version,
+     * then delegates the merge or generation work to that strategy implementation.
      * </p>
+     *
+     * @since 1.4.0
      */
     @TaskAction
     void process() {

@@ -14,6 +14,18 @@ The goal of this ecosystem is to decouple boilerplate configuration, automate st
 
 ---
 
+## What's New in 1.4.0
+
+Version **1.4.0** introduces several major improvements:
+
+- **Out-of-the-box JPA schema support from 2.0 to 3.2** — Descriptor processing now covers all JPA specification versions (2.0, 2.1, 2.2, 3.0, 3.1, 3.2) via a new strategy/delegate architecture. The appropriate XML namespace and schema location are resolved automatically based on the configured version.
+- **Customizable `jar-file` location** — The `jarFile` dependency declaration now supports a custom location attribute (`io.github.jpersist.jpa.location`) that controls the path prefix written into `<jar-file>` elements. This is useful when JAR artifacts are deployed to a non-default directory within the application archive.
+- **Explicit task dependency for EclipseLink weaving** — The `eclipseWeaveClasses` task now declares the `processPersistenceDescriptor` output file as an explicit input, establishing an immutable task execution graph dependency that guarantees descriptor generation completes before weaving begins.
+- **Removed implicit `implementation` configuration** — JPA engine dependencies are no longer added to the `implementation` configuration implicitly, giving projects full control over their dependency scopes.
+- **Removed Eclipse Buildship integration** — The automatic Eclipse IDE classpath synchronization hooks have been removed, simplifying the plugin internals.
+
+---
+
 ## Repository Structure
 
 The suite is organized into four primary submodules, each containing fully documented, type-safe Gradle plugins:
@@ -33,7 +45,13 @@ The `persistence-gradle-plugin` module provides a foundational plugin for centra
 ### `io.github.jpersist.persistence-platform`
 Introduces a dedicated `persistence` configuration that allows you to declare a JPA implementation platform (BOM) dependency. Version constraints from the declared platform are automatically propagated into all standard Java configurations (`implementation`, `compileOnly`, `annotationProcessor`, `runtimeOnly`, and `testImplementation`), so individual JPA dependencies no longer need explicit version strings.
 
-**Groovy DSL:**
+<details open>
+  <summary>
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/groovy/groovy-original.svg" width="16" height="16" valign="middle" alt="Groovy">
+    <b>Groovy DSL</b>
+  </summary>
+  <br>
+
 ```groovy
 plugins {
     id 'io.github.jpersist.hibernate-persistence'  // or 'io.github.jpersist.eclipse-persistence'
@@ -43,8 +61,15 @@ dependencies {
     persistence platform('org.hibernate.orm:hibernate-platform:6.6.5.Final')
 }
 ```
+</details>
 
-**Kotlin DSL:**
+<details>
+  <summary>
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/kotlin/kotlin-original.svg" width="16" height="16" valign="middle" alt="Kotlin">
+    <b>Kotlin DSL</b>
+  </summary>
+  <br>
+
 ```kotlin
 plugins {
     id("io.github.jpersist.hibernate-persistence")  // or "io.github.jpersist.eclipse-persistence"
@@ -54,6 +79,7 @@ dependencies {
     persistence(platform("org.hibernate.orm:hibernate-platform:6.6.5.Final"))
 }
 ```
+</details>
 
 > **Note:** The aggregate plugins (`hibernate-persistence` and `eclipse-persistence`) automatically apply the platform plugin, so you only need to declare the `persistence` dependency.
 
@@ -70,7 +96,13 @@ The plugin also provides a `jarFile` configuration that allows you to declare pr
 
 Persistence units already declared in a user-provided `persistence.xml` template are automatically registered into the extension at configuration time, allowing build scripts to customise them (e.g. disable or override properties) without re-declaring them in the DSL.
 
-**Groovy DSL:**
+<details open>
+  <summary>
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/groovy/groovy-original.svg" width="16" height="16" valign="middle" alt="Groovy">
+    <b>Groovy DSL</b>
+  </summary>
+  <br>
+
 ```groovy
 plugins {
     id 'io.github.jpersist.jpa'
@@ -95,8 +127,15 @@ persistence {
     }
 }
 ```
+</details>
 
-**Kotlin DSL:**
+<details>
+  <summary>
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/kotlin/kotlin-original.svg" width="16" height="16" valign="middle" alt="Kotlin">
+    <b>Kotlin DSL</b>
+  </summary>
+  <br>
+
 ```kotlin
 plugins {
     id("io.github.jpersist.jpa")
@@ -121,12 +160,19 @@ persistence {
     }
 }
 ```
+</details>
 
 #### Skipping Persistence Unit Generation
 
 Individual persistence units can be excluded from the generated `persistence.xml` by setting their `enabled` property to `false`. When all units are disabled, the `processPersistenceDescriptor` task is automatically skipped. This allows build scripts to selectively disable units without removing their configuration:
 
-**Groovy DSL:**
+<details open>
+  <summary>
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/groovy/groovy-original.svg" width="16" height="16" valign="middle" alt="Groovy">
+    <b>Groovy DSL</b>
+  </summary>
+  <br>
+
 ```groovy
 persistence {
     main {
@@ -138,8 +184,15 @@ persistence {
     }
 }
 ```
+</details>
 
-**Kotlin DSL:**
+<details>
+  <summary>
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/kotlin/kotlin-original.svg" width="16" height="16" valign="middle" alt="Kotlin">
+    <b>Kotlin DSL</b>
+  </summary>
+  <br>
+
 ```kotlin
 persistence {
     named("main") {
@@ -151,12 +204,19 @@ persistence {
     }
 }
 ```
+</details>
 
 #### Formatting the Generated XML
 
 The XML output of the generated `persistence.xml` can be customized via the `transformer` DSL block or the `outputProperty` method. Default settings include `indent=yes`, `omit-xml-declaration=no`, `encoding=UTF-8`, and an indent amount of `4` spaces:
 
-**Groovy DSL:**
+<details open>
+  <summary>
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/groovy/groovy-original.svg" width="16" height="16" valign="middle" alt="Groovy">
+    <b>Groovy DSL</b>
+  </summary>
+  <br>
+
 ```groovy
 persistence {
     main {
@@ -167,8 +227,15 @@ persistence {
     }
 }
 ```
+</details>
 
-**Kotlin DSL:**
+<details>
+  <summary>
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/kotlin/kotlin-original.svg" width="16" height="16" valign="middle" alt="Kotlin">
+    <b>Kotlin DSL</b>
+  </summary>
+  <br>
+
 ```kotlin
 persistence {
     named("main") {
@@ -179,6 +246,7 @@ persistence {
     }
 }
 ```
+</details>
 
 ---
 
@@ -198,7 +266,13 @@ An aggregate utility plugin designed for maximum simplicity. Applying this singl
 #### EclipseLink DSL Customization
 By default, the plugin isolates contexts per source set and maps conventions natively. If your target configuration file lives in a non-standard path, you can easily override it inside your `build.gradle`:
 
-**Groovy DSL:**
+<details open>
+  <summary>
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/groovy/groovy-original.svg" width="16" height="16" valign="middle" alt="Groovy">
+    <b>Groovy DSL</b>
+  </summary>
+  <br>
+
 ```groovy
 eclipselink {
     main {
@@ -213,8 +287,15 @@ eclipselink {
     }
 }
 ```
+</details>
 
-**Kotlin DSL:**
+<details>
+  <summary>
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/kotlin/kotlin-original.svg" width="16" height="16" valign="middle" alt="Kotlin">
+    <b>Kotlin DSL</b>
+  </summary>
+  <br>
+
 ```kotlin
 the<NamedDomainObjectContainer<persist.eclipse.gradle.extension.EclipselinkExtension>>().named("main") {
     jpaModelgen {
@@ -227,6 +308,7 @@ the<NamedDomainObjectContainer<persist.eclipse.gradle.extension.EclipselinkExten
     }
 }
 ```
+</details>
 
 ---
 
@@ -246,7 +328,13 @@ An aggregate utility plugin that configures a complete standard Hibernate baseli
 #### Hibernate DSL Customization
 Sane optimization defaults are configured automatically. You can cleanly adjust or override enhancement behaviors via the following block:
 
-**Groovy DSL:**
+<details open>
+  <summary>
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/groovy/groovy-original.svg" width="16" height="16" valign="middle" alt="Groovy">
+    <b>Groovy DSL</b>
+  </summary>
+  <br>
+
 ```groovy
 hibernate {
     enhancement {
@@ -257,8 +345,15 @@ hibernate {
     }
 }
 ```
+</details>
 
-**Kotlin DSL:**
+<details>
+  <summary>
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/kotlin/kotlin-original.svg" width="16" height="16" valign="middle" alt="Kotlin">
+    <b>Kotlin DSL</b>
+  </summary>
+  <br>
+
 ```kotlin
 hibernate {
     enhancement {
@@ -269,6 +364,7 @@ hibernate {
     }
 }
 ```
+</details>
 
 ---
 
@@ -281,7 +377,13 @@ The simplest and recommended approach — declare a platform BOM on the `persist
 
 > 📌 **Note:** Starting from version **1.2.0**, the `persistence` configuration will become `jpa`, providing the same functionality through the `jakarta-persistence-gradle-plugin`.
 
-**Groovy DSL:**
+<details open>
+  <summary>
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/groovy/groovy-original.svg" width="16" height="16" valign="middle" alt="Groovy">
+    <b>Groovy DSL</b>
+  </summary>
+  <br>
+
 ```groovy
 plugins {
     id 'io.github.jpersist.hibernate-persistence'
@@ -295,8 +397,15 @@ dependencies {
     // persistence platform('org.eclipse.persistence:org.eclipse.persistence.parent:4.0.9')
 }
 ```
+</details>
 
-**Kotlin DSL:**
+<details>
+  <summary>
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/kotlin/kotlin-original.svg" width="16" height="16" valign="middle" alt="Kotlin">
+    <b>Kotlin DSL</b>
+  </summary>
+  <br>
+
 ```kotlin
 plugins {
     id("io.github.jpersist.hibernate-persistence")
@@ -310,6 +419,7 @@ dependencies {
     // persistence(platform("org.eclipse.persistence:org.eclipse.persistence.parent:4.0.9"))
 }
 ```
+</details>
 
 ### Option B: Using a Gradle Version Catalog
 Define explicit versions in your project's `gradle/libs.versions.toml`:
@@ -326,36 +436,64 @@ hibernate-core = { group = "org.hibernate.orm", name = "hibernate-core", version
 
 Then apply them inside your submodule dependencies:
 
-**Groovy DSL:**
+<details open>
+  <summary>
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/groovy/groovy-original.svg" width="16" height="16" valign="middle" alt="Groovy">
+    <b>Groovy DSL</b>
+  </summary>
+  <br>
+
 ```groovy
 dependencies {
     implementation libs.eclipselink.jpa // or libs.hibernate.core
 }
 ```
+</details>
 
-**Kotlin DSL:**
+<details>
+  <summary>
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/kotlin/kotlin-original.svg" width="16" height="16" valign="middle" alt="Kotlin">
+    <b>Kotlin DSL</b>
+  </summary>
+  <br>
+
 ```kotlin
 dependencies {
     implementation(libs.eclipselink.jpa) // or libs.hibernate.core
 }
 ```
+</details>
 
 ### Option C: Using an Official Platform / BOM Directly
 Enforce consistency using an upstream Bill of Materials platform on `implementation`:
 
-**Groovy DSL:**
+<details open>
+  <summary>
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/groovy/groovy-original.svg" width="16" height="16" valign="middle" alt="Groovy">
+    <b>Groovy DSL</b>
+  </summary>
+  <br>
+
 ```groovy
 dependencies {
     implementation platform('org.hibernate.orm:hibernate-platform:6.6.5.Final')
 }
 ```
+</details>
 
-**Kotlin DSL:**
+<details>
+  <summary>
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/kotlin/kotlin-original.svg" width="16" height="16" valign="middle" alt="Kotlin">
+    <b>Kotlin DSL</b>
+  </summary>
+  <br>
+
 ```kotlin
 dependencies {
     implementation(platform("org.hibernate.orm:hibernate-platform:6.6.5.Final"))
 }
 ```
+</details>
 
 ---
 
@@ -364,13 +502,7 @@ dependencies {
 ### 1. High-Speed Incremental Builds & `NO-SOURCE` Mapping
 All transformation tasks employ native Gradle `@SkipWhenEmpty` mechanics. If a targeted source set contains no source files (e.g., a module with no active test classes), the plugin tasks immediately exit with a true **`NO-SOURCE`** or **`SKIPPED`** outcome, preventing unnecessary execution overhead.
 
-### 2. Eclipse IDE Integration
-When applying any of the scoped plugins, the system hooks into Eclipse Buildship's synchronization lifecycle. When you perform a **Gradle -> Refresh Project** action:
-- It checks if files were generated by the processor.
-- It dynamically adds the generated annotation processor folders into Eclipse's source classpath with modern `test="true"` scoping parameters where applicable.
-- It safely clears out the classpath entries if the output directory becomes empty to keep your workspace pristine.
-
-### 3. Comprehensive IDE Quick-Doc Support
+### 2. Comprehensive IDE Quick-Doc Support
 Every public API boundary—including all Plugin classes, independent Task structures, and nested DSL Extension properties—carries explicit, strongly-typed Groovydoc declarations. This ensures immediate type safety, strict compile-time validation, and detailed inline helper tooltips when developing inside IntelliJ IDEA or Eclipse.
 
 ---

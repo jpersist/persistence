@@ -12,6 +12,19 @@ import javax.xml.transform.TransformerFactory
 import javax.xml.transform.stream.StreamResult
 import javax.xml.transform.stream.StreamSource
 
+/**
+ * Base implementation of {@link DescriptorProcessorDelegate} that provides the
+ * common merge and generate logic for all JPA specification versions.
+ * <p>
+ * Concrete subclasses only need to declare which specification versions they
+ * support via {@link DescriptorProcessorDelegate#getSupportedVersions()}. All XML node manipulation is
+ * isolated inside the static {@code Helper} inner class to prevent Groovy's
+ * dynamic method dispatch from routing calls through Gradle's decorated task
+ * proxy.
+ * </p>
+ *
+ * @since 1.4.0
+ */
 abstract class AbstractDescriptorProcessorDelegate implements DescriptorProcessorDelegate {
 
     @Override
@@ -306,7 +319,7 @@ abstract class AbstractDescriptorProcessorDelegate implements DescriptorProcesso
          * <p>
          * The method strips extraneous whitespace between XML tags, then applies
          * the transformer output properties (indentation, encoding, XML declaration)
-         * supplied via the {@link ProcessPersistenceDescriptor#getTransformerSettings()} map.
+         * supplied via the {@link persist.jakarta.gradle.task.ProcessPersistenceDescriptor#getTransformerSettings()} map.
          * </p>
          *
          * @param rawXml     The raw XML string to format.
