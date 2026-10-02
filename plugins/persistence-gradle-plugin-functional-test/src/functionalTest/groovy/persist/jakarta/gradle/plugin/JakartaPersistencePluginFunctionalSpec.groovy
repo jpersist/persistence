@@ -159,6 +159,33 @@ class JakartaPersistencePluginFunctionalSpec extends Specification {
         }
     }
 
+    def "should inject custom jar file location prefixes when namespaced attributes are declared"() {
+        given: "a template persistence.xml in the source resources directory"
+        def runner = createRunner()
+
+        when: "executing the build"
+        def result = runner.build()
+
+        then: "the build succeeds and outputs a merged layout"
+        result.task(":bookstore-service-module:processPersistenceDescriptor").outcome.toString() == "SUCCESS"
+
+        File outputFile = new File(testProjectDir.toFile(), "bookstore-service-module/build/resources/main/META-INF/persistence.xml")
+        outputFile.exists()
+
+        and: "the newly resolved project dependency jar file are injected to the right location"
+        def parser = new XmlParser(false, false)
+        Node root = parser.parse(outputFile)
+
+        Node unit = (Node) ((List<?>) root.get("persistence-unit"))[0]
+        List<?> jarFilesList = (List<?>) unit.get("jar-file")
+
+        // Assert that the generated file contains exactly 2 entries matching the custom path format
+        jarFilesList.size() == 2
+
+        ((Node) jarFilesList.get(0)).text() == "lib/common-persistence-module-0.1-SNAPSHOT.jar"
+        ((Node) jarFilesList.get(1)).text() == "lib/bookstore-persistence-module-0.1-SNAPSHOT.jar"
+    }
+
     private GradleRunner createRunner() {
         def jacocoAgentJvmArg = System.getProperty('jacocoAgentJvmArg')
         def jacocoDestFile = System.getProperty('jacocoDestFile')
