@@ -1,5 +1,5 @@
 [versions]
-jakarta-persistence = "3.1.0"
+jakarta-persistence = "3.2.0"
 hibernate = "6.6.56.Final"
 spock = "2.3-groovy-4.0"
 asm = "9.10.1"
