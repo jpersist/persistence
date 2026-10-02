@@ -1,0 +1,22 @@
+import persist.jakarta.gradle.plugin.JakartaPersistencePlugin
+
+plugins {
+    id 'java-library'
+    id 'io.github.jpersist.jpa'
+}
+
+dependencies {
+    compileOnly libs.jakarta.persistence.api
+
+    jarFile(project(':common-persistence-module')) {
+        attributes {
+            attribute JakartaPersistencePlugin.JAR_LOCATION_ATTRIBUTE, 'lib/'
+        }
+    }
+
+    jarFile(project(':bookstore-persistence-module')) {
+        attributes {
+            attribute JakartaPersistencePlugin.JAR_LOCATION_ATTRIBUTE, 'lib/'
+        }
+    }
+}

@@ -3,6 +3,10 @@ package persist.jakarta.gradle.plugin
 import groovy.io.FileType
 import groovy.xml.XmlParser
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.component.ModuleComponentSelector
+import org.gradle.api.artifacts.component.ProjectComponentSelector
+import org.gradle.api.artifacts.result.DependencyResult
+import org.gradle.api.attributes.Attribute
 import org.gradle.api.plugins.JavaLibraryPlugin
 import org.gradle.api.provider.Provider
 import org.objectweb.asm.AnnotationVisitor
@@ -83,6 +87,9 @@ import persist.jakarta.gradle.task.ProcessPersistenceDescriptor
  */
 class JakartaPersistencePlugin implements Plugin<Project> {
 
+    // Define the custom attribute key for jar files location routing
+    static final Attribute<String> JAR_LOCATION_ATTRIBUTE = Attribute.of('io.github.jpersist.jpa.location', String)
+
     @Override
     void apply(Project project) {
         project.plugins.apply(JavaPlugin)
@@ -161,8 +168,50 @@ class JakartaPersistencePlugin implements Plugin<Project> {
                 task.jarFileNames.set(project.provider {
                     def jarFileConfig = jarFileConfigProvider.get()
                     if (jarFileConfig.isEmpty()) return []
+
+                    // 1. Build a robust path map using the unified component selection graph
+                    Map<String, String> dependencyLocationOverrides = [:]
+
+                    // ResolutionResult captures both Project and Module attributes accurately
+                    jarFileConfig.incoming.resolutionResult.allDependencies.each { depResult ->
+                        if (depResult instanceof DependencyResult) {
+                            def requested = depResult.requested
+
+                            // Extract the attribute directly from the requested builder notation metadata
+                            String declaredLocation = requested.attributes.getAttribute(JAR_LOCATION_ATTRIBUTE)
+
+                            if (declaredLocation) {
+                                if (requested instanceof ProjectComponentSelector) {
+                                    // Extract via requested.projectPath and strip the leading colons to get the pure module name
+                                    String path = requested.projectPath
+                                    String cleanProjectName = path.contains(':') ? path.substring(path.lastIndexOf(':') + 1) : path
+                                    dependencyLocationOverrides.put(cleanProjectName, declaredLocation)
+                                } else if (requested instanceof ModuleComponentSelector) {
+                                    // Key format for external groups: "group:name"
+                                    String artifactId = "${requested.group}:${requested.module}"
+                                    dependencyLocationOverrides.put(artifactId, declaredLocation)
+                                }
+                            }
+                        }
+                    }
+
+                    // 2. Loop over resolved artifacts and apply matching path configurations
                     jarFileConfig.resolvedConfiguration.firstLevelModuleDependencies.collectMany { dep ->
-                        dep.moduleArtifacts.collect { artifact -> artifact.file.name }
+                        dep.moduleArtifacts.collect { artifact ->
+                            String jarName = artifact.file.name
+
+                            // Match using full coordinate string first, then fall back to the simple submodule name
+                            String customLocation = dependencyLocationOverrides.get("${dep.moduleGroup}:${dep.moduleName}")
+                                ?: dependencyLocationOverrides.get(dep.moduleName)
+
+                            if (customLocation && !customLocation.trim().isEmpty()) {
+                                // Normalize trailing slashes elegantly
+                                String cleanLocation = customLocation.endsWith('/') ? customLocation : "${customLocation}/"
+                                return "${cleanLocation}${jarName}"
+                            }
+
+                            return jarName // Default fallback path if no layout attribute was specified
+                        }
                     }
                 })
 
