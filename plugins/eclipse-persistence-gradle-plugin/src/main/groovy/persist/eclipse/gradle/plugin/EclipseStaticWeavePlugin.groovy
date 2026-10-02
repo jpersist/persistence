@@ -9,6 +9,7 @@ import org.gradle.jvm.tasks.Jar
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import persist.eclipse.gradle.task.EclipseWeaveTask
 import persist.jakarta.gradle.plugin.JakartaPersistencePlugin
+import persist.jakarta.gradle.task.ProcessPersistenceDescriptor
 
 /**
  * Main entry point for the EclipseLink Static Weaving Plugin.
@@ -43,14 +44,23 @@ class EclipseStaticWeavePlugin implements Plugin<Project> {
             String classesTaskName = sourceSet.getClassesTaskName()
             String compileTaskName = sourceSet.getCompileJavaTaskName()
             String weaveTaskName = "eclipseWeave${classesTaskName.capitalize()}"
+            String processPersistenceDescriptorTaskName = sourceSet.name == 'main' ? "processPersistenceDescriptor" : "process${sourceSet.name.capitalize()}PersistenceDescriptor"
 
             // Fetch the compileJava task provider safely
             def compileJavaProvider = project.tasks.named(compileTaskName, JavaCompile)
 
+            // Locate the descriptor generation task registered by our core plugin
+            def processDescriptorTaskProvider = project.tasks.named(processPersistenceDescriptorTaskName, ProcessPersistenceDescriptor)
+
             // Map to an explicitly isolated woven directory
             def wovenClassesDir = project.layout.buildDirectory.dir("woven/classes/java/${sourceSet.name}")
 
-            def resourcesDir = project.layout.projectDirectory.dir("src/${sourceSet.name}/resources")
+            // Identify the root directory containing our dynamically generated META-INF folder
+            def generatedResourcesRootDir = project.layout.buildDirectory.dir("generated/resources/${sourceSet.name}")
+
+            // Natively register the generated directory as a resource path inside the source set
+            // This ensures Gradle and IDEs index your dynamic persistence.xml perfectly.
+            sourceSet.resources.srcDir(generatedResourcesRootDir)
 
             // Register your weaving task at the PROJECT level (Fixed Context!)
             def weaveTaskProvider = project.tasks.register(weaveTaskName, EclipseWeaveTask) { task ->
@@ -63,8 +73,13 @@ class EclipseStaticWeavePlugin implements Plugin<Project> {
                 // Target goes to a brand new isolated directory
                 task.targetClassesDir.set(wovenClassesDir)
 
-                // Wire the resources directory using layout properties
-                task.resourcesDir.set(resourcesDir)
+                // Pass the ROOT generated resources directory where META-INF/persistence.xml lives
+                // This gives EclipseLink the exact path layout structure it expects to find.
+                task.resourcesDir.set(generatedResourcesRootDir)
+
+                // Wire the descriptor task output directly as an input to the weaving task!
+                // This instantly establishes an implicit task dependency graph tracking rule.
+                task.persistenceXml.set(processDescriptorTaskProvider.flatMap { it.destinationFile })
 
                 // Wire the classpaths safely using lazy FileCollections
                 task.weaveClasspath.from(weaveConfig)

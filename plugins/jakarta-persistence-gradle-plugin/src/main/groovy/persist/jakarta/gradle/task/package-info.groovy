@@ -11,9 +11,13 @@
  *         or merges an existing user-provided descriptor with extension-defined
  *         overrides and resolved {@code jar-file} entries. Disabled persistence
  *         units are automatically excluded, and the final output is formatted
- *         according to configurable transformer properties.</li>
+ *         according to configurable transformer properties. Processing is
+ *         delegated to version-specific strategy implementations resolved via
+ *         {@link persist.jakarta.gradle.task.registry.JPAVersionStrategyRegistry}.</li>
  * </ul>
  *
  * @since 1.1.0
+ * @see persist.jakarta.gradle.task.delegate
+ * @see persist.jakarta.gradle.task.registry
  */
 package persist.jakarta.gradle.task

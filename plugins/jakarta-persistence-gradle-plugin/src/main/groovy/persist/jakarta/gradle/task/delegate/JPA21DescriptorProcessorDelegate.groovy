@@ -1,5 +1,11 @@
 package persist.jakarta.gradle.task.delegate
 
+/**
+ * Descriptor processor delegate for the JPA 2.1 and 2.2 specifications.
+ *
+ * @since 1.4.0
+ * @see AbstractDescriptorProcessorDelegate
+ */
 class JPA21DescriptorProcessorDelegate extends AbstractDescriptorProcessorDelegate {
 
     @Override
