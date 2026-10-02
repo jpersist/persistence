@@ -56,10 +56,6 @@ class EclipseJpaModelgenPlugin implements Plugin<Project> {
 
             // Dynamic dependency assignment matching configuration name targets
             def annotationProcessorConfigName = sourceSet.annotationProcessorConfigurationName
-            def implementationConfigName = sourceSet.implementationConfigurationName
-
-            project.dependencies.add(implementationConfigName, 'jakarta.persistence:jakarta.persistence-api')
-            project.dependencies.add(implementationConfigName, 'org.eclipse.persistence:org.eclipse.persistence.jpa')
 
             project.dependencies.add(annotationProcessorConfigName, 'org.eclipse.persistence:org.eclipse.persistence.jpa.modelgen.processor')
 
