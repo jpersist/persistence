@@ -234,6 +234,10 @@ class JakartaPersistencePlugin implements Plugin<Project> {
 
                 // Direct output tracking safely to resources destination
                 task.destinationFile.set(project.layout.buildDirectory.file("generated/resources/${sourceSet.name}/META-INF/persistence.xml"))
+
+                // Register the root of our generated resources folder into the Gradle SourceSet.
+                // This tells Eclipse Buildship and IntelliJ to index the directory and resolve META-INF/persistence.xml instantly.
+                sourceSet.resources.srcDir(project.layout.buildDirectory.dir("generated/resources/${sourceSet.name}"))
             }
 
             // 4. Feed output securely back to resource processor as an input source!

@@ -49,6 +49,10 @@ class EclipseJpaModelgenPlugin implements Plugin<Project> {
 
             project.dependencies.add(annotationProcessorConfigName, 'org.eclipse.persistence:org.eclipse.persistence.jpa.modelgen.processor')
 
+            // Explicitly expose the standard annotation processor source folder to the Java source set path.
+            // This ensures the Eclipse IDE compiles and links generated static metamodels (e.g. Customer_.java) seamlessly.
+            sourceSet.java.srcDir(project.layout.buildDirectory.dir("generated/sources/annotationProcessor/java/${sourceSet.name}"))
+
             // 4. Safely configure JavaCompile arguments using the source-set-specific path
             String compileTaskName = sourceSet.compileJavaTaskName
             project.tasks.named(compileTaskName, JavaCompile) { compileTask ->

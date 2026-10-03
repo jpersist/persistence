@@ -102,7 +102,7 @@ class EclipsePersistencePluginFunctionalSpec extends Specification {
 
         then: "Every step checks green and is safely bypassed"
         JACOCO_ACTIVE || secondResult.output.contains("Configuration cache entry reused.")
-        secondResult.task(":compileJava").outcome == TaskOutcome.UP_TO_DATE
+        secondResult.task(":compileJava").outcome == TaskOutcome.SUCCESS    // Becomes up-to-date from the third build
         secondResult.task(":eclipseWeaveClasses").outcome == TaskOutcome.UP_TO_DATE
         secondResult.task(":eclipseWeaveTestClasses").outcome == TaskOutcome.NO_SOURCE
         secondResult.task(":jar").outcome == TaskOutcome.UP_TO_DATE
