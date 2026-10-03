@@ -3,12 +3,12 @@ package persist.eclipse.gradle.plugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.file.DuplicatesStrategy
+import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.jvm.tasks.Jar
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import persist.eclipse.gradle.task.EclipseWeaveTask
-import persist.jakarta.gradle.plugin.JakartaPersistencePlugin
 import persist.jakarta.gradle.task.ProcessPersistenceDescriptor
 
 /**
@@ -30,11 +30,11 @@ class EclipseStaticWeavePlugin implements Plugin<Project> {
 
     @Override
     void apply(Project project) {
-        project.plugins.apply(JakartaPersistencePlugin)
+        project.plugins.apply(JavaPlugin)
 
         def weaveConfig = project.configurations.maybeCreate('weave')
-        project.configurations.named('jpa').configure {
-            weaveConfig.extendsFrom(it)
+        project.configurations.matching { it.name == 'jpa'}.configureEach { jpaConfig ->
+            weaveConfig.extendsFrom(jpaConfig)
         }
 
         project.dependencies.add('weave', 'org.eclipse.persistence:org.eclipse.persistence.jpa')

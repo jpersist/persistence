@@ -2,8 +2,8 @@ package persist.hibernate.gradle.plugin
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.SourceSetContainer
-import persist.jakarta.gradle.plugin.JakartaPersistencePlugin
 
 /**
  * Main entry point for the Hibernate JPA Modelgen Processor Plugin.
@@ -19,7 +19,7 @@ class HibernateJpamodelgenPlugin implements Plugin<Project> {
 
     @Override
     void apply(Project project) {
-        project.plugins.apply(JakartaPersistencePlugin)
+        project.plugins.apply(JavaPlugin)
 
         // Fetch the project sourceSets container extension
         def sourceSets = project.extensions.getByType(SourceSetContainer)

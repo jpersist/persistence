@@ -2,6 +2,7 @@ package persist.hibernate.gradle.plugin
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import persist.jakarta.gradle.plugin.JakartaPersistencePlugin
 
 /**
  * An aggregate utility plugin that configures a complete, modern corporate standard Hibernate
@@ -16,6 +17,7 @@ class HibernatePersistencePlugin implements Plugin<Project> {
 
     @Override
     void apply(Project project) {
+        project.plugins.apply(JakartaPersistencePlugin)
         project.plugins.apply(HibernateJpamodelgenPlugin)
         project.plugins.apply(HibernateEnhancementPlugin)
     }

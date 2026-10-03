@@ -2,6 +2,7 @@ package persist.eclipse.gradle.plugin
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import persist.jakarta.gradle.plugin.JakartaPersistencePlugin
 
 /**
  * An aggregate utility plugin that configures a comprehensive EclipseLink toolbelt out-of-the-box.
@@ -19,6 +20,7 @@ class EclipsePersistencePlugin implements Plugin<Project> {
 
     @Override
     void apply(Project project) {
+        project.plugins.apply(JakartaPersistencePlugin)
         project.plugins.apply(EclipseJpaModelgenPlugin)
         project.plugins.apply(EclipseStaticWeavePlugin)
     }
