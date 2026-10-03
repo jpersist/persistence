@@ -26,6 +26,9 @@ jobs:
     steps:
       - name: Check out Repository
         uses: actions/checkout@v7
+        with:
+          # Fetch enough history so Sonar can resolve the base branch (e.g. 'main') during PR analysis
+          fetch-depth: 0
 
       - name: Set up Java Development Kit
         uses: actions/setup-java@v6
