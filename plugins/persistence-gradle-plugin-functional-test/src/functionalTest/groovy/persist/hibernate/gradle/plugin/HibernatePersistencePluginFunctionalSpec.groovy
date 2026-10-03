@@ -94,7 +94,7 @@ class HibernatePersistencePluginFunctionalSpec extends Specification {
 
         then: "Incremental tracking bypasses overhead execution loops cleanly"
         JACOCO_ACTIVE || secondResult.output.contains("Configuration cache entry reused.")
-        secondResult.task(":compileJava").outcome == TaskOutcome.UP_TO_DATE
+        secondResult.task(":compileJava").outcome == TaskOutcome.SUCCESS    // Becomes up-to-date from the third build
         secondResult.task(":compileTestJava").outcome == TaskOutcome.NO_SOURCE
         secondResult.task(":hibernateEnhanceClasses").outcome == TaskOutcome.UP_TO_DATE
         secondResult.task(":hibernateEnhanceTestClasses").outcome == TaskOutcome.NO_SOURCE

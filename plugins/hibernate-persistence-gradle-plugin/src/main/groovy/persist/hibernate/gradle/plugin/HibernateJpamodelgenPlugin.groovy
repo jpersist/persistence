@@ -29,6 +29,9 @@ class HibernateJpamodelgenPlugin implements Plugin<Project> {
             // Determine the matching annotation processor configuration name.
             String configName = sourceSet.annotationProcessorConfigurationName
 
+            // Expose the annotation processor source folder into the core Java source directory pool.
+            sourceSet.java.srcDir(project.layout.buildDirectory.dir("generated/sources/annotationProcessor/java/${sourceSet.name}"))
+
             // Inject the dependency dynamically into the calculated configuration name
             project.dependencies.add(configName, 'org.hibernate.orm:hibernate-jpamodelgen')
         }
