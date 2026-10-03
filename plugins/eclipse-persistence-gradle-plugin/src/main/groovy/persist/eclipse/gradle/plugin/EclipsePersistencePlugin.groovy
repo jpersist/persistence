@@ -8,8 +8,10 @@ import persist.jakarta.gradle.plugin.JakartaPersistencePlugin
  * An aggregate utility plugin that configures a comprehensive EclipseLink toolbelt out-of-the-box.
  * <p>
  * Applying this plugin serves as a single macro shortcut that automatically triggers the registration
- * and orchestration parameters of both the model generator framework ({@link EclipseJpaModelgenPlugin})
- * and the compile-time bytecode enhancement framework ({@link EclipseStaticWeavePlugin}).
+ * and orchestration parameters of the Jakarta Persistence descriptor generator
+ * ({@link persist.jakarta.gradle.plugin.JakartaPersistencePlugin}), the model generator framework
+ * ({@link EclipseJpaModelgenPlugin}), and the compile-time bytecode enhancement framework
+ * ({@link EclipseStaticWeavePlugin}).
  * </p>
  * <p>
  * This allows multi-module architecture projects to establish complete JPA standard baselines using

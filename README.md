@@ -14,6 +14,18 @@ The goal of this ecosystem is to decouple boilerplate configuration, automate st
 
 ---
 
+## What's New in 1.4.1
+
+Version **1.4.1** introduces the following improvements:
+
+- **Aggregate plugins now apply the Jakarta Persistence plugin** — The `eclipse-persistence` and `hibernate-persistence` aggregate plugins now automatically apply the `io.github.jpersist.jpa` plugin, so descriptor generation is included out-of-the-box without requiring a separate plugin declaration.
+- **Sub-plugins apply the standard `JavaPlugin`** — The `eclipse-jpa-modelgen`, `eclipse-static-weave`, `hibernate-jpamodelgen`, and `hibernate-enhancement` plugins now apply the Gradle `JavaPlugin` directly instead of the `JakartaPersistencePlugin`, giving finer-grained control when used individually.
+- **Generated source directories registered for IDE support** — The `eclipse-jpa-modelgen` and `hibernate-jpamodelgen` plugins now register the annotation processor generated source directory into each source set, so IDEs such as Eclipse and IntelliJ can compile and index the generated static metamodel classes seamlessly.
+- **Generated resources directory registered for IDE support** — The `io.github.jpersist.jpa` plugin now registers the generated resources directory into the source set, allowing IDEs to resolve `META-INF/persistence.xml` instantly.
+- **Lazy `jpa` configuration extension for weaving** — The `eclipse-static-weave` plugin now lazily extends the `weave` configuration from the `jpa` configuration (when present) to inherit platform version constraints.
+
+---
+
 ## What's New in 1.4.0
 
 Version **1.4.0** introduces several major improvements:
@@ -261,7 +273,7 @@ Generates your JPA static canonical metamodel using the EclipseLink JPA Modelgen
 Executes EclipseLink static weaving at compile-time via an isolated forked worker process (`javaexec`). It reads raw compiled bytecode and optimizes it to support lazy loading hooks, fetch graph optimizations, and advanced dirty tracking without needing a dynamic `-javaagent` at runtime.
 
 ### 3. `io.github.jpersist.eclipse-persistence`
-An aggregate utility plugin designed for maximum simplicity. Applying this single identifier acts as a macro shortcut that automatically enables both `eclipse-jpa-modelgen` and `eclipse-static-weave` inside your project.
+An aggregate utility plugin designed for maximum simplicity. Applying this single identifier acts as a macro shortcut that automatically enables the `jpa` descriptor generator, `eclipse-jpa-modelgen`, and `eclipse-static-weave` inside your project.
 
 #### EclipseLink DSL Customization
 By default, the plugin isolates contexts per source set and maps conventions natively. If your target configuration file lives in a non-standard path, you can easily override it inside your `build.gradle`:
@@ -323,7 +335,7 @@ Generates the JPA static canonical metamodel utilizing the Hibernate JPA Annotat
 A high-performance task that programmatically triggers Hibernate's core bytecode `Enhancer` engine. It isolates input and staging tracks, allowing full compatibility with Gradle's Configuration Cache and incremental execution engines.
 
 ### 3. `io.github.jpersist.hibernate-persistence`
-An aggregate utility plugin that configures a complete standard Hibernate baseline out of the box. It automatically applies `hibernate-jpamodelgen` alongside `hibernate-enhancement`.
+An aggregate utility plugin that configures a complete standard Hibernate baseline out of the box. It automatically applies the `jpa` descriptor generator, `hibernate-jpamodelgen`, and `hibernate-enhancement`.
 
 #### Hibernate DSL Customization
 Sane optimization defaults are configured automatically. You can cleanly adjust or override enhancement behaviors via the following block:

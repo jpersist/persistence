@@ -59,6 +59,10 @@ import persist.jakarta.gradle.task.ProcessPersistenceDescriptor
  *                 {@code process<SourceSet>PersistenceDescriptor})
  *                 {@link ProcessPersistenceDescriptor} task that generates or
  *                 merges the final {@code persistence.xml}.</li>
+ *             <li>Registers the generated resources directory into the source set
+ *                 so that IDEs such as Eclipse Buildship and IntelliJ can index
+ *                 the directory and resolve {@code META-INF/persistence.xml}
+ *                 instantly.</li>
  *             <li>Wires the task output into the source set's
  *                 {@code processResources} so the generated descriptor ends up
  *                 in the JAR.</li>

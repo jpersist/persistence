@@ -8,11 +8,13 @@ import org.gradle.api.tasks.SourceSetContainer
 /**
  * Main entry point for the Hibernate JPA Modelgen Processor Plugin.
  * <p>
- * This plugin registers the Hibernate JPA Annotation Processor configuration engines, helping
- * engineers build type-safe Criteria API queries. It tracks active project source sets, lazily wires
- * the unversioned <code>hibernate-jpamodelgen</code> framework dependency directly onto the targeted
- * <code>annotationProcessor</code> configurations, and ensures version suggestions play seamlessly
- * alongside upstream platform BOM definitions or corporate Gradle Version Catalogs.
+ * This plugin applies the {@link org.gradle.api.plugins.JavaPlugin} and registers the Hibernate JPA
+ * Annotation Processor configuration engines, helping engineers build type-safe Criteria API queries.
+ * It tracks active project source sets, lazily wires the unversioned
+ * <code>hibernate-jpamodelgen</code> framework dependency directly onto the targeted
+ * <code>annotationProcessor</code> configurations, registers the annotation processor generated
+ * source directory into each source set for seamless IDE indexing, and ensures version suggestions
+ * play seamlessly alongside upstream platform BOM definitions or corporate Gradle Version Catalogs.
  * </p>
  */
 class HibernateJpamodelgenPlugin implements Plugin<Project> {
