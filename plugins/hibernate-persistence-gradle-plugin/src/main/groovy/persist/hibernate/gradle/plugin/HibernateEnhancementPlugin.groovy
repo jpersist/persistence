@@ -3,20 +3,20 @@ package persist.hibernate.gradle.plugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.file.DuplicatesStrategy
+import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.jvm.tasks.Jar
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import persist.hibernate.gradle.extension.HibernateExtension
 import persist.hibernate.gradle.task.HibernateEnhancementTask
-import persist.jakarta.gradle.plugin.JakartaPersistencePlugin
 
 /**
  * Main entry point for the Hibernate Bytecode Enhancement Plugin.
  * <p>
- * This plugin registers a customizable <code>hibernate</code> configuration extension block and
- * dynamically instantiates an independent {@link HibernateEnhancementTask}
- * for every active project source set layout.
+ * This plugin applies the {@link org.gradle.api.plugins.JavaPlugin}, registers a customizable
+ * <code>hibernate</code> configuration extension block, and dynamically instantiates an independent
+ * {@link HibernateEnhancementTask} for every active project source set layout.
  * </p>
  * <p>
  * To ensure absolute compliance with the Gradle Configuration Cache and incremental verification states,
@@ -29,7 +29,7 @@ import persist.jakarta.gradle.plugin.JakartaPersistencePlugin
 
     @Override
     void apply(Project project) {
-        project.plugins.apply(JakartaPersistencePlugin)
+        project.plugins.apply(JavaPlugin)
 
         def hibernate = project.extensions.create('hibernate', HibernateExtension)
         hibernate.enhancement { enhancement ->

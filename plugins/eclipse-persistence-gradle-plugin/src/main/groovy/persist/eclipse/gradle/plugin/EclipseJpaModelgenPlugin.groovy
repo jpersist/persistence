@@ -2,19 +2,22 @@ package persist.eclipse.gradle.plugin
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.compile.JavaCompile
 import persist.eclipse.gradle.extension.EclipselinkExtension
-import persist.jakarta.gradle.plugin.JakartaPersistencePlugin
 
 /**
  * Main entry point for the EclipseLink JPA Modelgen Processor Plugin.
  * <p>
  * This plugin automates the generation of the JPA static canonical metamodel using
- * the EclipseLink JpaModelgen Annotation Processor. It dynamically applies the standard
- * Gradle 'java' and 'eclipse' development environments, provisions the required processing
- * dependencies safely using a lazy version fallback mechanism, and dynamically injects
- * compiler arguments targeting the appropriate <code>persistence.xml</code> configuration file path.
+ * the EclipseLink JpaModelgen Annotation Processor. It applies the standard
+ * Gradle {@link org.gradle.api.plugins.JavaPlugin}, provisions the required processing
+ * dependencies safely using a lazy version fallback mechanism, dynamically injects
+ * compiler arguments targeting the appropriate <code>persistence.xml</code> configuration file path,
+ * and registers the annotation processor generated source directory into each source set
+ * so that IDEs such as Eclipse and IntelliJ can compile and link the generated static
+ * metamodel classes (e.g.&nbsp;{@code Customer_.java}) seamlessly.
  * </p>
  *
  * @see EclipselinkExtension
@@ -23,7 +26,7 @@ class EclipseJpaModelgenPlugin implements Plugin<Project> {
 
     @Override
     void apply(Project project) {
-        project.plugins.apply(JakartaPersistencePlugin)
+        project.plugins.apply(JavaPlugin)
 
         // 1. Create a NamedDomainObjectContainer using Gradle's ObjectFactory
         def container = project.objects.domainObjectContainer(EclipselinkExtension)
