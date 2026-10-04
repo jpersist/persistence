@@ -25,6 +25,7 @@ import org.gradle.language.jvm.tasks.ProcessResources
 import persist.jakarta.gradle.extension.PersistenceExtension
 import persist.jakarta.gradle.task.GenerateJPAGraalVMMetadata
 import persist.jakarta.gradle.task.ProcessPersistenceDescriptor
+import persist.jakarta.gradle.task.ValidatePersistenceSchema
 
 /**
  * Gradle plugin that manages Jakarta Persistence (JPA) descriptor generation.
@@ -155,6 +156,8 @@ class JakartaPersistencePlugin implements Plugin<Project> {
             configureProcessPersistenceDescriptorTask(project, sourceSet, extension, discoveredClassesProvider, jarFileConfigProvider)
 
             configureGenerateJPAGraalVMMetadataTask(project, sourceSet, discoveredClassesProvider)
+
+            configureValidatePersistenceSchemaTask(project, sourceSet)
         }
     }
 
@@ -255,6 +258,61 @@ class JakartaPersistencePlugin implements Plugin<Project> {
         // Ensure our sibling processing resource task executes in the correct logical sequence
         project.tasks.named(sourceSet.processResourcesTaskName, ProcessResources).configure { resourceTask ->
             resourceTask.dependsOn(graalVMTaskProvider)
+        }
+    }
+
+    private static void configureValidatePersistenceSchemaTask(Project project, SourceSet sourceSet) {
+        def processTaskName = sourceSet.name == 'main' ? "processPersistenceDescriptor" : "process${sourceSet.name.capitalize()}PersistenceDescriptor"
+        def processTask = project.tasks.named(processTaskName, ProcessPersistenceDescriptor)
+
+        // Register a single base validation driver task per SourceSet
+        def validationTaskName = sourceSet.name == 'main' ? "validatePersistenceSchema" : "validate${sourceSet.name.capitalize()}PersistenceSchema"
+
+        project.tasks.register(validationTaskName, ValidatePersistenceSchema) { task ->
+            task.group = LifecycleBasePlugin.VERIFICATION_GROUP
+            task.description = "Validates the JPA schema alignment for all active units in the ${sourceSet.name} source set against an in-memory database snapshot."
+
+            // Lazily pull the active names list from the processor task at execution time
+            task.persistenceUnitNames.set(project.provider {
+                // Collect names of all enabled units managed by the processor task
+                List<String> unitNames = processTask.get().units.get().collect { it.name }
+                // Join names with a comma to pass them into our main worker process safely
+                return unitNames.join(',')
+            })
+
+            // Natively skip task execution when the unit names string payload evaluates to empty
+            // This prevents the task from running if no active units are declared or enabled!
+            task.onlyIf {
+                String units = task.persistenceUnitNames.getOrElse("")
+                return !units.trim().isEmpty()
+            }
+
+            // FIX: Enforce an explicit dependency rule on the processResources task instance.
+            // This guarantees the directory is physically present before validation triggers!
+            def processResourcesTask = project.tasks.named(sourceSet.processResourcesTaskName, ProcessResources)
+            task.getResourcesDir().set(processResourcesTask.flatMap { it.destinationDirectory })
+            task.dependsOn(processResourcesTask)
+
+            // 1. Add pure compiled java entity classes directories ONLY (No resources included)
+            task.getClasspath().from(sourceSet.output.classesDirs)
+
+            // 2. Add external framework dependencies from compileClasspath configuration
+            // compileClasspath contains Hibernate/EclipseLink but does NOT track processResources outputs!
+            task.getClasspath().from(project.configurations.named(sourceSet.compileClasspathConfigurationName))
+
+            // 3. Add the Plugin's own compiled files directory so SchemaValidationWorker can be found
+            // This safely uses the class protection domain location which we verified is stable
+            def pluginLocation = JakartaPersistencePlugin.class.protectionDomain.codeSource?.location
+            if (pluginLocation != null) {
+                task.getClasspath().from(project.files(pluginLocation))
+            } else {
+                task.getClasspath().from(project.files(JakartaPersistencePlugin.class.classLoader.getResource(".")).builtBy())
+            }
+
+            // 4. Transparently inject the H2 driver file on-the-fly for the user
+            task.getClasspath().from(project.files(project.buildscript.configurations.detachedConfiguration(
+                project.dependencies.create("com.h2database:h2:2.2.224")
+            )))
         }
     }
 
