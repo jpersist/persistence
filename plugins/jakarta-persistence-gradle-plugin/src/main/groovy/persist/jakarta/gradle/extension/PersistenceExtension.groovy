@@ -67,6 +67,8 @@ abstract class PersistenceExtension {
      */
     final NamedDomainObjectContainer<PersistenceUnitExtension> persistenceUnits
 
+    final ValidationExtension validation
+
     /**
      * Key-value pairs passed to the XML {@link javax.xml.transform.Transformer}
      * that formats the generated {@code persistence.xml}.
@@ -96,6 +98,8 @@ abstract class PersistenceExtension {
         // Default to spec version 3.0
         this.version.convention("3.0")
         this.persistenceUnits = objects.domainObjectContainer(PersistenceUnitExtension)
+
+        this.validation = objects.newInstance(ValidationExtension)
 
         // Set up the default transformer properties exactly as required
         this.outputProperties.put("indent", "yes")
@@ -138,6 +142,10 @@ abstract class PersistenceExtension {
      */
     void persistenceUnits(Action<? super NamedDomainObjectContainer<PersistenceUnitExtension>> action) {
         action.execute(persistenceUnits)
+    }
+
+    void validation(Action<? super ValidationExtension> action) {
+        action.execute(validation)
     }
 
     /**

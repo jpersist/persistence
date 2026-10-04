@@ -13,6 +13,14 @@ interface SchemaValidationParameters extends WorkParameters {
 
     Property<String> getPersistenceUnitNames()
 
+    Property<String> getValidationUrl()
+
+    Property<String> getValidationDriver()
+
+    Property<String> getValidationUser()
+
+    Property<String> getValidationPassword()
+
 }
 
 /**
@@ -27,10 +35,10 @@ abstract class SchemaValidationWorker implements WorkAction<SchemaValidationPara
 
         // Setup ephemeral H2 in-memory properties
         Map<String, String> properties = [
-            "jakarta.persistence.jdbc.driver"              : "org.h2.Driver",
-            "jakarta.persistence.jdbc.url"                 : "jdbc:h2:mem:schema_validate_db;DB_CLOSE_DELAY=-1",
-            "jakarta.persistence.jdbc.user"                : "sa",
-            "jakarta.persistence.jdbc.password"            : "",
+            "jakarta.persistence.jdbc.driver"              : parameters.validationDriver.get(),
+            "jakarta.persistence.jdbc.url"                 : parameters.validationUrl.get(),
+            "jakarta.persistence.jdbc.user"                : parameters.validationUser.get(),
+            "jakarta.persistence.jdbc.password"            : parameters.validationPassword.get(),
             "jakarta.persistence.schema-generation.database.action": "validate",
             "hibernate.hbm2ddl.auto"                       : "validate"
         ]

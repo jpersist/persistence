@@ -157,7 +157,7 @@ class JakartaPersistencePlugin implements Plugin<Project> {
 
             configureGenerateJPAGraalVMMetadataTask(project, sourceSet, discoveredClassesProvider)
 
-            configureValidatePersistenceSchemaTask(project, sourceSet)
+            configureValidatePersistenceSchemaTask(project, sourceSet, extension)
         }
     }
 
@@ -261,12 +261,19 @@ class JakartaPersistencePlugin implements Plugin<Project> {
         }
     }
 
-    private static void configureValidatePersistenceSchemaTask(Project project, SourceSet sourceSet) {
+    private static void configureValidatePersistenceSchemaTask(Project project, SourceSet sourceSet, PersistenceExtension extension) {
         def processTaskName = sourceSet.name == 'main' ? "processPersistenceDescriptor" : "process${sourceSet.name.capitalize()}PersistenceDescriptor"
         def processTask = project.tasks.named(processTaskName, ProcessPersistenceDescriptor)
 
         // Register a single base validation driver task per SourceSet
         def validationTaskName = sourceSet.name == 'main' ? "validatePersistenceSchema" : "validate${sourceSet.name.capitalize()}PersistenceSchema"
+
+        extension.validation { validation ->
+            validation.url.convention("jdbc:h2:mem:schema_validate_db;DB_CLOSE_DELAY=-1")
+            validation.driver.convention("org.h2.Driver")
+            validation.user.convention("sa")
+            validation.password.convention("")
+        }
 
         project.tasks.register(validationTaskName, ValidatePersistenceSchema) { task ->
             task.group = LifecycleBasePlugin.VERIFICATION_GROUP
@@ -279,6 +286,9 @@ class JakartaPersistencePlugin implements Plugin<Project> {
                 // Join names with a comma to pass them into our main worker process safely
                 return unitNames.join(',')
             })
+
+            // Lazily put validation extension to the validation task
+            task.validation.set(extension.validation)
 
             // Natively skip task execution when the unit names string payload evaluates to empty
             // This prevents the task from running if no active units are declared or enabled!
