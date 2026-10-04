@@ -220,6 +220,24 @@ class JakartaPersistencePluginFunctionalSpec extends Specification {
         assert entityRecord.allDeclaredMethods == true
     }
 
+    def "should fail the build when the JPA entity configuration does not align with the database schema"() {
+        given: "a project layout with an active persistence unit configured for verification"
+        def runner = createRunner()
+        runner.withArguments(":test-validate-persistence-module:validatePersistenceSchema", "--stacktrace")
+
+        when: "executing the schema validation task against a blank in-memory database configuration"
+        // We use runner.buildAndFail() because a successful guard MUST fail the build
+        // when a structural mismatch is explicitly detected.
+        def result = runner.buildAndFail()
+
+        then: "the task outcome evaluates to FAILED"
+        result.task(":test-validate-persistence-module:validatePersistenceSchema").outcome.toString() == "FAILED"
+
+        and: "the intercepted console error logs contain explicit Hibernate schema validation traces"
+        result.output.contains("Initiating automated schema validation guard for unit: 'failing-validation-unit'")
+        result.output.contains("SchemaManagementException") || result.output.contains("Schema-validation: missing table")
+    }
+
     private GradleRunner createRunner() {
         def jacocoAgentJvmArg = System.getProperty('jacocoAgentJvmArg')
         def jacocoDestFile = System.getProperty('jacocoDestFile')
