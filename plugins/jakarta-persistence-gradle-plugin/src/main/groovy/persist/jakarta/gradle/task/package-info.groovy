@@ -14,6 +14,16 @@
  *         according to configurable transformer properties. Processing is
  *         delegated to version-specific strategy implementations resolved via
  *         {@link persist.jakarta.gradle.task.registry.JPAVersionStrategyRegistry}.</li>
+ *     <li>{@link persist.jakarta.gradle.task.ValidatePersistenceSchema} &mdash;
+ *         Boots an isolated JVM worker process to validate that JPA entity
+ *         configurations match the database schema. Uses classloader isolation
+ *         via Gradle's {@link org.gradle.workers.WorkerExecutor} and delegates
+ *         the actual validation to
+ *         {@link persist.jakarta.gradle.worker.SchemaValidationWorker}.</li>
+ *     <li>{@link persist.jakarta.gradle.task.GenerateJPAGraalVMMetadata} &mdash;
+ *         Generates a GraalVM native image {@code reflect-config.json} file
+ *         containing all discovered JPA entity metadata classes to support
+ *         ahead-of-time (AOT) reflection registration.</li>
  * </ul>
  *
  * @since 1.1.0

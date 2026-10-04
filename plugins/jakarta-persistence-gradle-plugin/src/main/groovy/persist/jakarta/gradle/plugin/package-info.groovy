@@ -16,7 +16,11 @@
  *         extending the extra configurations of the
  *         {@link org.gradle.api.plugins.JavaLibraryPlugin java-library} plugin
  *         when it is applied, and automatically registering persistence units
- *         found in a user-provided {@code persistence.xml} template.</li>
+ *         found in a user-provided {@code persistence.xml} template.
+ *         Additionally registers a {@code validatePersistenceSchema} task for
+ *         schema validation using an isolated worker process and a
+ *         {@code generateJPAGraalVMMetadata} task for generating GraalVM
+ *         native image reflection configuration.</li>
  * </ul>
  * <p>
  * The plugin is designed as a replacement for the deprecated

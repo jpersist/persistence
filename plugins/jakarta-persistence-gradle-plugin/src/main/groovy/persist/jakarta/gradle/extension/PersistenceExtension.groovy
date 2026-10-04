@@ -67,6 +67,19 @@ abstract class PersistenceExtension {
      */
     final NamedDomainObjectContainer<PersistenceUnitExtension> persistenceUnits
 
+    /**
+     * Nested configuration for JPA schema validation database connection
+     * properties.
+     * <p>
+     * Configurable via the {@link #validation(Action)} DSL method. When no
+     * properties are set, the
+     * {@link persist.jakarta.gradle.task.ValidatePersistenceSchema} task
+     * defaults to an in-memory H2 database.
+     * </p>
+     *
+     * @since 1.5.0
+     * @see ValidationExtension
+     */
     final ValidationExtension validation
 
     /**
@@ -144,6 +157,26 @@ abstract class PersistenceExtension {
         action.execute(persistenceUnits)
     }
 
+    /**
+     * Configures the {@link #validation} extension using the given action.
+     * <p>
+     * This method enables the standard Gradle nested-closure notation in build
+     * scripts:
+     * </p>
+     * <pre>
+     * persistence {
+     *     main {
+     *         validation {
+     *             url = 'jdbc:h2:mem:my_db'
+     *             driver = 'org.h2.Driver'
+     *         }
+     *     }
+     * }
+     * </pre>
+     *
+     * @param action The configuration action to apply to the validation extension.
+     * @since 1.5.0
+     */
     void validation(Action<? super ValidationExtension> action) {
         action.execute(validation)
     }

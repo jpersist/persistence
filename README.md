@@ -109,6 +109,33 @@ Triggers raw bytecode modification tasks post-compilation, modifying entities sa
 * **Proxy-Free Safety:** Execution loops are fully encapsulated within an isolated static helper layer, making it completely immune to Gradle proxy object `MissingMethodException` bugs.
 * **No Runtime Agents:** Natively supports performance optimizations like lazy loading hooks and advanced inline dirty tracking without requiring an active runtime `-javaagent` argument.
 
+### 🔍 JPA Schema Validation <sup>`v1.5.0`</sup>
+Registers a `validatePersistenceSchema` task **for each Java source set** that boots an isolated JVM worker process to verify JPA entity mappings against the database schema at build time — catching mapping drift before it reaches production.
+* **Worker Process Isolation:** Leverages Gradle's `WorkerExecutor` with classloader isolation, keeping the JPA provider, entity classes, and JDBC driver completely separated from the Gradle daemon classpath.
+* **Configurable Database Connection:** Override the default in-memory H2 validation target via the `validation` DSL block:
+
+```groovy
+persistence {
+    main {
+        validation {
+            url = 'jdbc:h2:mem:my_validation_db;DB_CLOSE_DELAY=-1'
+            driver = 'org.h2.Driver'
+            user = 'sa'
+            password = ''
+        }
+    }
+}
+```
+
+### 🌐 GraalVM Native Image Metadata <sup>`v1.5.0`</sup>
+Registers a `generateJPAGraalVMMetadata` task **for each Java source set** that produces a `reflect-config.json` file containing all ASM-discovered JPA entity classes — enabling ahead-of-time (AOT) reflection registration for GraalVM native image compilation with zero manual configuration.
+* **Automatic Entity Discovery:** Reuses the plugin's existing ASM bytecode scanning pipeline to locate every `@Entity`, `@MappedSuperclass`, and `@Embeddable` class in the source set.
+* **Native-Ready Builds:** Emitted JSON declares `allDeclaredConstructors`, `allDeclaredFields`, and `allDeclaredMethods` for each class, ensuring full JPA provider compatibility under native compilation.
+
+### 🧩 Validation DSL Extension <sup>`v1.5.0`</sup>
+A dedicated `ValidationExtension` interface is embedded inside each source set's `PersistenceExtension`, providing optional JDBC connection properties (`url`, `driver`, `user`, `password`) for schema validation. When omitted, sensible H2 defaults are applied automatically.
+* **Seamless DSL Integration:** Accessible via the standard Gradle nested-closure notation through the `validation { }` block, consistent with the existing `persistenceUnits { }` and `transformer { }` DSL patterns.
+
 ---
 
 ## 📂 Repository Blueprint

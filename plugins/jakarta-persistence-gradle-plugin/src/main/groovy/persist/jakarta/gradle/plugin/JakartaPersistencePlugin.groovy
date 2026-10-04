@@ -70,6 +70,16 @@ import persist.jakarta.gradle.task.ValidatePersistenceSchema
  *             <li>Wires the task output into the source set's
  *                 {@code processResources} so the generated descriptor ends up
  *                 in the JAR.</li>
+ *             <li>Registers a {@code validatePersistenceSchema} (or
+ *                 {@code validate<SourceSet>PersistenceSchema})
+ *                 {@link ValidatePersistenceSchema} task that validates entity
+ *                 mappings against the database schema using an isolated worker
+ *                 process.</li>
+ *             <li>Registers a {@code generateJPAGraalVMMetadata} (or
+ *                 {@code generate<SourceSet>JPAGraalVMMetadata})
+ *                 {@link GenerateJPAGraalVMMetadata} task that produces a
+ *                 GraalVM {@code reflect-config.json} for all discovered JPA
+ *                 entity classes.</li>
  *         </ul>
  *     </li>
  * </ol>

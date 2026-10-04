@@ -19,6 +19,10 @@
  *         Per-unit configuration attributes such as provider, transaction type,
  *         data source, mapping files, JPA properties, and an {@code enabled}
  *         flag to skip generation of individual persistence units.</li>
+ *     <li>{@link persist.jakarta.gradle.extension.ValidationExtension} &mdash;
+ *         Optional JDBC connection properties (URL, driver, user, password)
+ *         used by the schema validation task. Defaults to an in-memory H2
+ *         database when not configured.</li>
  * </ul>
  *
  * @since 1.1.0

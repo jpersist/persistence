@@ -7,24 +7,78 @@ import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 
 /**
- * Parameters required by the Schema Validation Worker.
+ * Parameter interface for the {@link SchemaValidationWorker} work action.
+ * <p>
+ * Carries the persistence unit names and JDBC connection properties from the
+ * {@link persist.jakarta.gradle.task.ValidatePersistenceSchema} task into the
+ * isolated worker process. All values are resolved eagerly by the task before
+ * being passed to the worker.
+ * </p>
+ *
+ * @since 1.5.0
+ * @see SchemaValidationWorker
  */
 interface SchemaValidationParameters extends WorkParameters {
 
+    /**
+     * Comma-separated persistence unit names to validate.
+     *
+     * @return The property tracking the unit names string.
+     */
     Property<String> getPersistenceUnitNames()
 
+    /**
+     * The JDBC connection URL for the validation database.
+     *
+     * @return The property tracking the JDBC URL.
+     */
     Property<String> getValidationUrl()
 
+    /**
+     * The fully qualified JDBC driver class name.
+     *
+     * @return The property tracking the driver class name.
+     */
     Property<String> getValidationDriver()
 
+    /**
+     * The database user name.
+     *
+     * @return The property tracking the user name.
+     */
     Property<String> getValidationUser()
 
+    /**
+     * The database password.
+     *
+     * @return The property tracking the password.
+     */
     Property<String> getValidationPassword()
 
 }
 
 /**
- * An isolated Worker Action executing standard typed JPA code without reflection.
+ * Gradle {@link WorkAction} that validates JPA entity mappings against a
+ * database schema inside an isolated classloader.
+ * <p>
+ * For each persistence unit name supplied via
+ * {@link SchemaValidationParameters#getPersistenceUnitNames()}, this worker
+ * boots a standard JPA {@link jakarta.persistence.EntityManagerFactory} with
+ * the {@code validate} schema generation action. If the entity metadata does
+ * not match the database schema, the JPA provider throws an exception and the
+ * enclosing Gradle task fails.
+ * </p>
+ * <p>
+ * The worker is submitted by
+ * {@link persist.jakarta.gradle.task.ValidatePersistenceSchema} using
+ * classloader isolation so that the project's JPA provider, entity classes,
+ * and JDBC driver are loaded in a separate classloader, avoiding conflicts
+ * with the Gradle daemon's own classpath.
+ * </p>
+ *
+ * @since 1.5.0
+ * @see SchemaValidationParameters
+ * @see persist.jakarta.gradle.task.ValidatePersistenceSchema
  */
 abstract class SchemaValidationWorker implements WorkAction<SchemaValidationParameters> {
 
