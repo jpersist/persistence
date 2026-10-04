@@ -1,5 +1,6 @@
 package persist.jakarta.gradle.plugin
 
+import groovy.json.JsonSlurper
 import groovy.xml.XmlParser
 import org.gradle.testkit.runner.GradleRunner
 import spock.lang.Specification
@@ -184,6 +185,39 @@ class JakartaPersistencePluginFunctionalSpec extends Specification {
 
         ((Node) jarFilesList.get(0)).text() == "lib/common-persistence-module-0.1-SNAPSHOT.jar"
         ((Node) jarFilesList.get(1)).text() == "lib/bookstore-persistence-module-0.1-SNAPSHOT.jar"
+    }
+
+    def "should automatically generate a valid GraalVM reflect-config.json metadata file"() {
+        given: "a standard build execution context"
+        def runner = createRunner()
+
+        when: "running the classes compilation and processing pipeline"
+        def result = runner.build()
+
+        then: "the core task and our newly introduced GraalVM task execute successfully"
+        result.task(":common-persistence-module:processPersistenceDescriptor").outcome.toString() == "SUCCESS"
+        result.task(":common-persistence-module:generateJPAGraalVMMetadata").outcome.toString() == "SUCCESS"
+
+        and: "the target reflect-config.json file is written to the correct namespaced location"
+        // Note: 'unspecified' is used here since the test-multi-module template project group isn't declared
+        File jsonFile = new File(testProjectDir.toFile(), "common-persistence-module/build/resources/main/META-INF/native-image/com/example/common-persistence-module/reflect-config.json")
+        assert jsonFile.exists()
+
+        and: "the generated JSON contents follow the required GraalVM reflection AOT structural contract"
+        String jsonContent = jsonFile.text
+
+        // Parse using Groovy's built-in safe JSON slurper to validate structural semantics
+        def jsonSlurper = new JsonSlurper()
+        List<Map<String, Object>> entries = (List<Map<String, Object>>) jsonSlurper.parseText(jsonContent)
+
+        // Verify that exactly 1 entry exists matching our ASM discovered entity class footprint
+        assert entries.size() == 1
+
+        Map<String, Object> entityRecord = entries.find { it.name == "com.example.entity.Identifiable" }
+        assert entityRecord != null
+        assert entityRecord.allDeclaredConstructors == true
+        assert entityRecord.allDeclaredFields == true
+        assert entityRecord.allDeclaredMethods == true
     }
 
     private GradleRunner createRunner() {
