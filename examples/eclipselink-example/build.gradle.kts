@@ -1,6 +1,6 @@
 plugins {
     `java-library`
-    id("io.github.jpersist.eclipse-persistence") version "1.4.0"
+    id("io.github.jpersist.eclipse-persistence") version "1.5.0"
 }
 
 dependencies {

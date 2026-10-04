@@ -27,9 +27,24 @@ import javax.inject.Inject
 @DisableCachingByDefault(because = "Validates active database schema state at execution time")
 abstract class ValidatePersistenceSchema extends DefaultTask {
 
+    /**
+     * A comma-separated list of persistence unit names to validate.
+     * <p>
+     * Each name must correspond to a {@code <persistence-unit>} declared
+     * in the project's {@code persistence.xml}.
+     * </p>
+     *
+     * @return The lazy property tracking the comma-separated unit names.
+     */
     @Input
     abstract Property<String> getPersistenceUnitNames()
 
+    /**
+     * Nested database connection configuration used during schema validation.
+     *
+     * @return The lazy property wrapping the {@link ValidationExtension}.
+     * @see ValidationExtension
+     */
     @Nested
     abstract Property<ValidationExtension> getValidation()
 
@@ -49,11 +64,27 @@ abstract class ValidatePersistenceSchema extends DefaultTask {
 
     private final WorkerExecutor workerExecutor
 
+    /**
+     * Creates a new task instance.
+     *
+     * @param workerExecutor The Gradle {@link WorkerExecutor} used to submit
+     *                       the isolated schema validation work action.
+     */
     @Inject
     ValidatePersistenceSchema(WorkerExecutor workerExecutor) {
         this.workerExecutor = workerExecutor
     }
 
+    /**
+     * Executes schema validation by submitting a
+     * {@link SchemaValidationWorker} to an isolated classloader worker process.
+     * <p>
+     * The worker receives the persistence unit names, database connection
+     * properties, and the full runtime classpath. Each persistence unit is
+     * booted via the standard JPA {@code Persistence.createEntityManagerFactory}
+     * API with the {@code validate} schema generation action.
+     * </p>
+     */
     @TaskAction
     void validate() {
         // FIX: Unpack the string primitive inside @TaskAction

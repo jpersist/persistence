@@ -77,6 +77,51 @@
     </tr>
 </table>
 
+<h2>What's New in v1.5.0</h2>
+<p>
+    Version 1.5.0 introduces three major features to the Jakarta Persistence plugin
+    (<code>io.github.jpersist.jpa</code>):
+</p>
+<ul>
+    <li><strong>JPA Schema Validation</strong> &mdash; A new
+        {@link persist.jakarta.gradle.task.ValidatePersistenceSchema validatePersistenceSchema}
+        task boots an isolated JVM worker process to validate that JPA entity mappings
+        match the database schema. The task uses Gradle's
+        {@link org.gradle.workers.WorkerExecutor} with classloader isolation to avoid
+        classpath conflicts with the Gradle daemon. Database connection properties are
+        configurable via the new {@link persist.jakarta.gradle.extension.ValidationExtension validation}
+        DSL block inside each source set's {@code persistence} extension:
+        <pre>
+persistence {
+    main {
+        validation {
+            url = 'jdbc:h2:mem:my_validation_db;DB_CLOSE_DELAY=-1'
+            driver = 'org.h2.Driver'
+            user = 'sa'
+            password = ''
+        }
+    }
+}</pre>
+        When no properties are configured, the task defaults to an in-memory H2 database.
+        See {@link persist.jakarta.gradle.worker.SchemaValidationWorker} for implementation
+        details.
+    </li>
+    <li><strong>GraalVM Native Image Support</strong> &mdash; A new
+        {@link persist.jakarta.gradle.task.GenerateJPAGraalVMMetadata generateJPAGraalVMMetadata}
+        task produces a {@code reflect-config.json} file containing all discovered JPA
+        entity classes, enabling ahead-of-time (AOT) reflection registration for GraalVM
+        native image compilation.
+    </li>
+    <li><strong>Validation DSL Extension</strong> &mdash; The new
+        {@link persist.jakarta.gradle.extension.ValidationExtension} interface provides
+        optional JDBC connection properties ({@code url}, {@code driver}, {@code user},
+        {@code password}) embedded inside
+        {@link persist.jakarta.gradle.extension.PersistenceExtension}. It is accessible
+        via the {@link persist.jakarta.gradle.extension.PersistenceExtension#validation(org.gradle.api.Action) validation(Action)}
+        DSL method.
+    </li>
+</ul>
+
 <h2>Quick Start</h2>
 <pre>
 plugins {
@@ -107,7 +152,8 @@ dependencies {
 <ul>
     <li>{@link persist.jakarta.gradle.plugin} &mdash; Jakarta Persistence plugin for JPA descriptor generation and version management.</li>
     <li>{@link persist.jakarta.gradle.extension} &mdash; Jakarta Persistence DSL extension configuration model, including XML formatting options.</li>
-    <li>{@link persist.jakarta.gradle.task} &mdash; Jakarta Persistence build-time task implementations with skip and formatting support.</li>
+    <li>{@link persist.jakarta.gradle.task} &mdash; Jakarta Persistence build-time task implementations, including schema validation and GraalVM metadata generation.</li>
+    <li>{@link persist.jakarta.gradle.worker} &mdash; Gradle Worker API implementations for isolated JPA schema validation.</li>
     <li>{@link persist.platform.gradle.plugin} &mdash; <em>(Deprecated)</em> Platform alignment plugin for centralized version management.</li>
     <li>{@link persist.eclipse.gradle.plugin} &mdash; EclipseLink plugin implementations.</li>
     <li>{@link persist.eclipse.gradle.extension} &mdash; EclipseLink DSL extension configuration model.</li>
