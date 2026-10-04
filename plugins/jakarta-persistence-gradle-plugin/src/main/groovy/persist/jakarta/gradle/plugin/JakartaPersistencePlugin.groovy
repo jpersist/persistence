@@ -2,6 +2,7 @@ package persist.jakarta.gradle.plugin
 
 import groovy.io.FileType
 import groovy.xml.XmlParser
+import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.component.ModuleComponentSelector
 import org.gradle.api.artifacts.component.ProjectComponentSelector
@@ -9,6 +10,7 @@ import org.gradle.api.artifacts.result.DependencyResult
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.plugins.JavaLibraryPlugin
 import org.gradle.api.provider.Provider
+import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.objectweb.asm.AnnotationVisitor
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassVisitor
@@ -21,6 +23,7 @@ import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.language.jvm.tasks.ProcessResources
 import persist.jakarta.gradle.extension.PersistenceExtension
+import persist.jakarta.gradle.task.GenerateJPAGraalVMMetadata
 import persist.jakarta.gradle.task.ProcessPersistenceDescriptor
 
 /**
@@ -144,116 +147,114 @@ class JakartaPersistencePlugin implements Plugin<Project> {
                 extendProjectConfigurations(project, jarFileConfigProvider, sourceSet.apiConfigurationName)
             }
 
-            // 3. Register standard descriptors processor task
-            def processTaskName = sourceSet.name == 'main' ? "processPersistenceDescriptor" : "process${sourceSet.name.capitalize()}PersistenceDescriptor"
-            def processTask = project.tasks.register(processTaskName, ProcessPersistenceDescriptor) { task ->
-                task.xmlVersion.set(extension.version)
-
-                // Connect transformer properties configuration securely
-                task.transformerSettings.set(extension.outputProperties)
-
-                // Lazily filter out disabled units or clear out the list if the root extension is disabled
-                task.units.set(project.provider {
-                    extension.persistenceUnits.matching { it.enabled.getOrElse(true)} as List
-                })
-
-                // Natively skip task execution when the units collection list evaluates to empty
-                task.onlyIf {
-                    // Safe lazy getter call evaluated exactly at execution time
-                    !task.units.get().isEmpty()
-                }
-
-                // Dynamically fetch annotated class names lazily at execution time
-                task.includedClasses.set(project.provider {
-                    discoverJpaClasses(sourceSet)
-                })
-
-                // Resolve first level declared jars
-                task.jarFileNames.set(project.provider {
-                    def jarFileConfig = jarFileConfigProvider.get()
-                    if (jarFileConfig.isEmpty()) return []
-
-                    // 1. Build a robust path map using the unified component selection graph
-                    Map<String, String> dependencyLocationOverrides = [:]
-
-                    // ResolutionResult captures both Project and Module attributes accurately
-                    jarFileConfig.incoming.resolutionResult.allDependencies.each { depResult ->
-                        if (depResult instanceof DependencyResult) {
-                            def requested = depResult.requested
-
-                            // Extract the attribute directly from the requested builder notation metadata
-                            String declaredLocation = requested.attributes.getAttribute(JAR_LOCATION_ATTRIBUTE)
-
-                            if (declaredLocation) {
-                                if (requested instanceof ProjectComponentSelector) {
-                                    // Extract via requested.projectPath and strip the leading colons to get the pure module name
-                                    String path = requested.projectPath
-                                    String cleanProjectName = path.contains(':') ? path.substring(path.lastIndexOf(':') + 1) : path
-                                    dependencyLocationOverrides.put(cleanProjectName, declaredLocation)
-                                } else if (requested instanceof ModuleComponentSelector) {
-                                    // Key format for external groups: "group:name"
-                                    String artifactId = "${requested.group}:${requested.module}"
-                                    dependencyLocationOverrides.put(artifactId, declaredLocation)
-                                }
-                            }
-                        }
-                    }
-
-                    // 2. Loop over resolved artifacts and apply matching path configurations
-                    jarFileConfig.resolvedConfiguration.firstLevelModuleDependencies.collectMany { dep ->
-                        dep.moduleArtifacts.collect { artifact ->
-                            String jarName = artifact.file.name
-
-                            // Match using full coordinate string first, then fall back to the simple submodule name
-                            String customLocation = dependencyLocationOverrides.get("${dep.moduleGroup}:${dep.moduleName}")
-                                ?: dependencyLocationOverrides.get(dep.moduleName)
-
-                            if (customLocation && !customLocation.trim().isEmpty()) {
-                                // Normalize trailing slashes elegantly
-                                String cleanLocation = customLocation.endsWith('/') ? customLocation : "${customLocation}/"
-                                return "${cleanLocation}${jarName}"
-                            }
-
-                            return jarName // Default fallback path if no layout attribute was specified
-                        }
-                    }
-                })
-
-                // Safely hook into the sibling compilation task output lazily using Provider map arrays
-                def compileJavaTaskProvider = project.tasks.named(sourceSet.compileJavaTaskName)
-
-                // Explicitly enforce that compilation completes BEFORE this task runs
-                task.mustRunAfter(compileJavaTaskProvider)
-
-                // Natively bind compilation outputs as inputs to trigger accurate incremental build caching
-                task.inputs.files(compileJavaTaskProvider.map { it.outputs.files })
-
-                // Safe input lookup tracking direct source files — only set when the file exists
-                // so that @Optional @InputFile allows the task to run in generate-from-scratch mode
-                def sourcePath = "src/${sourceSet.name}/resources/META-INF/persistence.xml"
-                def sourceFile = project.file(sourcePath)
-                if (sourceFile.exists()) {
-                    task.persistenceXml.set(project.layout.projectDirectory.file(sourcePath))
-                }
-
-                // Direct output tracking safely to resources destination
-                task.destinationFile.set(project.layout.buildDirectory.file("generated/resources/${sourceSet.name}/META-INF/persistence.xml"))
-
-                // Register the root of our generated resources folder into the Gradle SourceSet.
-                // This tells Eclipse Buildship and IntelliJ to index the directory and resolve META-INF/persistence.xml instantly.
-                sourceSet.resources.srcDir(project.layout.buildDirectory.dir("generated/resources/${sourceSet.name}"))
+            // Create a single, shared memorized lazy data provider for this source set
+            def discoveredClassesProvider = project.provider {
+                discoverJpaClasses(sourceSet)
             }
 
-            // 4. Feed output securely back to resource processor as an input source!
-            project.tasks.named(sourceSet.processResourcesTaskName, ProcessResources).configure { resourceTask ->
-                // Prevent duplicate/conflict matching by excluding the un-patched original file
-                resourceTask.exclude("META-INF/persistence.xml")
+            configureProcessPersistenceDescriptorTask(project, sourceSet, extension, discoveredClassesProvider, jarFileConfigProvider)
 
-                // Place the generated file into META-INF/ within the resources output
-                resourceTask.from(processTask.flatMap { it.destinationFile }) {
-                    into("META-INF")
-                }
+            configureGenerateJPAGraalVMMetadataTask(project, sourceSet, discoveredClassesProvider)
+        }
+    }
+
+    private static void configureProcessPersistenceDescriptorTask(Project project, SourceSet sourceSet, PersistenceExtension extension,
+                                                                  Provider<List<String>> discoveredClassesProvider,
+                                                                  NamedDomainObjectProvider<Configuration> jarFileConfigProvider) {
+        // 3. Register standard descriptors processor task
+        def processTaskName = sourceSet.name == 'main' ? "processPersistenceDescriptor" : "process${sourceSet.name.capitalize()}PersistenceDescriptor"
+        def processTask = project.tasks.register(processTaskName, ProcessPersistenceDescriptor) { task ->
+            task.group = LifecycleBasePlugin.BUILD_GROUP
+            task.description = "Merges or generates from scratch the persistence.xml for the ${sourceSet.name} source set."
+
+            task.xmlVersion.set(extension.version)
+
+            // Connect transformer properties configuration securely
+            task.transformerSettings.set(extension.outputProperties)
+
+            // Lazily filter out disabled units or clear out the list if the root extension is disabled
+            task.units.set(project.provider {
+                extension.persistenceUnits.matching { it.enabled.getOrElse(true)} as List
+            })
+
+            // Natively skip task execution when the units collection list evaluates to empty
+            task.onlyIf {
+                // Safe lazy getter call evaluated exactly at execution time
+                !task.units.get().isEmpty()
             }
+
+            // Dynamically fetch annotated class names lazily at execution time
+            task.includedClasses.set(discoveredClassesProvider)
+
+            // Resolve first level declared jars
+            task.jarFileNames.set(project.provider {
+                resolveFirstLevelJarFileNames(jarFileConfigProvider)
+            })
+
+            // Safely hook into the sibling compilation task output lazily using Provider map arrays
+            def compileJavaTaskProvider = project.tasks.named(sourceSet.compileJavaTaskName)
+
+            // Explicitly enforce that compilation completes BEFORE this task runs
+            task.mustRunAfter(compileJavaTaskProvider)
+
+            // Natively bind compilation outputs as inputs to trigger accurate incremental build caching
+            task.inputs.files(compileJavaTaskProvider.map { it.outputs.files })
+
+            // Safe input lookup tracking direct source files — only set when the file exists
+            // so that @Optional @InputFile allows the task to run in generate-from-scratch mode
+            def sourcePath = "src/${sourceSet.name}/resources/META-INF/persistence.xml"
+            def sourceFile = project.file(sourcePath)
+            if (sourceFile.exists()) {
+                task.persistenceXml.set(project.layout.projectDirectory.file(sourcePath))
+            }
+
+            // Direct output tracking safely to resources destination
+            task.destinationFile.set(project.layout.buildDirectory.file("generated/resources/${sourceSet.name}/META-INF/persistence.xml"))
+
+            // Register the root of our generated resources folder into the Gradle SourceSet.
+            // This tells Eclipse Buildship and IntelliJ to index the directory and resolve META-INF/persistence.xml instantly.
+            sourceSet.resources.srcDir(project.layout.buildDirectory.dir("generated/resources/${sourceSet.name}"))
+        }
+
+        // 4. Feed output securely back to resource processor as an input source!
+        project.tasks.named(sourceSet.processResourcesTaskName, ProcessResources).configure { resourceTask ->
+            // Prevent duplicate/conflict matching by excluding the un-patched original file
+            resourceTask.exclude("META-INF/persistence.xml")
+
+            // Place the generated file into META-INF/ within the resources output
+            resourceTask.from(processTask.flatMap { it.destinationFile }) {
+                into("META-INF")
+            }
+        }
+    }
+
+    private static void configureGenerateJPAGraalVMMetadataTask(Project project, SourceSet sourceSet, Provider<List<String>> discoveredClassesProvider) {
+        // 1. Register GraalVM Native Image Metadata Generation Task
+        def graalVMTaskName = sourceSet.name == 'main' ? "generateJPAGraalVMMetadata" : "generate${sourceSet.name.capitalize()}JPAGraalVMMetadata"
+
+        def graalVMTaskProvider = project.tasks.register(graalVMTaskName, GenerateJPAGraalVMMetadata) { task ->
+            task.group = LifecycleBasePlugin.BUILD_GROUP
+            task.description = "Generates GraalVM reflect-config.json metadata for source set ${sourceSet.name}"
+
+            // Natively hook into your existing high-speed lazy ASM bytecode scanner!
+            task.includedClasses.set(discoveredClassesProvider)
+
+            // Use the group and name parameters to isolate the target path perfectly following GraalVM spec standards
+            String groupPath = project.group ? project.group.toString().replace('.', '/') : 'unspecified'
+            String targetPath = "generated/graalvm-resources/${sourceSet.name}/META-INF/native-image/${groupPath}/${project.name}/reflect-config.json"
+
+            task.outputFile.set(project.layout.buildDirectory.file(targetPath))
+        }
+
+        // 2. Wire the generated GraalVM output directory straight back as an active resource path!
+        // This ensures the JSON is automatically indexed by IDEs and packaged into the final JAR distribution.
+        project.layout.buildDirectory.dir("generated/graalvm-resources/${sourceSet.name}").tap { generatedGraalVMDir ->
+            sourceSet.resources.srcDir(generatedGraalVMDir)
+        }
+
+        // Ensure our sibling processing resource task executes in the correct logical sequence
+        project.tasks.named(sourceSet.processResourcesTaskName, ProcessResources).configure { resourceTask ->
+            resourceTask.dependsOn(graalVMTaskProvider)
         }
     }
 
@@ -353,6 +354,56 @@ class JakartaPersistencePlugin implements Plugin<Project> {
         }
 
         return jpaClasses.sort()
+    }
+
+    private static List<String> resolveFirstLevelJarFileNames(NamedDomainObjectProvider<Configuration> jarFileConfigProvider) {
+        def jarFileConfig = jarFileConfigProvider.get()
+        if (jarFileConfig.isEmpty()) return []
+
+        // 1. Build a robust path map using the unified component selection graph
+        Map<String, String> dependencyLocationOverrides = [:]
+
+        // ResolutionResult captures both Project and Module attributes accurately
+        jarFileConfig.incoming.resolutionResult.allDependencies.each { depResult ->
+            if (depResult instanceof DependencyResult) {
+                def requested = depResult.requested
+
+                // Extract the attribute directly from the requested builder notation metadata
+                String declaredLocation = requested.attributes.getAttribute(JAR_LOCATION_ATTRIBUTE)
+
+                if (declaredLocation) {
+                    if (requested instanceof ProjectComponentSelector) {
+                        // Extract via requested.projectPath and strip the leading colons to get the pure module name
+                        String path = requested.projectPath
+                        String cleanProjectName = path.contains(':') ? path.substring(path.lastIndexOf(':') + 1) : path
+                        dependencyLocationOverrides.put(cleanProjectName, declaredLocation)
+                    } else if (requested instanceof ModuleComponentSelector) {
+                        // Key format for external groups: "group:name"
+                        String artifactId = "${requested.group}:${requested.module}"
+                        dependencyLocationOverrides.put(artifactId, declaredLocation)
+                    }
+                }
+            }
+        }
+
+        // 2. Loop over resolved artifacts and apply matching path configurations
+        jarFileConfig.resolvedConfiguration.firstLevelModuleDependencies.collectMany { dep ->
+            dep.moduleArtifacts.collect { artifact ->
+                String jarName = artifact.file.name
+
+                // Match using full coordinate string first, then fall back to the simple submodule name
+                String customLocation = dependencyLocationOverrides.get("${dep.moduleGroup}:${dep.moduleName}")
+                    ?: dependencyLocationOverrides.get(dep.moduleName)
+
+                if (customLocation && !customLocation.trim().isEmpty()) {
+                    // Normalize trailing slashes elegantly
+                    String cleanLocation = customLocation.endsWith('/') ? customLocation : "${customLocation}/"
+                    return "${cleanLocation}${jarName}"
+                }
+
+                return jarName // Default fallback path if no layout attribute was specified
+            }
+        }
     }
 
     /**
