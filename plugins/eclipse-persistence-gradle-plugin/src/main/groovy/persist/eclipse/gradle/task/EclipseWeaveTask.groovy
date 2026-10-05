@@ -1,7 +1,6 @@
 package persist.eclipse.gradle.task
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.file.RegularFileProperty
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
@@ -41,22 +40,6 @@ abstract class EclipseWeaveTask extends DefaultTask {
     @InputDirectory
     @PathSensitive(PathSensitivity.RELATIVE)
     abstract DirectoryProperty getResourcesDir()
-
-    /**
-     * The generated {@code persistence.xml} descriptor file produced by the
-     * {@link persist.jakarta.gradle.task.ProcessPersistenceDescriptor} task.
-     * <p>
-     * Declaring this as an explicit {@link InputFile} input establishes an
-     * immutable task execution graph dependency, ensuring the descriptor
-     * generation task completes before weaving begins.
-     * </p>
-     *
-     * @return The file property tracking the generated persistence descriptor.
-     * @since 1.4.0
-     */
-    @InputFile
-    @PathSensitive(PathSensitivity.RELATIVE)
-    abstract RegularFileProperty getPersistenceXml()
 
     /**
      * The immutable input source directory holding clean, raw compiled Java class files before weaving.
