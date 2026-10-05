@@ -1,0 +1,27 @@
+= JPersist User Guide
+:author: Yannick Ebongue
+:revnumber: 1.5.0
+:revdate: 2026-10-05
+:toc: left
+:toclevels: 3
+:sectnums:
+:source-highlighter: coderay
+:icons: font
+:examplesdir: {docdir}/../../../examples
+
+JPersist is a suite of modern, high-performance, and Gradle Configuration Cache-compliant plugins that automate the configuration of enterprise Jakarta Persistence API (JPA) environments.
+It provides zero-configuration support for Hibernate and EclipseLink multi-module builds.
+
+include::getting-started.adoc[leveloffset=+1]
+
+include::jakarta-plugin.adoc[leveloffset=+1]
+
+include::hibernate-plugin.adoc[leveloffset=+1]
+
+include::eclipse-plugin.adoc[leveloffset=+1]
+
+include::configuration.adoc[leveloffset=+1]
+
+include::examples.adoc[leveloffset=+1]
+
+include::faq.adoc[leveloffset=+1]

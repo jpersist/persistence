@@ -6,6 +6,7 @@ plugins {
     id 'com.gradle.plugin-publish' version '2.2.1' apply false
     id 'org.gradle.plugin-compatibility' version '1.1.0' apply false
     id 'org.sonarqube' version '7.5.0.8588'
+    id 'org.asciidoctor.jvm.convert' version '4.0.4'
 }
 
 
@@ -179,6 +180,28 @@ tasks.named('check') {
 
 // Apply Groovydoc tasks
 apply from: "gradle/groovydoc.gradle"
+
+configurations {
+    asciidoctorExtensions
+}
+
+dependencies {
+    asciidoctorExtensions 'com.bmuschko:asciidoctorj-tabbed-code-extension:0.3'
+}
+
+asciidoctor {
+    sourceDir = file('src/docs/asciidoc')
+    baseDirFollowsSourceDir()
+    outputOptions {
+        backends 'html5'
+    }
+    configurations 'asciidoctorExtensions'
+    attributes 'source-highlighter': 'coderay',
+               'toc': 'left',
+               'toclevels': '3',
+               'sectnums': '',
+               'examplesdir': file('examples').absolutePath
+}
 
 sonar {
     properties {

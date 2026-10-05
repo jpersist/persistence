@@ -1,0 +1,537 @@
+= Jakarta Persistence Plugin
+
+Plugin ID: `io.github.jpersist.jpa`
+
+The `io.github.jpersist.jpa` plugin is the core implementation of the JPersist plugin suite and facilitates the integration of provider platform plugins such as EclipseLink and Hibernate.
+It automatically applies the `java` plugin, registers a `persistence` DSL extension, and creates per-source-set tasks for descriptor generation, schema validation, and GraalVM native image metadata generation.
+
+== Applying the Plugin
+
+[source,groovy,indent=0,role="primary"]
+.Groovy
+----
+plugins {
+    id 'io.github.jpersist.jpa' version '1.5.0'
+}
+----
+
+[source,kotlin,indent=0,role="secondary"]
+.Kotlin
+----
+plugins {
+    id("io.github.jpersist.jpa") version "1.5.0"
+}
+----
+
+== The `jpa` Configuration
+
+The plugin registers a `jpa` dependency configuration that propagates platform/BOM version constraints into all standard Java configurations (`implementation`, `compileOnly`, `annotationProcessor`, `runtimeOnly`).
+When the `java-library` plugin is also applied, the `api` and `compileOnlyApi` configurations are extended as well.
+
+[source,groovy,indent=0,role="primary"]
+.Groovy
+----
+dependencies {
+    jpa platform('org.hibernate.orm:hibernate-platform:6.6.56.Final')
+
+    implementation 'org.hibernate.orm:hibernate-core'
+}
+----
+
+[source,kotlin,indent=0,role="secondary"]
+.Kotlin
+----
+dependencies {
+    jpa(platform("org.hibernate.orm:hibernate-platform:6.6.56.Final"))
+
+    implementation("org.hibernate.orm:hibernate-core")
+}
+----
+
+== DSL Extension: `persistence`
+
+The `persistence` block is a `NamedDomainObjectContainer` scoped per Java source set.
+The plugin automatically creates one entry per source set (e.g. `main`, `test`).
+
+[source,groovy,indent=0,role="primary"]
+.Groovy
+----
+persistence {
+    main {
+        version = '3.0'
+
+        persistenceUnits {
+            'my-unit' {
+                provider = 'org.hibernate.jpa.HibernatePersistenceProvider'
+                transactionType = 'RESOURCE_LOCAL'
+
+                properties {
+                    property 'hibernate.show_sql', 'true'
+                }
+            }
+        }
+
+        validation {
+            url = 'jdbc:h2:mem:my_db;DB_CLOSE_DELAY=-1'
+        }
+
+        transformer {
+            outputProperty 'indent', 'yes'
+            outputProperty '{http://xml.apache.org/xslt}indent-amount', '2'
+        }
+    }
+}
+----
+
+[source,kotlin,indent=0,role="secondary"]
+.Kotlin
+----
+persistence {
+    create("main") {
+        version.set("3.0")
+
+        persistenceUnits {
+            create("my-unit") {
+                provider.set("org.hibernate.jpa.HibernatePersistenceProvider")
+                transactionType.set("RESOURCE_LOCAL")
+
+                properties.put("hibernate.show_sql", "true")
+            }
+        }
+
+        validation {
+            url.set("jdbc:h2:mem:my_db;DB_CLOSE_DELAY=-1")
+        }
+
+        outputProperties.put("indent", "yes")
+        outputProperties.put("{http://xml.apache.org/xslt}indent-amount", "2")
+    }
+}
+----
+
+=== `PersistenceExtension` Properties
+
+[cols="2,2,2,4"]
+|===
+| Property | Type | Default | Description
+
+| `version`
+| `Property<String>`
+| `"3.0"`
+| JPA specification version written into the root `<persistence>` element of the generated `persistence.xml`.
+
+| `persistenceUnits`
+| `NamedDomainObjectContainer<PersistenceUnitExtension>`
+| _auto-populated_
+| Named container of persistence unit definitions. Each entry maps to a `<persistence-unit>` element. Units declared in an existing `persistence.xml` template are automatically registered.
+
+| `validation`
+| `ValidationExtension`
+| _see below_
+| Nested database connection configuration for the schema validation task.
+
+| `outputProperties`
+| `MapProperty<String, String>`
+| _see below_
+| Key-value pairs passed to the XML `Transformer` that formats the output `persistence.xml`.
+|===
+
+==== Default Output Properties
+
+* `indent` = `yes`
+* `omit-xml-declaration` = `no`
+* `encoding` = `UTF-8`
+* `\{http://xml.apache.org/xslt}indent-amount` = `4`
+
+These can be customized via the `transformer` block (Groovy) or by setting entries directly on `outputProperties` (Kotlin):
+
+[source,groovy,indent=0,role="primary"]
+.Groovy
+----
+persistence {
+    main {
+        transformer {
+            outputProperty 'indent', 'yes'
+            outputProperty '{http://xml.apache.org/xslt}indent-amount', '2'
+        }
+    }
+}
+----
+
+[source,kotlin,indent=0,role="secondary"]
+.Kotlin
+----
+persistence {
+    create("main") {
+        outputProperties.put("indent", "yes")
+        outputProperties.put("{http://xml.apache.org/xslt}indent-amount", "2")
+    }
+}
+----
+
+=== `PersistenceUnitExtension` Properties
+
+[cols="2,2,2,4"]
+|===
+| Property | Type | Default | Description
+
+| `name`
+| `String`
+| _(container key)_
+| Read-only. The persistence-unit name used as the `name` attribute in the generated `<persistence-unit>` element.
+
+| `enabled`
+| `Property<Boolean>`
+| `true`
+| When set to `false`, the unit is excluded from the generated `persistence.xml`.
+
+| `transactionType`
+| `Property<String>`
+| `"RESOURCE_LOCAL"`
+| The JPA transaction type (`RESOURCE_LOCAL` or `JTA`).
+
+| `description`
+| `Property<String>`
+| _none_
+| An optional human-readable description for the persistence unit.
+
+| `provider`
+| `Property<String>`
+| _none_
+| Fully qualified class name of the JPA persistence provider (e.g. `org.hibernate.jpa.HibernatePersistenceProvider`).
+
+| `dataSource`
+| `Property<String>`
+| _none_
+| The JNDI name of the data source for this persistence unit.
+
+| `jta`
+| `Property<Boolean>`
+| _none_
+| Whether the data source is JTA-managed. When `true`, the data source is emitted as `<jta-data-source>`; otherwise as `<non-jta-data-source>`.
+
+| `mappingFiles`
+| `ListProperty<String>`
+| _empty_
+| A list of ORM mapping file paths to include in the persistence unit.
+
+| `jarFileMappings`
+| `MapProperty<String, String>`
+| _empty_
+| Custom jar-file element layout translations. Key: project path or `group:artifact` coordinates. Value: the structural path written into the `<jar-file>` XML tag.
+
+| `excludedUnlistedClasses`
+| `Property<Boolean>`
+| `false`
+| Whether unlisted entity classes should be excluded from the persistence unit.
+
+| `includeAllClasses`
+| `Property<Boolean>`
+| `true`
+| Whether all discovered entity classes should be included automatically.
+
+| `sharedCacheMode`
+| `Property<String>`
+| _none_
+| The shared (second-level) cache mode. When present, emitted as a `<shared-cache-mode>` element.
+
+| `validationMode`
+| `Property<String>`
+| _none_
+| The Bean Validation mode (`AUTO`, `CALLBACK`, or `NONE`). When present, emitted as a `<validation-mode>` element.
+
+| `properties`
+| `MapProperty<String, String>`
+| _empty_
+| Vendor-specific JPA properties included in the `<properties>` block of the persistence unit.
+|===
+
+Example with multiple properties:
+
+[source,groovy,indent=0,role="primary"]
+.Groovy
+----
+persistence {
+    main {
+        persistenceUnits {
+            'my-unit' {
+                provider = 'org.hibernate.jpa.HibernatePersistenceProvider'
+                transactionType = 'RESOURCE_LOCAL'
+                sharedCacheMode = 'ENABLE_SELECTIVE'
+                validationMode = 'AUTO'
+
+                properties {
+                    property 'hibernate.show_sql', 'true'
+                    property 'hibernate.format_sql', 'true'
+                }
+            }
+        }
+    }
+}
+----
+
+[source,kotlin,indent=0,role="secondary"]
+.Kotlin
+----
+persistence {
+    create("main") {
+        persistenceUnits {
+            create("my-unit") {
+                provider.set("org.hibernate.jpa.HibernatePersistenceProvider")
+                transactionType.set("RESOURCE_LOCAL")
+                sharedCacheMode.set("ENABLE_SELECTIVE")
+                validationMode.set("AUTO")
+
+                properties.put("hibernate.show_sql", "true")
+                properties.put("hibernate.format_sql", "true")
+            }
+        }
+    }
+}
+----
+
+=== `ValidationExtension` Properties
+
+[cols="2,2,3,4"]
+|===
+| Property | Type | Default | Description
+
+| `url`
+| `Property<String>`
+| `"jdbc:h2:mem:schema_validate_db;DB_CLOSE_DELAY=-1"`
+| The JDBC connection URL used for schema validation.
+
+| `driver`
+| `Property<String>`
+| `"org.h2.Driver"`
+| The fully qualified JDBC driver class name.
+
+| `user`
+| `Property<String>`
+| `"sa"`
+| The database user name.
+
+| `password`
+| `Property<String>`
+| `""` _(empty)_
+| The database password.
+|===
+
+[source,groovy,indent=0,role="primary"]
+.Groovy
+----
+persistence {
+    main {
+        validation {
+            url = 'jdbc:h2:mem:my_validation_db;DB_CLOSE_DELAY=-1'
+            driver = 'org.h2.Driver'
+            user = 'sa'
+            password = ''
+        }
+    }
+}
+----
+
+[source,kotlin,indent=0,role="secondary"]
+.Kotlin
+----
+persistence {
+    create("main") {
+        validation {
+            url.set("jdbc:h2:mem:my_validation_db;DB_CLOSE_DELAY=-1")
+            driver.set("org.h2.Driver")
+            user.set("sa")
+            password.set("")
+        }
+    }
+}
+----
+
+== Dependency Routing with `jarFile`
+
+For multi-module projects, the plugin registers a `jarFile` dependency configuration per source set that allows you to declare module dependencies injected as `<jar-file>` entries in the generated `persistence.xml`.
+
+The `jarFile` configuration extends `implementation` (and `api` when the `java-library` plugin is present).
+
+=== Using the Location Attribute
+
+[source,groovy,indent=0,role="primary"]
+.Groovy
+----
+dependencies {
+    jarFile(project(':common-entities')) {
+        attributes {
+            attribute(persist.jakarta.gradle.plugin.JakartaPersistencePlugin.JAR_LOCATION_ATTRIBUTE, 'lib/')
+        }
+    }
+}
+----
+
+[source,kotlin,indent=0,role="secondary"]
+.Kotlin
+----
+dependencies {
+    jarFile(project(":common-entities")) {
+        attributes {
+            attribute(persist.jakarta.gradle.plugin.JakartaPersistencePlugin.JAR_LOCATION_ATTRIBUTE, "lib/")
+        }
+    }
+}
+----
+
+=== Using DSL Jar File Mappings
+
+You can also declare custom jar-file path mappings directly inside a persistence unit:
+
+[source,groovy,indent=0,role="primary"]
+.Groovy
+----
+persistence {
+    main {
+        persistenceUnits {
+            'my-unit' {
+                jarFile(project(':ejb-module')) { jarTask ->
+                    "${jarTask.archiveBaseName.get()}.jar"
+                }
+                jarFile 'com.example:external-persistence', 'lib/external-persistence-custom.jar'
+            }
+        }
+    }
+}
+----
+
+[source,kotlin,indent=0,role="secondary"]
+.Kotlin
+----
+persistence {
+    create("main") {
+        persistenceUnits {
+            create("my-unit") {
+                jarFileMappings.put(":ejb-module", "ejb-module.jar")
+                jarFileMappings.put("com.example:external-persistence", "lib/external-persistence-custom.jar")
+            }
+        }
+    }
+}
+----
+
+== Tasks
+
+The plugin registers the following tasks per Java source set. For the `main` source set the task names are as shown below; for other source sets (e.g. `test`) the source set name is capitalized and inserted (e.g. `processTestPersistenceDescriptor`).
+
+=== `processPersistenceDescriptor`
+
+**Group:** `build` +
+**Type:** `ProcessPersistenceDescriptor`
+
+Generates or merges the `persistence.xml` descriptor for the source set.
+
+* **Merge mode:** When a user-provided `src/main/resources/META-INF/persistence.xml` exists, the task parses it, applies extension-defined overrides (provider, data source, properties), injects resolved `<class>` and `<jar-file>` entries, and writes the result to the destination.
+* **Generate mode:** When no source descriptor is present, the task builds a complete `persistence.xml` from scratch using the DSL configuration.
+
+The task automatically discovers JPA entity classes annotated with `@Entity`, `@Embeddable`, `@MappedSuperclass`, or `@Converter` using ASM bytecode scanning on the compiled class output.
+
+[cols="2,2,2,4"]
+|===
+| Property | Type | Default | Description
+
+| `xmlVersion`
+| `Property<String>`
+| `"3.0"`
+| The JPA specification version for the root `<persistence>` element. Bound from `persistence.main.version`.
+
+| `units`
+| `ListProperty<PersistenceUnitExtension>`
+| _from extension_
+| The list of active (enabled) persistence unit configurations to process.
+
+| `includedClasses`
+| `ListProperty<String>`
+| _auto-discovered_
+| Fully qualified class names of discovered JPA entity classes injected as `<class>` elements.
+
+| `jarFileNames`
+| `ListProperty<String>`
+| _from `jarFile` config_
+| Resolved JAR file names injected as `<jar-file>` elements.
+
+| `persistenceXml`
+| `RegularFileProperty`
+| _optional_
+| Path to the user-provided `persistence.xml` template. When present, enables merge mode.
+
+| `destinationFile`
+| `RegularFileProperty`
+| `build/generated/resources/main/META-INF/persistence.xml`
+| The output location of the generated or merged descriptor.
+
+| `transformerSettings`
+| `MapProperty<String, String>`
+| _from extension_
+| XML Transformer output properties controlling indentation, encoding, and formatting.
+|===
+
+TIP: The task is automatically skipped when no persistence units are enabled.
+
+=== `validatePersistenceSchema`
+
+**Group:** `verification` +
+**Type:** `ValidatePersistenceSchema`
+
+Validates that the JPA entity mappings align correctly with the database schema by booting an isolated JVM worker process.
+Each persistence unit is validated using the standard JPA `Persistence.createEntityManagerFactory` API with the `validate` schema generation action against an in-memory H2 database.
+
+[cols="2,2,2,4"]
+|===
+| Property | Type | Default | Description
+
+| `persistenceUnitNames`
+| `Property<String>`
+| _from extension_
+| A comma-separated list of active persistence unit names to validate.
+
+| `validation`
+| `Property<ValidationExtension>`
+| _from extension_
+| Nested database connection configuration (URL, driver, user, password).
+
+| `resourcesDir`
+| `DirectoryProperty`
+| _from `processResources`_
+| The resources directory containing `META-INF/persistence.xml`.
+
+| `classpath`
+| `ConfigurableFileCollection`
+| _auto-configured_
+| The full classpath including compiled entity classes, JPA provider binaries, and the H2 driver.
+|===
+
+NOTE: The H2 JDBC driver (`com.h2database:h2:2.2.224`) is transparently injected into the task classpath — no manual dependency declaration is needed.
+
+TIP: The task is automatically skipped when no active persistence unit names are present.
+
+=== `generateJPAGraalVMMetadata`
+
+**Group:** `build` +
+**Type:** `GenerateJPAGraalVMMetadata`
+
+Generates a GraalVM native image `reflect-config.json` file containing all discovered JPA entity classes to support AOT reflection in native images.
+
+The generated JSON follows the GraalVM reachability metadata format and registers each entity class with `allDeclaredConstructors`, `allDeclaredFields`, and `allDeclaredMethods` set to `true`.
+
+[cols="2,2,2,4"]
+|===
+| Property | Type | Default | Description
+
+| `includedClasses`
+| `ListProperty<String>`
+| _auto-discovered_
+| Fully qualified class names of discovered JPA entity classes.
+
+| `outputFile`
+| `RegularFileProperty`
+| `build/generated/graalvm-resources/main/META-INF/native-image/<group>/<name>/reflect-config.json`
+| The location where the `reflect-config.json` is written. The path follows GraalVM standard conventions using the project group and name.
+|===
+
+The generated resource directory is automatically added to the source set resources, ensuring the JSON file is indexed by IDEs and packaged into the final JAR.

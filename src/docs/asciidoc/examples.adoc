@@ -1,0 +1,82 @@
+= Examples
+
+Complete runnable examples are available in the link:https://github.com/jpersist/persistence/tree/main/examples[`examples/`] directory of the repository.
+Each example demonstrates a minimal JPA project using one of the supported plugins.
+
+== Hibernate Example
+
+This example applies the `io.github.jpersist.hibernate-persistence` aggregator plugin to generate `persistence.xml` descriptors and perform compile-time bytecode enhancement via Hibernate.
+
+[source,groovy,indent=0,role="primary"]
+.Groovy
+----
+include::{examplesdir}/hibernate-example/build.gradle[]
+----
+
+[source,kotlin,indent=0,role="secondary"]
+.Kotlin
+----
+include::{examplesdir}/hibernate-example/build.gradle.kts[]
+----
+
+See <<hibernate-plugin.adoc#,Hibernate Plugin>> for the full list of extension properties and tasks.
+
+== EclipseLink Example
+
+This example applies the `io.github.jpersist.eclipse-persistence` aggregator plugin to generate `persistence.xml` descriptors and perform compile-time static weaving via EclipseLink.
+
+[source,groovy,indent=0,role="primary"]
+.Groovy
+----
+include::{examplesdir}/eclipselink-example/build.gradle[]
+----
+
+[source,kotlin,indent=0,role="secondary"]
+.Kotlin
+----
+include::{examplesdir}/eclipselink-example/build.gradle.kts[]
+----
+
+See <<eclipse-plugin.adoc#,EclipseLink Plugin>> for the full list of extension properties and tasks.
+
+== Jakarta Persistence Example
+
+This example demonstrates standalone descriptor generation using the core `io.github.jpersist.jpa` plugin without a specific JPA provider aggregator.
+It explicitly configures a persistence unit with a provider class and custom properties via the `persistence` DSL extension.
+
+[source,groovy,indent=0,role="primary"]
+.Groovy
+----
+include::{examplesdir}/jakarta-persistence-example/build.gradle[]
+----
+
+[source,kotlin,indent=0,role="secondary"]
+.Kotlin
+----
+include::{examplesdir}/jakarta-persistence-example/build.gradle.kts[]
+----
+
+See <<jakarta-plugin.adoc#,Jakarta Persistence Plugin>> for the full documentation on the `persistence` DSL extension.
+
+== Entity Class
+
+Each example uses a simple `Person` entity annotated with standard Jakarta Persistence annotations:
+
+[source,java,indent=0]
+----
+include::{examplesdir}/hibernate-example/src/main/java/com/example/entity/Person.java[]
+----
+
+== Persistence Descriptor Template
+
+Each example includes a `persistence.xml` template in `src/main/resources/META-INF/`.
+The plugin merges auto-detected entity classes with the entries defined in this template.
+
+[source,xml,indent=0]
+----
+include::{examplesdir}/hibernate-example/src/main/resources/META-INF/persistence.xml[]
+----
+
+TIP: Providing a `persistence.xml` template is optional when using the Hibernate or core JPA plugin.
+However, it is *required* when applying the `io.github.jpersist.eclipse-jpa-modelgen` sub-plugin.
+See <<eclipse-plugin.adoc#,EclipseLink Plugin>> for details.

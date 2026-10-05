@@ -1,0 +1,70 @@
+= FAQ
+
+[[faq-persistence-xml]]
+== 1. Do I need to write a `persistence.xml` manually?
+
+No. The plugin automatically scans your compiled classes for JPA entity annotations and generates a complete `persistence.xml`.
+If you provide a template `persistence.xml` in `src/main/resources/META-INF/`, the plugin merges your entries with the auto-detected entities.
+
+WARNING: When applying the `io.github.jpersist.eclipse-jpa-modelgen` sub-plugin, you *must* provide a `persistence.xml` template with at least the persistence unit name and the full list of entity classes.
+Without it, metamodel generation may not work correctly because the `persistence.xml` is generated _after_ the `compileJava` task.
+See <<eclipse-plugin.adoc#,EclipseLink Plugin — JPA Static Metamodel Generation>> for details and a minimal template example.
+
+[[faq-hibernate-eclipselink]]
+== 2. Can I use both Hibernate and EclipseLink in the same project?
+
+Each module should use only one provider plugin.
+However, different modules within a multi-module project can use different providers.
+
+It is also possible to combine sub-plugins from different providers within the same module.
+For example, instead of applying one of the aggregator plugins (`io.github.jpersist.hibernate-persistence` or `io.github.jpersist.eclipse-persistence`), you can manually apply the core `io.github.jpersist.jpa` plugin first, then cherry-pick individual sub-plugins:
+
+[source,groovy,indent=0,role="primary"]
+.Groovy
+----
+plugins {
+    id 'io.github.jpersist.jpa' version '1.5.0'
+    id 'io.github.jpersist.hibernate-jpamodelgen' version '1.5.0'
+    id 'io.github.jpersist.eclipse-static-weave' version '1.5.0'
+}
+----
+
+[source,kotlin,indent=0,role="secondary"]
+.Kotlin
+----
+plugins {
+    id("io.github.jpersist.jpa") version "1.5.0"
+    id("io.github.jpersist.hibernate-jpamodelgen") version "1.5.0"
+    id("io.github.jpersist.eclipse-static-weave") version "1.5.0"
+}
+----
+
+In this example, JPA static metamodel generation is handled by Hibernate's annotation processor while compile-time bytecode weaving is performed by EclipseLink's static weaver.
+Note that in this scenario, the target JPA platform is *EclipseLink* — the static weaving step produces EclipseLink-enhanced bytecode, so the runtime persistence provider must be EclipseLink.
+
+[[faq-jpa-versions]]
+== 3. Which JPA specification versions are supported?
+
+The plugin supports JPA `2.0`, `2.1`, `2.2`, `3.0`, `3.1`, and `3.2`.
+The default version is `3.0` (Jakarta Persistence 3.0).
+
+See <<configuration.adoc#,Configuration — JPA Version Selection>> for how to change the target version.
+
+[[faq-configuration-cache]]
+== 4. Is the Gradle Configuration Cache supported?
+
+Yes. All JPersist plugins are fully compatible with Gradle's Configuration Cache and Isolated Projects features.
+
+[[faq-bytecode-enhancement]]
+== 5. Do I need a runtime `-javaagent` for bytecode enhancement?
+
+No. Both the Hibernate enhancement and EclipseLink static weaving plugins perform bytecode modification at compile time.
+No runtime agent is required.
+
+See <<hibernate-plugin.adoc#,Hibernate Plugin — `hibernateEnhanceClasses`>> and <<eclipse-plugin.adoc#,EclipseLink Plugin — `eclipseWeaveClasses`>> for details.
+
+[[faq-api-docs]]
+== 6. Where can I find the API documentation?
+
+The full Groovydoc API reference is published at https://jpersist.github.io/persistence/api/latest/[jpersist.github.io/persistence/api/latest].
+The User Guide is available at https://jpersist.github.io/persistence/guide/latest/[jpersist.github.io/persistence/guide/latest].

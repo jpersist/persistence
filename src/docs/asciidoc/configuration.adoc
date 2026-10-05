@@ -1,0 +1,174 @@
+= Configuration
+
+This section covers advanced configuration topics for JPersist plugins.
+
+== Multi-Module Projects
+
+In multi-module Gradle projects, declare the provider-specific plugin once in the root build file with `apply false`, then apply it individually in each module that contains JPA entities.
+Use the `jarFile` dependency configuration together with DSL jar-file mappings to declare cross-module entity dependencies so that `<jar-file>` entries are correctly generated in `persistence.xml`.
+
+=== Root `build.gradle`
+
+[source,groovy,indent=0,role="primary"]
+.Groovy
+----
+plugins {
+    id 'base'
+    id 'io.github.jpersist.hibernate-persistence' version '1.5.0' apply false
+}
+
+subprojects {
+    repositories {
+        mavenCentral()
+    }
+}
+----
+
+[source,kotlin,indent=0,role="secondary"]
+.Kotlin
+----
+plugins {
+    base
+    id("io.github.jpersist.hibernate-persistence") version "1.5.0" apply false
+}
+
+subprojects {
+    repositories {
+        mavenCentral()
+    }
+}
+----
+
+TIP: Declaring the plugin with `apply false` in the root project makes the plugin available to subprojects without applying it at the root level. Each subproject then opts in explicitly.
+
+=== Entity Module `build.gradle`
+
+The entity module defines JPA entity classes and applies both `java-library` and the Hibernate persistence plugin.
+Because the plugin version is already declared in the root `build.gradle`, the subproject does not need to repeat it.
+
+[source,groovy,indent=0,role="primary"]
+.Groovy
+----
+plugins {
+    id 'java-library'
+    id 'io.github.jpersist.hibernate-persistence'
+}
+
+dependencies {
+    jpa platform('org.hibernate.orm:hibernate-platform:6.6.56.Final')
+    implementation 'org.hibernate.orm:hibernate-core'
+}
+----
+
+[source,kotlin,indent=0,role="secondary"]
+.Kotlin
+----
+plugins {
+    `java-library`
+    id("io.github.jpersist.hibernate-persistence")
+}
+
+dependencies {
+    jpa(platform("org.hibernate.orm:hibernate-platform:6.6.56.Final"))
+    implementation("org.hibernate.orm:hibernate-core")
+}
+----
+
+=== Service Module `build.gradle`
+
+The service module depends on the entity module.
+It declares a `jarFile` project dependency and maps the jar-file location directly inside the persistence unit DSL block.
+
+[source,groovy,indent=0,role="primary"]
+.Groovy
+----
+plugins {
+    id 'java-library'
+    id 'io.github.jpersist.hibernate-persistence'
+}
+
+dependencies {
+    jpa platform('org.hibernate.orm:hibernate-platform:6.6.56.Final')
+    implementation 'org.hibernate.orm:hibernate-core'
+
+    jarFile project(':entity-module')
+}
+
+persistence {
+    main {
+        persistenceUnits {
+            'service-persistence-unit' {
+                jarFile(project(':entity-module')) { jarTask ->
+                    "lib/${jarTask.archiveFileName.get()}"
+                }
+            }
+        }
+    }
+}
+----
+
+[source,kotlin,indent=0,role="secondary"]
+.Kotlin
+----
+plugins {
+    `java-library`
+    id("io.github.jpersist.hibernate-persistence")
+}
+
+dependencies {
+    jpa(platform("org.hibernate.orm:hibernate-platform:6.6.56.Final"))
+    implementation("org.hibernate.orm:hibernate-core")
+
+    jarFile(project(":entity-module"))
+}
+
+persistence {
+    create("main") {
+        persistenceUnits {
+            create("service-persistence-unit") {
+                jarFileMappings.put(":entity-module", "lib/entity-module.jar")
+            }
+        }
+    }
+}
+----
+
+The `jarFile` dependency ensures that the entity module's JAR is resolved at build time.
+The DSL `jarFile` mapping inside `persistenceUnits` controls the exact `<jar-file>` path written to `persistence.xml`.
+See <<jakarta-plugin.adoc#,Jakarta Persistence Plugin>> for the full documentation on the `jarFile` dependency routing and DSL jar-file mappings.
+
+== JPA Version Selection
+
+The `persistence` extension defaults to JPA 3.0. To target a different specification version, set the `version` property:
+
+[source,groovy,indent=0,role="primary"]
+.Groovy
+----
+persistence {
+    main {
+        version = '2.1' // JPA 2.1
+    }
+}
+----
+
+[source,kotlin,indent=0,role="secondary"]
+.Kotlin
+----
+persistence {
+    create("main") {
+        version.set("2.1") // JPA 2.1
+    }
+}
+----
+
+Supported versions: `2.0`, `2.1`, `2.2`, `3.0`, `3.1` and `3.2`.
+
+== Gradle Configuration Cache
+
+All JPersist plugins are fully compatible with Gradle's Configuration Cache.
+No special configuration is required — the plugins use lazy `Property` and `Provider` APIs throughout to ensure safe serialization of the build configuration.
+
+== IDE Integration
+
+JPersist automatically hooks into Buildship (Eclipse) and IntelliJ IDEA project synchronization.
+Generated source directories for metamodel classes are registered as source roots, so IDE indexing works out of the box.
