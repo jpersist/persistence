@@ -5,6 +5,7 @@ import groovy.xml.XmlParser
 import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.component.ModuleComponentSelector
+import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentSelector
 import org.gradle.api.artifacts.result.DependencyResult
 import org.gradle.api.attributes.Attribute
@@ -201,7 +202,7 @@ class JakartaPersistencePlugin implements Plugin<Project> {
 
             // Resolve first level declared jars
             task.jarFileNames.set(project.provider {
-                resolveFirstLevelJarFileNames(jarFileConfigProvider)
+                resolveFirstLevelJarFileNames(jarFileConfigProvider, task)
             })
 
             // Safely hook into the sibling compilation task output lazily using Provider map arrays
@@ -434,7 +435,8 @@ class JakartaPersistencePlugin implements Plugin<Project> {
         return jpaClasses.sort()
     }
 
-    private static List<String> resolveFirstLevelJarFileNames(NamedDomainObjectProvider<Configuration> jarFileConfigProvider) {
+    private static List<String> resolveFirstLevelJarFileNames(NamedDomainObjectProvider<Configuration> jarFileConfigProvider,
+                                                              ProcessPersistenceDescriptor processTask) {
         def jarFileConfig = jarFileConfigProvider.get()
         if (jarFileConfig.isEmpty()) return []
 
@@ -464,11 +466,31 @@ class JakartaPersistencePlugin implements Plugin<Project> {
             }
         }
 
+        // Aggregate unique mappings across all active persistence units configured for the task
+        Map<String, String> customJarFileMappings = [:]
+        processTask.units.get().each { unit ->
+            customJarFileMappings.putAll(unit.jarFileMappings.getOrElse([:]))
+        }
+
         // 2. Loop over resolved artifacts and apply matching path configurations
         jarFileConfig.resolvedConfiguration.firstLevelModuleDependencies.collectMany { dep ->
             dep.moduleArtifacts.collect { artifact ->
                 String jarName = artifact.file.name
 
+                // Determine the clean project path coordinate if it is a local module dependency
+                String projectPath = artifact.id.componentIdentifier instanceof ProjectComponentIdentifier
+                    ? ((ProjectComponentIdentifier) artifact.id.componentIdentifier).projectPath
+                    : null
+
+                // 1. HIGHEST PRIORITY: Check for a direct explicit mapping override in the new DSL map
+                String directOverride = customJarFileMappings.get(projectPath)
+                    ?: customJarFileMappings.get("${dep.moduleGroup}:${dep.moduleName}")
+
+                if (directOverride) {
+                    return directOverride
+                }
+
+                // 2. FALLBACK: Use standard Namespaced Location Attribute routing from v1.4.1
                 // Match using full coordinate string first, then fall back to the simple submodule name
                 String customLocation = dependencyLocationOverrides.get("${dep.moduleGroup}:${dep.moduleName}")
                     ?: dependencyLocationOverrides.get(dep.moduleName)
