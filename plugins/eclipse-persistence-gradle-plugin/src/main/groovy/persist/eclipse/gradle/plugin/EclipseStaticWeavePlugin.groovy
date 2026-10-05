@@ -53,6 +53,9 @@ class EclipseStaticWeavePlugin implements Plugin<Project> {
 
             // Locate the native, built-in processResources task provider
             def processResourcesProvider = project.tasks.named(sourceSet.processResourcesTaskName, ProcessResources)
+            def processResourcesDestinationDir = processResourcesProvider.flatMap {task ->
+                project.layout.dir(project.provider { task.destinationDir })
+            }
 
             // Map to an explicitly isolated woven directory
             def wovenClassesDir = project.layout.buildDirectory.dir("woven/classes/java/${sourceSet.name}")
@@ -71,7 +74,7 @@ class EclipseStaticWeavePlugin implements Plugin<Project> {
                 // Pass the native processResources destination directory as the resource info root!
                 // This guarantees that all resources, metadata files, and the generated persistence.xml
                 // are fully present on disk before weaving begins.
-                task.resourcesDir.set(processResourcesProvider.flatMap { it.destinationDirectory })
+                task.resourcesDir.set(processResourcesDestinationDir)
 
                 // Wire the classpaths safely using lazy FileCollections
                 task.weaveClasspath.from(weaveConfig)
