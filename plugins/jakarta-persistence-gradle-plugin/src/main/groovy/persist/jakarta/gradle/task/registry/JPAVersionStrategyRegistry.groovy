@@ -4,13 +4,14 @@ import org.gradle.api.GradleException
 import persist.jakarta.gradle.task.delegate.DescriptorProcessorDelegate
 import persist.jakarta.gradle.task.delegate.JPA20DescriptorProcessorDelegate
 import persist.jakarta.gradle.task.delegate.JPA21DescriptorProcessorDelegate
+import persist.jakarta.gradle.task.delegate.JPA22DescriptorProcessorDelegate
 import persist.jakarta.gradle.task.delegate.JPA30DescriptorProcessorDelegate
 import persist.jakarta.gradle.task.delegate.JPA32DescriptorProcessorDelegate
 import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Registry factory that maps JPA specification version strings to their
- * corresponding XML namespace, schema location, and
+ * corresponding XML version, namespace, schema location, and
  * {@link DescriptorProcessorDelegate} strategy implementation.
  * <p>
  * All supported versions are registered eagerly in a static initializer
@@ -24,6 +25,9 @@ import java.util.concurrent.ConcurrentHashMap
  */
 class JPAVersionStrategyRegistry {
 
+    /** The XML version for the {@code <persistence>} root element. */
+    final String version
+
     /** The XML namespace URI for the {@code <persistence>} root element. */
     final String namespace
 
@@ -35,7 +39,9 @@ class JPAVersionStrategyRegistry {
 
     private static final Map<String, JPAVersionStrategyRegistry> REGISTRY = new ConcurrentHashMap<>()
 
-    private JPAVersionStrategyRegistry(String namespace, String schemaLocation, DescriptorProcessorDelegate delegate) {
+    private JPAVersionStrategyRegistry(String version, String namespace, String schemaLocation,
+                                       DescriptorProcessorDelegate delegate) {
+        this.version = version
         this.namespace = namespace
         this.schemaLocation = schemaLocation
         this.delegate = delegate
@@ -46,28 +52,37 @@ class JPAVersionStrategyRegistry {
         // 1. JPA 2.0 (Javax Old Era)
         registerDelegate(
             new JPA20DescriptorProcessorDelegate(),
+            "2.0",
             "http://java.sun.com/xml/ns/persistence",
             "http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
         )
 
         // 2. JPA 2.1 & 2.2 (Javax Modern Era)
-        def jpa21Delegate = new JPA21DescriptorProcessorDelegate()
-        jpa21Delegate.getSupportedVersions().forEach { version ->
-            registerDelegate(
-                jpa21Delegate,
-                "http://xmlns.jcp.org/xml/ns/persistence",
-                "http://xmlns.jcp.org/xml/ns/persistence/persistence_${version.replace('.', '_')}.xsd"
-            )
-        }
+        registerDelegate(
+            new JPA21DescriptorProcessorDelegate(),
+            "2.1",
+            "http://xmlns.jcp.org/xml/ns/persistence",
+            "http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
+        )
+
+        registerDelegate(
+            new JPA22DescriptorProcessorDelegate(),
+            "2.2",
+            "http://xmlns.jcp.org/xml/ns/persistence",
+            "http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd"
+        )
 
         // 3. JPA 3.0 & 3.1 (Jakarta Core)
-        // We handle individual schemas mapping dynamically inside registration
-        registerDelegate(new JPA30DescriptorProcessorDelegate(), "https://jakarta.ee/xml/ns/persistence", "https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd")
-        registerDelegate(new JPA30DescriptorProcessorDelegate(), "https://jakarta.ee/xml/ns/persistence", "https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd")
+        registerDelegate(
+            new JPA30DescriptorProcessorDelegate(),
+            "3.0",
+            "https://jakarta.ee/xml/ns/persistence",
+            "https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd")
 
         // 4. JPA 3.2 (Jakarta Modern)
         registerDelegate(
             new JPA32DescriptorProcessorDelegate(),
+            "3.2",
             "https://jakarta.ee/xml/ns/persistence",
             "https://jakarta.ee/xml/ns/persistence/persistence_3_2.xsd"
         )
@@ -75,20 +90,21 @@ class JPAVersionStrategyRegistry {
 
     /**
      * Registers a delegate for each of its supported versions, associating
-     * the given namespace and schema location with the version key.
+     * the given XML version, namespace, and schema location with the version key.
      *
      * @param delegate        The strategy implementation to register.
+     * @param xmlVersion      The XML version attribute for the root element.
      * @param namespace       The XML namespace URI.
      * @param schemaFileName  The XSD schema location URL.
      */
-    private static void registerDelegate(DescriptorProcessorDelegate delegate, String namespace, String schemaFileName) {
+    private static void registerDelegate(DescriptorProcessorDelegate delegate, String xmlVersion, String namespace, String schemaFileName) {
         delegate.getSupportedVersions().forEach { version ->
             // If we passed an explicit .xsd target file structure string, apply it, else generate dynamically
             String finalSchemaLoc = schemaFileName.endsWith(".xsd")
                 ? schemaFileName
-                : "https://jakarta.ee/persistence_${version.replace('.', '_')}.xsd"
+                : "https://jakarta.ee/xml/ns/persistence/persistence_${version.replace('.', '_')}.xsd"
 
-            REGISTRY.put(version, new JPAVersionStrategyRegistry(namespace, finalSchemaLoc, delegate))
+            REGISTRY.put(version, new JPAVersionStrategyRegistry(xmlVersion, namespace, finalSchemaLoc, delegate))
         }
     }
 
@@ -97,7 +113,7 @@ class JPAVersionStrategyRegistry {
      * specification version.
      *
      * @param version The JPA version string (e.g. {@code "3.2"}).
-     * @return The matching registry entry containing namespace, schema, and delegate.
+     * @return The matching registry entry containing version, namespace, schema, and delegate.
      * @throws org.gradle.api.GradleException if the version is not supported.
      */
     static JPAVersionStrategyRegistry resolve(String version) {

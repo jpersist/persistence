@@ -1,7 +1,7 @@
 package persist.jakarta.gradle.task.delegate
 
 /**
- * Descriptor processor delegate for the JPA 2.1 and 2.2 specifications.
+ * Descriptor processor delegate for the JPA 2.1 specifications.
  *
  * @since 1.4.0
  * @see AbstractDescriptorProcessorDelegate
@@ -10,7 +10,7 @@ class JPA21DescriptorProcessorDelegate extends AbstractDescriptorProcessorDelega
 
     @Override
     List<String> getSupportedVersions() {
-        return ["2.1", "2.2"]
+        return ["2.1"]
     }
 
 }
