@@ -228,13 +228,8 @@ The woven classes are automatically included in the final JAR with higher priori
 
 | `resourcesDir`
 | `DirectoryProperty`
-| `build/generated/resources/<sourceSet>`
+| _from `processResources` output_
 | The root directory containing persistence configuration metadata files (e.g. `META-INF/persistence.xml`). Passed to the `StaticWeave` processor via the `-persistenceinfo` argument.
-
-| `persistenceXml`
-| `RegularFileProperty`
-| _from `processPersistenceDescriptor` output_
-| The generated `persistence.xml` descriptor file produced by the `ProcessPersistenceDescriptor` task. Declaring this as an explicit input establishes an implicit task dependency, ensuring the descriptor is generated before weaving begins.
 
 | `weaveClasspath`
 | `ConfigurableFileCollection`

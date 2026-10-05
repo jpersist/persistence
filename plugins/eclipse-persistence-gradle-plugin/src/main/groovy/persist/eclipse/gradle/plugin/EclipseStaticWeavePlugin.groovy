@@ -8,8 +8,8 @@ import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.jvm.tasks.Jar
 import org.gradle.language.base.plugins.LifecycleBasePlugin
+import org.gradle.language.jvm.tasks.ProcessResources
 import persist.eclipse.gradle.task.EclipseWeaveTask
-import persist.jakarta.gradle.task.ProcessPersistenceDescriptor
 
 /**
  * Main entry point for the EclipseLink Static Weaving Plugin.
@@ -47,23 +47,15 @@ class EclipseStaticWeavePlugin implements Plugin<Project> {
             String classesTaskName = sourceSet.getClassesTaskName()
             String compileTaskName = sourceSet.getCompileJavaTaskName()
             String weaveTaskName = "eclipseWeave${classesTaskName.capitalize()}"
-            String processPersistenceDescriptorTaskName = sourceSet.name == 'main' ? "processPersistenceDescriptor" : "process${sourceSet.name.capitalize()}PersistenceDescriptor"
 
             // Fetch the compileJava task provider safely
             def compileJavaProvider = project.tasks.named(compileTaskName, JavaCompile)
 
-            // Locate the descriptor generation task registered by our core plugin
-            def processDescriptorTaskProvider = project.tasks.named(processPersistenceDescriptorTaskName, ProcessPersistenceDescriptor)
+            // Locate the native, built-in processResources task provider
+            def processResourcesProvider = project.tasks.named(sourceSet.processResourcesTaskName, ProcessResources)
 
             // Map to an explicitly isolated woven directory
             def wovenClassesDir = project.layout.buildDirectory.dir("woven/classes/java/${sourceSet.name}")
-
-            // Identify the root directory containing our dynamically generated META-INF folder
-            def generatedResourcesRootDir = project.layout.buildDirectory.dir("generated/resources/${sourceSet.name}")
-
-            // Natively register the generated directory as a resource path inside the source set
-            // This ensures Gradle and IDEs index your dynamic persistence.xml perfectly.
-            sourceSet.resources.srcDir(generatedResourcesRootDir)
 
             // Register your weaving task at the PROJECT level (Fixed Context!)
             def weaveTaskProvider = project.tasks.register(weaveTaskName, EclipseWeaveTask) { task ->
@@ -76,20 +68,19 @@ class EclipseStaticWeavePlugin implements Plugin<Project> {
                 // Target goes to a brand new isolated directory
                 task.targetClassesDir.set(wovenClassesDir)
 
-                // Pass the ROOT generated resources directory where META-INF/persistence.xml lives
-                // This gives EclipseLink the exact path layout structure it expects to find.
-                task.resourcesDir.set(generatedResourcesRootDir)
-
-                // Wire the descriptor task output directly as an input to the weaving task!
-                // This instantly establishes an implicit task dependency graph tracking rule.
-                task.persistenceXml.set(processDescriptorTaskProvider.flatMap { it.destinationFile })
+                // Pass the native processResources destination directory as the resource info root!
+                // This guarantees that all resources, metadata files, and the generated persistence.xml
+                // are fully present on disk before weaving begins.
+                task.resourcesDir.set(processResourcesProvider.flatMap { it.destinationDirectory })
 
                 // Wire the classpaths safely using lazy FileCollections
                 task.weaveClasspath.from(weaveConfig)
                 task.compileClasspath.from(sourceSet.compileClasspath)
 
-                // Explicitly dictate that weaving runs after compilation
+                // Explicitly dictate that weaving runs after BOTH compilation and resource processing are finalized
                 task.mustRunAfter(compileJavaProvider)
+                task.mustRunAfter(processResourcesProvider)
+                task.dependsOn(processResourcesProvider)
             }
 
             // Safely feed both directories to the jar task and prioritize woven outputs
