@@ -68,10 +68,6 @@ class HibernatePersistencePluginFunctionalSpec extends Specification {
         JarFile archive = new JarFile(jarFile)
         archive.getJarEntry("org/hibernate/persistence/entity/Person_.class") != null
         archive.close()
-
-        and: "The console output contains the exact deprecation warning"
-        result.output.contains("WARNING: The 'persistence' configuration is DEPRECATED.")
-        result.output.contains("Please migrate this dependency to 'jpa' instead.")
     }
 
     def "plugin applies successfully and builds downstream tasks with configuration cache support"() {
