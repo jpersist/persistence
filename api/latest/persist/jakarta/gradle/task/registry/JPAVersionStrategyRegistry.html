@@ -105,7 +105,7 @@ if (location.href.indexOf('is-external=true') == -1) {
 extends java.lang.Object</pre>
 
     <p> Registry factory that maps JPA specification version strings to their
- corresponding XML namespace, schema location, and
+ corresponding XML version, namespace, schema location, and
  <a href='../../../../../persist/jakarta/gradle/task/delegate/DescriptorProcessorDelegate.html' title='DescriptorProcessorDelegate'>DescriptorProcessorDelegate</a> strategy implementation.
  <p>
  All supported versions are registered eagerly in a static initializer
@@ -156,6 +156,11 @@ extends java.lang.Object</pre>
                         <tr class="altColor">
                             <td class="colFirst"><code><strong>java.lang.String</strong></code>&nbsp;</td>
                             <td class="colLast"><code><a href="#schemaLocation">schemaLocation</a></code><br>The full URL of the XSD schema used in <CODE>xsi:schemaLocation</CODE>.</td>
+                        </tr>
+                        
+                        <tr class="rowColor">
+                            <td class="colFirst"><code><strong>java.lang.String</strong></code>&nbsp;</td>
+                            <td class="colLast"><code><a href="#version">version</a></code><br>The XML version for the <CODE>&lt;persistence&gt;</CODE> root element.</td>
                         </tr>
                         
                     </table>
@@ -259,6 +264,14 @@ extends java.lang.Object</pre>
                             </li>
                         </ul>
                     
+                        <a name="version"><!-- --></a>
+                        <ul class="blockListLast">
+                            <li class="blockList">
+                                <h4>final&nbsp;java.lang.String <strong>version</strong></h4>
+                                <p>The XML version for the <CODE>&lt;persistence&gt;</CODE> root element.</p>
+                            </li>
+                        </ul>
+                    
                 </li>
             </ul>
             
@@ -281,7 +294,7 @@ extends java.lang.Object</pre>
                             <li class="blockList">
                                 <h4>static&nbsp;<a href='../../../../../persist/jakarta/gradle/task/registry/JPAVersionStrategyRegistry.html'>JPAVersionStrategyRegistry</a> <strong>resolve</strong>(java.lang.String version)</h4>
                                 <p> Resolves the complete strategy metadata for the requested JPA
- specification version.<DL><DT><B>throws:</B></DT><DD>org.gradle.api.GradleException if the version is not supported.</DD></DL> <DL><DT><B>Parameters:</B></DT><DD><code>version</code> -  The JPA version string (e.g. <CODE>"3.2"</CODE>).</DD></DL><DL><DT><B>Returns:</B></DT><DD>The matching registry entry containing namespace, schema, and delegate.</DD></DL></p>
+ specification version.<DL><DT><B>throws:</B></DT><DD>org.gradle.api.GradleException if the version is not supported.</DD></DL> <DL><DT><B>Parameters:</B></DT><DD><code>version</code> -  The JPA version string (e.g. <CODE>"3.2"</CODE>).</DD></DL><DL><DT><B>Returns:</B></DT><DD>The matching registry entry containing version, namespace, schema, and delegate.</DD></DL></p>
                             </li>
                         </ul>
                     

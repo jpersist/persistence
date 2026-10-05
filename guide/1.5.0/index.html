@@ -618,8 +618,18 @@ $(addBlockSwitches);
 <ul class="sectlevel2">
 <li><a href="#_requirements">1.1. Requirements</a></li>
 <li><a href="#_choosing_a_plugin">1.2. Choosing a Plugin</a></li>
-<li><a href="#_applying_the_plugin">1.3. Applying the Plugin</a></li>
-<li><a href="#_adding_dependencies">1.4. Adding Dependencies</a></li>
+<li><a href="#_applying_the_plugin">1.3. Applying the Plugin</a>
+<ul class="sectlevel3">
+<li><a href="#_hibernate_example">1.3.1. Hibernate example</a></li>
+<li><a href="#_eclipselink_example">1.3.2. EclipseLink example</a></li>
+</ul>
+</li>
+<li><a href="#_adding_dependencies">1.4. Adding Dependencies</a>
+<ul class="sectlevel3">
+<li><a href="#_hibernate_example_2">1.4.1. Hibernate example</a></li>
+<li><a href="#_eclipselink_example_2">1.4.2. EclipseLink example</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a href="#_jakarta_persistence_plugin">2. Jakarta Persistence Plugin</a>
@@ -701,8 +711,8 @@ $(addBlockSwitches);
 </li>
 <li><a href="#_examples">6. Examples</a>
 <ul class="sectlevel2">
-<li><a href="#_hibernate_example">6.1. Hibernate Example</a></li>
-<li><a href="#_eclipselink_example">6.2. EclipseLink Example</a></li>
+<li><a href="#_hibernate_example_3">6.1. Hibernate Example</a></li>
+<li><a href="#_eclipselink_example_3">6.2. EclipseLink Example</a></li>
 <li><a href="#_jakarta_persistence_example">6.3. Jakarta Persistence Example</a></li>
 <li><a href="#_entity_class">6.4. Entity Class</a></li>
 <li><a href="#_persistence_descriptor_template">6.5. Persistence Descriptor Template</a></li>
@@ -800,20 +810,42 @@ The provider-specific plugins (<code>hibernate-persistence</code> and <code>ecli
 </div>
 <div class="sect2">
 <h3 id="_applying_the_plugin">1.3. Applying the Plugin</h3>
-<div class="listingblock">
-<div class="title">Groovy DSL</div>
+<div class="sect3">
+<h4 id="_hibernate_example">1.3.1. Hibernate example</h4>
+<div class="listingblock primary">
+<div class="title">Groovy</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">plugins {
     id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.hibernate-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.5.0</span><span class="delimiter">'</span></span>
 }</code></pre>
 </div>
 </div>
-<div class="listingblock">
-<div class="title">Kotlin DSL</div>
+<div class="listingblock secondary">
+<div class="title">Kotlin</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
     id(&quot;io.github.jpersist.hibernate-persistence&quot;) version &quot;1.5.0&quot;
 }</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_eclipselink_example">1.3.2. EclipseLink example</h4>
+<div class="listingblock primary">
+<div class="title">Groovy</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">plugins {
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.eclipse-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.5.0</span><span class="delimiter">'</span></span>
+}</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">Kotlin</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
+    id(&quot;io.github.jpersist.eclipse-persistence&quot;) version &quot;1.5.0&quot;
+}</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -822,8 +854,10 @@ The provider-specific plugins (<code>hibernate-persistence</code> and <code>ecli
 <div class="paragraph">
 <p>Use the <code>jpa</code> configuration to declare your JPA provider platform BOM. This centralizes version management across all compilation scopes.</p>
 </div>
-<div class="listingblock">
-<div class="title">Hibernate example</div>
+<div class="sect3">
+<h4 id="_hibernate_example_2">1.4.1. Hibernate example</h4>
+<div class="listingblock primary">
+<div class="title">Groovy</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">dependencies {
     jpa platform(<span class="string"><span class="delimiter">'</span><span class="content">org.hibernate.orm:hibernate-platform:6.6.56.Final</span><span class="delimiter">'</span></span>)
@@ -832,8 +866,21 @@ The provider-specific plugins (<code>hibernate-persistence</code> and <code>ecli
 }</code></pre>
 </div>
 </div>
-<div class="listingblock">
-<div class="title">EclipseLink example</div>
+<div class="listingblock secondary">
+<div class="title">Kotlin</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="kotlin">dependencies {
+    jpa(platform(&quot;org.hibernate.orm:hibernate-platform:6.6.56.Final&quot;))
+
+    implementation(&quot;org.hibernate.orm:hibernate-core&quot;)
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_eclipselink_example_2">1.4.2. EclipseLink example</h4>
+<div class="listingblock primary">
+<div class="title">Groovy</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">dependencies {
     jpa platform(<span class="string"><span class="delimiter">'</span><span class="content">org.eclipse.persistence:org.eclipse.persistence.parent:4.0.9</span><span class="delimiter">'</span></span>)
@@ -843,9 +890,21 @@ The provider-specific plugins (<code>hibernate-persistence</code> and <code>ecli
 }</code></pre>
 </div>
 </div>
+<div class="listingblock secondary">
+<div class="title">Kotlin</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="kotlin">dependencies {
+    jpa(platform(&quot;org.eclipse.persistence:org.eclipse.persistence.parent:4.0.9&quot;))
+
+    compileOnly(&quot;jakarta.persistence:jakarta.persistence-api&quot;)
+    implementation(&quot;org.eclipse.persistence:org.eclipse.persistence.core&quot;)
+}</code></pre>
+</div>
+</div>
 <div class="paragraph">
 <p>That&#8217;s it — no additional XML configuration or annotation processing setup is required.
 The plugin automatically detects your entity classes and generates the appropriate <code>persistence.xml</code> at build time.</p>
+</div>
 </div>
 </div>
 </div>
@@ -2590,7 +2649,7 @@ Generated source directories for metamodel classes are registered as source root
 Each example demonstrates a minimal JPA project using one of the supported plugins.</p>
 </div>
 <div class="sect2">
-<h3 id="_hibernate_example">6.1. Hibernate Example</h3>
+<h3 id="_hibernate_example_3">6.1. Hibernate Example</h3>
 <div class="paragraph">
 <p>This example applies the <code>io.github.jpersist.hibernate-persistence</code> aggregator plugin to generate <code>persistence.xml</code> descriptors and perform compile-time bytecode enhancement via Hibernate.</p>
 </div>
@@ -2637,7 +2696,7 @@ repositories {
 </div>
 </div>
 <div class="sect2">
-<h3 id="_eclipselink_example">6.2. EclipseLink Example</h3>
+<h3 id="_eclipselink_example_3">6.2. EclipseLink Example</h3>
 <div class="paragraph">
 <p>This example applies the <code>io.github.jpersist.eclipse-persistence</code> aggregator plugin to generate <code>persistence.xml</code> descriptors and perform compile-time static weaving via EclipseLink.</p>
 </div>
@@ -3005,7 +3064,7 @@ The User Guide is available at <a href="https://jpersist.github.io/persistence/g
 <div id="footer">
 <div id="footer-text">
 Version 1.5.0<br>
-Last updated 2026-10-05 15:52:49 UTC
+Last updated 2026-10-05 18:54:33 UTC
 </div>
 </div>
 </body>
