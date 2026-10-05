@@ -1,0 +1,277 @@
+= EclipseLink Plugin
+
+Plugin ID: `io.github.jpersist.eclipse-persistence`
+
+The `io.github.jpersist.eclipse-persistence` plugin provides a complete EclipseLink persistence pipeline out-of-the-box.
+It is the core implementation of the JPersist plugin suite for EclipseLink and facilitates the integration of provider platform capabilities such as JPA static metamodel generation and compile-time static bytecode weaving.
+It automatically applies the core `io.github.jpersist.jpa` plugin (see <<jakarta-plugin.adoc#,Jakarta Persistence Plugin>>), the EclipseLink canonical metamodel generator, and compile-time static weaving for EclipseLink-based projects.
+
+== Applying the Plugin
+
+[source,groovy,indent=0,role="primary"]
+.Groovy
+----
+plugins {
+    id 'io.github.jpersist.eclipse-persistence' version '1.5.0'
+}
+
+dependencies {
+    jpa platform('org.eclipse.persistence:org.eclipse.persistence.parent:4.0.9')
+
+    compileOnly 'jakarta.persistence:jakarta.persistence-api'
+    implementation 'org.eclipse.persistence:org.eclipse.persistence.core'
+}
+----
+
+[source,kotlin,indent=0,role="secondary"]
+.Kotlin
+----
+plugins {
+    id("io.github.jpersist.eclipse-persistence") version "1.5.0"
+}
+
+dependencies {
+    jpa(platform("org.eclipse.persistence:org.eclipse.persistence.parent:4.0.9"))
+
+    compileOnly("jakarta.persistence:jakarta.persistence-api")
+    implementation("org.eclipse.persistence:org.eclipse.persistence.core")
+}
+----
+
+TIP: The `jpa` configuration is provided by the core Jakarta Persistence plugin (applied transitively).
+Use it to declare an EclipseLink platform BOM so that all EclipseLink module versions are aligned automatically.
+
+== Sub-Plugins
+
+The aggregate `io.github.jpersist.eclipse-persistence` plugin is a convenience macro that applies the following three plugins:
+
+[cols="2,4"]
+|===
+| Plugin ID | Description
+
+| `io.github.jpersist.jpa`
+| The core Jakarta Persistence plugin — registers the `persistence` DSL extension, generates or merges `persistence.xml` descriptors, validates persistence schema, and generates GraalVM native image metadata. See <<jakarta-plugin.adoc#,Jakarta Persistence Plugin>>.
+
+| `io.github.jpersist.eclipse-jpa-modelgen`
+| Configures EclipseLink's canonical metamodel generator (`org.eclipse.persistence.jpa.modelgen.processor`) as an annotation processor for every source set, enabling type-safe Criteria API queries.
+
+| `io.github.jpersist.eclipse-static-weave`
+| Registers the `weave` configuration and creates a static weaving task for every source set, enabling compile-time lazy loading, fetch graph optimizations, and inline dirty tracking without a runtime `-javaagent`.
+|===
+
+You can apply sub-plugins individually if you only need a subset of the functionality:
+
+[source,groovy,indent=0,role="primary"]
+.Groovy
+----
+plugins {
+    id 'io.github.jpersist.eclipse-static-weave' version '1.5.0'
+}
+----
+
+[source,kotlin,indent=0,role="secondary"]
+.Kotlin
+----
+plugins {
+    id("io.github.jpersist.eclipse-static-weave") version "1.5.0"
+}
+----
+
+== JPA Static Metamodel Generation
+
+The `io.github.jpersist.eclipse-jpa-modelgen` sub-plugin automatically:
+
+* Applies the `java` plugin.
+* Creates the `eclipselink` DSL extension — a `NamedDomainObjectContainer` scoped per source set (see <<DSL Extension: `eclipselink`>>).
+* Adds `org.eclipse.persistence:org.eclipse.persistence.jpa.modelgen.processor` as an `annotationProcessor` dependency for every source set.
+* Injects the `-Aeclipselink.persistencexml=<path>` compiler argument pointing to the configured `persistence.xml` location.
+* Registers the annotation processor generated source directory (`build/generated/sources/annotationProcessor/java/<sourceSet>`) into the source set's Java source directories for seamless IDE indexing.
+
+For each JPA entity class annotated with `@Entity`, `@Embeddable`, or `@MappedSuperclass`, EclipseLink generates a corresponding static metamodel class (e.g. `Person_`) that provides compile-time-safe attribute references for Criteria API queries.
+
+WARNING: While it is possible to work without a user-provided `persistence.xml` and rely only on the persistence DSL extension, the `io.github.jpersist.eclipse-jpa-modelgen` sub-plugin may not work properly.
+This is because in this scenario, the `persistence.xml` will be generated _after_ the `compileJava` task and without static metamodel classes.
+For this reason, the user *must* provide a `persistence.xml` template with at least the persistence unit name (mandatory) and the full list of entity classes to include.
+
+.Example minimal `persistence.xml` template for metamodel generation
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence
+             https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd"
+             version="3.0">
+
+    <persistence-unit name="example-unit">
+        <class>com.example.entity.Person</class>
+    </persistence-unit>
+</persistence>
+----
+
+== DSL Extension: `eclipselink`
+
+The `io.github.jpersist.eclipse-jpa-modelgen` sub-plugin registers an `eclipselink` DSL extension block at the project level.
+It is a `NamedDomainObjectContainer<EclipselinkExtension>`, meaning an entry is automatically created for each source set (e.g. `main`, `test`).
+Each entry exposes a nested `jpaModelgen` sub-block to control the canonical metamodel generation parameters.
+
+[source,groovy,indent=0,role="primary"]
+.Groovy
+----
+eclipselink {
+    main {
+        jpaModelgen {
+            persistenceXml = 'src/main/resources/META-INF/persistence.xml'
+        }
+    }
+}
+----
+
+[source,kotlin,indent=0,role="secondary"]
+.Kotlin
+----
+eclipselink {
+    named("main") {
+        jpaModelgen {
+            persistenceXml.set(layout.projectDirectory.file("src/main/resources/META-INF/persistence.xml"))
+        }
+    }
+}
+----
+
+=== `EclipselinkExtension` Properties
+
+[cols="2,2,2,4"]
+|===
+| Property | Type | Default | Description
+
+| `name`
+| `String`
+| _source set name_
+| The name of the source set associated with this configuration block. Populated automatically by Gradle's container instantiation engine.
+
+| `jpaModelgen`
+| `JpaModelgenExtension`
+| _see below_
+| Nested configuration block controlling the EclipseLink canonical metamodel generator options for this source set.
+|===
+
+=== `JpaModelgenExtension` Properties
+
+[cols="2,2,2,4"]
+|===
+| Property | Type | Default | Description
+
+| `persistenceXml`
+| `RegularFileProperty`
+| `src/<sourceSet>/resources/META-INF/persistence.xml`
+| Path to the `persistence.xml` file used by the EclipseLink canonical metamodel generator. Passed to the annotation processor via the `-Aeclipselink.persistencexml` compiler argument. Accepts a `RegularFileProperty` or a `String` path relative to the project directory.
+|===
+
+Example overriding the `persistence.xml` location for a custom source set:
+
+[source,groovy,indent=0,role="primary"]
+.Groovy
+----
+eclipselink {
+    integrationTest {
+        jpaModelgen {
+            persistenceXml = 'src/integrationTest/resources/META-INF/persistence.xml'
+        }
+    }
+}
+----
+
+[source,kotlin,indent=0,role="secondary"]
+.Kotlin
+----
+eclipselink {
+    named("integrationTest") {
+        jpaModelgen {
+            persistenceXml.set(layout.projectDirectory.file("src/integrationTest/resources/META-INF/persistence.xml"))
+        }
+    }
+}
+----
+
+== Tasks
+
+The plugin registers the following task per Java source set.
+
+In addition, all tasks inherited from the core `io.github.jpersist.jpa` plugin (`processPersistenceDescriptor`, `validatePersistenceSchema`, `generateJPAGraalVMMetadata`) are also available. See <<jakarta-plugin.adoc#,Jakarta Persistence Plugin>> for their documentation.
+
+=== `eclipseWeaveClasses`
+
+**Group:** `build` +
+**Type:** `EclipseWeaveTask`
+
+Performs compile-time static bytecode weaving on EclipseLink entity classes using the official EclipseLink `StaticWeave` command-line processor in an isolated JVM process.
+The task reads raw compiled `.class` files from the Java compilation output directory, executes the weaving process, and writes the woven classes to an isolated output directory.
+
+For the `main` source set the task name is `eclipseWeaveClasses`; for other source sets (e.g. `test`) the source set name is used (e.g. `eclipseWeaveTestClasses`).
+
+The woven classes are automatically included in the final JAR with higher priority than the original unwoven classes (using `DuplicatesStrategy.EXCLUDE`), so no additional packaging configuration is needed.
+
+[cols="2,2,2,4"]
+|===
+| Property | Type | Default | Description
+
+| `sourceClassesDir`
+| `DirectoryProperty`
+| _from `compileJava` output_
+| The input directory containing the raw, unwoven compiled Java class files. Bound from the Java compilation task's destination directory.
+
+| `targetClassesDir`
+| `DirectoryProperty`
+| `build/woven/classes/java/<sourceSet>`
+| The isolated output directory where woven class files are written. Keeping this separate from the compile output preserves Gradle's incremental build and `UP-TO-DATE` checking.
+
+| `resourcesDir`
+| `DirectoryProperty`
+| `build/generated/resources/<sourceSet>`
+| The root directory containing persistence configuration metadata files (e.g. `META-INF/persistence.xml`). Passed to the `StaticWeave` processor via the `-persistenceinfo` argument.
+
+| `persistenceXml`
+| `RegularFileProperty`
+| _from `processPersistenceDescriptor` output_
+| The generated `persistence.xml` descriptor file produced by the `ProcessPersistenceDescriptor` task. Declaring this as an explicit input establishes an implicit task dependency, ensuring the descriptor is generated before weaving begins.
+
+| `weaveClasspath`
+| `ConfigurableFileCollection`
+| _from `weave` configuration_
+| The classpath carrying the EclipseLink core libraries and tool binaries required to execute the `StaticWeave` main class.
+
+| `compileClasspath`
+| `ConfigurableFileCollection`
+| _from source set_
+| The full compilation classpath necessary for EclipseLink to inspect, map, and validate structural relationship models while modifying entity classes.
+|===
+
+NOTE: The task is annotated with `@DisableCachingByDefault` because weaving modifies class bytecode in place. It is automatically skipped with a `NO-SOURCE` outcome when no compiled classes are present in the source directory.
+
+TIP: The task is wired into the build lifecycle automatically — it runs after `compileJava` and before `classes`, so the woven bytecode is ready for both testing and packaging without manual task ordering.
+
+== The `weave` Configuration
+
+The `io.github.jpersist.eclipse-static-weave` sub-plugin creates a `weave` dependency configuration that carries the EclipseLink runtime libraries needed by the `StaticWeave` processor.
+
+* If the `jpa` configuration exists (e.g. when the core `io.github.jpersist.jpa` plugin is applied), the `weave` configuration automatically extends from it, inheriting all platform version constraints.
+* The plugin adds `org.eclipse.persistence:org.eclipse.persistence.jpa` to the `weave` configuration by default.
+
+[source,groovy,indent=0,role="primary"]
+.Groovy
+----
+dependencies {
+    jpa platform('org.eclipse.persistence:org.eclipse.persistence.parent:4.0.9')
+    // The 'weave' configuration automatically inherits from 'jpa'
+}
+----
+
+[source,kotlin,indent=0,role="secondary"]
+.Kotlin
+----
+dependencies {
+    jpa(platform("org.eclipse.persistence:org.eclipse.persistence.parent:4.0.9"))
+    // The 'weave' configuration automatically inherits from 'jpa'
+}
+----

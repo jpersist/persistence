@@ -1,0 +1,246 @@
+= Hibernate Plugin
+
+Plugin ID: `io.github.jpersist.hibernate-persistence`
+
+The `io.github.jpersist.hibernate-persistence` plugin provides a complete Hibernate persistence pipeline out-of-the-box.
+It automatically applies the core `io.github.jpersist.jpa` plugin (see <<jakarta-plugin.adoc#,Jakarta Persistence Plugin>>), the Hibernate JPA static metamodel generator, and compile-time bytecode enhancement for Hibernate-based projects.
+
+== Applying the Plugin
+
+[source,groovy,indent=0,role="primary"]
+.Groovy
+----
+plugins {
+    id 'io.github.jpersist.hibernate-persistence' version '1.5.0'
+}
+
+dependencies {
+    jpa platform('org.hibernate.orm:hibernate-platform:6.6.56.Final')
+
+    implementation 'org.hibernate.orm:hibernate-core'
+}
+----
+
+[source,kotlin,indent=0,role="secondary"]
+.Kotlin
+----
+plugins {
+    id("io.github.jpersist.hibernate-persistence") version "1.5.0"
+}
+
+dependencies {
+    jpa(platform("org.hibernate.orm:hibernate-platform:6.6.56.Final"))
+
+    implementation("org.hibernate.orm:hibernate-core")
+}
+----
+
+TIP: The `jpa` configuration is provided by the core Jakarta Persistence plugin (applied transitively).
+Use it to declare a Hibernate platform BOM so that all Hibernate module versions are aligned automatically.
+
+== Sub-Plugins
+
+The aggregate `io.github.jpersist.hibernate-persistence` plugin is a convenience macro that applies the following three plugins:
+
+[cols="2,4"]
+|===
+| Plugin ID | Description
+
+| `io.github.jpersist.jpa`
+| The core Jakarta Persistence plugin — registers the `persistence` DSL extension, generates or merges `persistence.xml` descriptors, validates persistence schema, and generates GraalVM native image metadata. See <<jakarta-plugin.adoc#,Jakarta Persistence Plugin>>.
+
+| `io.github.jpersist.hibernate-jpamodelgen`
+| Configures Hibernate's JPA static metamodel generator (`hibernate-jpamodelgen`) as an annotation processor for every source set, enabling type-safe Criteria API queries.
+
+| `io.github.jpersist.hibernate-enhancement`
+| Registers the `hibernate` DSL extension and creates a bytecode enhancement task for every source set, enabling compile-time lazy initialization, dirty tracking, and association management.
+|===
+
+You can apply sub-plugins individually if you only need a subset of the functionality:
+
+[source,groovy,indent=0,role="primary"]
+.Groovy
+----
+plugins {
+    id 'io.github.jpersist.hibernate-enhancement' version '1.5.0'
+}
+----
+
+[source,kotlin,indent=0,role="secondary"]
+.Kotlin
+----
+plugins {
+    id("io.github.jpersist.hibernate-enhancement") version "1.5.0"
+}
+----
+
+== JPA Static Metamodel Generation
+
+The `io.github.jpersist.hibernate-jpamodelgen` sub-plugin automatically:
+
+* Applies the `java` plugin.
+* Adds `org.hibernate.orm:hibernate-jpamodelgen` as an `annotationProcessor` dependency for every source set.
+* Registers the annotation processor generated source directory (`build/generated/sources/annotationProcessor/java/<sourceSet>`) into the source set's Java source directories for seamless IDE indexing.
+
+No additional configuration is needed — the annotation processor version is resolved from the Hibernate platform BOM declared through the `jpa` configuration.
+
+For each JPA entity class annotated with `@Entity`, `@Embeddable`, or `@MappedSuperclass`, Hibernate generates a corresponding static metamodel class (e.g. `Person_`) that provides compile-time-safe attribute references for Criteria API queries.
+
+== DSL Extension: `hibernate`
+
+The `io.github.jpersist.hibernate-enhancement` sub-plugin registers a `hibernate` DSL extension block at the project level.
+It exposes a nested `enhancement` sub-block to control compile-time bytecode transformation behavior.
+
+[source,groovy,indent=0,role="primary"]
+.Groovy
+----
+hibernate {
+    enhancement {
+        enableLazyInitialization = true
+        enableDirtyTracking = true
+        enableAssociationManagement = true
+        enableExtendedEnhancement = false
+    }
+}
+----
+
+[source,kotlin,indent=0,role="secondary"]
+.Kotlin
+----
+hibernate {
+    enhancement {
+        enableLazyInitialization.set(true)
+        enableDirtyTracking.set(true)
+        enableAssociationManagement.set(true)
+        enableExtendedEnhancement.set(false)
+    }
+}
+----
+
+=== `HibernateExtension` Properties
+
+[cols="2,2,2,4"]
+|===
+| Property | Type | Default | Description
+
+| `enhancement`
+| `EnhancementExtension`
+| _see below_
+| Nested configuration block controlling Hibernate compile-time bytecode enhancement options.
+|===
+
+=== `EnhancementExtension` Properties
+
+[cols="2,2,2,4"]
+|===
+| Property | Type | Default | Description
+
+| `enableLazyInitialization`
+| `Property<Boolean>`
+| `true`
+| Enhances entity bytecode to support field-level lazy initialization. When enabled, fields or relationships annotated for lazy fetching can be loaded individually on-demand via their getters, instead of initializing the entire containing entity.
+
+| `enableDirtyTracking`
+| `Property<Boolean>`
+| `true`
+| Enhances entities to actively track their own internal state mutations. This allows Hibernate to discover which fields changed during flush, avoiding heavy reflection-based state array snapshot comparisons.
+
+| `enableAssociationManagement`
+| `Property<Boolean>`
+| `true`
+| Automatically manages bidirectional associations — setting one side of a relationship updates the other side in memory (e.g. adding an item to a child collection updates the parent reference).
+
+| `enableExtendedEnhancement`
+| `Property<Boolean>`
+| `false`
+| Expands the bytecode enhancement scope beyond simple entity definitions to intercept non-proxy boundaries or customized orchestration scenarios.
+|===
+
+Example enabling only dirty tracking and lazy initialization:
+
+[source,groovy,indent=0,role="primary"]
+.Groovy
+----
+hibernate {
+    enhancement {
+        enableLazyInitialization = true
+        enableDirtyTracking = true
+        enableAssociationManagement = false
+        enableExtendedEnhancement = false
+    }
+}
+----
+
+[source,kotlin,indent=0,role="secondary"]
+.Kotlin
+----
+hibernate {
+    enhancement {
+        enableLazyInitialization.set(true)
+        enableDirtyTracking.set(true)
+        enableAssociationManagement.set(false)
+        enableExtendedEnhancement.set(false)
+    }
+}
+----
+
+== Tasks
+
+The plugin registers the following task per Java source set.
+For the `main` source set the task name is `hibernateEnhanceClasses`; for other source sets (e.g. `test`) the source set name is used (e.g. `hibernateEnhanceTestClasses`).
+
+In addition, all tasks inherited from the core `io.github.jpersist.jpa` plugin (`processPersistenceDescriptor`, `validatePersistenceSchema`, `generateJPAGraalVMMetadata`) are also available. See <<jakarta-plugin.adoc#,Jakarta Persistence Plugin>> for their documentation.
+
+=== `hibernateEnhanceClasses`
+
+**Group:** `build` +
+**Type:** `HibernateEnhancementTask`
+
+Performs compile-time bytecode enhancement on Hibernate entity classes using Hibernate's internal `Enhancer` engine.
+The task reads raw compiled `.class` files from the Java compilation output directory, runs multi-pass bytecode transformation (type discovery and byte-level rewriting), and writes the enhanced classes to an isolated output directory.
+
+The enhanced classes are automatically included in the final JAR with higher priority than the original unenhanced classes (using `DuplicatesStrategy.EXCLUDE`), so no additional packaging configuration is needed.
+
+[cols="2,2,2,4"]
+|===
+| Property | Type | Default | Description
+
+| `sourceClassesDir`
+| `DirectoryProperty`
+| _from `compileJava` output_
+| The input directory containing the raw, unenhanced compiled Java class files. Bound from the Java compilation task's destination directory.
+
+| `targetClassesDir`
+| `DirectoryProperty`
+| `build/enhanced/classes/java/<sourceSet>`
+| The isolated output directory where enhanced class files are written. Keeping this separate from the compile output preserves Gradle's incremental build and `UP-TO-DATE` checking.
+
+| `compileClasspath`
+| `ConfigurableFileCollection`
+| _from source set_
+| The full compilation classpath necessary for Hibernate to inspect, resolve, and validate complex relationships, types, or embedded enums during the bytecode analysis phase.
+
+| `lazyInitializationEnabled`
+| `Property<Boolean>`
+| `true`
+| Whether to enhance entities for field-level lazy initialization. Bound from `hibernate.enhancement.enableLazyInitialization`.
+
+| `dirtyTrackingEnabled`
+| `Property<Boolean>`
+| `true`
+| Whether to inject inline dirty tracking code into entity fields. Bound from `hibernate.enhancement.enableDirtyTracking`.
+
+| `associationManagementEnabled`
+| `Property<Boolean>`
+| `true`
+| Whether to automatically manage bidirectional associations. Bound from `hibernate.enhancement.enableAssociationManagement`.
+
+| `extendedEnhancementEnabled`
+| `Property<Boolean>`
+| `false`
+| Whether to enable extended bytecode enhancement beyond standard entity boundaries. Bound from `hibernate.enhancement.enableExtendedEnhancement`.
+|===
+
+NOTE: The task is annotated with `@DisableCachingByDefault` because enhancement modifies class bytecode in place. It is automatically skipped with a `NO-SOURCE` outcome when no compiled classes are present in the source directory.
+
+TIP: The task is wired into the build lifecycle automatically — it runs after `compileJava` and before `classes`, so the enhanced bytecode is ready for both testing and packaging without manual task ordering.

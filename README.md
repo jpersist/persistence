@@ -144,7 +144,8 @@ A dedicated `ValidationExtension` interface is embedded inside each source set's
 * **`eclipse-persistence-gradle-plugin`** — Houses all EclipseLink-related tooling and processing enhancements.
 * **`hibernate-persistence-gradle-plugin`** — Houses all Hibernate-related static generation and enhancement utilities.
 
-> 📖 **API Reference:** Browse the full Groovydoc at [jpersist.github.io/persistence](https://jpersist.github.io/persistence/)
+> 📖 **API Reference:** Browse the full Groovydoc at [jpersist.github.io/persistence/api/latest](https://jpersist.github.io/persistence/api/latest/)
+> 📘 **User Guide:** Read the documentation at [jpersist.github.io/persistence/guide/latest](https://jpersist.github.io/persistence/guide/latest/)
 > 🚀 **Runnable Specs:** Complete code templates are available in the [`examples/`](examples/) directory.
 
 ---
