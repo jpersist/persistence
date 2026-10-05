@@ -231,12 +231,12 @@ class JakartaPersistencePlugin implements Plugin<Project> {
         }
 
         // 4. Feed output securely back to resource processor as an input source!
-        project.tasks.named(sourceSet.processResourcesTaskName, ProcessResources).configure { resourceTask ->
+        project.tasks.named(sourceSet.processResourcesTaskName, ProcessResources).configure { resourcesTask ->
             // Prevent duplicate/conflict matching by excluding the un-patched original file
-            resourceTask.exclude("META-INF/persistence.xml")
+            resourcesTask.exclude("META-INF/persistence.xml")
 
             // Place the generated file into META-INF/ within the resources output
-            resourceTask.from(processTask.flatMap { it.destinationFile }) {
+            resourcesTask.from(processTask.flatMap { it.destinationFile }) {
                 into("META-INF")
             }
         }
@@ -354,8 +354,7 @@ class JakartaPersistencePlugin implements Plugin<Project> {
      * @param extension The persistence extension whose unit container is populated.
      */
     private static void autoRegisterExistingUnits(Project project, SourceSet sourceSet, PersistenceExtension extension) {
-        def sourcePath = "src/${sourceSet.name}/resources/META-INF/persistence.xml"
-        def sourceFile = project.file(sourcePath)
+        def sourceFile = project.file("src/${sourceSet.name}/resources/META-INF/persistence.xml")
 
         if (sourceFile.exists()) {
             try {

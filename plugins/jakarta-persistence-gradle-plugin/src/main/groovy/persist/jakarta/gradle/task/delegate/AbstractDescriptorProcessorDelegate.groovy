@@ -33,9 +33,9 @@ abstract class AbstractDescriptorProcessorDelegate implements DescriptorProcesso
         def registry = JPAVersionStrategyRegistry.resolve(xmlVersion)
 
         if (source != null && source.exists()) {
-            Helper.mergeDescriptor(source, target, managedClasses, resolvedJars, configuredUnits, settings, xmlVersion, registry)
+            Helper.mergeDescriptor(source, target, managedClasses, resolvedJars, configuredUnits, settings, registry)
         } else {
-            Helper.generateDescriptor(target, managedClasses, resolvedJars, configuredUnits, settings, xmlVersion, registry)
+            Helper.generateDescriptor(target, managedClasses, resolvedJars, configuredUnits, settings, registry)
         }
     }
 
@@ -77,17 +77,16 @@ abstract class AbstractDescriptorProcessorDelegate implements DescriptorProcesso
          * @param resolvedJars    The list of resolved JAR file names.
          * @param configuredUnits The persistence-unit extension configurations.
          * @param settings        The XML transformer output property overrides.
-         * @param xmlVersion      The JPA specification version for the root element.
          */
         private static void mergeDescriptor(File source, File target, List<String> managedClasses, List<String> resolvedJars,
                                             List<PersistenceUnitExtension> configuredUnits, Map<String, String> settings,
-                                            String xmlVersion, JPAVersionStrategyRegistry registry) {
+                                            JPAVersionStrategyRegistry registry) {
             XmlParser parser = new XmlParser(false, false)
             Node persistence = parser.parse(source)
 
             // Clear and rewrite standard modern schema boundaries
             persistence.attributes().clear()
-            persistence.attributes().put("version", xmlVersion)
+            persistence.attributes().put("version", registry.version)
             persistence.attributes().put("xmlns", registry.namespace)
             persistence.attributes().put("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance")
             persistence.attributes().put("xsi:schemaLocation", "${registry.namespace} ${registry.schemaLocation}")
@@ -238,11 +237,10 @@ abstract class AbstractDescriptorProcessorDelegate implements DescriptorProcesso
          * @param resolvedJars    The list of resolved JAR file names.
          * @param configuredUnits The persistence-unit extension configurations.
          * @param settings        The XML transformer output property overrides.
-         * @param xmlVersion      The JPA specification version for the root element.
          */
         private static void generateDescriptor(File target, List<String> managedClasses, List<String> resolvedJars,
                                                List<PersistenceUnitExtension> configuredUnits, Map<String, String> settings,
-                                               String xmlVersion, JPAVersionStrategyRegistry registry) {
+                                               JPAVersionStrategyRegistry registry) {
             // Generate via MarkupBuilder into an in-memory string buffer instead of straight to a file writer
             StringWriter rawXmlWriter = new StringWriter()
             MarkupBuilder xml = new MarkupBuilder(rawXmlWriter)
@@ -250,7 +248,7 @@ abstract class AbstractDescriptorProcessorDelegate implements DescriptorProcesso
             xml.omitEmptyAttributes = true
 
             Map<String, String> rootAttributes = [
-                "version": xmlVersion,
+                "version": registry.version,
                 "xmlns": registry.namespace,
                 "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
                 "xsi:schemaLocation": "${registry.namespace} ${registry.schemaLocation}"
