@@ -1,10 +1,13 @@
 package persist.jakarta.gradle.extension
 
+import org.gradle.api.Project
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
+import org.gradle.jvm.tasks.Jar
+
 import javax.inject.Inject
 
 /**
@@ -142,6 +145,19 @@ abstract class PersistenceUnitExtension {
     abstract ListProperty<String> getMappingFiles()
 
     /**
+     * Map tracking custom jar-file element layout translations.
+     * <p>
+     * Key: Project path (e.g. {@code ":ejb-module"}) or group:artifact coordinates (e.g. {@code "com.example:core"}).
+     * Value: The structural path string written into the final XML tag row.
+     * </p>
+     *
+     * @return The lazy map property tracking customized jar mappings.
+     * @since 1.5.0
+     */
+    @Input
+    abstract MapProperty<String, String> getJarFileMappings()
+
+    /**
      * Whether unlisted entity classes should be excluded from the persistence unit.
      * <p>
      * Defaults to {@code false}.
@@ -201,6 +217,48 @@ abstract class PersistenceUnitExtension {
      */
     @Input
     abstract MapProperty<String, String> getProperties()
+
+    /**
+     * Declaratively configures a local project dependency layout mapping inside the descriptor.
+     * <p>
+     * Automatically hooks into the target module's standard Java Jar task lifecycle properties
+     * lazily to avoid configuration-phase task ordering issues.
+     * </p>
+     * <p>Example usage:</p>
+     * <pre>
+     * jarFile(project(':ejb-module')) { jarTask -> "${jarTask.archiveBaseName.get()}.jar" }
+     * </pre>
+     *
+     * @param project            The downstream project submodule reference.
+     * @param pathConfiguration  A mapping configuration closure receiving the module's active Jar task instance.
+     * @since 1.5.0
+     */
+    void jarFile(Project project, Closure<String> pathConfiguration) {
+        project.plugins.withId('java') {
+            // Locate the sibling task lazily to prevent circular configuration evaluation traps
+            def jarTaskProvider = project.tasks.named('jar', Jar)
+
+            // Wire the string calculation safely inside a lazy provider block
+            this.jarFileMappings.put(project.path, jarTaskProvider.map { jarTask ->
+                pathConfiguration.call(jarTask)
+            })
+        }
+    }
+
+    /**
+     * Declaratively configures a fixed external dependency coordinate path string mapping inside the descriptor.
+     * <p>Example usage:</p>
+     * <pre>
+     * jarFile('com.example:external-persistence', 'lib/external-persistence-custom.jar')
+     * </pre>
+     *
+     * @param dependencyNotation  The group and artifact string coordinates (e.g. "group:artifact").
+     * @param structuredPath      The complete static destination path row written inside the tag.
+     * @since 1.5.0
+     */
+    void jarFile(String dependencyNotation, String structuredPath) {
+        this.jarFileMappings.put(dependencyNotation, structuredPath)
+    }
 
     /**
      * DSL Helper to add a single property:
