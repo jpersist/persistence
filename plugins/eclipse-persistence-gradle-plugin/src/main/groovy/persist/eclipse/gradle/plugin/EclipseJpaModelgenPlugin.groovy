@@ -59,11 +59,26 @@ class EclipseJpaModelgenPlugin implements Plugin<Project> {
             // 4. Safely configure JavaCompile arguments using the source-set-specific path
             String compileTaskName = sourceSet.compileJavaTaskName
             project.tasks.named(compileTaskName, JavaCompile) { compileTask ->
-                def compilerArgProvider = project.provider {
-                    File file = extension.jpaModelgen.persistenceXml.get().asFile
-                    return "-Aeclipselink.persistencexml=${file.absolutePath}"
-                }
-                compileTask.options.compilerArgs.add(compilerArgProvider.get())
+                // Configure compiler arguments safely via a lazy provider block
+                compileTask.options.compilerArgs.addAll(project.provider {
+                    File pXmlFile = extension.jpaModelgen.persistenceXml.get().asFile
+                    List<String> argsList = ["-Aeclipselink.persistencexml=${pXmlFile.absolutePath}"]
+
+                    // Automatically check if localized ORM descriptors exist and link them dynamically
+                    File resourcesRootDir = pXmlFile.parentFile.parentFile // src/main/resources
+                    if (resourcesRootDir && resourcesRootDir.exists()) {
+                        File ormXml = new File(resourcesRootDir, "META-INF/orm.xml")
+                        File elOrmXml = new File(resourcesRootDir, "META-INF/eclipselink-orm.xml")
+
+                        if (ormXml.exists()) {
+                            argsList.add("-Aeclipselink.ormxml=${ormXml.absolutePath}")
+                        }
+                        if (elOrmXml.exists()) {
+                            argsList.add("-Aeclipselink.eclipselink-ormxml=${elOrmXml.absolutePath}")
+                        }
+                    }
+                    return argsList
+                }.get())
             }
         }
     }
