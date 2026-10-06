@@ -26,6 +26,15 @@ import persist.eclipse.gradle.task.EclipseWeaveTask
  * This enables performance optimizations such as strict lazy loading, fetch graph mechanics,
  * and advanced inline dirty tracking without requiring an active <code>-javaagent</code> JVM argument at runtime.
  * </p>
+ * <p>
+ * <b>Since 1.5.1:</b> The weaving task is automatically skipped if no
+ * {@code META-INF/persistence.xml} is found in the processed resources output directory,
+ * preventing unnecessary failures in modules that do not define a persistence unit.
+ * Additionally, the plugin now resolves a source-set-specific {@code jarFile} configuration
+ * (e.g.&nbsp;{@code jarFile} for {@code main}, {@code testJarFile} for {@code test}) and feeds
+ * it to the {@link EclipseWeaveTask#getJarFileClasspath() jarFileClasspath}, enabling correct
+ * resolution of {@code <jar-file>} entries in multi-module projects.
+ * </p>
  *
  * @see EclipseWeaveTask
  */
