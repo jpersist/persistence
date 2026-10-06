@@ -48,6 +48,8 @@ class EclipseStaticWeavePlugin implements Plugin<Project> {
             String compileTaskName = sourceSet.getCompileJavaTaskName()
             String weaveTaskName = "eclipseWeave${classesTaskName.capitalize()}"
 
+            def jarFileConfigName = sourceSet.name == 'main' ? "jarFile" : "${sourceSet.name}JarFile"
+
             // Fetch the compileJava task provider safely
             def compileJavaProvider = project.tasks.named(compileTaskName, JavaCompile)
 
@@ -75,6 +77,13 @@ class EclipseStaticWeavePlugin implements Plugin<Project> {
                 // This guarantees that all resources, metadata files, and the generated persistence.xml
                 // are fully present on disk before weaving begins.
                 task.resourcesDir.set(processResourcesDestinationDir)
+
+                // Feed the resolved multi-module jars configuration straight to the task
+                // Safely hook into the configuration container only if it exists.
+                task.jarFileClasspath.from(project.provider {
+                    def config = project.configurations.matching { it.name == jarFileConfigName }.first()
+                    return config ? config.files : []
+                })
 
                 // Wire the classpaths safely using lazy FileCollections
                 task.weaveClasspath.from(weaveConfig)

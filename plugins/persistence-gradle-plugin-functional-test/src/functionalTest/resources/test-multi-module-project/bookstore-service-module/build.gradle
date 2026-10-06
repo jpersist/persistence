@@ -1,10 +1,12 @@
 plugins {
     id 'java-library'
-    id 'io.github.jpersist.jpa'
+    id 'io.github.jpersist.eclipse-persistence'
 }
 
 dependencies {
-    compileOnly libs.jakarta.persistence.api
+    jpa platform('org.eclipse.persistence:org.eclipse.persistence.parent:4.0.9')
+
+    implementation 'org.eclipse.persistence:org.eclipse.persistence.jpa'
 
     jarFile project(':common-persistence-module')
     jarFile project(':bookstore-persistence-module')
@@ -20,6 +22,10 @@ persistence {
 
                 jarFile(project(':bookstore-persistence-module')) { jarTask ->
                     "lib/${jarTask.archiveFileName.get()}"
+                }
+
+                properties {
+                    property 'eclipselink.weaving', 'static'
                 }
             }
         }

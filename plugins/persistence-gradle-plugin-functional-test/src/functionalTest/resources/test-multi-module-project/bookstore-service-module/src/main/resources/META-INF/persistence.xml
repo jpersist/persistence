@@ -5,9 +5,9 @@
              xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence
                                  https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd">
 	<persistence-unit name="bookstore-service-persistence-unit" transaction-type="RESOURCE_LOCAL">
-		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-        <properties>
-            <property name="hibernate.hbm2ddl.auto" value="update"/>
-        </properties>
+		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+        <class>com.example.bookstore.entity.Customer</class>
+        <class>com.example.bookstore.entity.Order</class>
+        <class>com.example.bookstore.entity.OrderItem</class>
 	</persistence-unit>
 </persistence>

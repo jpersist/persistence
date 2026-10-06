@@ -1,5 +1,6 @@
 package persist.eclipse.gradle.task
 
+import groovy.xml.XmlParser
 import org.gradle.api.DefaultTask
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.api.file.ConfigurableFileCollection
@@ -8,6 +9,8 @@ import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 
 import javax.inject.Inject
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 
 /**
  * A custom Gradle task that handles compile-time static bytecode weaving for EclipseLink entities.
@@ -87,6 +90,12 @@ abstract class EclipseWeaveTask extends DefaultTask {
     abstract ConfigurableFileCollection getCompileClasspath()
 
     /**
+     * The input collection of tracking dependencies declaring additional jar files entries.
+     */
+    @Internal
+    abstract ConfigurableFileCollection getJarFileClasspath()
+
+    /**
      * An internal worker reference providing isolated process execution operations.
      */
     private ExecOperations execOperations
@@ -115,19 +124,79 @@ abstract class EclipseWeaveTask extends DefaultTask {
      */
     @TaskAction
     void weave() {
-        def resourcesPath = getResourcesDir().get().asFile.absolutePath
-        def sourcePath = getSourceClassesDir().get().asFile.absolutePath
-        def targetPath = getTargetClassesDir().get().asFile.absolutePath
+        def resourcesFolder = getResourcesDir().get().asFile
+        def sourceFolder = getSourceClassesDir().get().asFile
+        def targetFolder = getTargetClassesDir().get().asFile
+
+        // Create a temporary staging sandbox directory inside the build directory
+        // to collect all referenced dependencies in a single flat path layout
+        File stagingSandboxDir = new File(temporaryDir, "persistence-info-sandbox")
+        if (stagingSandboxDir.exists()) {
+            stagingSandboxDir.deleteDir()
+        }
+        stagingSandboxDir.mkdirs()
+
+        // 1. Sync over the base processed meta resources assets hierarchy (META-INF/persistence.xml)
+        project.copy { spec ->
+            spec.from(resourcesFolder)
+            spec.into(stagingSandboxDir)
+        }
+
+        // 2. Parse the generated persistence.xml dynamically
+        // This discovers custom paths (e.g. 'lib/', '../../') and maps them perfectly
+        File pXmlFile = new File(stagingSandboxDir, "META-INF/persistence.xml")
+        List<String> expectedJarPaths = []
+
+        if (pXmlFile.exists()) {
+            try {
+                def xmlParser = new XmlParser(false, false)
+                def rootNode = xmlParser.parse(pXmlFile)
+                List<?> unitNodes = (List<?>) rootNode.get("persistence-unit")
+
+                unitNodes.each { Object unitObj ->
+                    List<?> jarNodes = (List<?>) ((Node) unitObj).get("jar-file")
+                    jarNodes.each { Object jarNode ->
+                        String jarPathText = ((Node) jarNode).text()?.trim()
+                        if (jarPathText) {
+                            expectedJarPaths.add(jarPathText)
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                System.err.println("⚠️ Warning: Failed to parse persistence.xml for dynamic JAR routing layouts: " + e.message)
+            }
+        }
+
+        // 3. Match and copy your runtime JAR files into their expected relative locations
+        Set<File> availableJars = jarFileClasspath.getFiles()
+
+        expectedJarPaths.each { String expectedPath ->
+            // Extract the simple file name from the expected path string (e.g. "lib/shared.jar" -> "shared.jar")
+            String simpleJarName = expectedPath.contains('/') ? expectedPath.substring(expectedPath.lastIndexOf('/') + 1) : expectedPath
+
+            // Find the matching file in our available project configurations classpath pool
+            File matchingJar = availableJars.find { it.name == simpleJarName }
+
+            if (matchingJar && matchingJar.exists()) {
+                // Resolve the exact destination path relative to our sandbox directory root
+                File targetStagedFile = new File(stagingSandboxDir, expectedPath)
+
+                // Automatically create any nested sub-directories (like lib/) if required!
+                targetStagedFile.parentFile.mkdirs()
+
+                Files.copy(matchingJar.toPath(), targetStagedFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
+            }
+        }
 
         execOperations.javaexec { spec ->
             spec.mainClass.set('org.eclipse.persistence.tools.weaving.jpa.StaticWeave')
-            spec.classpath = getWeaveClasspath()
+            spec.classpath = weaveClasspath
             spec.args(
-                '-persistenceinfo', resourcesPath,
-                '-classpath', getCompileClasspath().asPath,
+                '-persistenceinfo', stagingSandboxDir.absolutePath,
+                '-classpath', compileClasspath.asPath,
                 '-loglevel', 'FINE',
-                sourcePath,
-                targetPath
+                sourceFolder.absolutePath,
+                targetFolder.absolutePath
             )
         }
     }
