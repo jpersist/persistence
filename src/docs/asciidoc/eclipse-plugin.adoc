@@ -85,6 +85,7 @@ The `io.github.jpersist.eclipse-jpa-modelgen` sub-plugin automatically:
 * Creates the `eclipselink` DSL extension — a `NamedDomainObjectContainer` scoped per source set (see <<DSL Extension: `eclipselink`>>).
 * Adds `org.eclipse.persistence:org.eclipse.persistence.jpa.modelgen.processor` as an `annotationProcessor` dependency for every source set.
 * Injects the `-Aeclipselink.persistencexml=<path>` compiler argument pointing to the configured `persistence.xml` location.
+* Detects localized ORM mapping descriptors (`META-INF/orm.xml` and `META-INF/eclipselink-orm.xml`) relative to the configured `persistence.xml` location and passes them to the annotation processor via the `-Aeclipselink.ormxml` and `-Aeclipselink.eclipselink-ormxml` compiler arguments. _(Since 1.5.1)_
 * Registers the annotation processor generated source directory (`build/generated/sources/annotationProcessor/java/<sourceSet>`) into the source set's Java source directories for seamless IDE indexing.
 
 For each JPA entity class annotated with `@Entity`, `@Embeddable`, or `@MappedSuperclass`, EclipseLink generates a corresponding static metamodel class (e.g. `Person_`) that provides compile-time-safe attribute references for Criteria API queries.
@@ -207,6 +208,7 @@ In addition, all tasks inherited from the core `io.github.jpersist.jpa` plugin (
 
 Performs compile-time static bytecode weaving on EclipseLink entity classes using the official EclipseLink `StaticWeave` command-line processor in an isolated JVM process.
 The task reads raw compiled `.class` files from the Java compilation output directory, executes the weaving process, and writes the woven classes to an isolated output directory.
+The task is automatically skipped if no `META-INF/persistence.xml` is found in the processed resources output directory, preventing unnecessary failures in modules that do not define a persistence unit. _(Since 1.5.1)_
 
 For the `main` source set the task name is `eclipseWeaveClasses`; for other source sets (e.g. `test`) the source set name is used (e.g. `eclipseWeaveTestClasses`).
 
@@ -240,9 +242,16 @@ The woven classes are automatically included in the final JAR with higher priori
 | `ConfigurableFileCollection`
 | _from source set_
 | The full compilation classpath necessary for EclipseLink to inspect, map, and validate structural relationship models while modifying entity classes.
+
+| `jarFileClasspath`
+| `ConfigurableFileCollection`
+| _from `jarFile` configuration_
+| The collection of resolved JAR file dependencies declared via `<jar-file>` entries in `persistence.xml`. These JARs are matched by name and staged into a temporary sandbox directory at their expected relative paths before weaving, enabling correct resolution of cross-module entity references in multi-module projects. Fed from a source-set-specific configuration (e.g. `jarFile` for `main`, `testJarFile` for `test`). _(Since 1.5.1)_
 |===
 
 NOTE: The task is annotated with `@DisableCachingByDefault` because weaving modifies class bytecode in place. It is automatically skipped with a `NO-SOURCE` outcome when no compiled classes are present in the source directory.
+
+NOTE: During execution, the task creates a temporary staging sandbox, copies processed resources into it, and dynamically parses `persistence.xml` to discover `<jar-file>` entries. Matching JARs from the `jarFileClasspath` are resolved by name and copied into their expected relative paths within the sandbox before the `StaticWeave` processor is invoked. _(Since 1.5.1)_
 
 TIP: The task is wired into the build lifecycle automatically — it runs after `compileJava` and before `classes`, so the woven bytecode is ready for both testing and packaging without manual task ordering.
 
