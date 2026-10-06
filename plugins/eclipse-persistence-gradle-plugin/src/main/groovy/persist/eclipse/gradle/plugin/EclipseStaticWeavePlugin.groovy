@@ -80,6 +80,11 @@ class EclipseStaticWeavePlugin implements Plugin<Project> {
                 task.weaveClasspath.from(weaveConfig)
                 task.compileClasspath.from(sourceSet.compileClasspath)
 
+                // Skip weaving if no persistence.xml available
+                task.onlyIf("Performs weaving only if persistence.xml is available") {
+                    processResourcesDestinationDir.get().file("META-INF/persistence.xml").asFile.exists()
+                }
+
                 // Explicitly dictate that weaving runs after BOTH compilation and resource processing are finalized
                 task.mustRunAfter(compileJavaProvider)
                 task.mustRunAfter(processResourcesProvider)

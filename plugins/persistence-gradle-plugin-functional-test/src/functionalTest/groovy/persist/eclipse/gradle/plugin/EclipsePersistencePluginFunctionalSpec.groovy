@@ -46,7 +46,7 @@ class EclipsePersistencePluginFunctionalSpec extends Specification {
         then: "the core java compilation and processing tasks pass cleanly"
         result.task(":compileJava").outcome == TaskOutcome.SUCCESS
         result.task(":eclipseWeaveClasses").outcome == TaskOutcome.SUCCESS
-        result.task(":eclipseWeaveTestClasses").outcome == TaskOutcome.NO_SOURCE
+        result.task(":eclipseWeaveTestClasses").outcome == TaskOutcome.SKIPPED
         result.task(":jar").outcome == TaskOutcome.SUCCESS
 
         and: "the persistence descriptor task shifts from SKIPPED to SUCCESS due to auto-registration"
@@ -94,7 +94,7 @@ class EclipsePersistencePluginFunctionalSpec extends Specification {
 
         then:
         firstResult.task(":eclipseWeaveClasses").outcome == TaskOutcome.SUCCESS
-        firstResult.task(":eclipseWeaveTestClasses").outcome == TaskOutcome.NO_SOURCE
+        firstResult.task(":eclipseWeaveTestClasses").outcome == TaskOutcome.SKIPPED
         JACOCO_ACTIVE || firstResult.output.contains("Configuration cache entry stored.")
 
         when: "Second execution with no code changes"
@@ -104,7 +104,7 @@ class EclipsePersistencePluginFunctionalSpec extends Specification {
         JACOCO_ACTIVE || secondResult.output.contains("Configuration cache entry reused.")
         secondResult.task(":compileJava").outcome == TaskOutcome.SUCCESS    // Becomes up-to-date from the third build
         secondResult.task(":eclipseWeaveClasses").outcome == TaskOutcome.UP_TO_DATE
-        secondResult.task(":eclipseWeaveTestClasses").outcome == TaskOutcome.NO_SOURCE
+        secondResult.task(":eclipseWeaveTestClasses").outcome == TaskOutcome.SKIPPED
         secondResult.task(":jar").outcome == TaskOutcome.UP_TO_DATE
     }
 
