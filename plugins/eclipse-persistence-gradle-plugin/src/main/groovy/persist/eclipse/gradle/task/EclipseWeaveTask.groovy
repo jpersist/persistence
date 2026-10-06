@@ -90,7 +90,16 @@ abstract class EclipseWeaveTask extends DefaultTask {
     abstract ConfigurableFileCollection getCompileClasspath()
 
     /**
-     * The input collection of tracking dependencies declaring additional jar files entries.
+     * The input collection of resolved JAR file dependencies declared via {@code <jar-file>} entries
+     * in the {@code persistence.xml} descriptor.
+     * <p>
+     * These JARs are matched by name and staged into a temporary sandbox directory at their expected
+     * relative paths before weaving, allowing the EclipseLink {@code StaticWeave} processor to
+     * correctly resolve cross-module entity references in multi-module projects.
+     * </p>
+     *
+     * @return The file collection managing additional jar file dependencies.
+     * @since 1.5.1
      */
     @Internal
     abstract ConfigurableFileCollection getJarFileClasspath()
@@ -117,10 +126,20 @@ abstract class EclipseWeaveTask extends DefaultTask {
     /**
      * The core action block for the task execution.
      * <p>
-     * Spawns an isolated Java process running the {@code org.eclipse.persistence.tools.weaving.jpa.StaticWeave}
-     * main class, configuring arguments to map the byte structures cleanly from the raw source
-     * to the enhanced output target.
+     * Creates a temporary staging sandbox directory, copies processed resources into it, then
+     * dynamically parses the {@code persistence.xml} to discover {@code <jar-file>} entries.
+     * Matching JAR files from the {@link #getJarFileClasspath() jarFileClasspath} are resolved
+     * by name and copied into their expected relative paths within the sandbox, ensuring the
+     * EclipseLink {@code StaticWeave} processor can locate cross-module dependencies correctly.
      * </p>
+     * <p>
+     * Finally, spawns an isolated Java process running the
+     * {@code org.eclipse.persistence.tools.weaving.jpa.StaticWeave} main class, using the
+     * sandbox as the {@code -persistenceinfo} source to map byte structures cleanly from
+     * the raw source to the enhanced output target.
+     * </p>
+     *
+     * @since 1.5.1 Added staging sandbox with dynamic JAR resolution from persistence.xml
      */
     @TaskAction
     void weave() {

@@ -19,6 +19,14 @@ import persist.eclipse.gradle.extension.EclipselinkExtension
  * so that IDEs such as Eclipse and IntelliJ can compile and link the generated static
  * metamodel classes (e.g.&nbsp;{@code Customer_.java}) seamlessly.
  * </p>
+ * <p>
+ * <b>Since 1.5.1:</b> The plugin now automatically detects and resolves localized ORM mapping
+ * descriptors ({@code META-INF/orm.xml} and {@code META-INF/eclipselink-orm.xml}) relative to
+ * the configured {@code persistence.xml} location. When present, these descriptors are passed
+ * to the annotation processor via the {@code -Aeclipselink.ormxml} and
+ * {@code -Aeclipselink.eclipselink-ormxml} compiler arguments, enabling correct metamodel
+ * generation for projects that use external ORM mapping files.
+ * </p>
  *
  * @see EclipselinkExtension
  */

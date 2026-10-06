@@ -3,6 +3,7 @@ package persist.jakarta.gradle.plugin
 import groovy.json.JsonSlurper
 import groovy.xml.XmlParser
 import org.gradle.testkit.runner.GradleRunner
+import org.gradle.testkit.runner.TaskOutcome
 import spock.lang.Specification
 import spock.lang.TempDir
 
@@ -40,7 +41,7 @@ class JakartaPersistencePluginFunctionalSpec extends Specification {
         def result = runner.build()
 
         then: "the build succeeds and generates the correct xml file structural bindings"
-        result.task(":common-persistence-module:processPersistenceDescriptor").outcome.toString() == "SUCCESS"
+        result.task(":common-persistence-module:processPersistenceDescriptor").outcome == TaskOutcome.SUCCESS
 
         File outputFile = new File(testProjectDir.toFile(), "common-persistence-module/build/resources/main/META-INF/persistence.xml")
         outputFile.exists()
@@ -101,7 +102,7 @@ class JakartaPersistencePluginFunctionalSpec extends Specification {
         def result = runner.build()
 
         then: "the build succeeds and outputs a merged layout"
-        result.task(":bookstore-persistence-module:processPersistenceDescriptor").outcome.toString() == "SUCCESS"
+        result.task(":bookstore-persistence-module:processPersistenceDescriptor").outcome == TaskOutcome.SUCCESS
 
         File outputFile = new File(testProjectDir.toFile(), "bookstore-persistence-module/build/resources/main/META-INF/persistence.xml")
         outputFile.exists()
@@ -168,7 +169,9 @@ class JakartaPersistencePluginFunctionalSpec extends Specification {
         def result = runner.build()
 
         then: "the build succeeds and outputs a merged layout"
-        result.task(":bookstore-service-module:processPersistenceDescriptor").outcome.toString() == "SUCCESS"
+        result.task(":bookstore-service-module:compileJava").outcome == TaskOutcome.SUCCESS
+        result.task(":bookstore-service-module:eclipseWeaveClasses").outcome == TaskOutcome.SUCCESS
+        result.task(":bookstore-service-module:processPersistenceDescriptor").outcome == TaskOutcome.SUCCESS
 
         File outputFile = new File(testProjectDir.toFile(), "bookstore-service-module/build/resources/main/META-INF/persistence.xml")
         outputFile.exists()
@@ -195,8 +198,8 @@ class JakartaPersistencePluginFunctionalSpec extends Specification {
         def result = runner.build()
 
         then: "the core task and our newly introduced GraalVM task execute successfully"
-        result.task(":common-persistence-module:processPersistenceDescriptor").outcome.toString() == "SUCCESS"
-        result.task(":common-persistence-module:generateJPAGraalVMMetadata").outcome.toString() == "SUCCESS"
+        result.task(":common-persistence-module:processPersistenceDescriptor").outcome == TaskOutcome.SUCCESS
+        result.task(":common-persistence-module:generateJPAGraalVMMetadata").outcome == TaskOutcome.SUCCESS
 
         and: "the target reflect-config.json file is written to the correct namespaced location"
         // Note: 'unspecified' is used here since the test-multi-module template project group isn't declared
@@ -231,7 +234,7 @@ class JakartaPersistencePluginFunctionalSpec extends Specification {
         def result = runner.buildAndFail()
 
         then: "the task outcome evaluates to FAILED"
-        result.task(":test-validate-persistence-module:validatePersistenceSchema").outcome.toString() == "FAILED"
+        result.task(":test-validate-persistence-module:validatePersistenceSchema").outcome == TaskOutcome.FAILED
 
         and: "the intercepted console error logs contain explicit Hibernate schema validation traces"
         result.output.contains("Initiating automated schema validation guard for unit: 'failing-validation-unit'")
