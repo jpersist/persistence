@@ -23,8 +23,8 @@ import persist.eclipse.gradle.extension.EclipselinkExtension
  * <b>Since 1.5.1:</b> The plugin now automatically detects and resolves localized ORM mapping
  * descriptors ({@code META-INF/orm.xml} and {@code META-INF/eclipselink-orm.xml}) relative to
  * the configured {@code persistence.xml} location. When present, these descriptors are passed
- * to the annotation processor via the {@code -Aeclipselink.ormxml} and
- * {@code -Aeclipselink.eclipselink-ormxml} compiler arguments, enabling correct metamodel
+ * to the annotation processor via the {@code -Aeclipselink.ormxml.location} and
+ * {@code -Aeclipselink.eclipselink-ormxml.location} compiler arguments, enabling correct metamodel
  * generation for projects that use external ORM mapping files.
  * </p>
  *
@@ -79,10 +79,10 @@ class EclipseJpaModelgenPlugin implements Plugin<Project> {
                         File elOrmXml = new File(resourcesRootDir, "META-INF/eclipselink-orm.xml")
 
                         if (ormXml.exists()) {
-                            argsList.add("-Aeclipselink.ormxml=${ormXml.absolutePath}")
+                            argsList.add("-Aeclipselink.ormxml.location=${ormXml.absolutePath}")
                         }
                         if (elOrmXml.exists()) {
-                            argsList.add("-Aeclipselink.eclipselink-ormxml=${elOrmXml.absolutePath}")
+                            argsList.add("-Aeclipselink.eclipselink-ormxml.location=${elOrmXml.absolutePath}")
                         }
                     }
                     return argsList
