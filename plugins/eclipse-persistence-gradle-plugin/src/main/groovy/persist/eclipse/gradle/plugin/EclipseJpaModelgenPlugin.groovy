@@ -70,9 +70,11 @@ class EclipseJpaModelgenPlugin implements Plugin<Project> {
 
             // Ultra-clean universal configuration empty-check guard
             // Only add the default EclipseLink processor if the user hasn't declared ANY processor dependencies!
-            project.configurations.named(annotationProcessorConfigName).configure { processorConfig ->
-                if (processorConfig.dependencies.isEmpty()) {
-                    project.dependencies.add(annotationProcessorConfigName, 'org.eclipse.persistence:org.eclipse.persistence.jpa.modelgen.processor')
+            project.afterEvaluate {
+                project.configurations.named(annotationProcessorConfigName).configure { processorConfig ->
+                    if (processorConfig.dependencies.isEmpty()) {
+                        project.dependencies.add(annotationProcessorConfigName, 'org.eclipse.persistence:org.eclipse.persistence.jpa.modelgen.processor')
+                    }
                 }
             }
 

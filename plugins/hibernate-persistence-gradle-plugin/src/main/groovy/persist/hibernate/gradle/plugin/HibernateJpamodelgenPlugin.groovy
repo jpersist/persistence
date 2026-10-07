@@ -41,9 +41,11 @@ class HibernateJpamodelgenPlugin implements Plugin<Project> {
             sourceSet.java.srcDir(project.layout.buildDirectory.dir("generated/sources/annotationProcessor/java/${sourceSet.name}"))
 
             // Only add the default Hibernate processor if the user's annotationProcessor block is completely empty
-            project.configurations.named(configName).configure { config ->
-                if (config.dependencies.isEmpty()) {
-                    project.dependencies.add(configName, 'org.hibernate.orm:hibernate-jpamodelgen')
+            project.afterEvaluate {
+                project.configurations.named(configName).configure { config ->
+                    if (config.dependencies.isEmpty()) {
+                        project.dependencies.add(configName, 'org.hibernate.orm:hibernate-jpamodelgen')
+                    }
                 }
             }
         }
