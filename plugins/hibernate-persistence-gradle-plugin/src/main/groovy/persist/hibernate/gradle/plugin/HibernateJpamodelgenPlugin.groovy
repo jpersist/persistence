@@ -16,6 +16,12 @@ import org.gradle.api.tasks.SourceSetContainer
  * source directory into each source set for seamless IDE indexing, and ensures version suggestions
  * play seamlessly alongside upstream platform BOM definitions or corporate Gradle Version Catalogs.
  * </p>
+ * <p>
+ * <b>Since 1.5.2:</b> The default {@code hibernate-jpamodelgen} annotation processor dependency
+ * is now added conditionally — only when the user has not declared any custom annotation processor
+ * dependencies in the corresponding {@code annotationProcessor} configuration. This allows
+ * projects to substitute or override the default processor without conflicts.
+ * </p>
  */
 class HibernateJpamodelgenPlugin implements Plugin<Project> {
 
@@ -34,8 +40,12 @@ class HibernateJpamodelgenPlugin implements Plugin<Project> {
             // Expose the annotation processor source folder into the core Java source directory pool.
             sourceSet.java.srcDir(project.layout.buildDirectory.dir("generated/sources/annotationProcessor/java/${sourceSet.name}"))
 
-            // Inject the dependency dynamically into the calculated configuration name
-            project.dependencies.add(configName, 'org.hibernate.orm:hibernate-jpamodelgen')
+            // Only add the default Hibernate processor if the user's annotationProcessor block is completely empty
+            project.configurations.named(configName).configure { config ->
+                if (config.dependencies.isEmpty()) {
+                    project.dependencies.add(configName, 'org.hibernate.orm:hibernate-jpamodelgen')
+                }
+            }
         }
     }
 
