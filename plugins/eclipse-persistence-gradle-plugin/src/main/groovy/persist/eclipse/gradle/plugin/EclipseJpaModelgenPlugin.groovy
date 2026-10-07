@@ -27,6 +27,16 @@ import persist.eclipse.gradle.extension.EclipselinkExtension
  * {@code -Aeclipselink.eclipselink-ormxml.location} compiler arguments, enabling correct metamodel
  * generation for projects that use external ORM mapping files.
  * </p>
+ * <p>
+ * <b>Since 1.5.2:</b> The default {@code org.eclipse.persistence.jpa.modelgen.processor}
+ * annotation processor dependency is now added conditionally — only when the user has not
+ * declared any custom annotation processor dependencies in the corresponding
+ * {@code annotationProcessor} configuration. This allows projects to substitute or override
+ * the default processor without conflicts. Additionally, the ORM descriptor compiler argument
+ * keys have been corrected from {@code -Aeclipselink.ormxml} and
+ * {@code -Aeclipselink.eclipselink-ormxml} to {@code -Aeclipselink.ormxml.location} and
+ * {@code -Aeclipselink.eclipselink-ormxml.location} respectively.
+ * </p>
  *
  * @see EclipselinkExtension
  */
@@ -58,7 +68,13 @@ class EclipseJpaModelgenPlugin implements Plugin<Project> {
             // Dynamic dependency assignment matching configuration name targets
             def annotationProcessorConfigName = sourceSet.annotationProcessorConfigurationName
 
-            project.dependencies.add(annotationProcessorConfigName, 'org.eclipse.persistence:org.eclipse.persistence.jpa.modelgen.processor')
+            // Ultra-clean universal configuration empty-check guard
+            // Only add the default EclipseLink processor if the user hasn't declared ANY processor dependencies!
+            project.configurations.named(annotationProcessorConfigName).configure { processorConfig ->
+                if (processorConfig.dependencies.isEmpty()) {
+                    project.dependencies.add(annotationProcessorConfigName, 'org.eclipse.persistence:org.eclipse.persistence.jpa.modelgen.processor')
+                }
+            }
 
             // Explicitly expose the standard annotation processor source folder to the Java source set path.
             // This ensures the Eclipse IDE compiles and links generated static metamodels (e.g. Customer_.java) seamlessly.

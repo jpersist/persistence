@@ -8,6 +8,8 @@ dependencies {
     compileOnlyApi 'org.eclipse.persistence:jakarta.persistence'
 
     implementation 'org.eclipse.persistence:org.eclipse.persistence.jpa'
+
+    annotationProcessor 'org.eclipse.persistence:org.eclipse.persistence.jpa.modelgen.processor'
 }
 
 dependencyRecommendations {

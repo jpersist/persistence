@@ -83,7 +83,7 @@ The `io.github.jpersist.eclipse-jpa-modelgen` sub-plugin automatically:
 
 * Applies the `java` plugin.
 * Creates the `eclipselink` DSL extension — a `NamedDomainObjectContainer` scoped per source set (see <<DSL Extension: `eclipselink`>>).
-* Adds `org.eclipse.persistence:org.eclipse.persistence.jpa.modelgen.processor` as an `annotationProcessor` dependency for every source set.
+* Adds `org.eclipse.persistence:org.eclipse.persistence.jpa.modelgen.processor` as an `annotationProcessor` dependency for every source set, but only if the user has not declared any custom annotation processor dependencies in the corresponding configuration. _(Since 1.5.2)_
 * Injects the `-Aeclipselink.persistencexml=<path>` compiler argument pointing to the configured `persistence.xml` location.
 * Detects localized ORM mapping descriptors (`META-INF/orm.xml` and `META-INF/eclipselink-orm.xml`) relative to the configured `persistence.xml` location and passes them to the annotation processor via the `-Aeclipselink.ormxml.location` and `-Aeclipselink.eclipselink-ormxml.location` compiler arguments. _(Since 1.5.1, compiler argument keys corrected in 1.5.2)_
 * Registers the annotation processor generated source directory (`build/generated/sources/annotationProcessor/java/<sourceSet>`) into the source set's Java source directories for seamless IDE indexing.
