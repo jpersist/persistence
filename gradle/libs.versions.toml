@@ -1,6 +1,6 @@
 [versions]
 jakarta-persistence = "3.1.0"
-hibernate = "6.6.56.Final"
+hibernate = "7.4.12.Final"
 spock = "2.3-groovy-4.0"
 asm = "9.10.1"
 
