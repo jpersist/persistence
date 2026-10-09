@@ -6,6 +6,10 @@ plugins {
 dependencies {
     implementation libs.jakarta.persistence.api
     implementation libs.asm
+
+    implementation 'io.github.jpersist.lint:lint-persistence-api:latest.integration'
+    implementation 'io.github.jpersist.lint:lint-persistence-jakarta:latest.integration'
+    implementation 'io.github.jpersist.lint:lint-persistence-legacy:latest.integration'
 }
 
 gradlePlugin {

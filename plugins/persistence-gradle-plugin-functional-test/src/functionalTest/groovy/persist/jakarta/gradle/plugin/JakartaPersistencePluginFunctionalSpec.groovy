@@ -241,6 +241,28 @@ class JakartaPersistencePluginFunctionalSpec extends Specification {
         result.output.contains("SchemaManagementException") || result.output.contains("Schema-validation: missing table")
     }
 
+    def "should successfully execute lintNamedQueries task and fail the build when an invalid property typo is detected inside a @NamedQuery definition"() {
+        given: "a workspace module with a compiled JPA entity containing an intentional typo inside a @NamedQuery"
+        // Since our task hooks natively into the 'check' phase lifecycle, running compileJava prepares the classes,
+        // and then the linter task kicks in immediately to parse the bytecode structures.
+        def runner = createRunner()
+        runner.withArguments(":test-lint-persistence-module:compileJava", ":test-lint-persistence-module:lintNamedQueries", "--stacktrace")
+
+        when: "triggering a full build or explicit verification check lifecycle pass"
+        // Use buildAndFail() to explicitly verify that a linting failure code 1 is propagated correctly
+        def result = runner.buildAndFail()
+
+        then: "the lintNamedQueries task execution is attempted and accurately marks the build state as a failure"
+        result.task(":test-lint-persistence-module:lintNamedQueries").outcome == TaskOutcome.FAILED
+
+        and: "the output console logs contain the explicit semantic compilation mismatch details parsed by the ANTLR4 engine"
+        assert result.output.contains("❌ LINT ERROR in Query [InventoryItem.findByInvalidProperty]")
+        assert result.output.contains("Reason:")
+        // Verify that Hibernate's internal SQM compiler explicitly calls out the unresolvable property typo node
+        assert result.output.contains("Could not resolve attribute 'itemCode' of 'com.example.model.InventoryItem'")
+        assert result.output.contains("Build failed due to 1 invalid @NamedQuery syntax definitions.")
+    }
+
     private GradleRunner createRunner() {
         def jacocoAgentJvmArg = System.getProperty('jacocoAgentJvmArg')
         def jacocoDestFile = System.getProperty('jacocoDestFile')

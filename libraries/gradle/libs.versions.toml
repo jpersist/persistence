@@ -1,0 +1,7 @@
+[versions]
+hibernate = "5.6.15.Final"
+hibernate-orm = "6.6.56.Final"
+
+[libraries]
+hibernate-core = { group = "org.hibernate", name = "hibernate-core", version.ref = "hibernate" }
+hibernate-orm-core = { group = "org.hibernate.orm", name = "hibernate-core", version.ref = "hibernate-orm" }

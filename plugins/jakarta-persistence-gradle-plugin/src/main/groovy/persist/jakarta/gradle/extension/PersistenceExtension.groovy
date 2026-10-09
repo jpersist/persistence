@@ -6,6 +6,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Nested
 
 import javax.inject.Inject
 
@@ -98,6 +99,10 @@ abstract class PersistenceExtension {
     @Input
     abstract MapProperty<String, String> getOutputProperties()
 
+    // The Nested Linter Configuration Block Container
+    @Nested
+    final LinterExtension linter
+
     /**
      * Creates a new extension instance.
      *
@@ -119,6 +124,12 @@ abstract class PersistenceExtension {
         this.outputProperties.put("omit-xml-declaration", "no")
         this.outputProperties.put("encoding", "UTF-8")
         this.outputProperties.put("{http://xml.apache.org/xslt}indent-amount", "4")
+
+        // Initialize the linter configuration container and map its conventions safely
+        this.linter = objects.newInstance(LinterExtension)
+        this.linter.enabled.convention(true)
+        this.linter.failOnError.convention(true)
+        this.linter.ignoreWarnings.convention(false)
     }
 
     /**
@@ -231,6 +242,17 @@ abstract class PersistenceExtension {
         closure.setDelegate(this)
         closure.setResolveStrategy(Closure.DELEGATE_FIRST)
         closure.call()
+    }
+
+    // Expose programmatic Action DSL configuration routing for the linter block
+    /**
+     * Configures the static @NamedQuery analysis linter options.
+     *
+     * @param action The configuration action to apply to the linter extension parameters.
+     * @since 1.6.0
+     */
+    void linter(Action<? super LinterExtension> action) {
+        action.execute(linter)
     }
 
 }

@@ -11,6 +11,7 @@ import org.gradle.api.artifacts.result.DependencyResult
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.plugins.JavaLibraryPlugin
 import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.objectweb.asm.AnnotationVisitor
 import org.objectweb.asm.ClassReader
@@ -25,6 +26,7 @@ import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.language.jvm.tasks.ProcessResources
 import persist.jakarta.gradle.extension.PersistenceExtension
 import persist.jakarta.gradle.task.GenerateJPAGraalVMMetadata
+import persist.jakarta.gradle.task.LintNamedQueries
 import persist.jakarta.gradle.task.ProcessPersistenceDescriptor
 import persist.jakarta.gradle.task.ValidatePersistenceSchema
 
@@ -182,6 +184,8 @@ class JakartaPersistencePlugin implements Plugin<Project> {
             configureGenerateJPAGraalVMMetadataTask(project, sourceSet, discoveredClassesProvider)
 
             configureValidatePersistenceSchemaTask(project, sourceSet, extension)
+
+            configureLintNamedQueriesTask(project, sourceSet, extension)
         }
     }
 
@@ -347,6 +351,56 @@ class JakartaPersistencePlugin implements Plugin<Project> {
             task.getClasspath().from(project.files(project.buildscript.configurations.detachedConfiguration(
                 project.dependencies.create("com.h2database:h2:2.2.224")
             )))
+        }
+    }
+
+    private static void configureLintNamedQueriesTask(Project project, SourceSet sourceSet, PersistenceExtension extension) {
+        // Enforce a strict named convention pattern (e.g., lintNamedQueries or lintTestNamedQueries)
+        String linterTaskName = sourceSet.name == 'main' ? "lintNamedQueries" : "lint${sourceSet.name.capitalize()}NamedQueries"
+
+        project.tasks.register(linterTaskName, LintNamedQueries) { task ->
+            task.group = LifecycleBasePlugin.VERIFICATION_GROUP
+            task.description = "Lints and validates static JPQL/HQL strings inside @NamedQuery definitions for the ${sourceSet.name} source set."
+
+            // Only run if the user hasn't explicitly disabled the linter configuration
+            task.onlyIf {
+                return extension.linter.enabled.getOrElse(true)
+            }
+
+            // Pass the active spec version string from the top-level extension configuration block
+            task.jpaVersion.set(extension.version)
+
+            // Sync structural configuration boundaries from our new LinterExtension block
+            task.failOnError.set(extension.linter.failOnError)
+            task.ignoreWarnings.set(extension.linter.ignoreWarnings)
+
+            // Target the raw Java compilation output directory directly
+            def compileJavaTask = project.tasks.named(sourceSet.compileJavaTaskName, JavaCompile)
+            task.compiledClassesDir.set(compileJavaTask.flatMap { it.destinationDirectory })
+            task.mustRunAfter(compileJavaTask)
+
+            // Feed compilation runtime configurations safely using execution views
+            task.classpath.from(sourceSet.output.classesDirs)
+            task.classpath.from(project.configurations.named(sourceSet.compileClasspathConfigurationName))
+
+            // Ensure the plugin's own compiled files directory is attached to locate the worker classes
+            def pluginLocation = JakartaPersistencePlugin.class.protectionDomain.codeSource?.location
+            if (pluginLocation != null) {
+                task.classpath.from(project.files(pluginLocation))
+            } else {
+                task.classpath.from(project.files(JakartaPersistencePlugin.class.classLoader.getResource(".")).builtBy())
+            }
+
+            // Transparently inject the H2 driver dependency directly from a localized detached setup on-the-fly!
+            // This provides 'org.h2.Driver' directly into the worker's classloader isolation sandbox.
+            task.classpath.from(project.files(project.buildscript.configurations.detachedConfiguration(
+                project.dependencies.create("com.h2database:h2:2.2.224")
+            )))
+        }
+
+        // Link the linter task straight into Gradle's native check lifecycle
+        project.tasks.named(LifecycleBasePlugin.CHECK_TASK_NAME) { checkTask ->
+            checkTask.dependsOn(linterTaskName)
         }
     }
 
