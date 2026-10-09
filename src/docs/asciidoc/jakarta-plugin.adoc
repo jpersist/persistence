@@ -7,7 +7,7 @@ It automatically applies the `java` plugin, registers a `persistence` DSL extens
 
 == Applying the Plugin
 
-[source,groovy,indent=0,role="primary"]
+[source,groovy,indent=0,role="primary",subs="attributes+"]
 .Groovy
 ----
 plugins {
@@ -15,7 +15,7 @@ plugins {
 }
 ----
 
-[source,kotlin,indent=0,role="secondary"]
+[source,kotlin,indent=0,role="secondary",subs="attributes+"]
 .Kotlin
 ----
 plugins {

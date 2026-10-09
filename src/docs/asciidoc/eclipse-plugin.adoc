@@ -8,7 +8,7 @@ It automatically applies the core `io.github.jpersist.jpa` plugin (see <<jakarta
 
 == Applying the Plugin
 
-[source,groovy,indent=0,role="primary"]
+[source,groovy,indent=0,role="primary",subs="attributes+"]
 .Groovy
 ----
 plugins {
@@ -23,7 +23,7 @@ dependencies {
 }
 ----
 
-[source,kotlin,indent=0,role="secondary"]
+[source,kotlin,indent=0,role="secondary",subs="attributes+"]
 .Kotlin
 ----
 plugins {
@@ -61,7 +61,7 @@ The aggregate `io.github.jpersist.eclipse-persistence` plugin is a convenience m
 
 You can apply sub-plugins individually if you only need a subset of the functionality:
 
-[source,groovy,indent=0,role="primary"]
+[source,groovy,indent=0,role="primary",subs="attributes+"]
 .Groovy
 ----
 plugins {
@@ -69,7 +69,7 @@ plugins {
 }
 ----
 
-[source,kotlin,indent=0,role="secondary"]
+[source,kotlin,indent=0,role="secondary",subs="attributes+"]
 .Kotlin
 ----
 plugins {

@@ -19,7 +19,7 @@ However, different modules within a multi-module project can use different provi
 It is also possible to combine sub-plugins from different providers within the same module.
 For example, instead of applying one of the aggregator plugins (`io.github.jpersist.hibernate-persistence` or `io.github.jpersist.eclipse-persistence`), you can manually apply the core `io.github.jpersist.jpa` plugin first, then cherry-pick individual sub-plugins:
 
-[source,groovy,indent=0,role="primary"]
+[source,groovy,indent=0,role="primary",subs="attributes+"]
 .Groovy
 ----
 plugins {
@@ -29,7 +29,7 @@ plugins {
 }
 ----
 
-[source,kotlin,indent=0,role="secondary"]
+[source,kotlin,indent=0,role="secondary",subs="attributes+"]
 .Kotlin
 ----
 plugins {
