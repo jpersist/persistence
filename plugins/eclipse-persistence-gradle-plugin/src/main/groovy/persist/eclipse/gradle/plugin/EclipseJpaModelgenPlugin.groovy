@@ -65,19 +65,6 @@ class EclipseJpaModelgenPlugin implements Plugin<Project> {
                 )
             }
 
-            // Dynamic dependency assignment matching configuration name targets
-            def annotationProcessorConfigName = sourceSet.annotationProcessorConfigurationName
-
-            // Ultra-clean universal configuration empty-check guard
-            // Only add the default EclipseLink processor if the user hasn't declared ANY processor dependencies!
-            project.afterEvaluate {
-                project.configurations.named(annotationProcessorConfigName).configure { processorConfig ->
-                    if (processorConfig.dependencies.isEmpty()) {
-                        project.dependencies.add(annotationProcessorConfigName, 'org.eclipse.persistence:org.eclipse.persistence.jpa.modelgen.processor')
-                    }
-                }
-            }
-
             // Explicitly expose the standard annotation processor source folder to the Java source set path.
             // This ensures the Eclipse IDE compiles and links generated static metamodels (e.g. Customer_.java) seamlessly.
             sourceSet.java.srcDir(project.layout.buildDirectory.dir("generated/sources/annotationProcessor/java/${sourceSet.name}"))
@@ -105,6 +92,17 @@ class EclipseJpaModelgenPlugin implements Plugin<Project> {
                     }
                     return argsList
                 }.get())
+            }
+        }
+
+        // Ultra-clean universal configuration empty-check guard
+        // Only add the default EclipseLink processor if the user hasn't declared ANY processor dependencies!
+        project.afterEvaluate {
+            def annotationProcessorConfigName = JavaPlugin.ANNOTATION_PROCESSOR_CONFIGURATION_NAME
+            project.configurations.named(annotationProcessorConfigName).configure { processorConfig ->
+                if (processorConfig.dependencies.isEmpty()) {
+                    project.dependencies.add(annotationProcessorConfigName, 'org.eclipse.persistence:org.eclipse.persistence.jpa.modelgen.processor')
+                }
             }
         }
     }
