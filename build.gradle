@@ -1,3 +1,5 @@
+import java.time.LocalDate
+
 plugins {
     id 'base'
     id 'eclipse'
@@ -113,8 +115,12 @@ subprojects {
                                 // with Gradle's Configuration Cache.
                                 def jacocoAgent = extensions.getByType(JacocoTaskExtension)
                                 def jacocoEnabled = jacocoAgent.enabled
-                                def jacocoJvmArg = providers.provider { jacocoAgent.asJvmArg }
-                                def jacocoDestFilePath = jacocoAgent.destinationFile.absolutePath
+                                def jacocoJvmArg = providers.provider { jacocoAgent.asJvmArg.replace('\\', '/') }
+                                // Use a separate destination file for the GradleRunner JaCoCo agent
+                                // to avoid file lock conflicts on Windows where the daemon keeps the
+                                // .exec file locked, preventing Gradle from snapshotting task outputs
+                                def jacocoRunnerDestFile = new File(jacocoAgent.destinationFile.parentFile, 'functionalTestRunner.exec')
+                                def jacocoDestFilePath = jacocoRunnerDestFile.absolutePath.replace('\\', '/')
                                 doFirst {
                                     if (jacocoEnabled) {
                                         // Pass the fully resolved JaCoCo agent JVM arg and the destination
@@ -178,6 +184,15 @@ tasks.named('check') {
     finalizedBy tasks.named('functionalTestCodeCoverageReport', JacocoReport)
 }
 
+// Include GradleRunner JaCoCo exec files in the aggregated functional test
+// coverage report so plugin code exercised inside TestKit builds is reflected
+// in the final coverage numbers
+tasks.named('functionalTestCodeCoverageReport', JacocoReport) {
+    subprojects.each { sub ->
+        executionData.from(new File(sub.layout.buildDirectory.get().asFile, 'jacoco/functionalTestRunner.exec'))
+    }
+}
+
 // Apply Groovydoc tasks
 apply from: "gradle/groovydoc.gradle"
 
@@ -202,7 +217,7 @@ asciidoctor {
                'sectnums': '',
                'examplesdir': file('examples').absolutePath,
                'project-version': project.version,
-               'project-date': java.time.LocalDate.now().toString()
+               'project-date': LocalDate.now().toString()
 }
 
 sonar {

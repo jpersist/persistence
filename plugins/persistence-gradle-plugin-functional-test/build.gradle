@@ -29,12 +29,6 @@ tasks.named('check') {
     dependsOn testing.suites.functionalTest
 }
 
-// Expose the functionalTest execution data to the root aggregator
-configurations.matching { it.name == 'functionalTestJaCoCoReportElements' }.all {
-    // Ensures the data is published cleanly on the internal project classpath exchange
-    it.visible = true
-}
-
 sonar {
     properties {
         property "sonar.tests", "src/functionalTest/groovy"
