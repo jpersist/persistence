@@ -3,3 +3,5 @@ rootProject.name = "libraries"
 include("lint-persistence-api")
 include("lint-persistence-jakarta")
 include("lint-persistence-legacy")
+
+include("lint-persistence-bom")

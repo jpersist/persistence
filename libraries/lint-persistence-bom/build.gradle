@@ -1,0 +1,23 @@
+plugins {
+    id 'java-platform'
+}
+
+javaPlatform {
+    allowDependencies()
+}
+
+dependencies {
+    constraints {
+        api project(':lint-persistence-api')
+        api project(':lint-persistence-jakarta')
+        api project(':lint-persistence-legacy')
+    }
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.javaPlatform
+        }
+    }
+}
