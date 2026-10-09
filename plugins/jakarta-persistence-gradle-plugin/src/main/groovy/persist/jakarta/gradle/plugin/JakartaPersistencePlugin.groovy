@@ -98,6 +98,13 @@ import persist.jakarta.gradle.task.ValidatePersistenceSchema
  * without re-declaring them.
  * </p>
  * <p>
+ * When the configured JPA version is a legacy specification version ({@code 2.0},
+ * {@code 2.1}, or {@code 2.2}), the plugin automatically switches annotation
+ * scanning from the {@code jakarta.persistence} namespace to the
+ * {@code javax.persistence} namespace, ensuring correct entity discovery for
+ * projects that still target the older Java Persistence API.
+ * </p>
+ * <p>
  * This plugin replaces the deprecated {@code persistence-gradle-plugin}
  * ({@code io.github.jpersist.persistence}).
  * </p>
@@ -105,6 +112,8 @@ import persist.jakarta.gradle.task.ValidatePersistenceSchema
  * @since 1.1.0
  */
 class JakartaPersistencePlugin implements Plugin<Project> {
+
+    private static final List<String> LEGACY_JPA_VERSIONS = ['2.0', '2.1', '2.2']
 
     // Define the custom attribute key for jar files location routing
     static final Attribute<String> JAR_LOCATION_ATTRIBUTE = Attribute.of('io.github.jpersist.jpa.location', String)
@@ -159,9 +168,13 @@ class JakartaPersistencePlugin implements Plugin<Project> {
                 extendProjectConfigurations(project, jarFileConfigProvider, sourceSet.apiConfigurationName)
             }
 
-            // Create a single, shared memorized lazy data provider for this source set
-            def discoveredClassesProvider = project.provider {
-                discoverJpaClasses(sourceSet)
+            // FIX: Convert the discovery provider into a fully lazy flatMap chain!
+            // This defers fetching the version until execution time, allowing user DSL overrides to be captured.
+            def discoveredClassesProvider = extension.version.flatMap { activeVersion ->
+                project.provider {
+                    def namespacePrefix = isLegacyJpaVersion(activeVersion) ? 'javax' : 'jakarta'
+                    discoverJpaClasses(sourceSet, namespacePrefix)
+                }
             }
 
             configureProcessPersistenceDescriptorTask(project, sourceSet, extension, discoveredClassesProvider, jarFileConfigProvider)
@@ -386,15 +399,26 @@ class JakartaPersistencePlugin implements Plugin<Project> {
 
     /**
      * Scans the output classes directories of a SourceSet and returns fully qualified class names
-     * containing targeted Jakarta Persistence annotations.
+     * containing targeted JPA persistence annotations.
+     * <p>
+     * The {@code namespacePrefix} parameter controls which annotation namespace is scanned:
+     * {@code "javax"} for legacy JPA versions (2.0, 2.1, 2.2) or {@code "jakarta"} for
+     * JPA 3.0 and later.
+     * </p>
+     *
+     * @param sourceSet       the source set whose compiled class output directories are scanned.
+     * @param namespacePrefix the JPA namespace prefix ({@code "javax"} or {@code "jakarta"}).
+     * @return a sorted list of fully qualified class names annotated with JPA entity annotations.
+     *
+     * @since 1.5.3
      */
-    private static List<String> discoverJpaClasses(SourceSet sourceSet) {
+    private static List<String> discoverJpaClasses(SourceSet sourceSet, String namespacePrefix) {
         Set<String> targetAnnotations = [
-            'Ljakarta/persistence/Entity;',
-            'Ljakarta/persistence/Embeddable;',
-            'Ljakarta/persistence/MappedSuperclass;',
-            'Ljakarta/persistence/Converter;'
-        ] as Set<String>
+            "L${namespacePrefix}/persistence/Entity;",
+            "L${namespacePrefix}/persistence/Embeddable;",
+            "L${namespacePrefix}/persistence/MappedSuperclass;",
+            "L${namespacePrefix}/persistence/Converter;"
+        ].collect { it.toString() } as Set<String>
 
         List<String> jpaClasses = []
 
@@ -527,6 +551,20 @@ class JakartaPersistencePlugin implements Plugin<Project> {
         }.configureEach { config ->
             config.extendsFrom(parent.get())
         }
+    }
+
+    /**
+     * Returns {@code true} if the given JPA version string designates a legacy
+     * (pre-Jakarta) specification version, i.e.&nbsp;one of {@code 2.0}, {@code 2.1},
+     * or {@code 2.2}.
+     *
+     * @param version the JPA specification version to check.
+     * @return {@code true} when the version is a legacy {@code javax.persistence} version.
+     *
+     * @since 1.5.3
+     */
+    private static boolean isLegacyJpaVersion(String version) {
+        return LEGACY_JPA_VERSIONS.contains(version)
     }
 
 }
