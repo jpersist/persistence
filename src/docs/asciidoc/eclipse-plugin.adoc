@@ -12,7 +12,7 @@ It automatically applies the core `io.github.jpersist.jpa` plugin (see <<jakarta
 .Groovy
 ----
 plugins {
-    id 'io.github.jpersist.eclipse-persistence' version '1.5.0'
+    id 'io.github.jpersist.eclipse-persistence' version '{project-version}'
 }
 
 dependencies {
@@ -27,7 +27,7 @@ dependencies {
 .Kotlin
 ----
 plugins {
-    id("io.github.jpersist.eclipse-persistence") version "1.5.0"
+    id("io.github.jpersist.eclipse-persistence") version "{project-version}"
 }
 
 dependencies {
@@ -65,7 +65,7 @@ You can apply sub-plugins individually if you only need a subset of the function
 .Groovy
 ----
 plugins {
-    id 'io.github.jpersist.eclipse-static-weave' version '1.5.0'
+    id 'io.github.jpersist.eclipse-static-weave' version '{project-version}'
 }
 ----
 
@@ -73,7 +73,7 @@ plugins {
 .Kotlin
 ----
 plugins {
-    id("io.github.jpersist.eclipse-static-weave") version "1.5.0"
+    id("io.github.jpersist.eclipse-static-weave") version "{project-version}"
 }
 ----
 

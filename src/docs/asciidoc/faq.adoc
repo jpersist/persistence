@@ -23,9 +23,9 @@ For example, instead of applying one of the aggregator plugins (`io.github.jpers
 .Groovy
 ----
 plugins {
-    id 'io.github.jpersist.jpa' version '1.5.0'
-    id 'io.github.jpersist.hibernate-jpamodelgen' version '1.5.0'
-    id 'io.github.jpersist.eclipse-static-weave' version '1.5.0'
+    id 'io.github.jpersist.jpa' version '{project-version}'
+    id 'io.github.jpersist.hibernate-jpamodelgen' version '{project-version}'
+    id 'io.github.jpersist.eclipse-static-weave' version '{project-version}'
 }
 ----
 
@@ -33,9 +33,9 @@ plugins {
 .Kotlin
 ----
 plugins {
-    id("io.github.jpersist.jpa") version "1.5.0"
-    id("io.github.jpersist.hibernate-jpamodelgen") version "1.5.0"
-    id("io.github.jpersist.eclipse-static-weave") version "1.5.0"
+    id("io.github.jpersist.jpa") version "{project-version}"
+    id("io.github.jpersist.hibernate-jpamodelgen") version "{project-version}"
+    id("io.github.jpersist.eclipse-static-weave") version "{project-version}"
 }
 ----
 

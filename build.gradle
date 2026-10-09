@@ -200,7 +200,9 @@ asciidoctor {
                'toc': 'left',
                'toclevels': '3',
                'sectnums': '',
-               'examplesdir': file('examples').absolutePath
+               'examplesdir': file('examples').absolutePath,
+               'project-version': project.version,
+               'project-date': java.time.LocalDate.now().toString()
 }
 
 sonar {

@@ -14,7 +14,7 @@ Use the `jarFile` dependency configuration together with DSL jar-file mappings t
 ----
 plugins {
     id 'base'
-    id 'io.github.jpersist.hibernate-persistence' version '1.5.0' apply false
+    id 'io.github.jpersist.hibernate-persistence' version '{project-version}' apply false
 }
 
 subprojects {
@@ -29,7 +29,7 @@ subprojects {
 ----
 plugins {
     base
-    id("io.github.jpersist.hibernate-persistence") version "1.5.0" apply false
+    id("io.github.jpersist.hibernate-persistence") version "{project-version}" apply false
 }
 
 subprojects {
