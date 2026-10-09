@@ -1,0 +1,27 @@
+plugins {
+    id 'java-library'
+    id 'io.github.jpersist.hibernate-persistence'
+}
+
+dependencies {
+    compileOnly 'javax.persistence:javax.persistence-api:2.2'
+
+    runtimeOnly 'org.hibernate:hibernate-core:5.6.15.Final'
+
+    annotationProcessor 'org.hibernate:hibernate-jpamodelgen:5.6.15.Final'
+}
+
+persistence {
+    main {
+        version = '2.2'
+        persistenceUnits {
+            'stock-management-persistence-unit' {
+                provider = 'org.hibernate.jpa.HibernatePersistenceProvider'
+
+                properties {
+                    property 'hibernate.hbm2ddl.auto', 'none'
+                }
+            }
+        }
+    }
+}
