@@ -11,7 +11,7 @@ It automatically applies the `java` plugin, registers a `persistence` DSL extens
 .Groovy
 ----
 plugins {
-    id 'io.github.jpersist.jpa' version '1.5.0'
+    id 'io.github.jpersist.jpa' version '{project-version}'
 }
 ----
 
@@ -19,7 +19,7 @@ plugins {
 .Kotlin
 ----
 plugins {
-    id("io.github.jpersist.jpa") version "1.5.0"
+    id("io.github.jpersist.jpa") version "{project-version}"
 }
 ----
 
@@ -346,6 +346,60 @@ persistence {
     }
 }
 ----
+
+== Legacy JPA Namespace Support
+
+_Since {project-version}_
+
+When the `version` property is set to a legacy JPA specification version (`2.0`, `2.1`, or `2.2`), the plugin automatically switches annotation scanning from the `jakarta.persistence` namespace to the `javax.persistence` namespace.
+This ensures correct entity discovery for projects that still target the older Java Persistence API (JPA 2.x), where annotations such as `@javax.persistence.Entity` are used instead of `@jakarta.persistence.Entity`.
+
+The namespace resolution is fully lazy: the version value is read at task execution time via a `flatMap` provider chain, so any DSL overrides applied during the configuration phase are correctly captured.
+
+[cols="1,2"]
+|===
+| JPA Version | Annotation Namespace
+
+| `2.0`, `2.1`, `2.2`
+| `javax.persistence`
+
+| `3.0`, `3.2` _(and later)_
+| `jakarta.persistence`
+|===
+
+[source,groovy,indent=0,role="primary"]
+.Groovy
+----
+persistence {
+    main {
+        version = '2.1'
+
+        persistenceUnits {
+            'legacy-unit' {
+                provider = 'org.hibernate.jpa.HibernatePersistenceProvider'
+            }
+        }
+    }
+}
+----
+
+[source,kotlin,indent=0,role="secondary"]
+.Kotlin
+----
+persistence {
+    create("main") {
+        version.set("2.1")
+
+        persistenceUnits {
+            create("legacy-unit") {
+                provider.set("org.hibernate.jpa.HibernatePersistenceProvider")
+            }
+        }
+    }
+}
+----
+
+TIP: No additional configuration is needed — the plugin detects the legacy version and adjusts the bytecode scanning annotations automatically.
 
 == Dependency Routing with `jarFile`
 

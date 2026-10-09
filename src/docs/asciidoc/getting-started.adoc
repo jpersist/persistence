@@ -38,7 +38,7 @@ TIP: The provider-specific plugins (`hibernate-persistence` and `eclipse-persist
 .Groovy
 ----
 plugins {
-    id 'io.github.jpersist.hibernate-persistence' version '1.5.0'
+    id 'io.github.jpersist.hibernate-persistence' version '{project-version}'
 }
 ----
 
@@ -46,7 +46,7 @@ plugins {
 .Kotlin
 ----
 plugins {
-    id("io.github.jpersist.hibernate-persistence") version "1.5.0"
+    id("io.github.jpersist.hibernate-persistence") version "{project-version}"
 }
 ----
 
@@ -56,7 +56,7 @@ plugins {
 .Groovy
 ----
 plugins {
-    id 'io.github.jpersist.eclipse-persistence' version '1.5.0'
+    id 'io.github.jpersist.eclipse-persistence' version '{project-version}'
 }
 ----
 
@@ -64,7 +64,7 @@ plugins {
 .Kotlin
 ----
 plugins {
-    id("io.github.jpersist.eclipse-persistence") version "1.5.0"
+    id("io.github.jpersist.eclipse-persistence") version "{project-version}"
 }
 ----
 
