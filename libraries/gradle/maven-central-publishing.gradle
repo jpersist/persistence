@@ -2,22 +2,20 @@ apply plugin: 'maven-publish'
 apply plugin: 'signing'
 
 // 1. Automatically generate Source and Javadoc JARs required by Maven Central
-plugins.withType(JavaPlugin) {
+plugins.withType(JavaPlugin).configureEach {
     java {
         withSourcesJar()
         withJavadocJar()
     }
 }
 
+tasks.withType(Sign).configureEach {
+    onlyIf { !version.endsWith('SNAPSHOT') }
+}
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            // Safely fetch the java component if it exists
-            def javaComponent = components.findByName('java')
-            if (javaComponent != null) {
-                from javaComponent
-            }
-
             // Metadata required by Sonatype/Maven Central compliance
             pom {
                 name = project.name
@@ -60,6 +58,16 @@ publishing {
                 username = providers.environmentVariable("SONATYPE_USERNAME").orElse("").get()
                 password = providers.environmentVariable("SONATYPE_PASSWORD").orElse("").get()
             }
+        }
+    }
+}
+
+// Wait for the JavaPlugin to be applied before extracting and binding the component metadata.
+// This guarantees your compiled jars, sources, and javadocs are attached to the publication seamlessly!
+plugins.withType(JavaPlugin).configureEach {
+    publishing.publications.named('mavenJava', MavenPublication).configure { publication ->
+        components.named('java').configure { component ->
+            publication.from(component)
         }
     }
 }
