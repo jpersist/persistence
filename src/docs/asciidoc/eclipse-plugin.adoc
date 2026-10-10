@@ -83,7 +83,7 @@ The `io.github.jpersist.eclipse-jpa-modelgen` sub-plugin automatically:
 
 * Applies the `java` plugin.
 * Creates the `eclipselink` DSL extension — a `NamedDomainObjectContainer` scoped per source set (see <<DSL Extension: `eclipselink`>>).
-* Adds `org.eclipse.persistence:org.eclipse.persistence.jpa.modelgen.processor` as an `annotationProcessor` dependency for every source set, but only if the user has not declared any custom annotation processor dependencies in the corresponding configuration. _(Since 1.5.2)_
+* Adds `org.eclipse.persistence:org.eclipse.persistence.jpa.modelgen.processor` as an `annotationProcessor` dependency, but only if the user has not declared any custom annotation processor dependencies in the `annotationProcessor` configuration. _(Since 1.5.2)_
 * Injects the `-Aeclipselink.persistencexml=<path>` compiler argument pointing to the configured `persistence.xml` location.
 * Detects localized ORM mapping descriptors (`META-INF/orm.xml` and `META-INF/eclipselink-orm.xml`) relative to the configured `persistence.xml` location and passes them to the annotation processor via the `-Aeclipselink.ormxml.location` and `-Aeclipselink.eclipselink-ormxml.location` compiler arguments. _(Since 1.5.1, compiler argument keys corrected in 1.5.2)_
 * Registers the annotation processor generated source directory (`build/generated/sources/annotationProcessor/java/<sourceSet>`) into the source set's Java source directories for seamless IDE indexing.
@@ -260,7 +260,7 @@ TIP: The task is wired into the build lifecycle automatically — it runs after 
 The `io.github.jpersist.eclipse-static-weave` sub-plugin creates a `weave` dependency configuration that carries the EclipseLink runtime libraries needed by the `StaticWeave` processor.
 
 * If the `jpa` configuration exists (e.g. when the core `io.github.jpersist.jpa` plugin is applied), the `weave` configuration automatically extends from it, inheriting all platform version constraints.
-* The plugin adds `org.eclipse.persistence:org.eclipse.persistence.jpa` to the `weave` configuration by default.
+* The plugin adds `org.eclipse.persistence:org.eclipse.persistence.jpa` to the `weave` configuration by default, but only if the user has not declared any custom dependencies in the `weave` configuration. This allows projects to substitute or override the default weave dependency without conflicts. _(Since 1.5.4)_
 
 [source,groovy,indent=0,role="primary"]
 .Groovy

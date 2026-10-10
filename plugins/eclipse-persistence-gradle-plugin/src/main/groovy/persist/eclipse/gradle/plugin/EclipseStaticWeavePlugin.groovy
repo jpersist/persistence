@@ -36,6 +36,13 @@ import persist.eclipse.gradle.task.EclipseWeaveTask
  * resolution of {@code <jar-file>} entries in multi-module projects.
  * </p>
  *
+ * <p>
+ * <b>Since 1.5.4:</b> The default {@code org.eclipse.persistence.jpa} weave dependency
+ * is now added conditionally — only when the user has not declared any custom dependencies
+ * in the {@code weave} configuration. This allows projects to substitute or override
+ * the default weave dependency without conflicts.
+ * </p>
+ *
  * @see EclipseWeaveTask
  */
 class EclipseStaticWeavePlugin implements Plugin<Project> {
@@ -48,8 +55,6 @@ class EclipseStaticWeavePlugin implements Plugin<Project> {
         project.configurations.matching { it.name == 'jpa'}.configureEach { jpaConfig ->
             weaveConfig.extendsFrom(jpaConfig)
         }
-
-        project.dependencies.add('weave', 'org.eclipse.persistence:org.eclipse.persistence.jpa')
 
         project.extensions.getByType(SourceSetContainer).configureEach { sourceSet ->
             // Dynamic task naming based on the source set context (e.g., main -> compileJava)
@@ -125,6 +130,15 @@ class EclipseStaticWeavePlugin implements Plugin<Project> {
             // Hook the weaving task back into the build lifecycle
             project.tasks.named(classesTaskName) { classesTask ->
                 classesTask.dependsOn(weaveTaskProvider)
+            }
+        }
+
+        project.afterEvaluate {
+            def weaveConfigName = 'weave'
+            project.configurations.named(weaveConfigName).configure { config ->
+                if (config.dependencies.isEmpty()) {
+                    project.dependencies.add(weaveConfigName, 'org.eclipse.persistence:org.eclipse.persistence.jpa')
+                }
             }
         }
     }
