@@ -34,7 +34,7 @@ TIP: The provider-specific plugins (`hibernate-persistence` and `eclipse-persist
 
 === Hibernate example
 
-[source,groovy,indent=0,role="primary"]
+[source,groovy,indent=0,role="primary",subs="attributes+"]
 .Groovy
 ----
 plugins {
@@ -42,7 +42,7 @@ plugins {
 }
 ----
 
-[source,kotlin,indent=0,role="secondary"]
+[source,kotlin,indent=0,role="secondary",subs="attributes+"]
 .Kotlin
 ----
 plugins {
@@ -52,7 +52,7 @@ plugins {
 
 === EclipseLink example
 
-[source,groovy,indent=0,role="primary"]
+[source,groovy,indent=0,role="primary",subs="attributes+"]
 .Groovy
 ----
 plugins {
@@ -60,7 +60,7 @@ plugins {
 }
 ----
 
-[source,kotlin,indent=0,role="secondary"]
+[source,kotlin,indent=0,role="secondary",subs="attributes+"]
 .Kotlin
 ----
 plugins {

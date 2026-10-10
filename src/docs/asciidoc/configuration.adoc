@@ -9,7 +9,7 @@ Use the `jarFile` dependency configuration together with DSL jar-file mappings t
 
 === Root `build.gradle`
 
-[source,groovy,indent=0,role="primary"]
+[source,groovy,indent=0,role="primary",subs="attributes+"]
 .Groovy
 ----
 plugins {
@@ -24,7 +24,7 @@ subprojects {
 }
 ----
 
-[source,kotlin,indent=0,role="secondary"]
+[source,kotlin,indent=0,role="secondary",subs="attributes+"]
 .Kotlin
 ----
 plugins {
