@@ -1,0 +1,151 @@
+name: Trigger Automated Libraries Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      releaseVersion:
+        description: 'Target Release Version (e.g., 1.0.0)'
+        required: false
+      nextVersion:
+        description: 'Next Snapshot Version (e.g., 1.0.1-SNAPSHOT)'
+        required: false
+
+permissions:
+  contents: write # Crucial permission: allows the pipeline runner to push Git tags and commits
+
+jobs:
+  release:
+    name: Execute Release Automation
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    outputs:
+      release_version: ${{ steps.versions.outputs.release_version }}
+
+    steps:
+      - name: Check out Repository
+        uses: actions/checkout@v7
+        with:
+          # Fetch entire history and authentication scopes to allow the runner to push Git hooks
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure Git Author Profile
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Resolve Release and Next Versions
+        id: versions
+        run: |
+          # Read the current version from libraries/gradle.properties
+          CURRENT_VERSION=$(grep '^version=' libraries/gradle.properties | cut -d'=' -f2)
+
+          # Determine the release version (strip -SNAPSHOT suffix if not provided)
+          if [ -n "${{ github.event.inputs.releaseVersion }}" ]; then
+            RELEASE_VERSION="${{ github.event.inputs.releaseVersion }}"
+          else
+            RELEASE_VERSION="${CURRENT_VERSION%-SNAPSHOT}"
+          fi
+
+          # Determine the next development version
+          if [ -n "${{ github.event.inputs.nextVersion }}" ]; then
+            NEXT_VERSION="${{ github.event.inputs.nextVersion }}"
+          else
+            # Auto-increment the patch segment: 1.2.3 -> 1.2.4-SNAPSHOT
+            MAJOR=$(echo "$RELEASE_VERSION" | cut -d. -f1)
+            MINOR=$(echo "$RELEASE_VERSION" | cut -d. -f2)
+            PATCH=$(echo "$RELEASE_VERSION" | cut -d. -f3)
+            NEXT_PATCH=$((PATCH + 1))
+            NEXT_VERSION="${MAJOR}.${MINOR}.${NEXT_PATCH}-SNAPSHOT"
+          fi
+
+          echo "release_version=${RELEASE_VERSION}" >> "$GITHUB_OUTPUT"
+          echo "next_version=${NEXT_VERSION}" >> "$GITHUB_OUTPUT"
+          echo "Release version: ${RELEASE_VERSION}"
+          echo "Next development version: ${NEXT_VERSION}"
+
+      - name: Verify No SNAPSHOT Dependencies
+        run: |
+          # Fail if any build file in libraries references SNAPSHOT dependencies (excluding the project version itself)
+          if grep -r --include='*.gradle' --include='*.gradle.kts' --include='*.toml' \
+              'SNAPSHOT' --exclude='gradle.properties' libraries/ | grep -v '^Binary' | grep -v '^\./\.'; then
+            echo "::error::SNAPSHOT dependencies detected. Please resolve them before releasing."
+            exit 1
+          fi
+
+      - name: Set up Java Development Kit
+        uses: actions/setup-java@v6
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Set Release Version and Build
+        working-directory: libraries
+        run: |
+          RELEASE_VERSION="${{ steps.versions.outputs.release_version }}"
+
+          # Update libraries/gradle.properties with the release version
+          sed -i "s/^version=.*/version=${RELEASE_VERSION}/" gradle.properties
+
+          # Run the full build to validate the release
+          chmod +x ../gradlew
+          ../gradlew build
+
+      - name: Commit and Tag Release
+        run: |
+          RELEASE_VERSION="${{ steps.versions.outputs.release_version }}"
+
+          git add libraries/gradle.properties
+          git commit -m "[Libraries Release] - pre tag commit: '${RELEASE_VERSION}'."
+          git tag -a "libs-v${RELEASE_VERSION}" -m "Libraries Release libs-v${RELEASE_VERSION}"
+
+      - name: Set Next Development Version
+        run: |
+          NEXT_VERSION="${{ steps.versions.outputs.next_version }}"
+
+          # Update libraries/gradle.properties with the next snapshot version
+          sed -i "s/^version=.*/version=${NEXT_VERSION}/" libraries/gradle.properties
+
+          git add libraries/gradle.properties
+          git commit -m "[Libraries Release] - new version commit: '${NEXT_VERSION}'."
+
+      - name: Push Changes and Tag
+        run: |
+          git push origin main
+          git push origin "libs-v${{ steps.versions.outputs.release_version }}"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: libs-v${{ steps.versions.outputs.release_version }}
+          name: Libraries Release libs-v${{ steps.versions.outputs.release_version }}
+          draft: false
+          prerelease: false
+          # Tells GitHub to automatically generate the Markdown notes using the release.yml categories
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  publish-libraries:
+    name: Publish Libraries to Maven Central
+    needs: release
+    uses: ./.github/workflows/gradle-libraries-cd.yml
+    with:
+      tag: libs-v${{ needs.release.outputs.release_version }}
+    secrets:
+      SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+      SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+      GPG_SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
+      GPG_SIGNING_PASSWORD: ${{ secrets.GPG_SIGNING_PASSWORD }}
+
+  publish-docs:
+    name: Publish Documentation
+    needs: release
+    uses: ./.github/workflows/gradle-libraries-doc.yml
+    with:
+      tag: libs-v${{ needs.release.outputs.release_version }}
+    permissions:
+      contents: write
