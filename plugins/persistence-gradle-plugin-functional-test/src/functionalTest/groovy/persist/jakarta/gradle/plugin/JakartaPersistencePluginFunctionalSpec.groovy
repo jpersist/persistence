@@ -241,6 +241,23 @@ class JakartaPersistencePluginFunctionalSpec extends Specification {
         result.output.contains("SchemaManagementException") || result.output.contains("Schema-validation: missing table")
     }
 
+    def "should successfully pass lintNamedQueries task when all @NamedQuery definitions contain valid JPQL syntax and entity property references"() {
+        given: "a workspace module with a compiled JPA entity containing a syntactically correct @NamedQuery"
+        def runner = createRunner()
+        runner.withArguments(":test-lint-valid-persistence-module:compileJava", ":test-lint-valid-persistence-module:lintNamedQueries", "--stacktrace")
+
+        when: "triggering the lint verification pass"
+        def result = runner.build()
+
+        then: "the lintNamedQueries task execution completes successfully"
+        result.task(":test-lint-valid-persistence-module:lintNamedQueries").outcome == TaskOutcome.SUCCESS
+
+        and: "the output console logs confirm all queries passed semantic validation"
+        assert result.output.contains("All discovered static named queries validated successfully!")
+        assert result.output.contains("Product.findBySku")
+        assert result.output.contains("passed semantic compilation checks")
+    }
+
     def "should successfully execute lintNamedQueries task and fail the build when an invalid property typo is detected inside a @NamedQuery definition"() {
         given: "a workspace module with a compiled JPA entity containing an intentional typo inside a @NamedQuery"
         // Since our task hooks natively into the 'check' phase lifecycle, running compileJava prepares the classes,

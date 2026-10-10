@@ -65,9 +65,14 @@ publishing {
 // Wait for the JavaPlugin to be applied before extracting and binding the component metadata.
 // This guarantees your compiled jars, sources, and javadocs are attached to the publication seamlessly!
 plugins.withType(JavaPlugin).configureEach {
-    publishing.publications.named('mavenJava', MavenPublication).configure { publication ->
-        components.named('java').configure { component ->
-            publication.from(component)
+    publishing.publications.named('mavenJava', MavenPublication).configure {
+        versionMapping {
+            usage('java-api') {
+                fromResolutionOf('runtimeClasspath')
+            }
+            usage('java-runtime') {
+                fromResolutionResult()
+            }
         }
     }
 }

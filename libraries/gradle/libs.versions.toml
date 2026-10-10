@@ -1,7 +1,13 @@
 [versions]
+assertj = "3.27.3"
 hibernate = "5.6.15.Final"
 hibernate-orm = "6.6.56.Final"
+javax-persistence = "2.2"
+jakarta-persistence = "3.1.0"
 
 [libraries]
+assertj-core = { group = "org.assertj", name = "assertj-core", version.ref = "assertj" }
 hibernate-core = { group = "org.hibernate", name = "hibernate-core", version.ref = "hibernate" }
 hibernate-orm-core = { group = "org.hibernate.orm", name = "hibernate-core", version.ref = "hibernate-orm" }
+javax-persistence-api = { group = "javax.persistence", name = "javax.persistence-api", version.ref = "javax-persistence" }
+jakarta-persistence-api = { group = "jakarta.persistence", name = "jakarta.persistence-api", version.ref = "jakarta-persistence" }

@@ -16,8 +16,13 @@ dependencies {
 
 publishing {
     publications {
-        maven(MavenPublication) {
+        mavenJava(MavenPublication) {
             from components.javaPlatform
+
+            pom {
+                name = 'Lint Persistence BOM'
+                description = 'Bill of Materials (BOM) for convenient dependency management of all Lint Persistence modules'
+            }
         }
     }
 }

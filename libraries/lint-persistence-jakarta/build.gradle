@@ -1,5 +1,6 @@
 plugins {
     id "java-library"
+    id 'jacoco'
 }
 
 dependencies {
@@ -9,4 +10,21 @@ dependencies {
     testImplementation platform('org.junit:junit-bom:6.0.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation libs.assertj.core
+    testImplementation libs.hibernate.orm.core
+    testImplementation libs.jakarta.persistence.api
+    testImplementation 'com.h2database:h2:2.2.224'
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            pom {
+                name = 'Jakarta Lint Persistence'
+                description = 'Jakarta Persistence (JPA 3.x) provider'
+            }
+        }
+    }
 }

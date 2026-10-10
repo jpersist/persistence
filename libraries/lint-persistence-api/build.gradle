@@ -1,9 +1,24 @@
 plugins {
     id 'java-library'
+    id 'jacoco'
 }
 
 dependencies {
     testImplementation platform('org.junit:junit-bom:6.0.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation libs.assertj.core
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            pom {
+                name = 'Lint Persistence API'
+                description = 'Defines the Service Provider Interface (SPI): `QueryParser` and `QueryParserFactory`'
+            }
+        }
+    }
 }

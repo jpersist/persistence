@@ -77,7 +77,7 @@ abstract class LintNamedQueriesWorker implements WorkAction<LintNamedQueriesPara
         }
 
         // 2. Factory Builder Design Pattern: Resolve strategy and build Metamodel
-        QueryParser queryParser = null
+        QueryParser queryParser
         try {
             def queryParserFactory = QueryParserFactory.newQueryParserFactory(jpaVersion)
             queryParser = queryParserFactory.newQueryParser(discoveredClasses)

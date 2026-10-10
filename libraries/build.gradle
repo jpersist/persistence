@@ -1,6 +1,17 @@
 plugins {
     id("base")
+    id("test-report-aggregation")
+    id("jacoco-report-aggregation")
+    id("org.sonarqube") version "7.5.0.8588"
 }
+
+dependencies {
+    testReportAggregation project(':lint-persistence-api')
+    testReportAggregation project(':lint-persistence-jakarta')
+    testReportAggregation project(':lint-persistence-legacy')
+}
+
+configurations.jacocoAggregation.extendsFrom(configurations.testReportAggregation)
 
 allprojects {
     repositories {
@@ -24,8 +35,72 @@ subprojects { subproject ->
         options.release = 17
     }
 
+    tasks.withType(Jar).configureEach {
+        manifest {
+            attributes(
+                'Implementation-Title': subproject.name,
+                'Implementation-Version': subproject.version
+            )
+        }
+    }
+
     tasks.withType(Test).configureEach {
         useJUnitPlatform()
+        finalizedBy tasks.named('jacocoTestReport')
         systemProperty 'file.encoding', 'UTF-8'
+    }
+
+    tasks.withType(JacocoReport).configureEach {
+        dependsOn test
+        reports {
+            csv.required = false
+            xml.required = true
+        }
+    }
+}
+
+reporting {
+    reports {
+        testAggregateTestReport(AggregateTestReport) {
+            testSuiteName = "test"
+        }
+        testCodeCoverageReport(JacocoCoverageReport) {
+            testSuiteName = "test"
+        }
+    }
+}
+
+tasks.named('check') {
+    finalizedBy tasks.named('testAggregateTestReport', TestReport)
+    finalizedBy tasks.named('testCodeCoverageReport', JacocoReport)
+}
+
+sonar {
+    properties {
+        property "sonar.projectKey", "jpersist_persistence"
+        property "sonar.organization", "jpersist"
+        property "sonar.host.url", "https://sonarcloud.io"
+
+        property "sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml"
+    }
+}
+
+tasks.register('aggregateJavadoc', Javadoc) {
+    group = 'documentation'
+    description = 'Generates aggregated Javadoc for all library modules.'
+    title = "Lint Persistence Libraries API"
+
+    def javaSubprojects = subprojects.findAll { it.plugins.hasPlugin('java-library') }
+    dependsOn javaSubprojects.collect { it.tasks.named('classes') }
+
+    source javaSubprojects.collect { it.sourceSets.main.allJava }
+    classpath = files(javaSubprojects.collect { it.sourceSets.main.compileClasspath })
+    destinationDir = file("${buildDir}/docs/javadoc")
+
+    options {
+        overview = file("${rootDir}/src/docs/overview.html")
+        encoding = 'UTF-8'
+        docEncoding = 'UTF-8'
+        charSet = 'UTF-8'
     }
 }
