@@ -2,6 +2,11 @@ name: Publish Documentation
 
 on:
   workflow_call:  # Called from gradle-release.yml after a release
+    inputs:
+      tag:
+        description: 'The version tag to checkout and publish (e.g., v1.0.0)'
+        required: false
+        type: string
   workflow_dispatch:  # Allow manual triggering from the Actions tab
 
 permissions:
@@ -19,6 +24,8 @@ jobs:
     steps:
       - name: Check out Repository
         uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.tag || github.ref }}
 
       - name: Resolve Documentation Version
         id: version

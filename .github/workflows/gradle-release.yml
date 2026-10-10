@@ -142,5 +142,7 @@ jobs:
     name: Publish Documentation
     needs: release
     uses: ./.github/workflows/gradle-doc.yml
+    with:
+      tag: v${{ needs.release.outputs.release_version }}
     permissions:
       contents: write
