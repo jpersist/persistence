@@ -1,0 +1,3 @@
+persist.lint.query.jakarta
+persist.lint.query.legacy
+persist.lint.query.spi
