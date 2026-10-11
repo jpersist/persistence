@@ -55,3 +55,10 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: ./gradlew sonar --no-configuration-cache
+
+      - name: Analyze Libraries with Sonar
+        if: matrix.java-version == 21 && (github.actor != 'dependabot[bot]')
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        working-directory: libraries
+        run: ../gradlew sonar --no-configuration-cache

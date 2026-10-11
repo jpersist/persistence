@@ -28,6 +28,14 @@ subprojects { subproject ->
                 languageVersion = JavaLanguageVersion.of(17)
             }
         }
+
+        sonar {
+            properties {
+                property "sonar.sources", "src/main/java"
+                property "sonar.tests", "src/test/java"
+                property "sonar.junit.reportPaths", "${project.layout.buildDirectory.get().asFile}/test-results/test"
+            }
+        }
     }
 
     tasks.withType(JavaCompile).configureEach {
