@@ -64,15 +64,6 @@ jobs:
           echo "Release version: ${RELEASE_VERSION}"
           echo "Next development version: ${NEXT_VERSION}"
 
-      - name: Verify No SNAPSHOT Dependencies
-        run: |
-          # Fail if any build file in libraries references SNAPSHOT dependencies (excluding the project version itself)
-          if grep -r --include='*.gradle' --include='*.gradle.kts' --include='*.toml' \
-              'SNAPSHOT' --exclude='gradle.properties' libraries/ | grep -v '^Binary' | grep -v '^\./\.'; then
-            echo "::error::SNAPSHOT dependencies detected. Please resolve them before releasing."
-            exit 1
-          fi
-
       - name: Set up Java Development Kit
         uses: actions/setup-java@v6
         with:

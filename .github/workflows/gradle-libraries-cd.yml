@@ -55,8 +55,11 @@ jobs:
           GPG_SIGNING_PASSWORD: ${{ secrets.GPG_SIGNING_PASSWORD }}
         working-directory: libraries
         run: |
-          # Resolve the publication version from the git tag or fall back to gradle.properties
-          if [[ "${GITHUB_REF}" == refs/tags/libs-v* ]]; then
+          # Resolve the publication version from the input tag, git tag, or fall back to gradle.properties
+          if [ -n "${{ inputs.tag }}" ]; then
+            PUBLISH_VERSION="${{ inputs.tag }}"
+            PUBLISH_VERSION="${PUBLISH_VERSION#libs-v}"
+          elif [[ "${GITHUB_REF}" == refs/tags/libs-v* ]]; then
             PUBLISH_VERSION="${GITHUB_REF#refs/tags/libs-v}"
           else
             PUBLISH_VERSION=$(grep '^version=' gradle.properties | cut -d'=' -f2)

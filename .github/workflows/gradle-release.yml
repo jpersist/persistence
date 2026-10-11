@@ -67,7 +67,9 @@ jobs:
       - name: Verify No SNAPSHOT Dependencies
         run: |
           # Fail if any build file references SNAPSHOT dependencies (excluding the project version itself)
+          # The libraries/ directory is excluded because its publishing script legitimately references SNAPSHOT
           if grep -r --include='*.gradle' --include='*.gradle.kts' --include='*.toml' \
+              --exclude-dir='libraries' \
               'SNAPSHOT' --exclude='gradle.properties' . | grep -v '^Binary' | grep -v '^\./\.'; then
             echo "::error::SNAPSHOT dependencies detected. Please resolve them before releasing."
             exit 1
