@@ -63,3 +63,13 @@ jobs:
           fi
           echo "Publishing version: ${PUBLISH_VERSION}"
           ../gradlew publish -Pversion="${PUBLISH_VERSION}"
+
+      - name: Finalize Maven Central Deployment
+        env:
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+        run: |
+          TOKEN=$(echo -n "${SONATYPE_USERNAME}:${SONATYPE_PASSWORD}" | base64)
+          curl --fail -X POST \
+            "https://ossrh-staging-api.central.sonatype.com/manual/upload/defaultRepository/io.github.jpersist?publishing_type=automatic" \
+            -H "Authorization: Bearer ${TOKEN}"
