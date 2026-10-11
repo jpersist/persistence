@@ -1,0 +1,56 @@
+<html>
+<body>
+<h1>Lint Persistence Libraries</h1>
+<p>
+    The <strong>Lint Persistence Libraries</strong> provide build-time validation of
+    named JPQL queries defined in JPA projects. By compiling query strings against
+    the entity metamodel at build time, syntax errors, unknown entity references,
+    and invalid property paths are caught early — before the application is deployed.
+</p>
+
+<h2>Modules</h2>
+<dl>
+    <dt><code>lint-persistence-api</code></dt>
+    <dd>
+        Defines the Service Provider Interface (SPI):
+        {@link persist.lint.query.spi.QueryParser} and
+        {@link persist.lint.query.spi.QueryParserFactory}.
+        This module contains no implementation; provider modules are discovered
+        at runtime through the {@link java.util.ServiceLoader} mechanism.
+    </dd>
+
+    <dt><code>lint-persistence-jakarta</code></dt>
+    <dd>
+        Jakarta Persistence (JPA&nbsp;3.x) provider. Uses Hibernate ORM&nbsp;6
+        to compile JPQL queries into Semantic Query Model (SQM) trees.
+        See {@link persist.lint.query.jakarta.JakartaQueryParserFactory}.
+    </dd>
+
+    <dt><code>lint-persistence-legacy</code></dt>
+    <dd>
+        Legacy {@code javax.persistence} (JPA&nbsp;2.x) provider. Uses
+        Hibernate&nbsp;5 and its AST-based query translator to validate
+        JPQL queries.
+        See {@link persist.lint.query.legacy.LegacyQueryParserFactory}.
+    </dd>
+
+    <dt><code>lint-persistence-bom</code></dt>
+    <dd>
+        Bill of Materials (BOM) for convenient dependency management of
+        all Lint Persistence modules.
+    </dd>
+</dl>
+
+<h2>Getting Started</h2>
+<p>
+    Use {@link persist.lint.query.spi.QueryParserFactory#newQueryParserFactory(String)}
+    to obtain the appropriate factory for a given JPA specification version, then
+    create a {@link persist.lint.query.spi.QueryParser} to validate individual queries:
+</p>
+<pre>{@code
+    QueryParserFactory factory = QueryParserFactory.newQueryParserFactory("3.1");
+    QueryParser parser = factory.newQueryParser(entityClassNames);
+    parser.parseQuery("Order.findByStatus", "SELECT o FROM Order o WHERE o.status = :status");
+}</pre>
+</body>
+</html>

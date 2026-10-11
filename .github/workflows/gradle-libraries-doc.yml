@@ -1,0 +1,77 @@
+name: Publish Libraries Documentation
+
+on:
+  workflow_call:  # Called from gradle-libraries-release.yml after a release
+    inputs:
+      tag:
+        description: 'The version tag to checkout and publish (e.g., libs-v1.0.0)'
+        required: false
+        type: string
+  workflow_dispatch:  # Allow manual triggering from the Actions tab
+
+permissions:
+  contents: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy Documentation to GitHub Pages
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out Repository
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+
+      - name: Resolve Documentation Version
+        id: version
+        run: |
+          # Extract version from the Git tag (e.g., libs-v1.0.0 -> 1.0.0)
+          if [[ "${GITHUB_REF}" == refs/tags/libs-v* ]]; then
+            VERSION="${GITHUB_REF#refs/tags/libs-v}"
+          else
+            # Fall back to libraries/gradle.properties for workflow_call triggers
+            VERSION=$(grep '^version=' libraries/gradle.properties | cut -d'=' -f2)
+            VERSION="${VERSION%-SNAPSHOT}"
+          fi
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "Documentation version: ${VERSION}"
+
+      - name: Set up Java Development Kit
+        uses: actions/setup-java@v6
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Make Gradle Wrapper Executable
+        run: chmod +x ./gradlew
+
+      - name: Generate Documentation
+        working-directory: libraries
+        run: ../gradlew aggregateJavadoc
+
+      - name: Prepare Versioned Site
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+
+          mkdir -p site/libraries/api/${VERSION}
+          cp -r libraries/build/docs/javadoc/* site/libraries/api/${VERSION}/
+
+          # Also publish as 'latest' for convenient access
+          mkdir -p site/libraries/api/latest
+          cp -r site/libraries/api/${VERSION}/* site/libraries/api/latest/
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./site
+          destination_dir: .
+          keep_files: true
