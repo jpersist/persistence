@@ -15,6 +15,8 @@ import java.util.List;
  *
  * <p>Instances are created through the {@link #from(List)} factory method.</p>
  *
+ * @since 1.0.0
+ * @deprecated Use {@link persist.lint.jakarta.JakartaNamedObjectParser} instead.
  * @see JakartaQueryParserFactory
  */
 @Deprecated
@@ -32,13 +34,17 @@ public class JakartaQueryParser implements QueryParser {
      *
      * @param discoveredClassNames fully qualified names of JPA entity classes
      * @return a parser ready to validate JPQL queries
+     * @deprecated Use {@link persist.lint.jakarta.JakartaNamedObjectParser#from(java.util.List)} instead.
      */
     @Deprecated
     public static JakartaQueryParser from(List<String> discoveredClassNames) {
         return new JakartaQueryParser(JakartaNamedObjectParser.from(discoveredClassNames));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @deprecated Use {@link persist.lint.jakarta.JakartaNamedObjectParser#parseQuery(String, String)} instead.
+     */
     @Deprecated
     @Override
     public void parseQuery(String queryName, String queryString) {

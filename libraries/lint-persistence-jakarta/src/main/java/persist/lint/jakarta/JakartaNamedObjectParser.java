@@ -14,6 +14,22 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+/**
+ * {@link NamedObjectParser} implementation for the Jakarta Persistence namespace.
+ *
+ * <p>This parser uses Hibernate ORM&nbsp;6 to compile JPQL query strings
+ * into a Semantic Query Model (SQM) tree. The compilation verifies grammar,
+ * entity mappings, property paths, and function references entirely offline
+ * — no live database connection is required.</p>
+ *
+ * <p>Stored procedure declarations are validated by recording the procedure
+ * name and its parameter names into a {@link NamedObjectDescriptor}.</p>
+ *
+ * <p>Instances are created through the {@link #from(List)} factory method.</p>
+ *
+ * @since 2.0.0
+ * @see JakartaNamedObjectParserFactory
+ */
 public class JakartaNamedObjectParser implements NamedObjectParser {
 
     private final Metadata metadata;
@@ -22,10 +38,18 @@ public class JakartaNamedObjectParser implements NamedObjectParser {
         this.metadata = metadata;
     }
 
+    /**
+     * Creates a new {@code JakartaNamedObjectParser} configured with the
+     * supplied entity class names.
+     *
+     * @param discoveredClassNames fully qualified names of JPA entity classes
+     * @return a parser ready to validate named queries and stored procedures
+     */
     public static JakartaNamedObjectParser from(List<String> discoveredClassNames) {
         return new JakartaNamedObjectParser(buildMetadata(discoveredClassNames));
     }
 
+    /** {@inheritDoc} */
     @Override
     public NamedObjectDescriptor parseQuery(String name, String queryString) {
         try (SessionFactoryImplementor sessionFactory = from(metadata)) {
@@ -33,6 +57,7 @@ public class JakartaNamedObjectParser implements NamedObjectParser {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public NamedObjectDescriptor parseStoredProcedure(String name, String procedureName, Set<String> parameterNames) {
         return NamedObjectDescriptor.of(name, procedureName, parameterNames);

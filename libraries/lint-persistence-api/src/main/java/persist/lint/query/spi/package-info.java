@@ -18,5 +18,8 @@
  * <p>Provider implementations for specific JPA namespaces are shipped in
  * separate modules (e.g.&nbsp;{@code lint-persistence-jakarta} and
  * {@code lint-persistence-legacy}).</p>
+ *
+ * @since 1.0.0
+ * @deprecated Use the {@link persist.lint.api.spi} package instead.
  */
 package persist.lint.query.spi;

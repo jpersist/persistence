@@ -13,6 +13,8 @@ import java.util.List;
  * provider and creates {@link LegacyQueryParser} instances backed by
  * Hibernate&nbsp;5.</p>
  *
+ * @since 1.0.0
+ * @deprecated Use {@link persist.lint.legacy.LegacyNamedObjectParserFactory} instead.
  * @see LegacyQueryParser
  */
 @Deprecated

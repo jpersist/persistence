@@ -8,6 +8,8 @@ package persist.lint.query.spi;
  * the project's entity metamodel, verifying syntax, entity references, and
  * property paths without requiring a live database connection.</p>
  *
+ * @since 1.0.0
+ * @deprecated Use {@link persist.lint.api.spi.NamedObjectParser} instead.
  * @see QueryParserFactory
  */
 @Deprecated
@@ -25,6 +27,7 @@ public interface QueryParser {
      * @param queryString the JPQL query string to validate
      * @throws RuntimeException if the query is syntactically or semantically
      *                          invalid
+     * @deprecated Use {@link persist.lint.api.spi.NamedObjectParser#parseQuery(String, String)} instead.
      */
     @Deprecated
     void parseQuery(String queryName, String queryString);

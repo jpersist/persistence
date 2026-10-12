@@ -17,6 +17,8 @@ import java.util.List;
  *
  * <p>Instances are created through the {@link #from(List)} factory method.</p>
  *
+ * @since 1.0.0
+ * @deprecated Use {@link persist.lint.legacy.LegacyNamedObjectParser} instead.
  * @see LegacyQueryParserFactory
  */
 @Deprecated
@@ -34,13 +36,17 @@ public class LegacyQueryParser implements QueryParser {
      *
      * @param discoveredClassNames fully qualified names of JPA entity classes
      * @return a parser ready to validate JPQL queries
+     * @deprecated Use {@link persist.lint.legacy.LegacyNamedObjectParser#from(java.util.List)} instead.
      */
     @Deprecated
     public static LegacyQueryParser from(List<String> discoveredClassNames) {
         return new LegacyQueryParser(LegacyNamedObjectParser.from(discoveredClassNames));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @deprecated Use {@link persist.lint.legacy.LegacyNamedObjectParser#parseQuery(String, String)} instead.
+     */
     @Deprecated
     @Override
     public void parseQuery(String queryName, String queryString) {

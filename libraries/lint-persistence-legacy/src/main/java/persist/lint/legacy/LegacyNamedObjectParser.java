@@ -16,6 +16,23 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+/**
+ * {@link NamedObjectParser} implementation for the legacy
+ * {@code javax.persistence} namespace.
+ *
+ * <p>This parser uses Hibernate&nbsp;5 to compile JPQL query strings through
+ * the AST-based {@link org.hibernate.hql.spi.QueryTranslatorFactory}. The
+ * compilation verifies HQL grammar, entity mappings, and property paths
+ * entirely offline — no live database connection is required.</p>
+ *
+ * <p>Stored procedure declarations are validated by recording the procedure
+ * name and its parameter names into a {@link NamedObjectDescriptor}.</p>
+ *
+ * <p>Instances are created through the {@link #from(List)} factory method.</p>
+ *
+ * @since 2.0.0
+ * @see LegacyNamedObjectParserFactory
+ */
 public class LegacyNamedObjectParser implements NamedObjectParser {
 
     private final Metadata metadata;
@@ -24,10 +41,18 @@ public class LegacyNamedObjectParser implements NamedObjectParser {
         this.metadata = metadata;
     }
 
+    /**
+     * Creates a new {@code LegacyNamedObjectParser} configured with the
+     * supplied entity class names.
+     *
+     * @param discoveredClassNames fully qualified names of JPA entity classes
+     * @return a parser ready to validate named queries and stored procedures
+     */
     public static LegacyNamedObjectParser from(List<String> discoveredClassNames) {
         return new LegacyNamedObjectParser(buildMetadata(discoveredClassNames));
     }
 
+    /** {@inheritDoc} */
     @Override
     public NamedObjectDescriptor parseQuery(String name, String queryString) {
         try (SessionFactoryImplementor sessionFactory = from(metadata)) {
@@ -38,6 +63,7 @@ public class LegacyNamedObjectParser implements NamedObjectParser {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public NamedObjectDescriptor parseStoredProcedure(String name, String procedureName, Set<String> parameterNames) {
         return NamedObjectDescriptor.of(name, procedureName, parameterNames);

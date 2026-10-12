@@ -12,6 +12,8 @@ import java.util.ServiceLoader;
  * {@code "jakarta"}) so that the correct parser strategy can be
  * resolved for the target JPA specification version.</p>
  *
+ * @since 1.0.0
+ * @deprecated Use {@link persist.lint.api.spi.NamedObjectParserFactory} instead.
  * @see QueryParser
  */
 @Deprecated
@@ -22,6 +24,7 @@ public interface QueryParserFactory {
      *
      * @return the namespace identifier, for example {@code "javax"} for
      *         JPA&nbsp;2.x or {@code "jakarta"} for JPA&nbsp;3.x
+     * @deprecated Use {@link persist.lint.api.spi.NamedObjectParserFactory#getSupportedNamespace()} instead.
      */
     @Deprecated
     String getSupportedNamespace();
@@ -33,6 +36,7 @@ public interface QueryParserFactory {
      * @param discoveredClassNames fully qualified class names of the JPA
      *                             entities to register in the metamodel
      * @return a ready-to-use query parser
+     * @deprecated Use {@link persist.lint.api.spi.NamedObjectParserFactory#newNamedObjectParser(java.util.List)} instead.
      */
     @Deprecated
     QueryParser newQueryParser(List<String> discoveredClassNames);
@@ -52,6 +56,7 @@ public interface QueryParserFactory {
      * @throws IllegalArgumentException if the version is not recognized
      * @throws IllegalStateException    if no provider is registered for
      *                                  the resolved namespace
+     * @deprecated Use {@link persist.lint.api.spi.NamedObjectParserFactory#newNamedObjectParserFactory(String)} instead.
      */
     @Deprecated
     static QueryParserFactory newQueryParserFactory(String jpaVersion) {

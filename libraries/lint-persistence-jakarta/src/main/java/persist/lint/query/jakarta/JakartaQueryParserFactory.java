@@ -13,6 +13,8 @@ import java.util.List;
  * provider and creates {@link JakartaQueryParser} instances backed by
  * Hibernate ORM&nbsp;6.</p>
  *
+ * @since 1.0.0
+ * @deprecated Use {@link persist.lint.jakarta.JakartaNamedObjectParserFactory} instead.
  * @see JakartaQueryParser
  */
 @Deprecated
