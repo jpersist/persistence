@@ -1,1 +1,1 @@
-packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"persist.lint.query.jakarta"},{"l":"persist.lint.query.legacy"},{"l":"persist.lint.query.spi"}];updateSearchResults();
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"persist.lint.api"},{"l":"persist.lint.api.spi"},{"l":"persist.lint.jakarta"},{"l":"persist.lint.legacy"},{"l":"persist.lint.query.jakarta"},{"l":"persist.lint.query.legacy"},{"l":"persist.lint.query.spi"}];updateSearchResults();

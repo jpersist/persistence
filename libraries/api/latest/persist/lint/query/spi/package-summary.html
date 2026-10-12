@@ -30,6 +30,7 @@ loadScripts(document, 'script');</script>
 <li class="nav-bar-cell1-rev">Package</li>
 <li>Class</li>
 <li><a href="package-tree.html">Tree</a></li>
+<li><a href="../../../../deprecated-list.html">Deprecated</a></li>
 <li><a href="../../../../index-all.html">Index</a></li>
 <li><a href="../../../../help-doc.html#package">Help</a></li>
 </ul>
@@ -69,6 +70,9 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="package-signature">package <span class="element-name">persist.lint.query.spi</span></div>
 <section class="package-description" id="package-description">
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Use the <a href="../../api/spi/package-summary.html"><code>persist.lint.api.spi</code></a> package instead.</div>
+</div>
 <div class="block">Service Provider Interface (SPI) for build-time JPQL query validation.
 
  <p>This package defines the core abstractions used to parse and validate
@@ -88,6 +92,10 @@ loadScripts(document, 'script');</script>
  <p>Provider implementations for specific JPA namespaces are shipped in
  separate modules (e.g.&nbsp;<code>lint-persistence-jakarta</code> and
  <code>lint-persistence-legacy</code>).</p></div>
+<dl class="notes">
+<dt>Since:</dt>
+<dd>1.0.0</dd>
+</dl>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -98,13 +106,12 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Class</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color class-summary class-summary-tab1"><a href="QueryParser.html" title="interface in persist.lint.query.spi">QueryParser</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab1">
-<div class="block">Service provider interface for parsing and validating named JPQL queries
- at build time.</div>
+<div class="col-last even-row-color class-summary class-summary-tab1">Deprecated.
+<div class="deprecation-comment">Use <a href="../../api/spi/NamedObjectParser.html" title="interface in persist.lint.api.spi"><code>NamedObjectParser</code></a> instead.</div>
 </div>
 <div class="col-first odd-row-color class-summary class-summary-tab1"><a href="QueryParserFactory.html" title="interface in persist.lint.query.spi">QueryParserFactory</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab1">
-<div class="block">Factory for creating <a href="QueryParser.html" title="interface in persist.lint.query.spi"><code>QueryParser</code></a> instances.</div>
+<div class="col-last odd-row-color class-summary class-summary-tab1">Deprecated.
+<div class="deprecation-comment">Use <a href="../../api/spi/NamedObjectParserFactory.html" title="interface in persist.lint.api.spi"><code>NamedObjectParserFactory</code></a> instead.</div>
 </div>
 </div>
 </div>
