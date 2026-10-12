@@ -19,12 +19,32 @@ import javax.inject.Inject
 @DisableCachingByDefault(because = "Validates active source metadata state at execution time")
 abstract class LintNamedQueries extends DefaultTask {
 
+    /**
+     * The JPA specification version used to determine the annotation namespace
+     * ({@code jakarta.persistence} vs {@code javax.persistence}) during bytecode scanning.
+     * <p>Defaults to {@code "3.0"}.</p>
+     *
+     * @return The lazy property tracking the JPA version string.
+     */
     @Input
     abstract Property<String> getJpaVersion()
 
+    /**
+     * Whether discovering a query syntax error or metamodel mismatch should
+     * immediately fail the Gradle build.
+     * <p>Defaults to {@code true}. When set to {@code false}, errors are logged as warnings.</p>
+     *
+     * @return The lazy property tracking the build failure strategy on errors.
+     */
     @Input
     abstract Property<Boolean> getFailOnError()
 
+    /**
+     * Whether sub-critical semantic validation warnings should be muted.
+     * <p>Defaults to {@code false}.</p>
+     *
+     * @return The lazy property tracking the warning suppression strategy.
+     */
     @Input
     abstract Property<Boolean> getIgnoreWarnings()
 

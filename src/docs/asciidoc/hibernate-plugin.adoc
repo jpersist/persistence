@@ -189,7 +189,7 @@ hibernate {
 The plugin registers the following task per Java source set.
 For the `main` source set the task name is `hibernateEnhanceClasses`; for other source sets (e.g. `test`) the source set name is used (e.g. `hibernateEnhanceTestClasses`).
 
-In addition, all tasks inherited from the core `io.github.jpersist.jpa` plugin (`processPersistenceDescriptor`, `validatePersistenceSchema`, `generateJPAGraalVMMetadata`) are also available. See <<jakarta-plugin.adoc#,Jakarta Persistence Plugin>> for their documentation.
+In addition, all tasks inherited from the core `io.github.jpersist.jpa` plugin (`processPersistenceDescriptor`, `validatePersistenceSchema`, `generateJPAGraalVMMetadata`, `lintNamedQueries`) are also available. See <<jakarta-plugin.adoc#,Jakarta Persistence Plugin>> for their documentation.
 
 === `hibernateEnhanceClasses`
 

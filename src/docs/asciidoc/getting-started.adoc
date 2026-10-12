@@ -16,7 +16,7 @@ JPersist provides three main plugins depending on your JPA provider:
 | Plugin ID | Description | Provider
 
 | `io.github.jpersist.jpa`
-| Generates or merges `persistence.xml` descriptors, validates persistence schema against the database schema, and generates JPA GraalVM native image metadata (`reflect-config.json`)
+| Generates or merges `persistence.xml` descriptors, validates persistence schema against the database schema, generates JPA GraalVM native image metadata (`reflect-config.json`), and lints `@NamedQuery` / `@NamedStoredProcedureQuery` definitions at compile time
 | Provider-agnostic
 
 | `io.github.jpersist.hibernate-persistence`

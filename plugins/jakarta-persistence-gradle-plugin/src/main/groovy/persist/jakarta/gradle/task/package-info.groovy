@@ -24,6 +24,14 @@
  *         Generates a GraalVM native image {@code reflect-config.json} file
  *         containing all discovered JPA entity metadata classes to support
  *         ahead-of-time (AOT) reflection registration.</li>
+ *     <li>{@link persist.jakarta.gradle.task.LintNamedQueries} &mdash;
+ *         Executes a static, compile-time AST verification loop over all
+ *         {@code @NamedQuery} and {@code @NamedStoredProcedureQuery}
+ *         definitions discovered in the compiled source set output directories.
+ *         Uses classloader isolation via Gradle's
+ *         {@link org.gradle.workers.WorkerExecutor} and delegates the actual
+ *         analysis to
+ *         {@link persist.jakarta.gradle.worker.LintNamedQueriesWorker}.</li>
  * </ul>
  *
  * @since 1.1.0

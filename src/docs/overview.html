@@ -3,9 +3,12 @@
 <h1>jPersist &mdash; Jakarta Persistence Gradle Plugins</h1>
 <p>
     <strong>jPersist</strong> is a suite of Gradle plugins that simplify development with
-    Jakarta Persistence API (JPA) frameworks. It automates two key build-time tasks &mdash;
-    <em>static metamodel generation</em> and <em>bytecode enhancement/weaving</em> &mdash;
-    for both <strong>EclipseLink</strong> and <strong>Hibernate</strong>.
+    Jakarta Persistence API (JPA) frameworks. It automates key build-time tasks &mdash;
+    <em>descriptor generation &amp; merging</em>, <em>schema validation</em>,
+    <em>static metamodel generation</em>, <em>bytecode enhancement/weaving</em>,
+    <em>GraalVM native image metadata generation</em>, and <em>static compile-time
+    named query linting</em> &mdash; for both <strong>EclipseLink</strong> and
+    <strong>Hibernate</strong>.
 </p>
 
 <h2>Available Plugins</h2>
@@ -15,12 +18,13 @@
     <tr><th>Plugin ID</th><th>Description</th></tr>
     <tr>
         <td><code>io.github.jpersist.jpa</code></td>
-        <td>Manages Jakarta Persistence (JPA) descriptor generation, creates the {@code jpa}
-            dependency configuration for platform/BOM version alignment, and registers the
-            {@code persistence} extension DSL with {@code processPersistenceDescriptor} tasks.
-            Supports skipping generation of individual persistence units via the
-            {@code enabled} flag and customizing the XML output formatting through
-            configurable transformer properties.
+        <td>Manages Jakarta Persistence (JPA) descriptor generation and merging,
+            schema validation, GraalVM native image metadata generation, and
+            static compile-time named query linting. Creates the {@code jpa}
+            dependency configuration for platform/BOM version alignment and registers the
+            {@code persistence} extension DSL with {@code processPersistenceDescriptor},
+            {@code validatePersistenceSchema}, {@code generateJPAGraalVMMetadata}, and
+            {@code lintNamedQueries} tasks.
             See {@link persist.jakarta.gradle.plugin.JakartaPersistencePlugin}.</td>
     </tr>
 </table>
@@ -76,6 +80,41 @@
             See {@link persist.hibernate.gradle.plugin.HibernatePersistencePlugin}.</td>
     </tr>
 </table>
+
+<h2>What's New in v1.6.0</h2>
+<p>
+    Version 1.6.0 introduces static compile-time named query linting to the
+    Jakarta Persistence plugin (<code>io.github.jpersist.jpa</code>):
+</p>
+<ul>
+    <li><strong>Lint Named Queries</strong> &mdash; A new
+        {@link persist.jakarta.gradle.task.LintNamedQueries lintNamedQueries}
+        task performs a static, compile-time AST verification pass over all
+        {@code @NamedQuery} and {@code @NamedStoredProcedureQuery} definitions
+        discovered in the compiled source set output. The task uses ASM bytecode
+        scanning to locate query annotations, then validates JPQL/HQL syntax and
+        parameter naming conventions using an ANTLR4-based parser loaded via SPI.
+        Processing runs inside an isolated Gradle Worker classloader.
+    </li>
+    <li><strong>Linter DSL Extension</strong> &mdash; The new
+        {@link persist.jakarta.gradle.extension.LinterExtension} interface provides
+        configuration options ({@code enabled}, {@code failOnError},
+        {@code ignoreWarnings}) embedded inside
+        {@link persist.jakarta.gradle.extension.PersistenceExtension}. It is accessible
+        via the {@link persist.jakarta.gradle.extension.PersistenceExtension#linter(org.gradle.api.Action) linter(Action)}
+        DSL method:
+        <pre>
+persistence {
+    main {
+        linter {
+            enabled = true
+            failOnError = true
+            ignoreWarnings = false
+        }
+    }
+}</pre>
+    </li>
+</ul>
 
 <h2>What's New in v1.5.0</h2>
 <p>
@@ -152,8 +191,8 @@ dependencies {
 <ul>
     <li>{@link persist.jakarta.gradle.plugin} &mdash; Jakarta Persistence plugin for JPA descriptor generation and version management.</li>
     <li>{@link persist.jakarta.gradle.extension} &mdash; Jakarta Persistence DSL extension configuration model, including XML formatting options.</li>
-    <li>{@link persist.jakarta.gradle.task} &mdash; Jakarta Persistence build-time task implementations, including schema validation and GraalVM metadata generation.</li>
-    <li>{@link persist.jakarta.gradle.worker} &mdash; Gradle Worker API implementations for isolated JPA schema validation.</li>
+    <li>{@link persist.jakarta.gradle.task} &mdash; Jakarta Persistence build-time task implementations, including schema validation, GraalVM metadata generation, and named query linting.</li>
+    <li>{@link persist.jakarta.gradle.worker} &mdash; Gradle Worker API implementations for isolated JPA schema validation and named query analysis.</li>
     <li>{@link persist.platform.gradle.plugin} &mdash; <em>(Deprecated)</em> Platform alignment plugin for centralized version management.</li>
     <li>{@link persist.eclipse.gradle.plugin} &mdash; EclipseLink plugin implementations.</li>
     <li>{@link persist.eclipse.gradle.extension} &mdash; EclipseLink DSL extension configuration model.</li>
