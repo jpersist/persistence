@@ -1,8 +1,8 @@
 # 🔍 Lint Persistence Libraries: Build-Time JPQL Query Validation
 
 ![Maven Central](https://img.shields.io/maven-central/v/io.github.jpersist.lint/lint-persistence-api)
-[![Quality gate status](https://sonarcloud.io/api/project_badges/measure?project=jpersist_persistence&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=jpersist_persistence)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=jpersist_persistence&metric=coverage)](https://sonarcloud.io/summary/new_code?id=jpersist_persistence)
+[![Quality gate status](https://sonarcloud.io/api/project_badges/measure?project=jpersist_persistence_libraries&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=jpersist_persistence_libraries)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=jpersist_persistence_libraries&metric=coverage)](https://sonarcloud.io/summary/new_code?id=jpersist_persistence_libraries)
 ![GitHub License](https://img.shields.io/github/license/jpersist/persistence)
 
 The **Lint Persistence Libraries** provide build-time validation of named JPQL queries defined in JPA projects. By compiling query strings against the entity metamodel at build time, syntax errors, unknown entity references, and invalid property paths are caught early — before the application is deployed.
