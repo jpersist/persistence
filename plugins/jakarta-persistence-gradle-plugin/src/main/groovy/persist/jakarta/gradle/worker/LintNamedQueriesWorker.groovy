@@ -10,8 +10,9 @@ import org.objectweb.asm.AnnotationVisitor
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.Opcodes
-import persist.lint.query.spi.QueryParser
-import persist.lint.query.spi.QueryParserFactory
+import persist.lint.api.NamedObjectDescriptor
+import persist.lint.api.spi.NamedObjectParser
+import persist.lint.api.spi.NamedObjectParserFactory
 
 /**
  * Parameters required by the Static NamedQuery Analysis Linter Worker.
@@ -43,20 +44,21 @@ abstract class LintNamedQueriesWorker implements WorkAction<LintNamedQueriesPara
         println "⏳ Starting static query analysis linter pass over: ${classesDir.name}..."
 
         if (!classesDir.exists()) {
-            println "✅ No compiled classes found. Skipping query linter pass."
+            println "✅ No compiled classes found. Skipping linter pass."
             return
         }
 
-        // Registry map to collect extracted queries: Key = Query Name, Value = JPQL/HQL String
         Map<String, String> discoveredQueries = [:]
-        List<String> discoveredClasses = [] // Tracks structural entity class types
+        // Key = Metadata Unit Identifier Name, Value = [procedureName: Set<parameterNames>]
+        Map<String, Map<String, Set<String>>> discoveredProcedures = [:]
+        List<String> discoveredClasses = []
 
-        // 1. HIGH-SPEED ASM BYTECODE SWEEP
+        // 1. ADVANCED ASM MULTI-ANNOTATION SWEEP (QUERIES + STORED PROCEDURES)
         classesDir.traverse(type: FileType.FILES, nameFilter: ~/.*\.class$/) { classFile ->
             classFile.withInputStream { is ->
                 try {
                     ClassReader reader = new ClassReader(is)
-                    reader.accept(new NamedQueryAnnotationScanner(discoveredQueries, discoveredClasses),
+                    reader.accept(new ComprehensiveMetadataScanner(discoveredQueries, discoveredProcedures, discoveredClasses),
                         ClassReader.SKIP_CODE | ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES)
                 } catch (Exception e) {
                     System.err.println("⚠️ Warning: Failed to sweep class file metrics for ${classFile.name}: ${e.message}")
@@ -64,23 +66,19 @@ abstract class LintNamedQueriesWorker implements WorkAction<LintNamedQueriesPara
             }
         }
 
-        println "📊 Discovered ${discoveredQueries.size()} static @NamedQuery entries to validate."
+        int totalObjects = discoveredQueries.size() + discoveredProcedures.size()
+        println "📊 Discovered ${totalObjects} static structural items to validate."
 
-        if (discoveredQueries.isEmpty()) {
-            println "✅ No Named Queries declared in this source set. Pass complete."
+        if (totalObjects == 0) {
+            println "✅ No named metadata configurations declared in this source set. Pass complete."
             return
         }
 
-        // Trace print discovered entries cleanly for validation tracing
-        discoveredQueries.each { qName, qString ->
-            println "   🔍 Found Query: '${qName}' -> [${qString.trim().replaceAll("\\s+", " ")}]"
-        }
-
-        // 2. Factory Builder Design Pattern: Resolve strategy and build Metamodel
-        QueryParser queryParser
+        // 2. Factory Generation via ServiceLoader
+        NamedObjectParser namedObjectParser
         try {
-            def queryParserFactory = QueryParserFactory.newQueryParserFactory(jpaVersion)
-            queryParser = queryParserFactory.newQueryParser(discoveredClasses)
+            def factory = NamedObjectParserFactory.newNamedObjectParserFactory(jpaVersion)
+            namedObjectParser = factory.newNamedObjectParser(discoveredClasses)
             println "✅ In-memory verification metamodel generated successfully."
         } catch (Exception e) {
             System.err.println("❌ Critical: Metamodel initialization crash: " + e.message)
@@ -88,127 +86,169 @@ abstract class LintNamedQueriesWorker implements WorkAction<LintNamedQueriesPara
             return
         }
 
-        // 3. COMPLETE STRONGLY-TYPED SEMANTIC VALIDATION SWEEP
-        println "⏳ Driving native ANTLR4 query semantic validation sweep..."
         int errorCount = 0
 
-        discoveredQueries.each { queryName, queryString ->
-            try {
-                // Execute version-isolated typed verification routine safely
-                queryParser.parseQuery(queryName, queryString)
-                println "   ✅ Query '${queryName}' passed semantic compilation checks."
-            } catch (Exception e) {
-                errorCount++
-                Throwable cause = e.getCause() ?: e
-                System.err.println("   ❌ LINT ERROR in Query [${queryName}]:")
-                System.err.println("      Expression: ${queryString.trim()}")
-                System.err.println("      Reason:     ${cause.getMessage() ?: cause.toString()}")
+        // 3a. COMPLETE STRONGLY-TYPED SEMANTIC & PARAMETER STYLE VALIDATION FOR QUERIES
+        if (!discoveredQueries.isEmpty()) {
+            println "⏳ Driving native ANTLR4 query semantic validation sweep..."
+            discoveredQueries.each { name, queryString ->
+                try {
+                    // Execute parser and capture parameter sets
+                    NamedObjectDescriptor descriptor = namedObjectParser.parseQuery(name, queryString)
+                    println "   ✅ Query '${name}' passed semantic compilation checks."
+
+                    // Style Governance Check Loop
+                    if (!ignoreWarnings && descriptor.namedParameters() != null) {
+                        descriptor.namedParameters().each { String param ->
+                            Helper.validateParameterStyle(name, param)
+                        }
+                    }
+                } catch (Exception e) {
+                    errorCount++
+                    Throwable cause = e.getCause() ?: e
+                    System.err.println("   ❌ LINT ERROR in Query [${name}]: ${cause.getMessage() ?: cause.toString()}")
+                }
+            }
+        }
+
+        // 3b. COMPLETE PARAMETER STYLE VALIDATION FOR STORED PROCEDURES
+        if (!discoveredProcedures.isEmpty()) {
+            println "⏳ Running parameters governance lint checks over named stored procedures..."
+            discoveredProcedures.each { name, procedureMap ->
+                procedureMap.each { procedureName, params ->
+                    try {
+                        // Pass down seamlessly into your updated v2 SPI contract layers
+                        namedObjectParser.parseStoredProcedure(name, procedureName, params)
+                        println "   ✅ Stored Procedure '${name}' [${procedureName}] metadata structural paths validated."
+
+                        // Style Governance Check Loop
+                        if (!ignoreWarnings && params != null) {
+                            params.each { String param ->
+                                Helper.validateParameterStyle(name, param)
+                            }
+                        }
+                    } catch (Exception e) {
+                        errorCount++
+                        System.err.println("   ❌ LINT ERROR in Stored Procedure [${name}]: ${e.getMessage()}")
+                    }
+                }
             }
         }
 
         if (errorCount > 0) {
-            System.err.println("⚠️ JPersist Static Linter found ${errorCount} query compilation errors!")
+            System.err.println("⚠️ JPersist Static Linter found ${errorCount} structural metadata errors!")
             if (failOnError) {
-                throw new GradleException("Build failed due to ${errorCount} invalid @NamedQuery syntax definitions.")
+                throw new GradleException("Build failed due to ${errorCount} invalid named metadata definitions.")
             }
         } else {
-            println "✅ All discovered static named queries validated successfully!"
+            println "✅ All discovered static metadata structures validated successfully!"
         }
     }
 
-    /**
-     * Specialized ASM ClassVisitor targeting JPA NamedQuery annotations at the class metadata layer.
-     */
-    private static class NamedQueryAnnotationScanner extends ClassVisitor {
-        private final Map<String, String> queriesRegistry
-        private final List<String> classesRegistry
+    private static class ComprehensiveMetadataScanner extends ClassVisitor {
+        private final Map<String, String> queries
+        private final Map<String, Map<String, Set<String>>> procedures
+        private final List<String> classes
 
-        NamedQueryAnnotationScanner(Map<String, String> queriesRegistry, List<String> classesRegistry) {
+        ComprehensiveMetadataScanner(Map<String, String> queries, Map<String, Map<String, Set<String>>> procedures, List<String> classes) {
             super(Opcodes.ASM9)
-            this.queriesRegistry = queriesRegistry
-            this.classesRegistry = classesRegistry
+            this.queries = queries
+            this.procedures = procedures
+            this.classes = classes
         }
 
         @Override
         void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-            // Convert internal ASM slash notation to a standard fully qualified binary dot path string
-            // e.g., "com/example/model/InventoryItem" -> "com.example.model.InventoryItem"
             if (name) {
-                classesRegistry.add(name.replace('/', '.'))
+                classes.add(name.replace('/', '.'))
             }
             super.visit(version, access, name, signature, superName, interfaces)
         }
 
         @Override
         AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
-            // Case A: Single @NamedQuery declaration block found
-            if (descriptor == 'Ljakarta/persistence/NamedQuery;' || descriptor == 'Ljavax/persistence/NamedQuery;') {
-                return new NamedQueryDataExtractor(queriesRegistry)
+            if (descriptor in ['Ljakarta/persistence/NamedQuery;', 'Ljavax/persistence/NamedQuery;']) {
+                return new NamedQueryDataExtractor(queries)
             }
-            // Case B: Multi-query wrapper @NamedQueries container block found
-            if (descriptor == 'Ljakarta/persistence/NamedQueries;' || descriptor == 'Ljavax/persistence/NamedQueries;') {
-                return new NamedQueriesContainerExtractor(queriesRegistry)
+            if (descriptor in ['Ljakarta/persistence/NamedStoredProcedureQuery;', 'Ljavax/persistence/NamedStoredProcedureQuery;']) {
+                return new StoredProcedureDataExtractor(procedures)
             }
             return null
         }
     }
 
-    /**
-     * Extracts primitive string value pairs ('name' and 'query') out of a @NamedQuery block.
-     */
     private static class NamedQueryDataExtractor extends AnnotationVisitor {
-        private final Map<String, String> queriesRegistry
-        private String queryName = ""
-        private String queryString = ""
+        private final Map<String, String> registry
+        private String name = ""
+        private String query = ""
 
-        NamedQueryDataExtractor(Map<String, String> queriesRegistry) {
-            super(Opcodes.ASM9)
-            this.queriesRegistry = queriesRegistry
-        }
+        NamedQueryDataExtractor(Map<String, String> registry) { super(Opcodes.ASM9); this.registry = registry }
 
         @Override
         void visit(String name, Object value) {
-            if (name == "name") {
-                this.queryName = value.toString()
-            } else if (name == "query") {
-                this.queryString = value.toString()
-            }
+            if (name == "name") this.name = value.toString()
+            else if (name == "query") this.query = value.toString()
         }
 
         @Override
         void visitEnd() {
-            if (queryName && queryString) {
-                queriesRegistry.put(queryName, queryString)
-            }
+            if (name && query) registry.put(name, query)
         }
     }
 
-    /**
-     * Iterates over the arrays matrix elements inside a @NamedQueries multi-container annotation wrapper.
-     */
-    private static class NamedQueriesContainerExtractor extends AnnotationVisitor {
-        private final Map<String, String> queriesRegistry
+    private static class StoredProcedureDataExtractor extends AnnotationVisitor {
+        private final Map<String, Map<String, Set<String>>> registry
+        private String name = ""
+        private String procedureName = ""
+        private Set<String> parameterNames = new TreeSet<>()
 
-        NamedQueriesContainerExtractor(Map<String, String> queriesRegistry) {
-            super(Opcodes.ASM9)
-            this.queriesRegistry = queriesRegistry
+        StoredProcedureDataExtractor(Map<String, Map<String, Set<String>>> registry) { super(Opcodes.ASM9); this.registry = registry }
+
+        @Override
+        void visit(String name, Object value) {
+            if (name == "name") this.name = value.toString()
+            else if (name == "procedureName") this.procedureName = value.toString()
         }
 
         @Override
         AnnotationVisitor visitArray(String name) {
-            if (name == "value") {
+            if (name == "parameters") {
                 return new AnnotationVisitor(Opcodes.ASM9) {
                     @Override
                     AnnotationVisitor visitAnnotation(String unnamed, String descriptor) {
-                        if (descriptor == 'Ljakarta/persistence/NamedQuery;' || descriptor == 'Ljavax/persistence/NamedQuery;') {
-                            return new NamedQueryDataExtractor(queriesRegistry)
+                        return new AnnotationVisitor(Opcodes.ASM9) {
+                            @Override
+                            void visit(String pName, Object pValue) {
+                                if (pName == "name" && pValue) parameterNames.add(pValue.toString())
+                            }
                         }
-                        return null
                     }
                 }
             }
             return null
         }
+
+        @Override
+        void visitEnd() {
+            if (name && procedureName) {
+                registry.put(name, [(procedureName): parameterNames])
+            }
+        }
+    }
+
+    private static class Helper {
+
+        /**
+         * Asserts parameter tokens against strict camelCase regular expression rules.
+         */
+        private static void validateParameterStyle(String contextName, String paramName) {
+            boolean isCamelCase = paramName ==~ /^[a-z][a-zA-Z0-9]*$/
+            if (!isCamelCase) {
+                println "      ⚠️ LINTER STYLE WARNING [${contextName}]: " +
+                    "Parameter ':${paramName}' breaks strict camelCase style conventions."
+            }
+        }
+
     }
 
 }

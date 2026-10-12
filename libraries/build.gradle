@@ -85,11 +85,12 @@ tasks.named('check') {
 
 sonar {
     properties {
-        property "sonar.projectKey", "jpersist_persistence"
+        property "sonar.projectKey", "jpersist_persistence_libraries"
         property "sonar.organization", "jpersist"
         property "sonar.host.url", "https://sonarcloud.io"
+        property "sonar.projectName", "persistence-libraries"
 
-        property "sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml"
+        property "sonar.coverage.jacoco.xmlReportPaths", "${project.layout.buildDirectory.get().asFile}/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml"
     }
 }
 

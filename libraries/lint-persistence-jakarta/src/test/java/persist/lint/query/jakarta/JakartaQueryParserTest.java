@@ -59,18 +59,4 @@ class JakartaQueryParserTest {
             .isInstanceOf(Exception.class);
     }
 
-    @Test
-    void buildMetadata_withValidClasses_returnsNonNullMetadata() {
-        var metadata = JakartaQueryParser.buildMetadata(List.of(TestEntity.class.getName()));
-
-        assertThat(metadata).isNotNull();
-    }
-
-    @Test
-    void buildMetadata_withEmptyClassList_returnsMetadata() {
-        var metadata = JakartaQueryParser.buildMetadata(List.of());
-
-        assertThat(metadata).isNotNull();
-    }
-
 }

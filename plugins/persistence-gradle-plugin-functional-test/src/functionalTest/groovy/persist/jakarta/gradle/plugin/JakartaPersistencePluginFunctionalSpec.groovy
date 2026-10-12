@@ -253,7 +253,7 @@ class JakartaPersistencePluginFunctionalSpec extends Specification {
         result.task(":test-lint-valid-persistence-module:lintNamedQueries").outcome == TaskOutcome.SUCCESS
 
         and: "the output console logs confirm all queries passed semantic validation"
-        assert result.output.contains("All discovered static named queries validated successfully!")
+        assert result.output.contains("All discovered static metadata structures validated successfully!")
         assert result.output.contains("Product.findBySku")
         assert result.output.contains("passed semantic compilation checks")
     }
@@ -274,10 +274,127 @@ class JakartaPersistencePluginFunctionalSpec extends Specification {
 
         and: "the output console logs contain the explicit semantic compilation mismatch details parsed by the ANTLR4 engine"
         assert result.output.contains("❌ LINT ERROR in Query [InventoryItem.findByInvalidProperty]")
-        assert result.output.contains("Reason:")
         // Verify that Hibernate's internal SQM compiler explicitly calls out the unresolvable property typo node
         assert result.output.contains("Could not resolve attribute 'itemCode' of 'com.example.model.InventoryItem'")
-        assert result.output.contains("Build failed due to 1 invalid @NamedQuery syntax definitions.")
+        assert result.output.contains("Build failed due to 1 invalid named metadata definitions.")
+    }
+
+    def "should execute lintNamedQueries and emit style warnings when standard named query parameters violate camelCase conventions"() {
+        given: "a workspace context with an entity declaring a query with a snake_case parameter"
+        // 1. Setup the project build script using our live v2 libraries coordinates
+        File buildFile = new File(testProjectDir.toFile(), "test-lint-persistence-module/build.gradle")
+
+        // 2. Generate the source Java entity containing a non-camelCase parameter token (:item_code)
+        File javaSourceDir = new File(testProjectDir.toFile(), "test-lint-persistence-module/src/main/java/com/example/model")
+        javaSourceDir.mkdirs()
+        File entitySourceFile = new File(javaSourceDir, "InventoryItem.java")
+        entitySourceFile.text = """
+            package com.example.model;
+
+            import jakarta.persistence.Entity;
+            import jakarta.persistence.Id;
+            import jakarta.persistence.NamedQuery;
+            import jakarta.persistence.Table;
+
+            @Entity
+            @Table(name = "inventory_items")
+            @NamedQuery(
+                name = "InventoryItem.findByCodeStyleViolation",
+                query = "SELECT i FROM InventoryItem i WHERE i.sku = :item_code"
+            )
+            public class InventoryItem {
+                @Id
+                private Long id;
+                private String sku;
+
+                public Long getId() { return id; }
+                public void setId(Long id) { this.id = id; }
+                public String getSku() { return sku; }
+                public void setSku(String sku) { this.sku = sku; }
+            }
+        """.stripIndent()
+
+        when: "triggering the query analysis linter task pass"
+        def runner = createRunner()
+            .withArguments(":test-lint-persistence-module:compileJava", ":test-lint-persistence-module:lintNamedQueries", "--stacktrace")
+        def result = runner.build() // We use build() because warnings are non-blocking!
+
+        then: "the task executes successfully without breaking compilation pipelines"
+        result.task(":test-lint-persistence-module:lintNamedQueries").outcome.toString() == "SUCCESS"
+
+        and: "the output console logs explicitly flag the snake_case token parameter style warning"
+        assert result.output.contains("⏳ Driving native ANTLR4 query semantic validation sweep...")
+        assert result.output.contains("⚠️ LINTER STYLE WARNING [InventoryItem.findByCodeStyleViolation]: Parameter ':item_code' breaks strict camelCase style conventions.")
+    }
+
+    def "should execute lintNamedQueries and emit style warnings when named stored procedure parameters violate camelCase conventions"() {
+        given: "a workspace context with an entity declaring a named stored procedure with an uppercase parameter"
+        File javaSourceDir = new File(testProjectDir.toFile(), "test-lint-persistence-module/src/main/java/com/example/model")
+        javaSourceDir.mkdirs()
+        File entitySourceFile = new File(javaSourceDir, "InventoryItem.java")
+        entitySourceFile.text = """
+            package com.example.model;
+
+            import jakarta.persistence.Entity;
+            import jakarta.persistence.Id;
+            import jakarta.persistence.NamedQuery;
+            import jakarta.persistence.Table;
+
+            @Entity
+            @Table(name = "inventory_items")
+            @NamedQuery(
+                name = "InventoryItem.findByCodeStyleViolation",
+                query = "SELECT i FROM InventoryItem i WHERE i.sku = :sku"
+            )
+            public class InventoryItem {
+                @Id
+                private Long id;
+                private String sku;
+
+                public Long getId() { return id; }
+                public void setId(Long id) { this.id = id; }
+                public String getSku() { return sku; }
+                public void setSku(String sku) { this.sku = sku; }
+            }
+        """.stripIndent()
+
+        File procedureEntityFile = new File(javaSourceDir, "StoredProcedureEntity.java")
+        procedureEntityFile.text = """
+            package com.example.model;
+
+            import jakarta.persistence.Entity;
+            import jakarta.persistence.Id;
+            import jakarta.persistence.NamedStoredProcedureQuery;
+            import jakarta.persistence.StoredProcedureParameter;
+            import jakarta.persistence.ParameterMode;
+
+            @Entity
+            @NamedStoredProcedureQuery(
+                name = "archiveOldRecordsProcedure",
+                procedureName = "sp_archive_records",
+                parameters = {
+                    // INTENTIONAL STYLE VIOLATION: Parameter name uses all-uppercase formatting
+                    @StoredProcedureParameter(name = "ITEM_SKU", mode = ParameterMode.IN, type = String.class)
+                }
+            )
+            public class StoredProcedureEntity {
+                @Id
+                private Long id;
+            }
+        """.stripIndent()
+
+        when: "triggering the query analysis linter task pass"
+        def runner = createRunner()
+            .withArguments(":test-lint-persistence-module:compileJava", ":test-lint-persistence-module:lintNamedQueries", "--stacktrace")
+        def result = runner.build()
+
+        then: "the linter processes the stored procedure mapping and executes successfully"
+        result.task(":test-lint-persistence-module:lintNamedQueries").outcome.toString() == "SUCCESS"
+
+        and: "the output console logs capture the procedure metadata sweep and emit the naming style warning"
+        assert result.output.contains("⏳ Running parameters governance lint checks over named stored procedures...")
+        assert result.output.contains("✅ Stored Procedure 'archiveOldRecordsProcedure' [sp_archive_records] metadata structural paths validated.")
+        assert result.output.contains("⚠️ LINTER STYLE WARNING [archiveOldRecordsProcedure]: Parameter ':ITEM_SKU' breaks strict camelCase style conventions.")
     }
 
     private GradleRunner createRunner() {

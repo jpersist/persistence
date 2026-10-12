@@ -13,20 +13,25 @@ import java.util.List;
  * provider and creates {@link LegacyQueryParser} instances backed by
  * Hibernate&nbsp;5.</p>
  *
+ * @since 1.0.0
+ * @deprecated Use {@link persist.lint.legacy.LegacyNamedObjectParserFactory} instead.
  * @see LegacyQueryParser
  */
+@Deprecated
 public class LegacyQueryParserFactory implements QueryParserFactory {
 
     /** Creates a new {@code LegacyQueryParserFactory}. */
     public LegacyQueryParserFactory() {}
 
     /** {@inheritDoc} */
+    @Deprecated
     @Override
     public String getSupportedNamespace() {
         return "javax";
     }
 
     /** {@inheritDoc} */
+    @Deprecated
     @Override
     public QueryParser newQueryParser(List<String> discoveredClassNames) {
         return LegacyQueryParser.from(discoveredClassNames);
