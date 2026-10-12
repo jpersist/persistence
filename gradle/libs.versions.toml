@@ -1,11 +1,20 @@
 [versions]
 jakarta-persistence = "3.1.0"
-hibernate = "6.6.56.Final"
+lint-persistence= "2.0.0"
+hibernate-orm = "6.6.56.Final"
 spock = "2.3-groovy-4.0"
 asm = "9.10.1"
 
 [libraries]
 jakarta-persistence-api = { group = "jakarta.persistence", name = "jakarta.persistence-api", version.ref = "jakarta-persistence" }
-hibernate-core = { group = "org.hibernate.orm", name = "hibernate-core", version.ref = "hibernate" }
+hibernate-orm-core = { group = "org.hibernate.orm", name = "hibernate-core", version.ref = "hibernate-orm" }
 spock-core = { group = "org.spockframework", name = "spock-core", version.ref = "spock" }
 asm = { group = "org.ow2.asm", name = "asm", version.ref = "asm" }
+
+lint-persistence-bom = { group = "io.github.jpersist.lint", name = "lint-persistence-bom", version.ref = "lint-persistence" }
+lint-persistence-api = { group = "io.github.jpersist.lint", name = "lint-persistence-api" }
+lint-persistence-jakarta = { group = "io.github.jpersist.lint", name = "lint-persistence-jakarta" }
+lint-persistence-legacy = { group = "io.github.jpersist.lint", name = "lint-persistence-legacy" }
+
+[bundles]
+lint-persistence = ["lint-persistence-api", "lint-persistence-jakarta", "lint-persistence-legacy"]
