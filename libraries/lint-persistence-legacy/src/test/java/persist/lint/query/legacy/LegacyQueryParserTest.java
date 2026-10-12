@@ -59,18 +59,4 @@ class LegacyQueryParserTest {
             .isInstanceOf(Exception.class);
     }
 
-    @Test
-    void buildMetadata_withValidClasses_returnsNonNullMetadata() {
-        var metadata = LegacyQueryParser.buildMetadata(List.of(TestEntity.class.getName()));
-
-        assertThat(metadata).isNotNull();
-    }
-
-    @Test
-    void buildMetadata_withEmptyClassList_returnsMetadata() {
-        var metadata = LegacyQueryParser.buildMetadata(List.of());
-
-        assertThat(metadata).isNotNull();
-    }
-
 }

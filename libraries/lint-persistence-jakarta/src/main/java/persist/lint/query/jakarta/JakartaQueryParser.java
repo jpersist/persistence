@@ -1,11 +1,6 @@
 package persist.lint.query.jakarta;
 
-import org.hibernate.boot.Metadata;
-import org.hibernate.boot.MetadataSources;
-import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
-import org.hibernate.engine.spi.SessionFactoryImplementor;
-import org.hibernate.query.hql.HqlTranslator;
-import org.hibernate.query.spi.QueryEngine;
+import persist.lint.jakarta.JakartaNamedObjectParser;
 import persist.lint.query.spi.QueryParser;
 
 import java.util.List;
@@ -22,12 +17,13 @@ import java.util.List;
  *
  * @see JakartaQueryParserFactory
  */
+@Deprecated
 public class JakartaQueryParser implements QueryParser {
 
-    private final Metadata metadata;
+    private final JakartaNamedObjectParser parser;
 
-    private JakartaQueryParser(Metadata metadata) {
-        this.metadata = metadata;
+    private JakartaQueryParser(JakartaNamedObjectParser parser) {
+        this.parser = parser;
     }
 
     /**
@@ -37,60 +33,16 @@ public class JakartaQueryParser implements QueryParser {
      * @param discoveredClassNames fully qualified names of JPA entity classes
      * @return a parser ready to validate JPQL queries
      */
+    @Deprecated
     public static JakartaQueryParser from(List<String> discoveredClassNames) {
-        return new JakartaQueryParser(buildMetadata(discoveredClassNames));
+        return new JakartaQueryParser(JakartaNamedObjectParser.from(discoveredClassNames));
     }
 
     /** {@inheritDoc} */
+    @Deprecated
     @Override
     public void parseQuery(String queryName, String queryString) {
-        try (SessionFactoryImplementor sessionFactory = from(metadata)) {
-            parseQuery(queryString, sessionFactory);
-        }
-    }
-
-    /**
-     * Builds a Hibernate {@link Metadata} instance from the given entity
-     * class names using an offline H2 dialect configuration.
-     *
-     * @param discoveredClasses fully qualified names of JPA entity classes
-     * @return the compiled metadata
-     */
-    public static Metadata buildMetadata(List<String> discoveredClasses) {
-        // Pure, strongly-typed Hibernate 6 bootstrapping
-        var ssr = new StandardServiceRegistryBuilder()
-            .applySetting("hibernate.dialect", "org.hibernate.dialect.H2Dialect")
-            .applySetting("hibernate.connection.url", "jdbc:h2:mem:lintdb;DB_CLOSE_DELAY=-1")
-            // Explicitly disable background JDBC metadata connections query passes!
-            .applySetting("hibernate.boot.allow_jdbc_metadata_access", "false")
-            // Disable DDL validation loops during compilation
-            .applySetting("hibernate.hbm2ddl.auto", "none")
-            .build();
-
-        var metadataSources = new MetadataSources(ssr);
-
-        // Strongly register every single ASM-discovered entity class natively!
-        discoveredClasses.forEach(metadataSources::addAnnotatedClassName);
-
-        return metadataSources.getMetadataBuilder().build();
-    }
-
-    private static void parseQuery(String queryString, SessionFactoryImplementor sessionFactory) {
-        // 1. In Hibernate 6, QueryPlanCache & repositories are managed by the centralized QueryEngine
-        QueryEngine queryEngine = sessionFactory.getQueryEngine();
-        HqlTranslator hqlTranslator = queryEngine.getHqlTranslator();
-
-        // 2. Use the HqlTranslator to compile the string into a Semantic Query Model (SQM) tree
-        // This verifies grammar, entity maps, fields, and functions completely offline
-        parseQuery(queryString, hqlTranslator);
-    }
-
-    private static void parseQuery(String queryString, HqlTranslator hqlTranslator) {
-        hqlTranslator.translate(queryString, Object.class);
-    }
-
-    private static SessionFactoryImplementor from(Metadata metadata) {
-        return (SessionFactoryImplementor) metadata.buildSessionFactory();
+        parser.parseQuery(queryName, queryString);
     }
 
 }

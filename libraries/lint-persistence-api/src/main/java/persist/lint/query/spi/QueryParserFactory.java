@@ -14,6 +14,7 @@ import java.util.ServiceLoader;
  *
  * @see QueryParser
  */
+@Deprecated
 public interface QueryParserFactory {
 
     /**
@@ -22,6 +23,7 @@ public interface QueryParserFactory {
      * @return the namespace identifier, for example {@code "javax"} for
      *         JPA&nbsp;2.x or {@code "jakarta"} for JPA&nbsp;3.x
      */
+    @Deprecated
     String getSupportedNamespace();
 
     /**
@@ -32,6 +34,7 @@ public interface QueryParserFactory {
      *                             entities to register in the metamodel
      * @return a ready-to-use query parser
      */
+    @Deprecated
     QueryParser newQueryParser(List<String> discoveredClassNames);
 
     /**
@@ -50,6 +53,7 @@ public interface QueryParserFactory {
      * @throws IllegalStateException    if no provider is registered for
      *                                  the resolved namespace
      */
+    @Deprecated
     static QueryParserFactory newQueryParserFactory(String jpaVersion) {
         // Resolve target namespace based on the semantic spec version map token
         final String targetNamespace = switch (jpaVersion) {

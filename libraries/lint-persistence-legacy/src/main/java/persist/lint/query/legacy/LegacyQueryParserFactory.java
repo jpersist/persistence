@@ -15,18 +15,21 @@ import java.util.List;
  *
  * @see LegacyQueryParser
  */
+@Deprecated
 public class LegacyQueryParserFactory implements QueryParserFactory {
 
     /** Creates a new {@code LegacyQueryParserFactory}. */
     public LegacyQueryParserFactory() {}
 
     /** {@inheritDoc} */
+    @Deprecated
     @Override
     public String getSupportedNamespace() {
         return "javax";
     }
 
     /** {@inheritDoc} */
+    @Deprecated
     @Override
     public QueryParser newQueryParser(List<String> discoveredClassNames) {
         return LegacyQueryParser.from(discoveredClassNames);

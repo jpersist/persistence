@@ -15,6 +15,7 @@ import java.util.List;
  *
  * @see JakartaQueryParser
  */
+@Deprecated
 public class JakartaQueryParserFactory implements QueryParserFactory {
 
     /** Creates a new {@code JakartaQueryParserFactory}. */

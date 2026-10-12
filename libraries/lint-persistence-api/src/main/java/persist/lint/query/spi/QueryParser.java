@@ -10,6 +10,7 @@ package persist.lint.query.spi;
  *
  * @see QueryParserFactory
  */
+@Deprecated
 public interface QueryParser {
 
     /**
@@ -25,6 +26,7 @@ public interface QueryParser {
      * @throws RuntimeException if the query is syntactically or semantically
      *                          invalid
      */
+    @Deprecated
     void parseQuery(String queryName, String queryString);
 
 }
