@@ -18,9 +18,12 @@
  *         when it is applied, and automatically registering persistence units
  *         found in a user-provided {@code persistence.xml} template.
  *         Additionally registers a {@code validatePersistenceSchema} task for
- *         schema validation using an isolated worker process and a
+ *         schema validation using an isolated worker process, a
  *         {@code generateJPAGraalVMMetadata} task for generating GraalVM
- *         native image reflection configuration.</li>
+ *         native image reflection configuration, and a
+ *         {@code lintNamedQueries} task for static compile-time verification
+ *         of {@code @NamedQuery} and {@code @NamedStoredProcedureQuery}
+ *         definitions.</li>
  * </ul>
  * <p>
  * The plugin is designed as a replacement for the deprecated

@@ -23,6 +23,10 @@
  *         Optional JDBC connection properties (URL, driver, user, password)
  *         used by the schema validation task. Defaults to an in-memory H2
  *         database when not configured.</li>
+ *     <li>{@link persist.jakarta.gradle.extension.LinterExtension} &mdash;
+ *         Configuration options for the static compile-time
+ *         {@code @NamedQuery} analysis linter, including toggles for enabling
+ *         the linter, failing the build on errors, and suppressing warnings.</li>
  * </ul>
  *
  * @since 1.1.0

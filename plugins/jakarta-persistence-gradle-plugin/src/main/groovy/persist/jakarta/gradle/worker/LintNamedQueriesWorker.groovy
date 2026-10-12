@@ -15,22 +15,44 @@ import persist.lint.api.spi.NamedObjectParser
 import persist.lint.api.spi.NamedObjectParserFactory
 
 /**
- * Parameters required by the Static NamedQuery Analysis Linter Worker.
+ * Parameters required by the {@link LintNamedQueriesWorker}.
+ * <p>
+ * Carries the compiled classes directory, JPA version, and linter behaviour
+ * options into the isolated worker process.
+ * </p>
+ *
+ * @since 1.6.0
  */
 interface LintNamedQueriesParameters extends WorkParameters {
 
+    /** The directory containing compiled {@code .class} files to scan. */
     DirectoryProperty getCompiledClassesDir()
 
+    /** The JPA specification version for annotation namespace resolution. */
     Property<String> getJpaVersion()
 
+    /** Whether errors should fail the build ({@code true}) or be logged as warnings. */
     Property<Boolean> getFailOnError()
 
+    /** Whether sub-critical style warnings should be suppressed. */
     Property<Boolean> getIgnoreWarnings()
 
 }
 
 /**
- * An isolated Worker Action executing bytecode sweeping and query AST validation.
+ * An isolated Worker Action that performs bytecode sweeping and query AST
+ * validation inside a classloader-isolated process.
+ * <p>
+ * The worker scans all {@code .class} files in the compiled output directory
+ * using ASM to discover {@code @NamedQuery} and
+ * {@code @NamedStoredProcedureQuery} annotations. Discovered queries are then
+ * validated using an ANTLR4-based parser loaded via the
+ * {@link persist.lint.api.spi.NamedObjectParserFactory} SPI contract.
+ * Parameter naming conventions are checked against strict camelCase rules.
+ * </p>
+ *
+ * @since 1.6.0
+ * @see persist.jakarta.gradle.task.LintNamedQueries
  */
 abstract class LintNamedQueriesWorker implements WorkAction<LintNamedQueriesParameters> {
 

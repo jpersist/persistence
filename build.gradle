@@ -191,6 +191,19 @@ tasks.named('functionalTestCodeCoverageReport', JacocoReport) {
     subprojects.each { sub ->
         executionData.from(new File(sub.layout.buildDirectory.get().asFile, 'jacoco/functionalTestRunner.exec'))
     }
+
+    // Remove included 'libraries' build classes from the report so only
+    // plugin classes are measured for functional-test coverage.
+    // Capture the original source objects (which carry task dependencies)
+    // before overwriting, to avoid both eager resolution and circular references.
+    def originalSources = new ArrayList(classDirectories.from)
+    classDirectories.setFrom(
+        files(originalSources).asFileTree.matching {
+            exclude { element ->
+                element.file.absolutePath.replace('\\', '/').contains('/libraries/')
+            }
+        }
+    )
 }
 
 // Apply Groovydoc tasks

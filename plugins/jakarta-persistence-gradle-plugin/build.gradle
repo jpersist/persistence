@@ -7,10 +7,8 @@ dependencies {
     implementation libs.jakarta.persistence.api
     implementation libs.asm
 
-    implementation platform('io.github.jpersist.lint:lint-persistence-bom:latest.integration')
-    implementation 'io.github.jpersist.lint:lint-persistence-api'
-    implementation 'io.github.jpersist.lint:lint-persistence-jakarta'
-    implementation 'io.github.jpersist.lint:lint-persistence-legacy'
+    implementation platform(libs.lint.persistence.bom.get())
+    implementation libs.bundles.lint.persistence
 }
 
 gradlePlugin {

@@ -6,50 +6,58 @@
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=jpersist_persistence&metric=coverage)](https://sonarcloud.io/summary/new_code?id=jpersist_persistence)
 ![GitHub License](https://img.shields.io/github/license/jpersist/persistence)
 
-**JPersist** is a suite of modern, high-performance, and **Gradle Configuration Cache-compliant** plugins that completely automates the tedious boilerplate configuration of enterprise **Jakarta Persistence API (JPA)** environments. It provides zero-configuration support for **Hibernate** and **EclipseLink** multi-module builds.
+## 🧩 What is JPersist?
+
+**JPersist** is a suite of modern, high-performance, and **Gradle Configuration Cache-compliant** plugins that completely automates the tedious boilerplate configuration of enterprise **Jakarta Persistence API (JPA)** environments.
+
+It handles everything a JPA developer needs at build time — from `persistence.xml` descriptor generation and merge to bytecode enhancement, metamodel generation, schema validation, GraalVM native image metadata, and compile-time named query linting — so you can focus on writing entities and queries instead of fighting build scripts.
 
 ---
 
-## 🚀 Why JPersist?
+## 🏆 Why JPersist is the Ultimate JPA Development Tool for Gradle
 
-Standard Gradle loops require verbose XML overrides, break incremental compilation states during bytecode manipulation, and crash with complex classpath tasks decoration proxy loops. **JPersist fixes this permanently.**
+Standard Gradle setups require verbose XML overrides, break incremental compilation states during bytecode manipulation, and crash with complex classpath decoration proxy loops. **JPersist fixes this permanently.**
 
-| Standard Gradle Setup | The JPersist Masterclass Advantage |
-| :--- | :--- |
-| ❌ Manual `<class>` tagging required | **✅ ASM-Powered Bytecode Scanning** auto-detects entities |
-| ❌ Hardcoded schema structures | **✅ Strategy-Driven Polymorphism** supports JPA 2.0 to 3.2 dynamically |
-| ❌ Rigid monolithic output paths | **✅ Declarative Attributes** route individual JAR locations via the DSL |
-| ❌ Broken workspace sync mappings | **✅ Automated IDE Indexing** hooks into Buildship and IntelliJ out-of-the-box |
+| Standard Gradle Setup                 | The JPersist Advantage                                                             |
+|:--------------------------------------|:-----------------------------------------------------------------------------------|
+| ❌ Manual `<class>` tagging required  | **✅ ASM-powered bytecode scanning** auto-detects entities                         |
+| ❌ Hardcoded schema structures        | **✅ Strategy-driven polymorphism** supports JPA 2.0 to 3.2 dynamically            |
+| ❌ Rigid monolithic output paths      | **✅ Declarative attributes** route individual JAR locations via the DSL           |
+| ❌ Broken workspace sync mappings     | **✅ Automated IDE indexing** hooks into Buildship and IntelliJ out-of-the-box     |
+| ❌ Named query errors only at runtime | **✅ Compile-time query linting** catches JPQL/HQL syntax errors before deployment |
+| ❌ Manual GraalVM reflection config   | **✅ Automatic `reflect-config.json`** generation for native images                |
+
+### ⚡ Key Features
+
+- **Descriptor Generation & Merging** — Generates or intelligently merges `persistence.xml` descriptors per source set using ASM bytecode scanning for automatic entity class discovery.
+- **Hibernate Bytecode Enhancement** — Compile-time enhancement for lazy initialization, dirty tracking, and association management without runtime agents.
+- **EclipseLink Static Weaving** — Compile-time static weaving fully isolated from the Gradle daemon classpath.
+- **JPA Static Metamodel Generation** — Automatic annotation processor setup for type-safe Criteria API queries (both Hibernate and EclipseLink).
+- **Schema Validation** — Validates entity mappings against a database schema at build time using an isolated Gradle Worker process.
+- **GraalVM Native Image Metadata** — Generates `reflect-config.json` for all discovered JPA entities, enabling ahead-of-time reflection registration.
+- **Lint Named Queries** *(new in v1.6.0)* — Static, compile-time AST verification of `@NamedQuery` and `@NamedStoredProcedureQuery` definitions with JPQL/HQL syntax and parameter naming validation.
 
 ---
 
-## 💖 Support the Project
+## 🚀 Getting Started
 
-Running complex continuous integration checks, multi-spec regression testing matrices, and maintaining full compatibility with rapid Gradle releases requires continuous investment.
+Apply the plugin matching your JPA provider. The `jpa` dependency configuration centralizes version management via a BOM platform across all standard Java compilation scopes.
 
-If JPersist is saving your engineering team debugging overhead hours, consider backing us!
+### 🐻 Hibernate Setup
 
-👉 **[Become a GitHub Sponsor to support JPersist's independence](https://github.com/jpersist/persistence)**
-
----
-
-## ⚡ Quick Start
-
-Apply the aggregate ecosystem plugin matching your infrastructure stack. Version suggestions from your corporate Version Catalogs or platform BOMs are dynamically propagated into all standard Java compilation scopes.
-
-### For Hibernate 6.x+ Projects
 <details open>
   <summary><b>Groovy DSL</b></summary>
   <br>
 
 ```groovy
 plugins {
-    id 'io.github.jpersist.hibernate-persistence' // Enables descriptor generation, modelgen, & enhancement
+    id 'io.github.jpersist.hibernate-persistence' version '1.6.0'
 }
 
 dependencies {
-    // Centralize versioning via a BOM platform configuration
     jpa platform('org.hibernate.orm:hibernate-platform:6.6.56.Final')
+
+    implementation 'org.hibernate.orm:hibernate-core'
 }
 ```
 </details>
@@ -60,100 +68,92 @@ dependencies {
 
 ```kotlin
 plugins {
-    id("io.github.jpersist.hibernate-persistence")
+    id("io.github.jpersist.hibernate-persistence") version "1.6.0"
 }
 
 dependencies {
-    "jpa"(platform("org.hibernate.orm:hibernate-platform:6.6.56.Final"))
+    jpa(platform("org.hibernate.orm:hibernate-platform:6.6.56.Final"))
+
+    implementation("org.hibernate.orm:hibernate-core")
 }
 ```
 </details>
 
-### For EclipseLink Projects
+### 🌀 EclipseLink Setup
+
 <details open>
   <summary><b>Groovy DSL</b></summary>
   <br>
 
 ```groovy
 plugins {
-    id 'io.github.jpersist.eclipse-persistence' // Enables descriptor generation, modelgen, & static weaving
+    id 'io.github.jpersist.eclipse-persistence' version '1.6.0'
 }
 
 dependencies {
     jpa platform('org.eclipse.persistence:org.eclipse.persistence.parent:4.0.9')
+
+    compileOnly 'jakarta.persistence:jakarta.persistence-api'
+    implementation 'org.eclipse.persistence:org.eclipse.persistence.core'
 }
 ```
 </details>
 
----
+<details>
+  <summary><b>Kotlin DSL</b></summary>
+  <br>
 
-## 💎 Core Production-Ready Features
+```kotlin
+plugins {
+    id("io.github.jpersist.eclipse-persistence") version "1.6.0"
+}
 
-### 🛠️ Polymorphic Descriptor Merging & Generation (`io.github.jpersist.jpa`)
-Registers a `processPersistenceDescriptor` task **for each Java source set**. It parses existing user templates, resolves conflicts, and writes a pristine, **4-space indented, pretty-printed** output into your build resources.
-* **Implicit Version Sync:** Automatically extracts version attributes from physical source XMLs at configuration time to handle schema modifications dynamically.
-* **Declarative Dependency Routing:** Pass custom namespaced attributes to control exactly what path prefix is written inside `<jar-file>` element rows for custom archive environments:
-
-```groovy
 dependencies {
-    jarFile(project(':common-entities')) {
-        attributes {
-            attribute(persist.jakarta.gradle.plugin.JakartaPersistencePlugin.JAR_LOCATION_ATTRIBUTE, 'lib/')
-        }
-    }
+    jpa(platform("org.eclipse.persistence:org.eclipse.persistence.parent:4.0.9"))
+
+    compileOnly("jakarta.persistence:jakarta.persistence-api")
+    implementation("org.eclipse.persistence:org.eclipse.persistence.core")
 }
 ```
+</details>
 
-### 🧵 Isolated Bytecode Static Weaving & Enhancement
-Triggers raw bytecode modification tasks post-compilation, modifying entities safely in-place within the compilation pipeline boundaries.
-* **Proxy-Free Safety:** Execution loops are fully encapsulated within an isolated static helper layer, making it completely immune to Gradle proxy object `MissingMethodException` bugs.
-* **No Runtime Agents:** Natively supports performance optimizations like lazy loading hooks and advanced inline dirty tracking without requiring an active runtime `-javaagent` argument.
-
-### 🔍 JPA Schema Validation <sup>`v1.5.0`</sup>
-Registers a `validatePersistenceSchema` task **for each Java source set** that boots an isolated JVM worker process to verify JPA entity mappings against the database schema at build time — catching mapping drift before it reaches production.
-* **Worker Process Isolation:** Leverages Gradle's `WorkerExecutor` with classloader isolation, keeping the JPA provider, entity classes, and JDBC driver completely separated from the Gradle daemon classpath.
-* **Configurable Database Connection:** Override the default in-memory H2 validation target via the `validation` DSL block:
-
-```groovy
-persistence {
-    main {
-        validation {
-            url = 'jdbc:h2:mem:my_validation_db;DB_CLOSE_DELAY=-1'
-            driver = 'org.h2.Driver'
-            user = 'sa'
-            password = ''
-        }
-    }
-}
-```
-
-### 🌐 GraalVM Native Image Metadata <sup>`v1.5.0`</sup>
-Registers a `generateJPAGraalVMMetadata` task **for each Java source set** that produces a `reflect-config.json` file containing all ASM-discovered JPA entity classes — enabling ahead-of-time (AOT) reflection registration for GraalVM native image compilation with zero manual configuration.
-* **Automatic Entity Discovery:** Reuses the plugin's existing ASM bytecode scanning pipeline to locate every `@Entity`, `@MappedSuperclass`, and `@Embeddable` class in the source set.
-* **Native-Ready Builds:** Emitted JSON declares `allDeclaredConstructors`, `allDeclaredFields`, and `allDeclaredMethods` for each class, ensuring full JPA provider compatibility under native compilation.
-
-### 🧩 Validation DSL Extension <sup>`v1.5.0`</sup>
-A dedicated `ValidationExtension` interface is embedded inside each source set's `PersistenceExtension`, providing optional JDBC connection properties (`url`, `driver`, `user`, `password`) for schema validation. When omitted, sensible H2 defaults are applied automatically.
-* **Seamless DSL Integration:** Accessible via the standard Gradle nested-closure notation through the `validation { }` block, consistent with the existing `persistenceUnits { }` and `transformer { }` DSL patterns.
+That's it — no additional XML configuration or annotation processing setup is required.
+The plugin automatically detects your entity classes and generates the appropriate `persistence.xml` at build time.
 
 ---
 
-## 📂 Repository Blueprint
+## 🏗️ Repository Structure
 
-* **`jakarta-persistence-gradle-plugin`** — Generates or merges `persistence.xml` descriptors using a declarative DSL.
-* **`eclipse-persistence-gradle-plugin`** — Houses all EclipseLink-related tooling and processing enhancements.
-* **`hibernate-persistence-gradle-plugin`** — Houses all Hibernate-related static generation and enhancement utilities.
-
-> 📖 **API Reference:** Browse the full Groovydoc at [jpersist.github.io/persistence/api/latest](https://jpersist.github.io/persistence/api/latest/)
-> 📘 **User Guide:** Read the documentation at [jpersist.github.io/persistence/guide/latest](https://jpersist.github.io/persistence/guide/latest/)
-> 🚀 **Runnable Specs:** Complete code templates are available in the [`examples/`](examples/) directory.
+| Directory                                     | Description                                                                                                               |
+|:----------------------------------------------|:--------------------------------------------------------------------------------------------------------------------------|
+| `plugins/jakarta-persistence-gradle-plugin`   | Core plugin — generates/merges `persistence.xml`, validates schemas, generates GraalVM metadata, and lints named queries. |
+| `plugins/hibernate-persistence-gradle-plugin` | Hibernate aggregate plugin — metamodel generation and compile-time bytecode enhancement.                                  |
+| `plugins/eclipse-persistence-gradle-plugin`   | EclipseLink aggregate plugin — metamodel generation and compile-time static weaving.                                      |
+| `libraries/lint-persistence-api`              | SPI contract and core interfaces for the named query linter.                                                              |
+| `libraries/lint-persistence-jakarta`          | Jakarta Persistence (3.x) linter implementation.                                                                          |
+| `libraries/lint-persistence-legacy`           | Legacy JPA (2.x) linter implementation.                                                                                   |
+| `examples/`                                   | Runnable example projects for Hibernate, EclipseLink, and standalone Jakarta Persistence.                                 |
 
 ---
 
-## 📌 Requirements
+## 📚 Further Information
+
+- 📖 **API Reference:** [jpersist.github.io/persistence/api/latest](https://jpersist.github.io/persistence/api/latest/)
+- 📘 **User Guide:** [jpersist.github.io/persistence/guide/latest](https://jpersist.github.io/persistence/guide/latest/)
+- 🚀 **Examples:** Complete runnable project templates in the [`examples/`](examples/) directory.
+
+---
+
+## ⚙️ Requirements
 
 - **Gradle:** 7.4+ or 8.x+ / 9.x+
-- **Java:** JDK 17 or higher (Required by modern Jakarta specifications)
+- **Java:** JDK 17 or higher (required by modern Jakarta specifications)
+
+## 💖 Support the Project
+
+If JPersist is saving your engineering team debugging hours, consider backing us!
+
+👉 **[Become a GitHub Sponsor](https://github.com/jpersist/persistence)**
 
 ## 📄 License
 

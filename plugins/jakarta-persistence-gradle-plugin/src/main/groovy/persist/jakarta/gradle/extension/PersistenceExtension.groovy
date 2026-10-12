@@ -99,7 +99,18 @@ abstract class PersistenceExtension {
     @Input
     abstract MapProperty<String, String> getOutputProperties()
 
-    // The Nested Linter Configuration Block Container
+    /**
+     * Nested configuration for the static compile-time {@code @NamedQuery}
+     * analysis linter.
+     * <p>
+     * Configurable via the {@link #linter(org.gradle.api.Action)} DSL method.
+     * By default the linter is enabled, fails the build on errors, and reports
+     * warnings.
+     * </p>
+     *
+     * @since 1.6.0
+     * @see LinterExtension
+     */
     @Nested
     final LinterExtension linter
 

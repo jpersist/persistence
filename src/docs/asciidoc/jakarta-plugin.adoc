@@ -3,7 +3,7 @@
 Plugin ID: `io.github.jpersist.jpa`
 
 The `io.github.jpersist.jpa` plugin is the core implementation of the JPersist plugin suite and facilitates the integration of provider platform plugins such as EclipseLink and Hibernate.
-It automatically applies the `java` plugin, registers a `persistence` DSL extension, and creates per-source-set tasks for descriptor generation, schema validation, and GraalVM native image metadata generation.
+It automatically applies the `java` plugin, registers a `persistence` DSL extension, and creates per-source-set tasks for descriptor generation, schema validation, GraalVM native image metadata generation, and static compile-time named query linting.
 
 == Applying the Plugin
 
@@ -129,6 +129,11 @@ persistence {
 | `ValidationExtension`
 | _see below_
 | Nested database connection configuration for the schema validation task.
+
+| `linter`
+| `LinterExtension`
+| _see below_
+| Nested configuration for the static compile-time `@NamedQuery` analysis linter.
 
 | `outputProperties`
 | `MapProperty<String, String>`
@@ -347,9 +352,61 @@ persistence {
 }
 ----
 
+=== `LinterExtension` Properties
+
+_Since 1.6.0_
+
+[cols="2,2,2,4"]
+|===
+| Property | Type | Default | Description
+
+| `enabled`
+| `Property<Boolean>`
+| `true`
+| Whether the static `@NamedQuery` analysis task should execute.
+
+| `failOnError`
+| `Property<Boolean>`
+| `true`
+| Whether a query syntax error or metamodel mismatch fails the Gradle build. When `false`, errors are logged as warnings.
+
+| `ignoreWarnings`
+| `Property<Boolean>`
+| `false`
+| Whether sub-critical semantic validation warnings should be muted.
+|===
+
+[source,groovy,indent=0,role="primary"]
+.Groovy
+----
+persistence {
+    main {
+        linter {
+            enabled = true
+            failOnError = true
+            ignoreWarnings = false
+        }
+    }
+}
+----
+
+[source,kotlin,indent=0,role="secondary"]
+.Kotlin
+----
+persistence {
+    create("main") {
+        linter {
+            enabled.set(true)
+            failOnError.set(true)
+            ignoreWarnings.set(false)
+        }
+    }
+}
+----
+
 == Legacy JPA Namespace Support
 
-_Since {project-version}_
+_Since 1.5.4_
 
 When the `version` property is set to a legacy JPA specification version (`2.0`, `2.1`, or `2.2`), the plugin automatically switches annotation scanning from the `jakarta.persistence` namespace to the `javax.persistence` namespace.
 This ensures correct entity discovery for projects that still target the older Java Persistence API (JPA 2.x), where annotations such as `@javax.persistence.Entity` are used instead of `@jakarta.persistence.Entity`.
@@ -589,3 +646,46 @@ The generated JSON follows the GraalVM reachability metadata format and register
 |===
 
 The generated resource directory is automatically added to the source set resources, ensuring the JSON file is indexed by IDEs and packaged into the final JAR.
+
+=== `lintNamedQueries`
+
+_Since 1.6.0_
+
+**Group:** `verification` +
+**Type:** `LintNamedQueries`
+
+Performs a static, compile-time AST verification pass over all `@NamedQuery` and `@NamedStoredProcedureQuery` definitions discovered in the compiled source set output.
+The task uses ASM bytecode scanning to locate query annotations, then validates JPQL/HQL syntax and parameter naming conventions using an ANTLR4-based parser loaded via SPI.
+Processing runs inside an isolated Gradle Worker classloader.
+
+[cols="2,2,2,4"]
+|===
+| Property | Type | Default | Description
+
+| `jpaVersion`
+| `Property<String>`
+| `"3.0"`
+| The JPA specification version used to determine the annotation namespace (`jakarta.persistence` vs `javax.persistence`) during bytecode scanning.
+
+| `failOnError`
+| `Property<Boolean>`
+| `true`
+| Whether discovering a syntax error or metamodel mismatch immediately fails the build.
+
+| `ignoreWarnings`
+| `Property<Boolean>`
+| `false`
+| Whether sub-critical semantic validation warnings should be muted.
+
+| `compiledClassesDir`
+| `DirectoryProperty`
+| _from source set output_
+| The directory containing compiled `.class` files to scan.
+
+| `classpath`
+| `ConfigurableFileCollection`
+| _auto-configured_
+| The classpath including compiled classes and the lint persistence libraries.
+|===
+
+TIP: The task is automatically skipped when the linter is disabled via `persistence.main.linter.enabled = false`.
