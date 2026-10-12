@@ -45,20 +45,24 @@ jobs:
       - name: Make Gradle Wrapper Executable
         run: chmod +x ./gradlew
 
+      - name: Run Libraries Build and Unit Tests
+        working-directory: libraries
+        run: ../gradlew build --configuration-cache
+
       # Verifies tasks, bytecode enhancement, and confirms true Configuration Cache compliance
       - name: Run Build and Functional Tests
         run: ./gradlew build --configuration-cache
 
       # ONLY execute Sonar analysis on JDK 21 pushed to main branches or active pull requests
-      - name: Analyze with Sonar
-        if: matrix.java-version == 21 && (github.actor != 'dependabot[bot]')
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew sonar --no-configuration-cache
-
       - name: Analyze Libraries with Sonar
         if: matrix.java-version == 21 && (github.actor != 'dependabot[bot]')
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         working-directory: libraries
         run: ../gradlew sonar --no-configuration-cache
+
+      - name: Analyze with Sonar
+        if: matrix.java-version == 21 && (github.actor != 'dependabot[bot]')
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: ./gradlew sonar --no-configuration-cache
