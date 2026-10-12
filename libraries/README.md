@@ -11,12 +11,12 @@ The **Lint Persistence Libraries** provide build-time validation of named JPQL q
 
 ## 📦 Modules
 
-| Module | Description |
-| :--- | :--- |
-| **`lint-persistence-api`** | Defines the Service Provider Interface (SPI): `QueryParser` and `QueryParserFactory`. Contains no implementation; provider modules are discovered at runtime through the `ServiceLoader` mechanism. |
-| **`lint-persistence-jakarta`** | Jakarta Persistence (JPA 3.x) provider. Uses Hibernate ORM 6 to compile JPQL queries into Semantic Query Model (SQM) trees. |
-| **`lint-persistence-legacy`** | Legacy `javax.persistence` (JPA 2.x) provider. Uses Hibernate 5 and its AST-based query translator to validate JPQL queries. |
-| **`lint-persistence-bom`** | Bill of Materials (BOM) for convenient dependency management of all Lint Persistence modules. |
+| Module                         | Description                                                                                                                                                                                                     |
+|:-------------------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **`lint-persistence-api`**     | Defines the Service Provider Interface (SPI): `NamedObjectParser` and `NamedObjectParserFactory`. Contains no implementation; provider modules are discovered at runtime through the `ServiceLoader` mechanism. |
+| **`lint-persistence-jakarta`** | Jakarta Persistence (JPA 3.x) provider. Uses Hibernate ORM 6 to compile JPQL queries into Semantic Query Model (SQM) trees.                                                                                     |
+| **`lint-persistence-legacy`**  | Legacy `javax.persistence` (JPA 2.x) provider. Uses Hibernate 5 and its AST-based query translator to validate JPQL queries.                                                                                    |
+| **`lint-persistence-bom`**     | Bill of Materials (BOM) for convenient dependency management of all Lint Persistence modules.                                                                                                                   |
 
 ---
 
@@ -42,14 +42,24 @@ dependencies {
 }
 ```
 
-### 2. Validate queries
+### 2. Validate named queries & stored procedures
 
-Use `QueryParserFactory.newQueryParserFactory(String)` to obtain the appropriate factory for a given JPA specification version, then create a `QueryParser` to validate individual queries:
+Use `NamedObjectParserFactory.newNamedObjectParserFactory(String)` to obtain the appropriate factory for a given JPA specification version, then create a `NamedObjectParser` to validate named queries and stored procedures:
 
 ```java
-QueryParserFactory factory = QueryParserFactory.newQueryParserFactory("3.1");
-QueryParser parser = factory.newQueryParser(entityClassNames);
-parser.parseQuery("Order.findByStatus", "SELECT o FROM Order o WHERE o.status = :status");
+NamedObjectParserFactory factory = NamedObjectParserFactory.newNamedObjectParserFactory("3.1");
+NamedObjectParser parser = factory.newNamedObjectParser(entityClassNames);
+
+// Validate a named query
+NamedObjectDescriptor queryDescriptor = parser.parseQuery(
+    "Order.findByStatus",
+    "SELECT o FROM Order o WHERE o.status = :status");
+
+// Validate a named stored procedure
+NamedObjectDescriptor procDescriptor = parser.parseStoredProcedure(
+    "Order.archiveOldOrders",
+    "sp_archive_orders",
+    Set.of("cutoffDate", "archiveTable"));
 ```
 
 The factory method accepts JPA version strings (`"2.0"` – `"2.2"` for `javax`, `"3.0"` – `"3.2"` for `jakarta`) and resolves the correct provider via the `ServiceLoader` API.
@@ -60,16 +70,18 @@ The factory method accepts JPA version strings (`"2.0"` – `"2.2"` for `javax`,
 
 ```
 lint-persistence-api  (SPI)
- ├── QueryParser            — parses and validates a single JPQL query
- └── QueryParserFactory     — creates QueryParser instances; discovered via ServiceLoader
+ ├── NamedObjectParser        — parses and validates named queries and stored procedures
+ ├── NamedObjectParserFactory — creates NamedObjectParser instances; discovered via ServiceLoader
+ ├── NamedObjectDescriptor    — immutable result containing parsed metadata and parameters
+ └── NamedObjectType          — QUERY or STORED_PROCEDURE
 
 lint-persistence-jakarta  (Provider)
- ├── JakartaQueryParser        — Hibernate 6 / SQM-based implementation
- └── JakartaQueryParserFactory — registered for the "jakarta" namespace
+ ├── JakartaNamedObjectParser        — Hibernate 6 / SQM-based implementation
+ └── JakartaNamedObjectParserFactory — registered for the "jakarta" namespace
 
 lint-persistence-legacy  (Provider)
- ├── LegacyQueryParser         — Hibernate 5 / AST-based implementation
- └── LegacyQueryParserFactory  — registered for the "javax" namespace
+ ├── LegacyNamedObjectParser         — Hibernate 5 / AST-based implementation
+ └── LegacyNamedObjectParserFactory  — registered for the "javax" namespace
 
 lint-persistence-bom  (BOM)
  └── Aligns versions of all modules above

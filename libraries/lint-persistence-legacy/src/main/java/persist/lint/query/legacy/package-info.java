@@ -12,6 +12,8 @@
  * registered as a {@link java.util.ServiceLoader} provider for
  * {@link persist.lint.query.spi.QueryParserFactory}.</p>
  *
+ * @since 1.0.0
+ * @deprecated Use the {@link persist.lint.legacy} package instead.
  * @see persist.lint.query.spi.QueryParser
  * @see persist.lint.query.spi.QueryParserFactory
  */
