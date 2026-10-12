@@ -225,6 +225,7 @@ sonar {
         property "sonar.projectKey", "jpersist_persistence"
         property "sonar.organization", "jpersist"
         property "sonar.host.url", "https://sonarcloud.io"
+        property "sonar.projectName", "persistence"
 
         property "sonar.exclusions", ".github/**/*"
 
