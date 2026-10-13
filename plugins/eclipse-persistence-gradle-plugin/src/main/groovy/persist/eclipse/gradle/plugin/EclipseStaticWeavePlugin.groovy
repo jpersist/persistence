@@ -64,6 +64,15 @@ class EclipseStaticWeavePlugin implements Plugin<Project> {
 
             def jarFileConfigName = sourceSet.name == 'main' ? "jarFile" : "${sourceSet.name}JarFile"
 
+            // Instantiate source-set-specific internal weaving classpaths
+            String weavingClasspathName = sourceSet.name == 'main' ? "weavingClasspath" : "${sourceSet.name}WeavingClasspath"
+            def weavingClasspathProvider = project.configurations.register(weavingClasspathName) { config ->
+                config.canBeConsumed = false
+                config.canBeResolved = true
+                // Extends from the global user-facing 'weave' configuration container
+                config.extendsFrom(weaveConfig)
+            }
+
             // Fetch the compileJava task provider safely
             def compileJavaProvider = project.tasks.named(compileTaskName, JavaCompile)
 
@@ -100,7 +109,8 @@ class EclipseStaticWeavePlugin implements Plugin<Project> {
                 })
 
                 // Wire the classpaths safely using lazy FileCollections
-                task.weaveClasspath.from(weaveConfig)
+                // Task reads directly from the isolated internal configuration provider
+                task.weaveClasspath.from(weavingClasspathProvider)
                 task.compileClasspath.from(sourceSet.compileClasspath)
 
                 // Skip weaving if no persistence.xml available
