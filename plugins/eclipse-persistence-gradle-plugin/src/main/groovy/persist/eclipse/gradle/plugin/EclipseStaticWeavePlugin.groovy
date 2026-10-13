@@ -43,6 +43,17 @@ import persist.eclipse.gradle.task.EclipseWeaveTask
  * the default weave dependency without conflicts.
  * </p>
  *
+ * <p>
+ * <b>Since 1.7.0:</b> The plugin now registers a source-set-specific internal
+ * {@code weavingClasspath} configuration (e.g.&nbsp;{@code weavingClasspath} for {@code main},
+ * {@code testWeavingClasspath} for {@code test}) with {@code canBeConsumed = false} and
+ * {@code canBeResolved = true}. This configuration lazily extends from the global user-facing
+ * {@code weave} configuration, isolating the weaving task execution graph. The
+ * {@link EclipseWeaveTask} now reads its {@code weaveClasspath} directly from this isolated
+ * internal configuration provider, protecting task property resolution states and maintaining
+ * full compatibility with the Gradle Configuration Cache.
+ * </p>
+ *
  * @see EclipseWeaveTask
  */
 class EclipseStaticWeavePlugin implements Plugin<Project> {
@@ -63,6 +74,15 @@ class EclipseStaticWeavePlugin implements Plugin<Project> {
             String weaveTaskName = "eclipseWeave${classesTaskName.capitalize()}"
 
             def jarFileConfigName = sourceSet.name == 'main' ? "jarFile" : "${sourceSet.name}JarFile"
+
+            // Instantiate source-set-specific internal weaving classpaths
+            String weavingClasspathName = sourceSet.name == 'main' ? "weavingClasspath" : "${sourceSet.name}WeavingClasspath"
+            def weavingClasspathProvider = project.configurations.register(weavingClasspathName) { config ->
+                config.canBeConsumed = false
+                config.canBeResolved = true
+                // Extends from the global user-facing 'weave' configuration container
+                config.extendsFrom(weaveConfig)
+            }
 
             // Fetch the compileJava task provider safely
             def compileJavaProvider = project.tasks.named(compileTaskName, JavaCompile)
@@ -100,7 +120,8 @@ class EclipseStaticWeavePlugin implements Plugin<Project> {
                 })
 
                 // Wire the classpaths safely using lazy FileCollections
-                task.weaveClasspath.from(weaveConfig)
+                // Task reads directly from the isolated internal configuration provider
+                task.weaveClasspath.from(weavingClasspathProvider)
                 task.compileClasspath.from(sourceSet.compileClasspath)
 
                 // Skip weaving if no persistence.xml available
