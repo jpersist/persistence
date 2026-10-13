@@ -43,6 +43,17 @@ import persist.eclipse.gradle.task.EclipseWeaveTask
  * the default weave dependency without conflicts.
  * </p>
  *
+ * <p>
+ * <b>Since 1.7.0:</b> The plugin now registers a source-set-specific internal
+ * {@code weavingClasspath} configuration (e.g.&nbsp;{@code weavingClasspath} for {@code main},
+ * {@code testWeavingClasspath} for {@code test}) with {@code canBeConsumed = false} and
+ * {@code canBeResolved = true}. This configuration lazily extends from the global user-facing
+ * {@code weave} configuration, isolating the weaving task execution graph. The
+ * {@link EclipseWeaveTask} now reads its {@code weaveClasspath} directly from this isolated
+ * internal configuration provider, protecting task property resolution states and maintaining
+ * full compatibility with the Gradle Configuration Cache.
+ * </p>
+ *
  * @see EclipseWeaveTask
  */
 class EclipseStaticWeavePlugin implements Plugin<Project> {

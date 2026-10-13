@@ -235,8 +235,8 @@ The woven classes are automatically included in the final JAR with higher priori
 
 | `weaveClasspath`
 | `ConfigurableFileCollection`
-| _from `weave` configuration_
-| The classpath carrying the EclipseLink core libraries and tool binaries required to execute the `StaticWeave` main class.
+| _from `weavingClasspath` configuration_
+| The classpath carrying the EclipseLink core libraries and tool binaries required to execute the `StaticWeave` main class. Since 1.7.0, the task reads from an isolated, source-set-specific internal `weavingClasspath` configuration (e.g. `weavingClasspath` for `main`, `testWeavingClasspath` for `test`) rather than directly from the global `weave` configuration, ensuring full compatibility with the Gradle Configuration Cache.
 
 | `compileClasspath`
 | `ConfigurableFileCollection`
@@ -261,6 +261,7 @@ The `io.github.jpersist.eclipse-static-weave` sub-plugin creates a `weave` depen
 
 * If the `jpa` configuration exists (e.g. when the core `io.github.jpersist.jpa` plugin is applied), the `weave` configuration automatically extends from it, inheriting all platform version constraints.
 * The plugin adds `org.eclipse.persistence:org.eclipse.persistence.jpa` to the `weave` configuration by default, but only if the user has not declared any custom dependencies in the `weave` configuration. This allows projects to substitute or override the default weave dependency without conflicts. _(Since 1.5.4)_
+* For each source set, the plugin registers an internal `weavingClasspath` configuration (e.g. `weavingClasspath` for `main`, `testWeavingClasspath` for `test`) with `canBeConsumed = false` and `canBeResolved = true`. This configuration lazily extends from the global `weave` configuration, isolating the weaving task execution graph and protecting task property resolution states for full Gradle Configuration Cache compatibility. _(Since 1.7.0)_
 
 [source,groovy,indent=0,role="primary"]
 .Groovy
