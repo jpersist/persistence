@@ -26,6 +26,9 @@ class JakartaPersistencePluginSpec extends Specification {
         and: "The jar file configuration is registered"
         project.configurations.named('jarFile') != null
 
+        and: "The modelgen processor configuration is registered"
+        project.configurations.named('modelgenProcessor') != null
+
         and: "All tasks are registered with the correct type"
         Map<String, Class<?>> taskMap = [
             "processPersistenceDescriptor": ProcessPersistenceDescriptor,

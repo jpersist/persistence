@@ -8,7 +8,7 @@ dependencies {
 
     runtimeOnly 'org.hibernate:hibernate-core:5.6.15.Final'
 
-    annotationProcessor 'org.hibernate:hibernate-jpamodelgen:5.6.15.Final'
+    modelgenProcessor 'org.hibernate:hibernate-jpamodelgen:5.6.15.Final'
 }
 
 persistence {

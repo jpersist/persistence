@@ -43,6 +43,12 @@ import persist.jakarta.gradle.task.ValidatePersistenceSchema
  *         {@code runtimeOnly}). When the {@link org.gradle.api.plugins.JavaLibraryPlugin}
  *         is applied, the {@code api} and {@code compileOnlyApi} configurations are
  *         also extended from {@code jpa}.</li>
+ *     <li>Registers a global, non-resolvable {@code modelgenProcessor} configuration
+ *         container that centralizes modelgen annotation processor dependencies.
+ *         Each source set's {@code annotationProcessor} configuration lazily extends
+ *         from this unified root via {@code extendsFrom}, so that provider-specific
+ *         plugins (e.g.&nbsp;Hibernate or EclipseLink) only need to target the single
+ *         {@code modelgenProcessor} configuration.</li>
  *     <li>Registers the {@code persistence}
  *         {@link org.gradle.api.NamedDomainObjectContainer} of
  *         {@link persist.jakarta.gradle.extension.PersistenceExtension} as the
@@ -129,6 +135,12 @@ class JakartaPersistencePlugin implements Plugin<Project> {
             config.canBeResolved = false
         }
 
+        // Register the unified global modelgenProcessor configuration container
+        def modelgenProcessorProvider = project.configurations.register('modelgenProcessor') { config ->
+            config.canBeConsumed = false
+            config.canBeResolved = false
+        }
+
         // 1. Create a NamedDomainObjectContainer using Gradle's ObjectFactory
         def container = project.objects.domainObjectContainer(PersistenceExtension)
 
@@ -147,6 +159,11 @@ class JakartaPersistencePlugin implements Plugin<Project> {
             // Automatically initialize a configuration instance inside the container matching the source set name
             // (e.g., this instantly builds 'persistence.main' and 'persistence.test')
             def extension = container.maybeCreate(sourceSet.name)
+
+            // Automatically make all source set annotation processors extend from the global configuration
+            project.configurations.named(sourceSet.annotationProcessorConfigurationName).configure { config ->
+                config.extendsFrom(modelgenProcessorProvider.get())
+            }
 
             // Auto-register persistence units already declared in the user's persistence.xml file
             autoRegisterExistingUnits(project, sourceSet, extension)

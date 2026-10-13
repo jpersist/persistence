@@ -22,6 +22,15 @@ import org.gradle.api.tasks.SourceSetContainer
  * dependencies in the corresponding {@code annotationProcessor} configuration. This allows
  * projects to substitute or override the default processor without conflicts.
  * </p>
+ * <p>
+ * <b>Since 1.7.0:</b> The default annotation processor dependency is now added to the
+ * unified global {@code modelgenProcessor} configuration container (registered by
+ * {@link persist.jakarta.gradle.plugin.JakartaPersistencePlugin}) instead of the
+ * per-source-set {@code annotationProcessor} configuration. The fallback only fires when
+ * the {@code modelgenProcessor} configuration exists and contains no user-declared
+ * dependencies, allowing user overrides inside {@code modelgenProcessor} to propagate
+ * cleanly and safely skip the built-in default.
+ * </p>
  */
 class HibernateJpamodelgenPlugin implements Plugin<Project> {
 
@@ -34,19 +43,18 @@ class HibernateJpamodelgenPlugin implements Plugin<Project> {
 
         // Automatically and lazily iterate over all source sets configured in the module
         sourceSets.configureEach { sourceSet ->
-            // Determine the matching annotation processor configuration name.
-            String configName = sourceSet.annotationProcessorConfigurationName
-
             // Expose the annotation processor source folder into the core Java source directory pool.
             sourceSet.java.srcDir(project.layout.buildDirectory.dir("generated/sources/annotationProcessor/java/${sourceSet.name}"))
         }
 
-        // Only add the default Hibernate processor if the user's annotationProcessor block is completely empty
+        // Target the global modelgenProcessor configuration during afterEvaluate fallback loops
         project.afterEvaluate {
-            def configName = JavaPlugin.ANNOTATION_PROCESSOR_CONFIGURATION_NAME
-            project.configurations.named(configName).configure { config ->
-                if (config.dependencies.isEmpty()) {
-                    project.dependencies.add(configName, 'org.hibernate.orm:hibernate-jpamodelgen')
+            def globalConfigName = 'modelgenProcessor'
+            if (project.configurations.names.contains(globalConfigName)) {
+                project.configurations.named(globalConfigName).configure { config ->
+                    if (config.dependencies.isEmpty()) {
+                        project.dependencies.add(globalConfigName, 'org.hibernate.orm:hibernate-jpamodelgen')
+                    }
                 }
             }
         }

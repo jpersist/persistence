@@ -79,7 +79,7 @@ plugins {
 The `io.github.jpersist.hibernate-jpamodelgen` sub-plugin automatically:
 
 * Applies the `java` plugin.
-* Adds `org.hibernate.orm:hibernate-jpamodelgen` as an `annotationProcessor` dependency, but only if the user has not declared any custom annotation processor dependencies in the `annotationProcessor` configuration. _(Since 1.5.2)_
+* Adds `org.hibernate.orm:hibernate-jpamodelgen` to the unified global `modelgenProcessor` configuration container (registered by the `io.github.jpersist.jpa` plugin), but only if the user has not declared any custom dependencies in the `modelgenProcessor` configuration. This allows user overrides inside `modelgenProcessor` to propagate cleanly and safely skip the built-in default. _(Since 1.7.0, previously targeted `annotationProcessor` directly since 1.5.2)_
 * Registers the annotation processor generated source directory (`build/generated/sources/annotationProcessor/java/<sourceSet>`) into the source set's Java source directories for seamless IDE indexing.
 
 No additional configuration is needed — the annotation processor version is resolved from the Hibernate platform BOM declared through the `jpa` configuration.

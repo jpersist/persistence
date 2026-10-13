@@ -9,7 +9,7 @@ dependencies {
 
     implementation 'org.eclipse.persistence:org.eclipse.persistence.jpa'
 
-    annotationProcessor 'org.eclipse.persistence:org.eclipse.persistence.jpa.modelgen.processor'
+    modelgenProcessor 'org.eclipse.persistence:org.eclipse.persistence.jpa.modelgen.processor'
 }
 
 dependencyRecommendations {
