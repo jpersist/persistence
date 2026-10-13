@@ -7,8 +7,6 @@ dependencies {
     jpa platform('org.hibernate.orm:hibernate-platform:6.6.56.Final')
 
     implementation 'org.hibernate.orm:hibernate-core'
-
-    annotationProcessor 'org.hibernate.orm:hibernate-jpamodelgen'
 }
 
 repositories {

@@ -34,19 +34,18 @@ class HibernateJpamodelgenPlugin implements Plugin<Project> {
 
         // Automatically and lazily iterate over all source sets configured in the module
         sourceSets.configureEach { sourceSet ->
-            // Determine the matching annotation processor configuration name.
-            String configName = sourceSet.annotationProcessorConfigurationName
-
             // Expose the annotation processor source folder into the core Java source directory pool.
             sourceSet.java.srcDir(project.layout.buildDirectory.dir("generated/sources/annotationProcessor/java/${sourceSet.name}"))
         }
 
-        // Only add the default Hibernate processor if the user's annotationProcessor block is completely empty
+        // Target the global modelgenProcessor configuration during afterEvaluate fallback loops
         project.afterEvaluate {
-            def configName = JavaPlugin.ANNOTATION_PROCESSOR_CONFIGURATION_NAME
-            project.configurations.named(configName).configure { config ->
-                if (config.dependencies.isEmpty()) {
-                    project.dependencies.add(configName, 'org.hibernate.orm:hibernate-jpamodelgen')
+            def globalConfigName = 'modelgenProcessor'
+            if (project.configurations.names.contains(globalConfigName)) {
+                project.configurations.named(globalConfigName).configure { config ->
+                    if (config.dependencies.isEmpty()) {
+                        project.dependencies.add(globalConfigName, 'org.hibernate.orm:hibernate-jpamodelgen')
+                    }
                 }
             }
         }

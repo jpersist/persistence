@@ -129,6 +129,12 @@ class JakartaPersistencePlugin implements Plugin<Project> {
             config.canBeResolved = false
         }
 
+        // Register the unified global modelgenProcessor configuration container
+        def modelgenProcessorProvider = project.configurations.register('modelgenProcessor') { config ->
+            config.canBeConsumed = false
+            config.canBeResolved = false
+        }
+
         // 1. Create a NamedDomainObjectContainer using Gradle's ObjectFactory
         def container = project.objects.domainObjectContainer(PersistenceExtension)
 
@@ -147,6 +153,11 @@ class JakartaPersistencePlugin implements Plugin<Project> {
             // Automatically initialize a configuration instance inside the container matching the source set name
             // (e.g., this instantly builds 'persistence.main' and 'persistence.test')
             def extension = container.maybeCreate(sourceSet.name)
+
+            // Automatically make all source set annotation processors extend from the global configuration
+            project.configurations.named(sourceSet.annotationProcessorConfigurationName).configure { config ->
+                config.extendsFrom(modelgenProcessorProvider.get())
+            }
 
             // Auto-register persistence units already declared in the user's persistence.xml file
             autoRegisterExistingUnits(project, sourceSet, extension)

@@ -14,8 +14,8 @@ class EclipsePersistencePluginSpec extends Specification {
         when: "The java plugin and our eclipse-persistence plugin are applied"
         project.plugins.apply('io.github.jpersist.eclipse-persistence')
 
-        then: "The annotation processor configuration is registered"
-        project.configurations.named('annotationProcessor') != null
+        then: "The modelgen processor configuration is registered"
+        project.configurations.named('modelgenProcessor') != null
 
         and: "The weave task is registered with the correct type"
         def task = project.tasks.named("eclipseWeaveClasses")
