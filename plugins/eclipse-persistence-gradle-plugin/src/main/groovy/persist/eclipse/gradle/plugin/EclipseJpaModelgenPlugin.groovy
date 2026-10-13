@@ -37,6 +37,15 @@ import persist.eclipse.gradle.extension.EclipselinkExtension
  * {@code -Aeclipselink.eclipselink-ormxml} to {@code -Aeclipselink.ormxml.location} and
  * {@code -Aeclipselink.eclipselink-ormxml.location} respectively.
  * </p>
+ * <p>
+ * <b>Since 1.7.0:</b> The default annotation processor dependency is now added to the
+ * unified global {@code modelgenProcessor} configuration container (registered by
+ * {@link persist.jakarta.gradle.plugin.JakartaPersistencePlugin}) instead of the
+ * per-source-set {@code annotationProcessor} configuration. The fallback only fires when
+ * the {@code modelgenProcessor} configuration exists and contains no user-declared
+ * dependencies, allowing user overrides inside {@code modelgenProcessor} to propagate
+ * cleanly and safely skip the built-in default.
+ * </p>
  *
  * @see EclipselinkExtension
  */

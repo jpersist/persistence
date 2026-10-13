@@ -48,6 +48,29 @@ dependencies {
 }
 ----
 
+=== The `modelgenProcessor` Configuration
+
+The plugin also registers a global, non-resolvable `modelgenProcessor` configuration container that centralizes modelgen annotation processor dependencies. _(Since 1.7.0)_
+
+Each source set's `annotationProcessor` configuration lazily extends from this unified root via `extendsFrom`, so that provider-specific plugins (e.g. Hibernate or EclipseLink) only need to target the single `modelgenProcessor` configuration.
+User overrides declared inside `modelgenProcessor` propagate to all source sets and safely skip any built-in defaults added by provider plugins.
+
+[source,groovy,indent=0,role="primary"]
+.Groovy
+----
+dependencies {
+    modelgenProcessor 'org.hibernate.orm:hibernate-jpamodelgen:6.6.56.Final'
+}
+----
+
+[source,kotlin,indent=0,role="secondary"]
+.Kotlin
+----
+dependencies {
+    "modelgenProcessor"("org.hibernate.orm:hibernate-jpamodelgen:6.6.56.Final")
+}
+----
+
 == DSL Extension: `persistence`
 
 The `persistence` block is a `NamedDomainObjectContainer` scoped per Java source set.

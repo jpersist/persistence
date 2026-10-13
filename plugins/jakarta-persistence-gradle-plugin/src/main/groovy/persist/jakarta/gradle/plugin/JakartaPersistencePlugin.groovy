@@ -43,6 +43,12 @@ import persist.jakarta.gradle.task.ValidatePersistenceSchema
  *         {@code runtimeOnly}). When the {@link org.gradle.api.plugins.JavaLibraryPlugin}
  *         is applied, the {@code api} and {@code compileOnlyApi} configurations are
  *         also extended from {@code jpa}.</li>
+ *     <li>Registers a global, non-resolvable {@code modelgenProcessor} configuration
+ *         container that centralizes modelgen annotation processor dependencies.
+ *         Each source set's {@code annotationProcessor} configuration lazily extends
+ *         from this unified root via {@code extendsFrom}, so that provider-specific
+ *         plugins (e.g.&nbsp;Hibernate or EclipseLink) only need to target the single
+ *         {@code modelgenProcessor} configuration.</li>
  *     <li>Registers the {@code persistence}
  *         {@link org.gradle.api.NamedDomainObjectContainer} of
  *         {@link persist.jakarta.gradle.extension.PersistenceExtension} as the
