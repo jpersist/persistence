@@ -73,11 +73,11 @@ function windowTitle()
 
 
 <h2 title="Package persist.jakarta.gradle.worker Description" class="title">Package persist.jakarta.gradle.worker Description</h2>
-<div class="header"> Gradle Worker API implementations for Jakarta Persistence schema validation.
+<div class="header"> Gradle Worker API implementations for Jakarta Persistence build-time analysis.
  <p>
- This package contains the worker action and its parameter interface used to
- validate JPA entity mappings against a database schema inside an isolated
- classloader managed by Gradle's org.gradle.workers.WorkerExecutor.
+ This package contains the worker actions and their parameter interfaces used to
+ perform isolated build-time analysis of JPA entity mappings inside classloaders
+ managed by Gradle's org.gradle.workers.WorkerExecutor.
  </p>
  <ul>
      <li><a href='../../../../persist/jakarta/gradle/worker/SchemaValidationParameters.html' title='SchemaValidationParameters'>SchemaValidationParameters</a> &mdash;
@@ -88,7 +88,16 @@ function windowTitle()
          jakarta.persistence.EntityManagerFactory per persistence unit
          with the <TT>validate</TT> schema generation action, failing the build
          if entity metadata does not match the database schema.</li>
- </ul><DL><DT><B>since:</B></DT><DD>1.5.0</DD></DL><DL><DT><B>see:</B></DT><DD><a href='../../../../persist/jakarta/gradle/task/ValidatePersistenceSchema.html' title='ValidatePersistenceSchema'>ValidatePersistenceSchema</a></DD></DL>
+     <li>persist.jakarta.gradle.worker.LintNamedQueriesParameters &mdash;
+         Parameter interface carrying the compiled classes directory, JPA
+         version, and linter options into the isolated worker process.</li>
+     <li>persist.jakarta.gradle.worker.LintNamedQueriesWorker &mdash;
+         org.gradle.workers.WorkAction that performs ASM bytecode
+         scanning to discover <TT>@NamedQuery</TT> and
+         <TT>@NamedStoredProcedureQuery</TT> annotations, then validates their
+         JPQL/HQL syntax and parameter naming conventions using an ANTLR4-based
+         parser loaded via SPI.</li>
+ </ul><DL><DT><B>since:</B></DT><DD>1.5.0</DD></DL><DL><DT><B>see:</B></DT><DD><a href='../../../../persist/jakarta/gradle/task/ValidatePersistenceSchema.html' title='ValidatePersistenceSchema'>ValidatePersistenceSchema</a></DD></DL><DL><DT><B>see:</B></DT><DD><a href='../../../../persist/jakarta/gradle/task/LintNamedQueries.html' title='LintNamedQueries'>LintNamedQueries</a></DD></DL>
  
  </div>
 
@@ -106,6 +115,14 @@ function windowTitle()
                         <th class="colFirst" scope="col">Interface</th>
                         <th class="colLast" scope="col">Description</th>
                     </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="LintNamedQueriesParameters.html" title="class in persist/jakarta/gradle/worker">
+                                    LintNamedQueriesParameters
+                                </a></strong>
+                            </td>
+                            <td>Parameters required by the <a href='../../../../persist/jakarta/gradle/worker/LintNamedQueriesWorker.html' title='LintNamedQueriesWorker'>LintNamedQueriesWorker</a>.</td>
+                        </tr>
 <tr class="altColor">
                             <td class="colOne">
                                 <strong><a href="SchemaValidationParameters.html" title="class in persist/jakarta/gradle/worker">
@@ -134,6 +151,31 @@ function windowTitle()
                         <th class="colFirst" scope="col">Class</th>
                         <th class="colLast" scope="col">Description</th>
                     </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="LintNamedQueriesWorker.html" title="class in persist/jakarta/gradle/worker">
+                                    LintNamedQueriesWorker
+                                </a></strong>
+                            </td>
+                            <td>An isolated Worker Action that performs bytecode sweeping and query AST
+ validation inside a classloader-isolated process.</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="LintNamedQueriesWorker.StoredProcedureDataExtractor.1.html" title="class in persist/jakarta/gradle/worker">
+                                    LintNamedQueriesWorker.StoredProcedureDataExtractor.1
+                                </a></strong>
+                            </td>
+                            <td></td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="LintNamedQueriesWorker.StoredProcedureDataExtractor.1.1.html" title="class in persist/jakarta/gradle/worker">
+                                    LintNamedQueriesWorker.StoredProcedureDataExtractor.1.1
+                                </a></strong>
+                            </td>
+                            <td></td>
+                        </tr>
 <tr class="altColor">
                             <td class="colOne">
                                 <strong><a href="SchemaValidationWorker.html" title="class in persist/jakarta/gradle/worker">

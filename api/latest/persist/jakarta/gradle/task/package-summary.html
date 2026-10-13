@@ -98,6 +98,14 @@ function windowTitle()
          Generates a GraalVM native image <TT>reflect-config.json</TT> file
          containing all discovered JPA entity metadata classes to support
          ahead-of-time (AOT) reflection registration.</li>
+     <li><a href='../../../../persist/jakarta/gradle/task/LintNamedQueries.html' title='LintNamedQueries'>LintNamedQueries</a> &mdash;
+         Executes a static, compile-time AST verification loop over all
+         <TT>@NamedQuery</TT> and <TT>@NamedStoredProcedureQuery</TT>
+         definitions discovered in the compiled source set output directories.
+         Uses classloader isolation via Gradle's
+         org.gradle.workers.WorkerExecutor and delegates the actual
+         analysis to
+         persist.jakarta.gradle.worker.LintNamedQueriesWorker.</li>
  </ul><DL><DT><B>since:</B></DT><DD>1.1.0</DD></DL><DL><DT><B>see:</B></DT><DD>persist.jakarta.gradle.task.delegate</DD></DL><DL><DT><B>see:</B></DT><DD>persist.jakarta.gradle.task.registry</DD></DL>
  
  </div>
@@ -126,6 +134,15 @@ function windowTitle()
                             </td>
                             <td>Generates a GraalVM native image <CODE>reflect-config.json</CODE> file
  containing all discovered JPA entity metadata classes to support AOT reflection.</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="LintNamedQueries.html" title="class in persist/jakarta/gradle/task">
+                                    LintNamedQueries
+                                </a></strong>
+                            </td>
+                            <td>Executes a static, compile-time AST verification loop over all<DL><DT><B>NamedQuery:</B></DT><DD>definitions
+ discovered inside the compiled source set output directories.</DD></DL> </td>
                         </tr>
 <tr class="altColor">
                             <td class="colOne">

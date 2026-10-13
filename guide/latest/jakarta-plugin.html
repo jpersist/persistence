@@ -605,7 +605,7 @@ $(addBlockSwitches);
 <div id="header">
 <h1>Jakarta Persistence Plugin</h1>
 <div class="details">
-<span id="revnumber">version 1.5.4</span>
+<span id="revnumber">version 1.6.0</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -621,6 +621,7 @@ $(addBlockSwitches);
 </li>
 <li><a href="#_persistenceunitextension_properties">3.2. <code>PersistenceUnitExtension</code> Properties</a></li>
 <li><a href="#_validationextension_properties">3.3. <code>ValidationExtension</code> Properties</a></li>
+<li><a href="#_linterextension_properties">3.4. <code>LinterExtension</code> Properties</a></li>
 </ul>
 </li>
 <li><a href="#_legacy_jpa_namespace_support">4. Legacy JPA Namespace Support</a></li>
@@ -635,6 +636,7 @@ $(addBlockSwitches);
 <li><a href="#_processpersistencedescriptor">6.1. <code>processPersistenceDescriptor</code></a></li>
 <li><a href="#_validatepersistenceschema">6.2. <code>validatePersistenceSchema</code></a></li>
 <li><a href="#_generatejpagraalvmmetadata">6.3. <code>generateJPAGraalVMMetadata</code></a></li>
+<li><a href="#_lintnamedqueries">6.4. <code>lintNamedQueries</code></a></li>
 </ul>
 </li>
 </ul>
@@ -648,7 +650,7 @@ $(addBlockSwitches);
 </div>
 <div class="paragraph">
 <p>The <code>io.github.jpersist.jpa</code> plugin is the core implementation of the JPersist plugin suite and facilitates the integration of provider platform plugins such as EclipseLink and Hibernate.
-It automatically applies the <code>java</code> plugin, registers a <code>persistence</code> DSL extension, and creates per-source-set tasks for descriptor generation, schema validation, and GraalVM native image metadata generation.</p>
+It automatically applies the <code>java</code> plugin, registers a <code>persistence</code> DSL extension, and creates per-source-set tasks for descriptor generation, schema validation, GraalVM native image metadata generation, and static compile-time named query linting.</p>
 </div>
 </div>
 </div>
@@ -659,7 +661,7 @@ It automatically applies the <code>java</code> plugin, registers a <code>persist
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">plugins {
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.jpa</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.5.4</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.jpa</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.6.0</span><span class="delimiter">'</span></span>
 }</code></pre>
 </div>
 </div>
@@ -667,7 +669,7 @@ It automatically applies the <code>java</code> plugin, registers a <code>persist
 <div class="title">Kotlin</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
-    id(&quot;io.github.jpersist.jpa&quot;) version &quot;1.5.4&quot;
+    id(&quot;io.github.jpersist.jpa&quot;) version &quot;1.6.0&quot;
 }</code></pre>
 </div>
 </div>
@@ -800,6 +802,12 @@ The plugin automatically creates one entry per source set (e.g. <code>main</code
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>ValidationExtension</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><em>see below</em></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Nested database connection configuration for the schema validation task.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>linter</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>LinterExtension</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>see below</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Nested configuration for the static compile-time <code>@NamedQuery</code> analysis linter.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>outputProperties</code></p></td>
@@ -1075,6 +1083,76 @@ The plugin automatically creates one entry per source set (e.g. <code>main</code
             driver.set(&quot;org.h2.Driver&quot;)
             user.set(&quot;sa&quot;)
             password.set(&quot;&quot;)
+        }
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_linterextension_properties">3.4. <code>LinterExtension</code> Properties</h3>
+<div class="paragraph">
+<p><em>Since 1.6.0</em></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 40%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>enabled</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Property&lt;Boolean&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Whether the static <code>@NamedQuery</code> analysis task should execute.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>failOnError</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Property&lt;Boolean&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Whether a query syntax error or metamodel mismatch fails the Gradle build. When <code>false</code>, errors are logged as warnings.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignoreWarnings</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Property&lt;Boolean&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>false</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Whether sub-critical semantic validation warnings should be muted.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock primary">
+<div class="title">Groovy</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">persistence {
+    main {
+        linter {
+            enabled = <span class="predefined-constant">true</span>
+            failOnError = <span class="predefined-constant">true</span>
+            ignoreWarnings = <span class="predefined-constant">false</span>
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">Kotlin</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="kotlin">persistence {
+    create(&quot;main&quot;) {
+        linter {
+            enabled.set(true)
+            failOnError.set(true)
+            ignoreWarnings.set(false)
         }
     }
 }</code></pre>
@@ -1464,13 +1542,88 @@ The task is automatically skipped when no active persistence unit names are pres
 <p>The generated resource directory is automatically added to the source set resources, ensuring the JSON file is indexed by IDEs and packaged into the final JAR.</p>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_lintnamedqueries">6.4. <code>lintNamedQueries</code></h3>
+<div class="paragraph">
+<p><em>Since 1.6.0</em></p>
+</div>
+<div class="paragraph">
+<p><strong>Group:</strong> <code>verification</code><br>
+<strong>Type:</strong> <code>LintNamedQueries</code></p>
+</div>
+<div class="paragraph">
+<p>Performs a static, compile-time AST verification pass over all <code>@NamedQuery</code> and <code>@NamedStoredProcedureQuery</code> definitions discovered in the compiled source set output.
+The task uses ASM bytecode scanning to locate query annotations, then validates JPQL/HQL syntax and parameter naming conventions using an ANTLR4-based parser loaded via SPI.
+Processing runs inside an isolated Gradle Worker classloader.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 40%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>jpaVersion</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Property&lt;String&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"3.0"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The JPA specification version used to determine the annotation namespace (<code>jakarta.persistence</code> vs <code>javax.persistence</code>) during bytecode scanning.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>failOnError</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Property&lt;Boolean&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Whether discovering a syntax error or metamodel mismatch immediately fails the build.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignoreWarnings</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Property&lt;Boolean&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>false</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Whether sub-critical semantic validation warnings should be muted.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>compiledClassesDir</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>DirectoryProperty</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>from source set output</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The directory containing compiled <code>.class</code> files to scan.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>classpath</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ConfigurableFileCollection</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>auto-configured</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The classpath including compiled classes and the lint persistence libraries.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+The task is automatically skipped when the linter is disabled via <code>persistence.main.linter.enabled = false</code>.
+</td>
+</tr>
+</table>
+</div>
+</div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.5.4<br>
-Last updated 2026-10-10 08:56:29 UTC
+Version 1.6.0<br>
+Last updated 2026-10-13 06:53:01 UTC
 </div>
 </div>
 </body>

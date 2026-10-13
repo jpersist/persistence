@@ -92,9 +92,12 @@ function windowTitle()
          when it is applied, and automatically registering persistence units
          found in a user-provided <TT>persistence.xml</TT> template.
          Additionally registers a <TT>validatePersistenceSchema</TT> task for
-         schema validation using an isolated worker process and a
+         schema validation using an isolated worker process, a
          <TT>generateJPAGraalVMMetadata</TT> task for generating GraalVM
-         native image reflection configuration.</li>
+         native image reflection configuration, and a
+         <TT>lintNamedQueries</TT> task for static compile-time verification
+         of <TT>@NamedQuery</TT> and <TT>@NamedStoredProcedureQuery</TT>
+         definitions.</li>
  </ul>
  <p>
  The plugin is designed as a replacement for the deprecated

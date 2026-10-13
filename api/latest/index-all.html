@@ -209,6 +209,8 @@ if (location.href.indexOf('is-external=true') == -1) {
 </dt><dd> <div class="block">The underlying enhancement configuration extension instance.</div></dd>
 <dt><span class="strong"><a href="persist/hibernate/gradle/extension/EnhancementExtension.html" title="Interface in persist.hibernate.gradle.extension">EnhancementExtension</a></span> - Interface in <a href="./persist/hibernate/gradle/extension/package-summary.html">persist.hibernate.gradle.extension</a>
 </dt><dd><div class="block">Configuration options for Hibernate's programmatic compile-time bytecode enhancement engine.</div></dd>
+<dt><span class="strong"><a href="persist/jakarta/gradle/worker/LintNamedQueriesWorker.html#execute()" title="Method in LintNamedQueriesWorker">execute()</a></span> - Method in <a href="persist/jakarta/gradle/worker/LintNamedQueriesWorker.html">LintNamedQueriesWorker</a>
+</dt><dd> <div class="block"></div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/worker/SchemaValidationWorker.html#execute()" title="Method in SchemaValidationWorker">execute()</a></span> - Method in <a href="persist/jakarta/gradle/worker/SchemaValidationWorker.html">SchemaValidationWorker</a>
 </dt><dd> <div class="block"></div></dd>
 </dl>
@@ -234,6 +236,9 @@ if (location.href.indexOf('is-external=true') == -1) {
 </dt><dd> <div class="block"></div></dd>
 <dt><span class="strong"><a href="persist/hibernate/gradle/task/HibernateEnhancementTask.html#getAssociationManagementEnabled()" title="Method in HibernateEnhancementTask">getAssociationManagementEnabled()</a></span> - Method in <a href="persist/hibernate/gradle/task/HibernateEnhancementTask.html">HibernateEnhancementTask</a>
 </dt><dd> <div class="block">Toggles whether to automatically manage bidirectional associations across mapped relationship bounds.</div></dd>
+<dt><span class="strong"><a href="persist/jakarta/gradle/task/LintNamedQueries.html#getClasspath()" title="Method in LintNamedQueries">getClasspath()</a></span> - Method in <a href="persist/jakarta/gradle/task/LintNamedQueries.html">LintNamedQueries</a>
+</dt><dd> <div class="block">The complete runtime and compilation classpath containing the JPA provider binaries
+ (Hibernate/EclipseLink) used to drive the internal semantic parsing engine.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/task/ValidatePersistenceSchema.html#getClasspath()" title="Method in ValidatePersistenceSchema">getClasspath()</a></span> - Method in <a href="persist/jakarta/gradle/task/ValidatePersistenceSchema.html">ValidatePersistenceSchema</a>
 </dt><dd> <div class="block">The complete runtime and compilation classpath containing the compiled entity classes,
  the JPA provider implementation binaries (Hibernate/EclipseLink), and the H2 driver.</div></dd>
@@ -244,6 +249,10 @@ if (location.href.indexOf('is-external=true') == -1) {
 </dt><dd> <div class="block">The full compilation dependencies classpath necessary for Hibernate to inspect, resolve,
  and validate complex relationships, types, or embedded enums (e.g., <CODE>Person$Gender</CODE>)
  during the bytecode analysis phase.</div></dd>
+<dt><span class="strong"><a href="persist/jakarta/gradle/task/LintNamedQueries.html#getCompiledClassesDir()" title="Method in LintNamedQueries">getCompiledClassesDir()</a></span> - Method in <a href="persist/jakarta/gradle/task/LintNamedQueries.html">LintNamedQueries</a>
+</dt><dd> <div class="block">The input source directory holding the compiled Java class files to be scanned via ASM.</div></dd>
+<dt><span class="strong"><a href="persist/jakarta/gradle/worker/LintNamedQueriesParameters.html#getCompiledClassesDir()" title="Method in LintNamedQueriesParameters">getCompiledClassesDir()</a></span> - Method in <a href="persist/jakarta/gradle/worker/LintNamedQueriesParameters.html">LintNamedQueriesParameters</a>
+</dt><dd> <div class="block">The directory containing compiled <CODE>.class</CODE> files to scan.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/extension/PersistenceUnitExtension.html#getDataSource()" title="Method in PersistenceUnitExtension">getDataSource()</a></span> - Method in <a href="persist/jakarta/gradle/extension/PersistenceUnitExtension.html">PersistenceUnitExtension</a>
 </dt><dd> <div class="block">The JNDI name of the data source for this persistence unit.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/extension/PersistenceUnitExtension.html#getDescription()" title="Method in PersistenceUnitExtension">getDescription()</a></span> - Method in <a href="persist/jakarta/gradle/extension/PersistenceUnitExtension.html">PersistenceUnitExtension</a>
@@ -258,6 +267,8 @@ if (location.href.indexOf('is-external=true') == -1) {
 </dt><dd> <div class="block">The fully qualified JDBC driver class name used for schema validation.</div></dd>
 <dt><span class="strong"><a href="persist/hibernate/gradle/extension/EnhancementExtension.html#getEnableAssociationManagement()" title="Method in EnhancementExtension">getEnableAssociationManagement()</a></span> - Method in <a href="persist/hibernate/gradle/extension/EnhancementExtension.html">EnhancementExtension</a>
 </dt><dd> <div class="block">Toggles whether to enhance entity bytecode to automatically manage bidirectional associations.</div></dd>
+<dt><span class="strong"><a href="persist/jakarta/gradle/extension/LinterExtension.html#getEnabled()" title="Method in LinterExtension">getEnabled()</a></span> - Method in <a href="persist/jakarta/gradle/extension/LinterExtension.html">LinterExtension</a>
+</dt><dd> <div class="block">Toggles whether the static<DL><DT><B>NamedQuery:</B></DT><DD>analysis task should execute.</DD></DL> </div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/extension/PersistenceUnitExtension.html#getEnabled()" title="Method in PersistenceUnitExtension">getEnabled()</a></span> - Method in <a href="persist/jakarta/gradle/extension/PersistenceUnitExtension.html">PersistenceUnitExtension</a>
 </dt><dd> <div class="block">Controls whether this persistence unit is included during descriptor
  generation.</div></dd>
@@ -271,6 +282,20 @@ if (location.href.indexOf('is-external=true') == -1) {
 </dt><dd> <div class="block">Whether unlisted entity classes should be excluded from the persistence unit.</div></dd>
 <dt><span class="strong"><a href="persist/hibernate/gradle/task/HibernateEnhancementTask.html#getExtendedEnhancementEnabled()" title="Method in HibernateEnhancementTask">getExtendedEnhancementEnabled()</a></span> - Method in <a href="persist/hibernate/gradle/task/HibernateEnhancementTask.html">HibernateEnhancementTask</a>
 </dt><dd> <div class="block">Toggles whether to enable advanced extended bytecode enhancement strategies.</div></dd>
+<dt><span class="strong"><a href="persist/jakarta/gradle/extension/LinterExtension.html#getFailOnError()" title="Method in LinterExtension">getFailOnError()</a></span> - Method in <a href="persist/jakarta/gradle/extension/LinterExtension.html">LinterExtension</a>
+</dt><dd> <div class="block">Toggles whether discovering a query syntax error or metamodel mismatch
+ should immediately fail the Gradle build execution pass.</div></dd>
+<dt><span class="strong"><a href="persist/jakarta/gradle/task/LintNamedQueries.html#getFailOnError()" title="Method in LintNamedQueries">getFailOnError()</a></span> - Method in <a href="persist/jakarta/gradle/task/LintNamedQueries.html">LintNamedQueries</a>
+</dt><dd> <div class="block">Whether discovering a query syntax error or metamodel mismatch should
+ immediately fail the Gradle build.</div></dd>
+<dt><span class="strong"><a href="persist/jakarta/gradle/worker/LintNamedQueriesParameters.html#getFailOnError()" title="Method in LintNamedQueriesParameters">getFailOnError()</a></span> - Method in <a href="persist/jakarta/gradle/worker/LintNamedQueriesParameters.html">LintNamedQueriesParameters</a>
+</dt><dd> <div class="block">Whether errors should fail the build (<CODE>true</CODE>) or be logged as warnings.</div></dd>
+<dt><span class="strong"><a href="persist/jakarta/gradle/extension/LinterExtension.html#getIgnoreWarnings()" title="Method in LinterExtension">getIgnoreWarnings()</a></span> - Method in <a href="persist/jakarta/gradle/extension/LinterExtension.html">LinterExtension</a>
+</dt><dd> <div class="block">Toggles whether sub-critical semantic validation warnings should be muted.</div></dd>
+<dt><span class="strong"><a href="persist/jakarta/gradle/task/LintNamedQueries.html#getIgnoreWarnings()" title="Method in LintNamedQueries">getIgnoreWarnings()</a></span> - Method in <a href="persist/jakarta/gradle/task/LintNamedQueries.html">LintNamedQueries</a>
+</dt><dd> <div class="block">Whether sub-critical semantic validation warnings should be muted.</div></dd>
+<dt><span class="strong"><a href="persist/jakarta/gradle/worker/LintNamedQueriesParameters.html#getIgnoreWarnings()" title="Method in LintNamedQueriesParameters">getIgnoreWarnings()</a></span> - Method in <a href="persist/jakarta/gradle/worker/LintNamedQueriesParameters.html">LintNamedQueriesParameters</a>
+</dt><dd> <div class="block">Whether sub-critical style warnings should be suppressed.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/extension/PersistenceUnitExtension.html#getIncludeAllClasses()" title="Method in PersistenceUnitExtension">getIncludeAllClasses()</a></span> - Method in <a href="persist/jakarta/gradle/extension/PersistenceUnitExtension.html">PersistenceUnitExtension</a>
 </dt><dd> <div class="block">Whether all discovered entity classes should be included.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/task/GenerateJPAGraalVMMetadata.html#getIncludedClasses()" title="Method in GenerateJPAGraalVMMetadata">getIncludedClasses()</a></span> - Method in <a href="persist/jakarta/gradle/task/GenerateJPAGraalVMMetadata.html">GenerateJPAGraalVMMetadata</a>
@@ -286,6 +311,11 @@ if (location.href.indexOf('is-external=true') == -1) {
 <dt><span class="strong"><a href="persist/jakarta/gradle/task/ProcessPersistenceDescriptor.html#getJarFileNames()" title="Method in ProcessPersistenceDescriptor">getJarFileNames()</a></span> - Method in <a href="persist/jakarta/gradle/task/ProcessPersistenceDescriptor.html">ProcessPersistenceDescriptor</a>
 </dt><dd> <div class="block">Resolved JAR file names from the <CODE>jarFile</CODE> configuration to inject
  as <CODE>&lt;jar-file&gt;</CODE> elements.</div></dd>
+<dt><span class="strong"><a href="persist/jakarta/gradle/task/LintNamedQueries.html#getJpaVersion()" title="Method in LintNamedQueries">getJpaVersion()</a></span> - Method in <a href="persist/jakarta/gradle/task/LintNamedQueries.html">LintNamedQueries</a>
+</dt><dd> <div class="block">The JPA specification version used to determine the annotation namespace
+ (<CODE>jakarta.persistence</CODE> vs <CODE>javax.persistence</CODE>) during bytecode scanning.</div></dd>
+<dt><span class="strong"><a href="persist/jakarta/gradle/worker/LintNamedQueriesParameters.html#getJpaVersion()" title="Method in LintNamedQueriesParameters">getJpaVersion()</a></span> - Method in <a href="persist/jakarta/gradle/worker/LintNamedQueriesParameters.html">LintNamedQueriesParameters</a>
+</dt><dd> <div class="block">The JPA specification version for annotation namespace resolution.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/extension/PersistenceUnitExtension.html#getJta()" title="Method in PersistenceUnitExtension">getJta()</a></span> - Method in <a href="persist/jakarta/gradle/extension/PersistenceUnitExtension.html">PersistenceUnitExtension</a>
 </dt><dd> <div class="block">Whether the <a href='#getDataSource()'>data source</a> is JTA-managed.</div></dd>
 <dt><span class="strong"><a href="persist/hibernate/gradle/task/HibernateEnhancementTask.html#getLazyInitializationEnabled()" title="Method in HibernateEnhancementTask">getLazyInitializationEnabled()</a></span> - Method in <a href="persist/hibernate/gradle/task/HibernateEnhancementTask.html">HibernateEnhancementTask</a>
@@ -482,6 +512,33 @@ if (location.href.indexOf('is-external=true') == -1) {
 <h2 class="title">L</h2>
 <dl>
 
+<dt><span class="strong"><a href="persist/jakarta/gradle/task/LintNamedQueries.html#lint()" title="Method in LintNamedQueries">lint()</a></span> - Method in <a href="persist/jakarta/gradle/task/LintNamedQueries.html">LintNamedQueries</a>
+</dt><dd> <div class="block"></div></dd>
+<dt><span class="strong"><a href="persist/jakarta/gradle/extension/PersistenceExtension.html#linter" title="Property in PersistenceExtension">linter</a></span> - Property in <a href="persist/jakarta/gradle/extension/PersistenceExtension.html">PersistenceExtension</a>
+</dt><dd> <div class="block">Nested configuration for the static compile-time <CODE>@NamedQuery</CODE>
+ analysis linter.</div></dd>
+<dt><span class="strong"><a href="persist/jakarta/gradle/extension/LinterExtension.html" title="Interface in persist.jakarta.gradle.extension">LinterExtension</a></span> - Interface in <a href="./persist/jakarta/gradle/extension/package-summary.html">persist.jakarta.gradle.extension</a>
+</dt><dd><div class="block">Named DSL extension for managing the static compile-time query verification linter.</div></dd>
+<dt><span class="strong"><a href="persist/jakarta/gradle/task/LintNamedQueries.html" title="Class in persist.jakarta.gradle.task">LintNamedQueries</a></span> - Class in <a href="./persist/jakarta/gradle/task/package-summary.html">persist.jakarta.gradle.task</a>
+</dt><dd><div class="block">Executes a static, compile-time AST verification loop over all<DL><DT><B>NamedQuery:</B></DT><DD>definitions
+ discovered inside the compiled source set output directories.</DD></DL> </div></dd>
+<dt><span class="strong"><a href="persist/jakarta/gradle/task/LintNamedQueries.html#LintNamedQueries(org.gradle.workers.WorkerExecutor)" title="Constructor in LintNamedQueries">LintNamedQueries(org.gradle.workers.WorkerExecutor)</a></span> - Constructor in <a href="persist/jakarta/gradle/task/LintNamedQueries.html">LintNamedQueries</a>
+</dt><dd> <div class="block"></div></dd>
+<dt><span class="strong"><a href="persist/jakarta/gradle/worker/LintNamedQueriesParameters.html" title="Interface in persist.jakarta.gradle.worker">LintNamedQueriesParameters</a></span> - Interface in <a href="./persist/jakarta/gradle/worker/package-summary.html">persist.jakarta.gradle.worker</a>
+</dt><dd><div class="block">Parameters required by the <a href='../../../../persist/jakarta/gradle/worker/LintNamedQueriesWorker.html' title='LintNamedQueriesWorker'>LintNamedQueriesWorker</a>.</div></dd>
+<dt><span class="strong"><a href="persist/jakarta/gradle/worker/LintNamedQueriesWorker.html" title="Class in persist.jakarta.gradle.worker">LintNamedQueriesWorker</a></span> - Class in <a href="./persist/jakarta/gradle/worker/package-summary.html">persist.jakarta.gradle.worker</a>
+</dt><dd><div class="block">An isolated Worker Action that performs bytecode sweeping and query AST
+ validation inside a classloader-isolated process.</div></dd>
+<dt><span class="strong"><a href="persist/jakarta/gradle/worker/LintNamedQueriesWorker.StoredProcedureDataExtractor.1.html" title="Class in persist.jakarta.gradle.worker.LintNamedQueriesWorker.StoredProcedureDataExtractor">LintNamedQueriesWorker.StoredProcedureDataExtractor.1</a></span> - Class in <a href="./persist/jakarta/gradle/worker/package-summary.html">persist.jakarta.gradle.worker</a>
+</dt><dd><div class="block"></div></dd>
+<dt><span class="strong"><a href="persist/jakarta/gradle/worker/LintNamedQueriesWorker.StoredProcedureDataExtractor.1.1.html" title="Class in persist.jakarta.gradle.worker.LintNamedQueriesWorker.StoredProcedureDataExtractor.1">LintNamedQueriesWorker.StoredProcedureDataExtractor.1.1</a></span> - Class in <a href="./persist/jakarta/gradle/worker/package-summary.html">persist.jakarta.gradle.worker</a>
+</dt><dd><div class="block"></div></dd>
+<dt><span class="strong"><a href="persist/jakarta/gradle/worker/LintNamedQueriesWorker.StoredProcedureDataExtractor.1.1.html#LintNamedQueriesWorker.StoredProcedureDataExtractor.1.1()" title="Constructor in LintNamedQueriesWorker.StoredProcedureDataExtractor.1.1">LintNamedQueriesWorker.StoredProcedureDataExtractor.1.1()</a></span> - Constructor in <a href="persist/jakarta/gradle/worker/LintNamedQueriesWorker.StoredProcedureDataExtractor.1.1.html">LintNamedQueriesWorker.StoredProcedureDataExtractor.1.1</a>
+</dt><dd> <div class="block"></div></dd>
+<dt><span class="strong"><a href="persist/jakarta/gradle/worker/LintNamedQueriesWorker.StoredProcedureDataExtractor.1.html#LintNamedQueriesWorker.StoredProcedureDataExtractor.1()" title="Constructor in LintNamedQueriesWorker.StoredProcedureDataExtractor.1">LintNamedQueriesWorker.StoredProcedureDataExtractor.1()</a></span> - Constructor in <a href="persist/jakarta/gradle/worker/LintNamedQueriesWorker.StoredProcedureDataExtractor.1.html">LintNamedQueriesWorker.StoredProcedureDataExtractor.1</a>
+</dt><dd> <div class="block"></div></dd>
+<dt><span class="strong"><a href="persist/jakarta/gradle/worker/LintNamedQueriesWorker.html#LintNamedQueriesWorker()" title="Constructor in LintNamedQueriesWorker">LintNamedQueriesWorker()</a></span> - Constructor in <a href="persist/jakarta/gradle/worker/LintNamedQueriesWorker.html">LintNamedQueriesWorker</a>
+</dt><dd> <div class="block"></div></dd>
 </dl>
 
     
@@ -622,7 +679,11 @@ if (location.href.indexOf('is-external=true') == -1) {
  during JPA schema validation.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/task/registry/JPAVersionStrategyRegistry.html#version" title="Property in JPAVersionStrategyRegistry">version</a></span> - Property in <a href="persist/jakarta/gradle/task/registry/JPAVersionStrategyRegistry.html">JPAVersionStrategyRegistry</a>
 </dt><dd> <div class="block">The XML version for the <CODE>&lt;persistence&gt;</CODE> root element.</div></dd>
+<dt><span class="strong"><a href="persist/jakarta/gradle/worker/LintNamedQueriesWorker.StoredProcedureDataExtractor.1.1.html#visit(java.lang.String, java.lang.Object)" title="Method in LintNamedQueriesWorker.StoredProcedureDataExtractor.1.1">visit(java.lang.String, java.lang.Object)</a></span> - Method in <a href="persist/jakarta/gradle/worker/LintNamedQueriesWorker.StoredProcedureDataExtractor.1.1.html">LintNamedQueriesWorker.StoredProcedureDataExtractor.1.1</a>
+</dt><dd> <div class="block"></div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/plugin/JakartaPersistencePlugin.1.html#visitAnnotation(java.lang.String, boolean)" title="Method in JakartaPersistencePlugin.1">visitAnnotation(java.lang.String, boolean)</a></span> - Method in <a href="persist/jakarta/gradle/plugin/JakartaPersistencePlugin.1.html">JakartaPersistencePlugin.1</a>
+</dt><dd> <div class="block"></div></dd>
+<dt><span class="strong"><a href="persist/jakarta/gradle/worker/LintNamedQueriesWorker.StoredProcedureDataExtractor.1.html#visitAnnotation(java.lang.String, java.lang.String)" title="Method in LintNamedQueriesWorker.StoredProcedureDataExtractor.1">visitAnnotation(java.lang.String, java.lang.String)</a></span> - Method in <a href="persist/jakarta/gradle/worker/LintNamedQueriesWorker.StoredProcedureDataExtractor.1.html">LintNamedQueriesWorker.StoredProcedureDataExtractor.1</a>
 </dt><dd> <div class="block"></div></dd>
 </dl>
 

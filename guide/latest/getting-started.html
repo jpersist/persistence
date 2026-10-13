@@ -605,7 +605,7 @@ $(addBlockSwitches);
 <div id="header">
 <h1>Getting Started</h1>
 <div class="details">
-<span id="revnumber">version 1.5.4</span>
+<span id="revnumber">version 1.6.0</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -672,7 +672,7 @@ $(addBlockSwitches);
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>io.github.jpersist.jpa</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Generates or merges <code>persistence.xml</code> descriptors, validates persistence schema against the database schema, and generates JPA GraalVM native image metadata (<code>reflect-config.json</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Generates or merges <code>persistence.xml</code> descriptors, validates persistence schema against the database schema, generates JPA GraalVM native image metadata (<code>reflect-config.json</code>), and lints <code>@NamedQuery</code> / <code>@NamedStoredProcedureQuery</code> definitions at compile time</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Provider-agnostic</p></td>
 </tr>
 <tr>
@@ -710,7 +710,7 @@ The provider-specific plugins (<code>hibernate-persistence</code> and <code>ecli
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">plugins {
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.hibernate-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.5.4</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.hibernate-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.6.0</span><span class="delimiter">'</span></span>
 }</code></pre>
 </div>
 </div>
@@ -718,7 +718,7 @@ The provider-specific plugins (<code>hibernate-persistence</code> and <code>ecli
 <div class="title">Kotlin</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
-    id(&quot;io.github.jpersist.hibernate-persistence&quot;) version &quot;1.5.4&quot;
+    id(&quot;io.github.jpersist.hibernate-persistence&quot;) version &quot;1.6.0&quot;
 }</code></pre>
 </div>
 </div>
@@ -729,7 +729,7 @@ The provider-specific plugins (<code>hibernate-persistence</code> and <code>ecli
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">plugins {
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.eclipse-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.5.4</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.eclipse-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.6.0</span><span class="delimiter">'</span></span>
 }</code></pre>
 </div>
 </div>
@@ -737,7 +737,7 @@ The provider-specific plugins (<code>hibernate-persistence</code> and <code>ecli
 <div class="title">Kotlin</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
-    id(&quot;io.github.jpersist.eclipse-persistence&quot;) version &quot;1.5.4&quot;
+    id(&quot;io.github.jpersist.eclipse-persistence&quot;) version &quot;1.6.0&quot;
 }</code></pre>
 </div>
 </div>
@@ -807,8 +807,8 @@ The plugin automatically detects your entity classes and generates the appropria
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.5.4<br>
-Last updated 2026-10-10 08:56:29 UTC
+Version 1.6.0<br>
+Last updated 2026-10-13 06:53:01 UTC
 </div>
 </div>
 </body>

@@ -605,7 +605,7 @@ $(addBlockSwitches);
 <div id="header">
 <h1>Hibernate Plugin</h1>
 <div class="details">
-<span id="revnumber">version 1.5.4</span>
+<span id="revnumber">version 1.6.0</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -646,7 +646,7 @@ It automatically applies the core <code>io.github.jpersist.jpa</code> plugin (se
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">plugins {
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.hibernate-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.5.4</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.hibernate-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.6.0</span><span class="delimiter">'</span></span>
 }
 
 dependencies {
@@ -660,7 +660,7 @@ dependencies {
 <div class="title">Kotlin</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
-    id(&quot;io.github.jpersist.hibernate-persistence&quot;) version &quot;1.5.4&quot;
+    id(&quot;io.github.jpersist.hibernate-persistence&quot;) version &quot;1.6.0&quot;
 }
 
 dependencies {
@@ -724,7 +724,7 @@ Use it to declare a Hibernate platform BOM so that all Hibernate module versions
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">plugins {
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.hibernate-enhancement</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.5.4</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.hibernate-enhancement</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.6.0</span><span class="delimiter">'</span></span>
 }</code></pre>
 </div>
 </div>
@@ -732,7 +732,7 @@ Use it to declare a Hibernate platform BOM so that all Hibernate module versions
 <div class="title">Kotlin</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
-    id(&quot;io.github.jpersist.hibernate-enhancement&quot;) version &quot;1.5.4&quot;
+    id(&quot;io.github.jpersist.hibernate-enhancement&quot;) version &quot;1.6.0&quot;
 }</code></pre>
 </div>
 </div>
@@ -909,7 +909,7 @@ It exposes a nested <code>enhancement</code> sub-block to control compile-time b
 For the <code>main</code> source set the task name is <code>hibernateEnhanceClasses</code>; for other source sets (e.g. <code>test</code>) the source set name is used (e.g. <code>hibernateEnhanceTestClasses</code>).</p>
 </div>
 <div class="paragraph">
-<p>In addition, all tasks inherited from the core <code>io.github.jpersist.jpa</code> plugin (<code>processPersistenceDescriptor</code>, <code>validatePersistenceSchema</code>, <code>generateJPAGraalVMMetadata</code>) are also available. See <a href="jakarta-plugin.html">Jakarta Persistence Plugin</a> for their documentation.</p>
+<p>In addition, all tasks inherited from the core <code>io.github.jpersist.jpa</code> plugin (<code>processPersistenceDescriptor</code>, <code>validatePersistenceSchema</code>, <code>generateJPAGraalVMMetadata</code>, <code>lintNamedQueries</code>) are also available. See <a href="jakarta-plugin.html">Jakarta Persistence Plugin</a> for their documentation.</p>
 </div>
 <div class="sect2">
 <h3 id="_hibernateenhanceclasses">5.1. <code>hibernateEnhanceClasses</code></h3>
@@ -1014,8 +1014,8 @@ The task is wired into the build lifecycle automatically — it runs after <code
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.5.4<br>
-Last updated 2026-10-10 08:56:29 UTC
+Version 1.6.0<br>
+Last updated 2026-10-13 06:53:01 UTC
 </div>
 </div>
 </body>

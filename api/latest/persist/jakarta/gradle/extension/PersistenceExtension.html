@@ -163,11 +163,17 @@ extends java.lang.Object</pre>
                         </tr>
                         
                         <tr class="altColor">
+                            <td class="colFirst"><code><strong><a href='../../../../persist/jakarta/gradle/extension/LinterExtension.html'>LinterExtension</a></strong></code>&nbsp;</td>
+                            <td class="colLast"><code><a href="#linter">linter</a></code><br>Nested configuration for the static compile-time <CODE>@NamedQuery</CODE>
+ analysis linter.</td>
+                        </tr>
+                        
+                        <tr class="rowColor">
                             <td class="colFirst"><code><strong>org.gradle.api.NamedDomainObjectContainer&lt;<a href='../../../../persist/jakarta/gradle/extension/PersistenceUnitExtension.html' title='PersistenceUnitExtension'>PersistenceUnitExtension</a>&gt;</strong></code>&nbsp;</td>
                             <td class="colLast"><code><a href="#persistenceUnits">persistenceUnits</a></code><br>Container of named <a href='../../../../persist/jakarta/gradle/extension/PersistenceUnitExtension.html' title='PersistenceUnitExtension'>PersistenceUnitExtension</a> instances.</td>
                         </tr>
                         
-                        <tr class="rowColor">
+                        <tr class="altColor">
                             <td class="colFirst"><code><strong><a href='../../../../persist/jakarta/gradle/extension/ValidationExtension.html'>ValidationExtension</a></strong></code>&nbsp;</td>
                             <td class="colLast"><code><a href="#validation">validation</a></code><br>Nested configuration for JPA schema validation database connection
  properties.</td>
@@ -243,22 +249,28 @@ extends java.lang.Object</pre>
                         <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>void</code></td>
-                            <td class="colLast"><code><strong><a href="#outputProperty(java.lang.String, java.lang.String)">outputProperty</a></strong>(java.lang.String key, java.lang.String value)</code><br>Sets a single XML transformer output property.</td>
+                            <td class="colLast"><code><strong><a href="#linter(Action)">linter</a></strong>(org.gradle.api.Action&lt;? super <a href='../../../../persist/jakarta/gradle/extension/LinterExtension.html' title='LinterExtension'>LinterExtension</a>&gt; action)</code><br>Configures the static<DL><DT><B>NamedQuery:</B></DT><DD>analysis linter options.</DD></DL> </td>
                         </tr>
                         
                         <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>void</code></td>
-                            <td class="colLast"><code><strong><a href="#persistenceUnits(Action)">persistenceUnits</a></strong>(org.gradle.api.Action&lt;? super org.gradle.api.NamedDomainObjectContainer&lt;<a href='../../../../persist/jakarta/gradle/extension/PersistenceUnitExtension.html' title='PersistenceUnitExtension'>PersistenceUnitExtension</a>&gt;&gt; action)</code><br>Configures the <a href='#persistenceUnits'>persistenceUnits</a> container using the given action.</td>
+                            <td class="colLast"><code><strong><a href="#outputProperty(java.lang.String, java.lang.String)">outputProperty</a></strong>(java.lang.String key, java.lang.String value)</code><br>Sets a single XML transformer output property.</td>
                         </tr>
                         
                         <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>void</code></td>
-                            <td class="colLast"><code><strong><a href="#transformer(Closure)">transformer</a></strong>(groovy.lang.Closure&lt;?&gt; closure)</code><br>Configures the XML transformer output properties using a closure.</td>
+                            <td class="colLast"><code><strong><a href="#persistenceUnits(Action)">persistenceUnits</a></strong>(org.gradle.api.Action&lt;? super org.gradle.api.NamedDomainObjectContainer&lt;<a href='../../../../persist/jakarta/gradle/extension/PersistenceUnitExtension.html' title='PersistenceUnitExtension'>PersistenceUnitExtension</a>&gt;&gt; action)</code><br>Configures the <a href='#persistenceUnits'>persistenceUnits</a> container using the given action.</td>
                         </tr>
                         
                         <tr class="altColor">
+                            <td class="colFirst"><code></code></td>
+                            <td class="colLast"><code>void</code></td>
+                            <td class="colLast"><code><strong><a href="#transformer(Closure)">transformer</a></strong>(groovy.lang.Closure&lt;?&gt; closure)</code><br>Configures the XML transformer output properties using a closure.</td>
+                        </tr>
+                        
+                        <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>void</code></td>
                             <td class="colLast"><code><strong><a href="#validation(Action)">validation</a></strong>(org.gradle.api.Action&lt;? super <a href='../../../../persist/jakarta/gradle/extension/ValidationExtension.html' title='ValidationExtension'>ValidationExtension</a>&gt; action)</code><br>Configures the <a href='#validation'>validation</a> extension using the given action.</td>
@@ -306,6 +318,20 @@ extends java.lang.Object</pre>
                     <!--   -->
                 </a>
                     <h3>Property Detail</h3>
+                    
+                        <a name="linter"><!-- --></a>
+                        <ul class="blockListLast">
+                            <li class="blockList">
+                                <h4>@org.gradle.api.tasks.Nested<br>final&nbsp;<a href='../../../../persist/jakarta/gradle/extension/LinterExtension.html'>LinterExtension</a> <strong>linter</strong></h4>
+                                <p> Nested configuration for the static compile-time <CODE>@NamedQuery</CODE>
+ analysis linter.
+ <p>
+ Configurable via the <a href='#linter(org.gradle.api.Action)'>linter(org.gradle.api.Action)</a> DSL method.
+ By default the linter is enabled, fails the build on errors, and reports
+ warnings.
+ </p> <DL><DT><B>Since:</B></DT><DD>1.6.0</DD></DL><DL><DT><B>See Also:</B></DT><DD><a href='../../../../persist/jakarta/gradle/extension/LinterExtension.html' title='LinterExtension'>LinterExtension</a></DD></DL></p>
+                            </li>
+                        </ul>
                     
                         <a name="persistenceUnits"><!-- --></a>
                         <ul class="blockListLast">
@@ -406,6 +432,14 @@ extends java.lang.Object</pre>
  <p>
  Defaults to <CODE>"3.0"</CODE> (Jakarta Persistence 3.0).
  </p> <DL><DT><B>Returns:</B></DT><DD>The lazy property tracking the specification version string.</DD></DL></p>
+                            </li>
+                        </ul>
+                    
+                        <a name="linter(Action)"><!-- --></a>
+                        <ul class="blockListLast">
+                            <li class="blockList">
+                                <h4>void <strong>linter</strong>(org.gradle.api.Action&lt;? super <a href='../../../../persist/jakarta/gradle/extension/LinterExtension.html' title='LinterExtension'>LinterExtension</a>&gt; action)</h4>
+                                <p> Configures the static<DL><DT><B>NamedQuery:</B></DT><DD>analysis linter options.</DD></DL> <DL><DT><B>Parameters:</B></DT><DD><code>action</code> -  The configuration action to apply to the linter extension parameters.</DD></DL><DL><DT><B>Since:</B></DT><DD>1.6.0</DD></DL></p>
                             </li>
                         </ul>
                     
