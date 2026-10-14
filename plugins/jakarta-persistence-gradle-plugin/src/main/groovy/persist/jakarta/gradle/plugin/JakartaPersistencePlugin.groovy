@@ -53,7 +53,9 @@ import persist.jakarta.gradle.task.ValidatePersistenceSchema
  *         {@link org.gradle.api.NamedDomainObjectContainer} of
  *         {@link persist.jakarta.gradle.extension.PersistenceExtension} as the
  *         top-level DSL extension.</li>
- *     <li>For each Java source set (e.g.&nbsp;{@code main}, {@code test}):
+ *     <li>For each Java source set (e.g.&nbsp;{@code main}, {@code test})
+ *         whose {@code java.srcDirs} or {@code resources.srcDirs} contain at
+ *         least one directory that physically exists on disk:
  *         <ul>
  *             <li>Creates a {@code jarFile} (or {@code <sourceSet>JarFile})
  *                 dependency configuration for declaring module JARs to be
@@ -111,6 +113,15 @@ import persist.jakarta.gradle.task.ValidatePersistenceSchema
  * scanning from the {@code jakarta.persistence} namespace to the
  * {@code javax.persistence} namespace, ensuring correct entity discovery for
  * projects that still target the older Java Persistence API.
+ * </p>
+ * <p>
+ * <b>Since 1.7.0:</b> Per-source-set task and configuration registration is
+ * conditional — the plugin inspects {@code sourceSet.java.srcDirs} and
+ * {@code sourceSet.resources.srcDirs} at configuration time and only creates
+ * tasks and dependency configurations when at least one physical directory
+ * exists on disk. This prevents clean IDE workspaces from being cluttered
+ * with empty tasks (e.g.&nbsp;{@code lintTestNamedQueries}) when a target
+ * source set contains no operational files.
  * </p>
  * <p>
  * This plugin replaces the deprecated {@code persistence-gradle-plugin}

@@ -53,7 +53,7 @@ The aggregate `io.github.jpersist.hibernate-persistence` plugin is a convenience
 | Configures Hibernate's JPA static metamodel generator (`hibernate-jpamodelgen`) as an annotation processor for every source set, enabling type-safe Criteria API queries.
 
 | `io.github.jpersist.hibernate-enhancement`
-| Registers the `hibernate` DSL extension and creates a bytecode enhancement task for every source set, enabling compile-time lazy initialization, dirty tracking, and association management.
+| Registers the `hibernate` DSL extension and creates a bytecode enhancement task for every source set whose Java source directories physically exist on disk, enabling compile-time lazy initialization, dirty tracking, and association management.
 |===
 
 You can apply sub-plugins individually if you only need a subset of the functionality:
@@ -188,6 +188,8 @@ hibernate {
 
 The plugin registers the following task per Java source set.
 For the `main` source set the task name is `hibernateEnhanceClasses`; for other source sets (e.g. `test`) the source set name is used (e.g. `hibernateEnhanceTestClasses`).
+
+NOTE: _(Since 1.7.0)_ The enhancement task is only registered for source sets whose `java.srcDirs` contain at least one directory that physically exists on disk. Source sets with no on-disk Java source directories are silently skipped, preventing clean IDE workspaces from being cluttered with empty tasks (e.g. `hibernateEnhanceTestClasses`).
 
 In addition, all tasks inherited from the core `io.github.jpersist.jpa` plugin (`processPersistenceDescriptor`, `validatePersistenceSchema`, `generateJPAGraalVMMetadata`, `lintNamedQueries`) are also available. See <<jakarta-plugin.adoc#,Jakarta Persistence Plugin>> for their documentation.
 

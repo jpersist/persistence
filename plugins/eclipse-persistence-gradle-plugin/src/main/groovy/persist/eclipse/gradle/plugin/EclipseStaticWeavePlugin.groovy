@@ -15,7 +15,8 @@ import persist.eclipse.gradle.task.EclipseWeaveTask
  * Main entry point for the EclipseLink Static Weaving Plugin.
  * <p>
  * This plugin applies the {@link org.gradle.api.plugins.JavaPlugin} and registers a high-performance,
- * incremental bytecode modification task for every discovered source set container in the project.
+ * incremental bytecode modification task for every discovered source set whose
+ * {@code java.srcDirs} contain at least one directory that physically exists on disk.
  * It programmatically triggers EclipseLink's <code>StaticWeave</code> execution framework
  * post-compilation, transforming standard JPA entities in-place within the compilation pipeline
  * output boundaries. When the {@code jpa} configuration is present (e.g.&nbsp;via
@@ -51,7 +52,11 @@ import persist.eclipse.gradle.task.EclipseWeaveTask
  * {@code weave} configuration, isolating the weaving task execution graph. The
  * {@link EclipseWeaveTask} now reads its {@code weaveClasspath} directly from this isolated
  * internal configuration provider, protecting task property resolution states and maintaining
- * full compatibility with the Gradle Configuration Cache.
+ * full compatibility with the Gradle Configuration Cache. The weaving task is only registered
+ * for source sets that have at least one physical Java source directory present on disk.
+ * Source sets with no existing {@code java.srcDirs} directories are silently skipped,
+ * preventing clean IDE workspaces from being cluttered with empty tasks
+ * (e.g.&nbsp;{@code eclipseWeaveTestClasses}).
  * </p>
  *
  * @see EclipseWeaveTask

@@ -16,12 +16,19 @@ import persist.hibernate.gradle.task.HibernateEnhancementTask
  * <p>
  * This plugin applies the {@link org.gradle.api.plugins.JavaPlugin}, registers a customizable
  * <code>hibernate</code> configuration extension block, and dynamically instantiates an independent
- * {@link HibernateEnhancementTask} for every active project source set layout.
+ * {@link HibernateEnhancementTask} for every active project source set layout whose
+ * {@code java.srcDirs} contain at least one directory that physically exists on disk.
  * </p>
  * <p>
  * To ensure absolute compliance with the Gradle Configuration Cache and incremental verification states,
  * this plugin manages separate input/output staging directory targets, safeguarding compilation
  * <code>UP-TO-DATE</code> checking parameters across multi-module build paths.
+ * </p>
+ * <p>
+ * <b>Since 1.7.0:</b> The enhancement task is only registered for source sets that have
+ * at least one physical Java source directory present on disk. Source sets with no existing
+ * {@code java.srcDirs} directories are silently skipped, preventing clean IDE workspaces
+ * from being cluttered with empty tasks (e.g.&nbsp;{@code hibernateEnhanceTestClasses}).
  * </p>
  *
  * @see HibernateExtension

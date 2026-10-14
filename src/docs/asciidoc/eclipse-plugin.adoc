@@ -56,7 +56,7 @@ The aggregate `io.github.jpersist.eclipse-persistence` plugin is a convenience m
 | Configures EclipseLink's canonical metamodel generator (`org.eclipse.persistence.jpa.modelgen.processor`) as an annotation processor for every source set, enabling type-safe Criteria API queries.
 
 | `io.github.jpersist.eclipse-static-weave`
-| Registers the `weave` configuration and creates a static weaving task for every source set, enabling compile-time lazy loading, fetch graph optimizations, and inline dirty tracking without a runtime `-javaagent`.
+| Registers the `weave` configuration and creates a static weaving task for every source set whose Java source directories physically exist on disk, enabling compile-time lazy loading, fetch graph optimizations, and inline dirty tracking without a runtime `-javaagent`.
 |===
 
 You can apply sub-plugins individually if you only need a subset of the functionality:
@@ -198,6 +198,8 @@ eclipselink {
 == Tasks
 
 The plugin registers the following task per Java source set.
+
+NOTE: _(Since 1.7.0)_ The weaving task is only registered for source sets whose `java.srcDirs` contain at least one directory that physically exists on disk. Source sets with no on-disk Java source directories are silently skipped, preventing clean IDE workspaces from being cluttered with empty tasks (e.g. `eclipseWeaveTestClasses`).
 
 In addition, all tasks inherited from the core `io.github.jpersist.jpa` plugin (`processPersistenceDescriptor`, `validatePersistenceSchema`, `generateJPAGraalVMMetadata`, `lintNamedQueries`) are also available. See <<jakarta-plugin.adoc#,Jakarta Persistence Plugin>> for their documentation.
 
