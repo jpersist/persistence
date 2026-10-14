@@ -148,61 +148,67 @@ class JakartaPersistencePlugin implements Plugin<Project> {
         project.extensions.add('persistence', container)
 
         project.extensions.getByType(SourceSetContainer).configureEach { sourceSet ->
-            // 1. Create native dependency configuration
-            def jarFileConfigName = sourceSet.name == 'main' ? "jarFile" : "${sourceSet.name}JarFile"
-            def jarFileConfigProvider = project.configurations.register(jarFileConfigName) { config ->
-                config.canBeConsumed = false
-                config.canBeResolved = true
-            }
+            // Check if the source set has configured Java or resource folders that actually exist on disk
+            boolean hasSources = sourceSet.java.srcDirs.any { it.exists() } ||
+                sourceSet.resources.srcDirs.any { it.exists() }
 
-            // 2. Register Extension API DSL
-            // Automatically initialize a configuration instance inside the container matching the source set name
-            // (e.g., this instantly builds 'persistence.main' and 'persistence.test')
-            def extension = container.maybeCreate(sourceSet.name)
+            if (hasSources) {
+                // 1. Create native dependency configuration
+                def jarFileConfigName = sourceSet.name == 'main' ? "jarFile" : "${sourceSet.name}JarFile"
+                def jarFileConfigProvider = project.configurations.register(jarFileConfigName) { config ->
+                    config.canBeConsumed = false
+                    config.canBeResolved = true
+                }
 
-            // Automatically make all source set annotation processors extend from the global configuration
-            project.configurations.named(sourceSet.annotationProcessorConfigurationName).configure { config ->
-                config.extendsFrom(modelgenProcessorProvider.get())
-            }
+                // 2. Register Extension API DSL
+                // Automatically initialize a configuration instance inside the container matching the source set name
+                // (e.g., this instantly builds 'persistence.main' and 'persistence.test')
+                def extension = container.maybeCreate(sourceSet.name)
 
-            // Auto-register persistence units already declared in the user's persistence.xml file
-            autoRegisterExistingUnits(project, sourceSet, extension)
+                // Automatically make all source set annotation processors extend from the global configuration
+                project.configurations.named(sourceSet.annotationProcessorConfigurationName).configure { config ->
+                    config.extendsFrom(modelgenProcessorProvider.get())
+                }
 
-            // Propagate platform version constraints into all standard Java configurations
-            extendProjectConfigurations(project, jpaProvider,
-                sourceSet.implementationConfigurationName,
-                sourceSet.compileOnlyConfigurationName,
-                sourceSet.annotationProcessorConfigurationName,
-                sourceSet.runtimeOnlyConfigurationName
-            )
+                // Auto-register persistence units already declared in the user's persistence.xml file
+                autoRegisterExistingUnits(project, sourceSet, extension)
 
-            extendProjectConfigurations(project, jarFileConfigProvider, sourceSet.implementationConfigurationName)
-
-            project.plugins.withType(JavaLibraryPlugin).configureEach {
+                // Propagate platform version constraints into all standard Java configurations
                 extendProjectConfigurations(project, jpaProvider,
-                    sourceSet.apiConfigurationName,
-                    sourceSet.compileOnlyApiConfigurationName
+                    sourceSet.implementationConfigurationName,
+                    sourceSet.compileOnlyConfigurationName,
+                    sourceSet.annotationProcessorConfigurationName,
+                    sourceSet.runtimeOnlyConfigurationName
                 )
 
-                extendProjectConfigurations(project, jarFileConfigProvider, sourceSet.apiConfigurationName)
-            }
+                extendProjectConfigurations(project, jarFileConfigProvider, sourceSet.implementationConfigurationName)
 
-            // FIX: Convert the discovery provider into a fully lazy flatMap chain!
-            // This defers fetching the version until execution time, allowing user DSL overrides to be captured.
-            def discoveredClassesProvider = extension.version.flatMap { activeVersion ->
-                project.provider {
-                    def namespacePrefix = isLegacyJpaVersion(activeVersion) ? 'javax' : 'jakarta'
-                    discoverJpaClasses(sourceSet, namespacePrefix)
+                project.plugins.withType(JavaLibraryPlugin).configureEach {
+                    extendProjectConfigurations(project, jpaProvider,
+                        sourceSet.apiConfigurationName,
+                        sourceSet.compileOnlyApiConfigurationName
+                    )
+
+                    extendProjectConfigurations(project, jarFileConfigProvider, sourceSet.apiConfigurationName)
                 }
+
+                // FIX: Convert the discovery provider into a fully lazy flatMap chain!
+                // This defers fetching the version until execution time, allowing user DSL overrides to be captured.
+                def discoveredClassesProvider = extension.version.flatMap { activeVersion ->
+                    project.provider {
+                        def namespacePrefix = isLegacyJpaVersion(activeVersion) ? 'javax' : 'jakarta'
+                        discoverJpaClasses(sourceSet, namespacePrefix)
+                    }
+                }
+
+                configureProcessPersistenceDescriptorTask(project, sourceSet, extension, discoveredClassesProvider, jarFileConfigProvider)
+
+                configureGenerateJPAGraalVMMetadataTask(project, sourceSet, discoveredClassesProvider)
+
+                configureValidatePersistenceSchemaTask(project, sourceSet, extension)
+
+                configureLintNamedQueriesTask(project, sourceSet, extension)
             }
-
-            configureProcessPersistenceDescriptorTask(project, sourceSet, extension, discoveredClassesProvider, jarFileConfigProvider)
-
-            configureGenerateJPAGraalVMMetadataTask(project, sourceSet, discoveredClassesProvider)
-
-            configureValidatePersistenceSchemaTask(project, sourceSet, extension)
-
-            configureLintNamedQueriesTask(project, sourceSet, extension)
         }
     }
 

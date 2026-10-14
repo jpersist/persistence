@@ -48,9 +48,9 @@ class HibernatePersistencePluginFunctionalSpec extends Specification {
 
         then:
         result.task(":compileJava").outcome == TaskOutcome.SUCCESS
-        result.task(":compileTestJava").outcome == TaskOutcome.NO_SOURCE
+        result.task(":compileTestJava") == null
         result.task(":hibernateEnhanceClasses").outcome == TaskOutcome.SUCCESS
-        result.task(":hibernateEnhanceTestClasses").outcome == TaskOutcome.NO_SOURCE
+        result.task(":hibernateEnhanceTestClasses") == null
         // Now persistence unit present in persistence.xml are auto-registered
         result.task(":processPersistenceDescriptor").outcome == TaskOutcome.SUCCESS
         result.task(":jar").outcome == TaskOutcome.SUCCESS
@@ -79,9 +79,9 @@ class HibernatePersistencePluginFunctionalSpec extends Specification {
 
         then:
         firstResult.task(":compileJava").outcome == TaskOutcome.SUCCESS
-        firstResult.task(":compileTestJava").outcome == TaskOutcome.NO_SOURCE
+        firstResult.task(":compileTestJava") == null
         firstResult.task(":hibernateEnhanceClasses").outcome == TaskOutcome.SUCCESS
-        firstResult.task(":hibernateEnhanceTestClasses").outcome == TaskOutcome.NO_SOURCE
+        firstResult.task(":hibernateEnhanceTestClasses") == null
         firstResult.task(":jar").outcome == TaskOutcome.SUCCESS
         JACOCO_ACTIVE || firstResult.output.contains("Configuration cache entry stored.")
 
@@ -91,9 +91,9 @@ class HibernatePersistencePluginFunctionalSpec extends Specification {
         then: "Incremental tracking bypasses overhead execution loops cleanly"
         JACOCO_ACTIVE || secondResult.output.contains("Configuration cache entry reused.")
         secondResult.task(":compileJava").outcome == TaskOutcome.SUCCESS    // Becomes up-to-date from the third build
-        secondResult.task(":compileTestJava").outcome == TaskOutcome.NO_SOURCE
+        secondResult.task(":compileTestJava") == null
         secondResult.task(":hibernateEnhanceClasses").outcome == TaskOutcome.UP_TO_DATE
-        secondResult.task(":hibernateEnhanceTestClasses").outcome == TaskOutcome.NO_SOURCE
+        secondResult.task(":hibernateEnhanceTestClasses") == null
         secondResult.task(":jar").outcome == TaskOutcome.UP_TO_DATE
     }
 
