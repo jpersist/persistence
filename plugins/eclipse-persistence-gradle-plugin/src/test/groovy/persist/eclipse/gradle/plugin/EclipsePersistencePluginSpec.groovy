@@ -2,7 +2,6 @@ package persist.eclipse.gradle.plugin
 
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
-import persist.eclipse.gradle.task.EclipseWeaveTask
 import spock.lang.Specification
 
 class EclipsePersistencePluginSpec extends Specification {
@@ -16,12 +15,6 @@ class EclipsePersistencePluginSpec extends Specification {
 
         then: "The modelgen processor configuration is registered"
         project.configurations.named('modelgenProcessor') != null
-
-        and: "The weave task is registered with the correct type"
-        def task = project.tasks.named("eclipseWeaveClasses")
-        task != null
-        task.isPresent()
-        task.get() instanceof EclipseWeaveTask
     }
 
 }

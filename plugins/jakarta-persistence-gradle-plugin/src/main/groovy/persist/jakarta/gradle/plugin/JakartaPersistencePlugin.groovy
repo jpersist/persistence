@@ -163,46 +163,46 @@ class JakartaPersistencePlugin implements Plugin<Project> {
             boolean hasSources = sourceSet.java.srcDirs.any { it.exists() } ||
                 sourceSet.resources.srcDirs.any { it.exists() }
 
-            if (hasSources) {
-                // 1. Create native dependency configuration
-                def jarFileConfigName = sourceSet.name == 'main' ? "jarFile" : "${sourceSet.name}JarFile"
-                def jarFileConfigProvider = project.configurations.register(jarFileConfigName) { config ->
-                    config.canBeConsumed = false
-                    config.canBeResolved = true
-                }
+            // 1. Create native dependency configuration
+            def jarFileConfigName = sourceSet.name == 'main' ? "jarFile" : "${sourceSet.name}JarFile"
+            def jarFileConfigProvider = project.configurations.register(jarFileConfigName) { config ->
+                config.canBeConsumed = false
+                config.canBeResolved = true
+            }
 
-                // 2. Register Extension API DSL
-                // Automatically initialize a configuration instance inside the container matching the source set name
-                // (e.g., this instantly builds 'persistence.main' and 'persistence.test')
-                def extension = container.maybeCreate(sourceSet.name)
+            // 2. Register Extension API DSL
+            // Automatically initialize a configuration instance inside the container matching the source set name
+            // (e.g., this instantly builds 'persistence.main' and 'persistence.test')
+            def extension = container.maybeCreate(sourceSet.name)
 
-                // Automatically make all source set annotation processors extend from the global configuration
-                project.configurations.named(sourceSet.annotationProcessorConfigurationName).configure { config ->
-                    config.extendsFrom(modelgenProcessorProvider.get())
-                }
+            // Automatically make all source set annotation processors extend from the global configuration
+            project.configurations.named(sourceSet.annotationProcessorConfigurationName).configure { config ->
+                config.extendsFrom(modelgenProcessorProvider.get())
+            }
 
-                // Auto-register persistence units already declared in the user's persistence.xml file
-                autoRegisterExistingUnits(project, sourceSet, extension)
+            // Auto-register persistence units already declared in the user's persistence.xml file
+            autoRegisterExistingUnits(project, sourceSet, extension)
 
-                // Propagate platform version constraints into all standard Java configurations
+            // Propagate platform version constraints into all standard Java configurations
+            extendProjectConfigurations(project, jpaProvider,
+                sourceSet.implementationConfigurationName,
+                sourceSet.compileOnlyConfigurationName,
+                sourceSet.annotationProcessorConfigurationName,
+                sourceSet.runtimeOnlyConfigurationName
+            )
+
+            extendProjectConfigurations(project, jarFileConfigProvider, sourceSet.implementationConfigurationName)
+
+            project.plugins.withType(JavaLibraryPlugin).configureEach {
                 extendProjectConfigurations(project, jpaProvider,
-                    sourceSet.implementationConfigurationName,
-                    sourceSet.compileOnlyConfigurationName,
-                    sourceSet.annotationProcessorConfigurationName,
-                    sourceSet.runtimeOnlyConfigurationName
+                    sourceSet.apiConfigurationName,
+                    sourceSet.compileOnlyApiConfigurationName
                 )
 
-                extendProjectConfigurations(project, jarFileConfigProvider, sourceSet.implementationConfigurationName)
+                extendProjectConfigurations(project, jarFileConfigProvider, sourceSet.apiConfigurationName)
+            }
 
-                project.plugins.withType(JavaLibraryPlugin).configureEach {
-                    extendProjectConfigurations(project, jpaProvider,
-                        sourceSet.apiConfigurationName,
-                        sourceSet.compileOnlyApiConfigurationName
-                    )
-
-                    extendProjectConfigurations(project, jarFileConfigProvider, sourceSet.apiConfigurationName)
-                }
-
+            if (hasSources) {
                 // FIX: Convert the discovery provider into a fully lazy flatMap chain!
                 // This defers fetching the version until execution time, allowing user DSL overrides to be captured.
                 def discoveredClassesProvider = extension.version.flatMap { activeVersion ->
