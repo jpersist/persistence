@@ -53,7 +53,9 @@ import persist.jakarta.gradle.task.ValidatePersistenceSchema
  *         {@link org.gradle.api.NamedDomainObjectContainer} of
  *         {@link persist.jakarta.gradle.extension.PersistenceExtension} as the
  *         top-level DSL extension.</li>
- *     <li>For each Java source set (e.g.&nbsp;{@code main}, {@code test}):
+ *     <li>For each Java source set (e.g.&nbsp;{@code main}, {@code test})
+ *         whose {@code java.srcDirs} or {@code resources.srcDirs} contain at
+ *         least one directory that physically exists on disk:
  *         <ul>
  *             <li>Creates a {@code jarFile} (or {@code <sourceSet>JarFile})
  *                 dependency configuration for declaring module JARs to be
@@ -113,6 +115,15 @@ import persist.jakarta.gradle.task.ValidatePersistenceSchema
  * projects that still target the older Java Persistence API.
  * </p>
  * <p>
+ * <b>Since 1.7.0:</b> Per-source-set task and configuration registration is
+ * conditional — the plugin inspects {@code sourceSet.java.srcDirs} and
+ * {@code sourceSet.resources.srcDirs} at configuration time and only creates
+ * tasks and dependency configurations when at least one physical directory
+ * exists on disk. This prevents clean IDE workspaces from being cluttered
+ * with empty tasks (e.g.&nbsp;{@code lintTestNamedQueries}) when a target
+ * source set contains no operational files.
+ * </p>
+ * <p>
  * This plugin replaces the deprecated {@code persistence-gradle-plugin}
  * ({@code io.github.jpersist.persistence}).
  * </p>
@@ -148,6 +159,10 @@ class JakartaPersistencePlugin implements Plugin<Project> {
         project.extensions.add('persistence', container)
 
         project.extensions.getByType(SourceSetContainer).configureEach { sourceSet ->
+            // Check if the source set has configured Java or resource folders that actually exist on disk
+            boolean hasSources = sourceSet.java.srcDirs.any { it.exists() } ||
+                sourceSet.resources.srcDirs.any { it.exists() }
+
             // 1. Create native dependency configuration
             def jarFileConfigName = sourceSet.name == 'main' ? "jarFile" : "${sourceSet.name}JarFile"
             def jarFileConfigProvider = project.configurations.register(jarFileConfigName) { config ->
@@ -187,22 +202,24 @@ class JakartaPersistencePlugin implements Plugin<Project> {
                 extendProjectConfigurations(project, jarFileConfigProvider, sourceSet.apiConfigurationName)
             }
 
-            // FIX: Convert the discovery provider into a fully lazy flatMap chain!
-            // This defers fetching the version until execution time, allowing user DSL overrides to be captured.
-            def discoveredClassesProvider = extension.version.flatMap { activeVersion ->
-                project.provider {
-                    def namespacePrefix = isLegacyJpaVersion(activeVersion) ? 'javax' : 'jakarta'
-                    discoverJpaClasses(sourceSet, namespacePrefix)
+            if (hasSources) {
+                // FIX: Convert the discovery provider into a fully lazy flatMap chain!
+                // This defers fetching the version until execution time, allowing user DSL overrides to be captured.
+                def discoveredClassesProvider = extension.version.flatMap { activeVersion ->
+                    project.provider {
+                        def namespacePrefix = isLegacyJpaVersion(activeVersion) ? 'javax' : 'jakarta'
+                        discoverJpaClasses(sourceSet, namespacePrefix)
+                    }
                 }
+
+                configureProcessPersistenceDescriptorTask(project, sourceSet, extension, discoveredClassesProvider, jarFileConfigProvider)
+
+                configureGenerateJPAGraalVMMetadataTask(project, sourceSet, discoveredClassesProvider)
+
+                configureValidatePersistenceSchemaTask(project, sourceSet, extension)
+
+                configureLintNamedQueriesTask(project, sourceSet, extension)
             }
-
-            configureProcessPersistenceDescriptorTask(project, sourceSet, extension, discoveredClassesProvider, jarFileConfigProvider)
-
-            configureGenerateJPAGraalVMMetadataTask(project, sourceSet, discoveredClassesProvider)
-
-            configureValidatePersistenceSchemaTask(project, sourceSet, extension)
-
-            configureLintNamedQueriesTask(project, sourceSet, extension)
         }
     }
 

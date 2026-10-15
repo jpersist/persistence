@@ -16,16 +16,24 @@ import persist.hibernate.gradle.task.HibernateEnhancementTask
  * <p>
  * This plugin applies the {@link org.gradle.api.plugins.JavaPlugin}, registers a customizable
  * <code>hibernate</code> configuration extension block, and dynamically instantiates an independent
- * {@link HibernateEnhancementTask} for every active project source set layout.
+ * {@link HibernateEnhancementTask} for every active project source set layout whose
+ * {@code java.srcDirs} contain at least one directory that physically exists on disk.
  * </p>
  * <p>
  * To ensure absolute compliance with the Gradle Configuration Cache and incremental verification states,
  * this plugin manages separate input/output staging directory targets, safeguarding compilation
  * <code>UP-TO-DATE</code> checking parameters across multi-module build paths.
  * </p>
+ * <p>
+ * <b>Since 1.7.0:</b> The enhancement task is only registered for source sets that have
+ * at least one physical Java source directory present on disk. Source sets with no existing
+ * {@code java.srcDirs} directories are silently skipped, preventing clean IDE workspaces
+ * from being cluttered with empty tasks (e.g.&nbsp;{@code hibernateEnhanceTestClasses}).
+ * </p>
  *
  * @see HibernateExtension
- */class HibernateEnhancementPlugin implements Plugin<Project> {
+ */
+class HibernateEnhancementPlugin implements Plugin<Project> {
 
     @Override
     void apply(Project project) {
@@ -40,54 +48,59 @@ import persist.hibernate.gradle.task.HibernateEnhancementTask
         }
 
         project.getExtensions().getByType(SourceSetContainer).configureEach { sourceSet ->
-            // Dynamic task naming based on the source set context (e.g., main -> compileJava)
-            String classesTaskName = sourceSet.getClassesTaskName()
-            String compileTaskName = sourceSet.getCompileJavaTaskName()
-            String enhanceTaskName = "hibernateEnhance${classesTaskName.capitalize()}"
-            def enhancement = hibernate.enhancement
+            // We strictly check for Java source directories since this is a bytecode enhancer
+            boolean hasJavaSources = sourceSet.java.srcDirs.any { it.exists() }
 
-            // Fetch the compilation task lazily using provider mappings to prevent premature instantiation
-            def compileTaskProvider = project.tasks.named(compileTaskName, JavaCompile)
+            if (hasJavaSources) {
+                // Dynamic task naming based on the source set context (e.g., main -> compileJava)
+                String classesTaskName = sourceSet.getClassesTaskName()
+                String compileTaskName = sourceSet.getCompileJavaTaskName()
+                String enhanceTaskName = "hibernateEnhance${classesTaskName.capitalize()}"
+                def enhancement = hibernate.enhancement
 
-            // Map to an explicitly isolated enhanced directory
-            def enhancedClassesDir = project.layout.buildDirectory.dir("enhanced/classes/java/${sourceSet.name}")
+                // Fetch the compilation task lazily using provider mappings to prevent premature instantiation
+                def compileTaskProvider = project.tasks.named(compileTaskName, JavaCompile)
 
-            // Register the task completely outside the compile task configuration execution context
-            def enhanceTaskProvider = project.tasks.register(enhanceTaskName, HibernateEnhancementTask) { enhanceTask ->
-                enhanceTask.group = LifecycleBasePlugin.BUILD_GROUP
-                enhanceTask.description = "Enhances entity ${classesTaskName}."
+                // Map to an explicitly isolated enhanced directory
+                def enhancedClassesDir = project.layout.buildDirectory.dir("enhanced/classes/java/${sourceSet.name}")
 
-                // Pass the complete compilation classpath directly to the task input property
-                enhanceTask.compileClasspath.from(sourceSet.compileClasspath)
+                // Register the task completely outside the compile task configuration execution context
+                def enhanceTaskProvider = project.tasks.register(enhanceTaskName, HibernateEnhancementTask) { enhanceTask ->
+                    enhanceTask.group = LifecycleBasePlugin.BUILD_GROUP
+                    enhanceTask.description = "Enhances entity ${classesTaskName}."
 
-                // Properly map input/output boundaries to maintain task correctness
-                enhanceTask.sourceClassesDir.set(compileTaskProvider.flatMap { it.getDestinationDirectory() })
-                enhanceTask.targetClassesDir.set(enhancedClassesDir)
+                    // Pass the complete compilation classpath directly to the task input property
+                    enhanceTask.compileClasspath.from(sourceSet.compileClasspath)
 
-                // Feed extension configuration states safely into the Task fields
-                enhanceTask.lazyInitializationEnabled.set(enhancement.enableLazyInitialization)
-                enhanceTask.dirtyTrackingEnabled.set(enhancement.enableDirtyTracking)
-                enhanceTask.associationManagementEnabled.set(enhancement.enableAssociationManagement)
-                enhanceTask.extendedEnhancementEnabled.set(enhancement.enableExtendedEnhancement)
+                    // Properly map input/output boundaries to maintain task correctness
+                    enhanceTask.sourceClassesDir.set(compileTaskProvider.flatMap { it.getDestinationDirectory() })
+                    enhanceTask.targetClassesDir.set(enhancedClassesDir)
 
-                // Hook the lifecycle dependencies safely
-                enhanceTask.mustRunAfter(compileTaskProvider)
-            }
+                    // Feed extension configuration states safely into the Task fields
+                    enhanceTask.lazyInitializationEnabled.set(enhancement.enableLazyInitialization)
+                    enhanceTask.dirtyTrackingEnabled.set(enhancement.enableDirtyTracking)
+                    enhanceTask.associationManagementEnabled.set(enhancement.enableAssociationManagement)
+                    enhanceTask.extendedEnhancementEnabled.set(enhancement.enableExtendedEnhancement)
 
-            project.tasks.named(classesTaskName).configure { task ->
-                task.dependsOn(enhanceTaskProvider)
-            }
+                    // Hook the lifecycle dependencies safely
+                    enhanceTask.mustRunAfter(compileTaskProvider)
+                }
 
-            // Re-route the packaging steps to collect classes from the enhanced directory
-            project.tasks.withType(Jar).configureEach { jarTask ->
-                // 1. Tell Gradle how to resolve duplicate file conflicts
-                jarTask.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+                project.tasks.named(classesTaskName).configure { task ->
+                    task.dependsOn(enhanceTaskProvider)
+                }
 
-                // 2. Add the ENHANCED classes FIRST so they take precedence
-                jarTask.from(enhanceTaskProvider.flatMap { task -> task.getTargetClassesDir() })
+                // Re-route the packaging steps to collect classes from the enhanced directory
+                project.tasks.withType(Jar).configureEach { jarTask ->
+                    // 1. Tell Gradle how to resolve duplicate file conflicts
+                    jarTask.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
-                // 3. Add the ORIGINAL classes SECOND (Duplicates matching woven classes will be ignored)
-                jarTask.from(compileTaskProvider.flatMap { task -> task.destinationDirectory })
+                    // 2. Add the ENHANCED classes FIRST so they take precedence
+                    jarTask.from(enhanceTaskProvider.flatMap { task -> task.getTargetClassesDir() })
+
+                    // 3. Add the ORIGINAL classes SECOND (Duplicates matching woven classes will be ignored)
+                    jarTask.from(compileTaskProvider.flatMap { task -> task.destinationDirectory })
+                }
             }
         }
     }

@@ -29,7 +29,8 @@ class JakartaPersistencePluginSpec extends Specification {
         and: "The modelgen processor configuration is registered"
         project.configurations.named('modelgenProcessor') != null
 
-        and: "All tasks are registered with the correct type"
+        and: "No plugin tasks are registered"
+        // Because source set source dirs does no exist
         Map<String, Class<?>> taskMap = [
             "processPersistenceDescriptor": ProcessPersistenceDescriptor,
             "generateJPAGraalVMMetadata": GenerateJPAGraalVMMetadata,
@@ -37,10 +38,7 @@ class JakartaPersistencePluginSpec extends Specification {
             "lintNamedQueries": LintNamedQueries
         ]
         def tasks = project.tasks.matching { taskMap.containsKey(it.name) }
-        tasks.size() == taskMap.size()
-        tasks.each { task ->
-            assert taskMap.get(task.name).isInstance(task)
-        }
+        tasks.size() == 0
     }
 
 }

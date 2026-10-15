@@ -16,12 +16,6 @@ class HibernatePersistencePluginSpec extends Specification {
 
         then: "The modelgen processor configuration is registered"
         project.configurations.named('modelgenProcessor') != null
-
-        and: "The enhancement task is registered with the correct type"
-        def task = project.tasks.named("hibernateEnhanceClasses")
-        task != null
-        task.isPresent()
-        task.get() instanceof HibernateEnhancementTask
     }
 
 }

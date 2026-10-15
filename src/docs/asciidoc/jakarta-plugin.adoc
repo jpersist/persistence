@@ -553,6 +553,8 @@ persistence {
 
 The plugin registers the following tasks per Java source set. For the `main` source set the task names are as shown below; for other source sets (e.g. `test`) the source set name is capitalized and inserted (e.g. `processTestPersistenceDescriptor`).
 
+NOTE: _(Since 1.7.0)_ Per-source-set tasks and configurations are only registered when the source set's `java.srcDirs` or `resources.srcDirs` contain at least one directory that physically exists on disk. Source sets with no on-disk directories are silently skipped, preventing clean IDE workspaces from being cluttered with empty tasks (e.g. `lintTestNamedQueries`).
+
 === `processPersistenceDescriptor`
 
 **Group:** `build` +
