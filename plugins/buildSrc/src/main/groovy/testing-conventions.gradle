@@ -1,0 +1,46 @@
+dependencies {
+    implementation localGroovy()
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+testing {
+    suites {
+        test {
+            useJUnitJupiter()
+            dependencies {
+                implementation libs.spock.core
+            }
+        }
+
+        functionalTest(JvmTestSuite) {
+            dependencies {
+                implementation gradleTestKit()
+                implementation libs.spock.core
+            }
+
+            targets {
+                all {
+                    testTask.configure {
+                        mustRunAfter(tasks.named('pluginUnderTestMetadata'))
+
+                        // Configuration Cache safe JaCoCo proxy variables configuration
+                        def jacocoAgent = extensions.getByType(JacocoTaskExtension)
+                        def jacocoEnabled = jacocoAgent.enabled
+                        def jacocoJvmArg = providers.provider { jacocoAgent.asJvmArg.replace('\\', '/') }
+                        def jacocoRunnerDestFile = new File(jacocoAgent.destinationFile.parentFile, 'functionalTestRunner.exec')
+                        def jacocoDestFilePath = jacocoRunnerDestFile.absolutePath.replace('\\', '/')
+
+                        doFirst {
+                            if (jacocoEnabled) {
+                                systemProperty 'jacocoAgentJvmArg', jacocoJvmArg.get()
+                                systemProperty 'jacocoDestFile', jacocoDestFilePath
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

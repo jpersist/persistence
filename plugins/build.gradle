@@ -1,0 +1,108 @@
+import java.time.LocalDate
+
+plugins {
+    id 'base'
+    id 'jacoco'
+    id 'jacoco-report-aggregation'
+    id 'com.gradle.plugin-publish' version '2.2.1' apply false
+    id 'org.sonarqube' version '7.5.0.8588'
+    id 'org.asciidoctor.jvm.convert' version '4.0.4'
+}
+
+allprojects {
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+// Declare dependencies for the aggregator so it links JVM test suites together
+dependencies {
+    // Collects standard unit tests and custom JvmTestSuites (like functionalTest) from subprojects
+    subprojects.forEach { subproject ->
+        jacocoAggregation(subproject)
+    }
+}
+
+reporting {
+    reports {
+        testCodeCoverageReport(JacocoCoverageReport) {
+            testSuiteName = 'test'
+        }
+        functionalTestCodeCoverageReport(JacocoCoverageReport) {
+            testSuiteName = 'functionalTest'
+        }
+    }
+}
+
+// Wire aggregated coverage reports into the root check lifecycle
+// Using finalizedBy avoids circular dependency issues since the report
+// tasks implicitly depend on test execution data via jacoco-report-aggregation
+tasks.named('check') {
+    finalizedBy tasks.named('testCodeCoverageReport', JacocoReport)
+    finalizedBy tasks.named('functionalTestCodeCoverageReport', JacocoReport)
+}
+
+// Include GradleRunner JaCoCo exec files in the aggregated functional test
+// coverage report so plugin code exercised inside TestKit builds is reflected
+// in the final coverage numbers
+tasks.named('functionalTestCodeCoverageReport', JacocoReport) {
+    doNotTrackState('Because accessing unreadable inputs or outputs is not supported.')
+    subprojects.each { sub ->
+        executionData.from(sub.layout.buildDirectory.file('jacoco/functionalTestRunner.exec'))
+    }
+
+    // Remove included 'libraries' build classes from the report so only
+    // plugin classes are measured for functional-test coverage.
+    // Capture the original source objects (which carry task dependencies)
+    // before overwriting, to avoid both eager resolution and circular references.
+    def originalSources = new ArrayList(classDirectories.from)
+    classDirectories.setFrom(
+        files(originalSources).asFileTree.matching {
+            exclude { element ->
+                element.file.absolutePath.replace('\\', '/').contains('/libraries/')
+            }
+        }
+    )
+}
+
+// Apply Groovydoc tasks
+apply from: "../gradle/groovydoc.gradle"
+
+configurations {
+    asciidoctorExtensions
+}
+
+dependencies {
+    asciidoctorExtensions 'com.bmuschko:asciidoctorj-tabbed-code-extension:0.3'
+}
+
+asciidoctor {
+    sourceDir = file('src/docs/asciidoc')
+    baseDirFollowsSourceDir()
+    outputOptions {
+        backends 'html5'
+    }
+    configurations 'asciidoctorExtensions'
+    attributes 'source-highlighter': 'coderay',
+               'toc': 'left',
+               'toclevels': '3',
+               'sectnums': '',
+               'examplesdir': file('../examples').absolutePath,
+               'project-version': project.version,
+               'project-date': LocalDate.now().toString()
+}
+
+sonar {
+    properties {
+        property "sonar.projectKey", "jpersist_persistence_plugins"
+        property "sonar.organization", "jpersist"
+        property "sonar.host.url", "https://sonarcloud.io"
+        property "sonar.projectName", "persistence-plugins"
+
+        property "sonar.coverage.jacoco.xmlReportPaths", [
+            "${layout.buildDirectory.get().asFile}/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml",
+            "${layout.buildDirectory.get().asFile}/reports/jacoco/functionalTestCodeCoverageReport/functionalTestCodeCoverageReport.xml"
+        ].join(",")
+    }
+}

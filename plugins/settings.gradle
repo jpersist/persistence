@@ -1,0 +1,29 @@
+pluginManagement {
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+dependencyResolutionManagement {
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+    }
+    versionCatalogs {
+        // Expose the same version catalog used by the root build
+        libs {
+            from(files("../gradle/libs.versions.toml"))
+        }
+    }
+}
+
+rootProject.name = 'plugins'
+
+// Include the individual plugin modules locally within this build scope
+include 'eclipse-persistence-gradle-plugin'
+include 'hibernate-persistence-gradle-plugin'
+include 'jakarta-persistence-gradle-plugin'
+include 'persistence-gradle-plugin-functional-test'
+
+includeBuild '../libraries'

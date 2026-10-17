@@ -50,8 +50,9 @@ jobs:
         run: ../gradlew build --configuration-cache
 
       # Verifies tasks, bytecode enhancement, and confirms true Configuration Cache compliance
-      - name: Run Build and Functional Tests
-        run: ./gradlew build --configuration-cache
+      - name: Run Plugins Build and Functional Tests
+        working-directory: plugins
+        run: ../gradlew build --configuration-cache
 
       # ONLY execute Sonar analysis on JDK 21 pushed to main branches or active pull requests
       - name: Analyze Libraries with Sonar
@@ -61,8 +62,9 @@ jobs:
         working-directory: libraries
         run: ../gradlew sonar --no-configuration-cache
 
-      - name: Analyze with Sonar
+      - name: Analyze Plugins with Sonar
         if: matrix.java-version == 21 && (github.actor != 'dependabot[bot]')
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew sonar --no-configuration-cache
+        working-directory: plugins
+        run: ../gradlew sonar --no-configuration-cache

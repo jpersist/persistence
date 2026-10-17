@@ -1,4 +1,4 @@
-name: Trigger Automated Framework Release
+name: Trigger Automated Plugins Release
 
 on:
   workflow_dispatch:
@@ -37,8 +37,8 @@ jobs:
       - name: Resolve Release and Next Versions
         id: versions
         run: |
-          # Read the current version from gradle.properties
-          CURRENT_VERSION=$(grep '^version=' gradle.properties | cut -d'=' -f2)
+          # Read the current version from plugins/gradle.properties
+          CURRENT_VERSION=$(grep '^version=' plugins/gradle.properties | cut -d'=' -f2)
 
           # Determine the release version (strip -SNAPSHOT suffix if not provided)
           if [ -n "${{ github.event.inputs.releaseVersion }}" ]; then
@@ -85,6 +85,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
 
       - name: Set Release Version and Build
+        working-directory: plugins
         run: |
           RELEASE_VERSION="${{ steps.versions.outputs.release_version }}"
 
@@ -92,26 +93,26 @@ jobs:
           sed -i "s/^version=.*/version=${RELEASE_VERSION}/" gradle.properties
 
           # Run the full build to validate the release
-          chmod +x ./gradlew
-          ./gradlew build
+          chmod +x ../gradlew
+          ../gradlew build
 
       - name: Commit and Tag Release
         run: |
           RELEASE_VERSION="${{ steps.versions.outputs.release_version }}"
 
-          git add gradle.properties
-          git commit -m "[Release] - pre tag commit: '${RELEASE_VERSION}'."
-          git tag -a "v${RELEASE_VERSION}" -m "Release v${RELEASE_VERSION}"
+          git add plugins/gradle.properties
+          git commit -m "[Plugins Release] - pre tag commit: '${RELEASE_VERSION}'."
+          git tag -a "v${RELEASE_VERSION}" -m "Plugins Release v${RELEASE_VERSION}"
 
       - name: Set Next Development Version
         run: |
           NEXT_VERSION="${{ steps.versions.outputs.next_version }}"
 
           # Update gradle.properties with the next snapshot version
-          sed -i "s/^version=.*/version=${NEXT_VERSION}/" gradle.properties
+          sed -i "s/^version=.*/version=${NEXT_VERSION}/" plugins/gradle.properties
 
-          git add gradle.properties
-          git commit -m "[Release] - new version commit: '${NEXT_VERSION}'."
+          git add plugins/gradle.properties
+          git commit -m "[Plugins Release] - new version commit: '${NEXT_VERSION}'."
 
       - name: Push Changes and Tag
         run: |
@@ -122,7 +123,7 @@ jobs:
         uses: softprops/action-gh-release@v3
         with:
           tag_name: v${{ steps.versions.outputs.release_version }}
-          name: Release v${{ steps.versions.outputs.release_version }}
+          name: Plugins Release v${{ steps.versions.outputs.release_version }}
           draft: false
           prerelease: false
           # Tells GitHub to automatically generate the Markdown notes using the release.yml categories
@@ -133,7 +134,7 @@ jobs:
   publish-plugins:
     name: Publish Plugins to Portal
     needs: release
-    uses: ./.github/workflows/gradle-cd.yml
+    uses: ./.github/workflows/gradle-plugins-cd.yml
     with:
       tag: v${{ needs.release.outputs.release_version }}
     secrets:
@@ -143,7 +144,7 @@ jobs:
   publish-docs:
     name: Publish Documentation
     needs: release
-    uses: ./.github/workflows/gradle-doc.yml
+    uses: ./.github/workflows/gradle-plugins-doc.yml
     with:
       tag: v${{ needs.release.outputs.release_version }}
     permissions:

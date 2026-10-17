@@ -1,7 +1,7 @@
-name: Publish Documentation
+name: Publish Plugins Documentation
 
 on:
-  workflow_call:  # Called from gradle-release.yml after a release
+  workflow_call:  # Called from gradle-plugins-release.yml after a release
     inputs:
       tag:
         description: 'The version tag to checkout and publish (e.g., v1.0.0)'
@@ -34,8 +34,8 @@ jobs:
           if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
             VERSION="${GITHUB_REF#refs/tags/v}"
           else
-            # Fall back to gradle.properties for workflow_call triggers
-            VERSION=$(grep '^version=' gradle.properties | cut -d'=' -f2)
+            # Fall back to plugins/gradle.properties for workflow_call triggers
+            VERSION=$(grep '^version=' plugins/gradle.properties | cut -d'=' -f2)
             VERSION="${VERSION%-SNAPSHOT}"
           fi
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
@@ -54,28 +54,30 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Generate Documentation
-        run: ./gradlew groovydocAll asciidoctor
+        working-directory: plugins
+        run: ../gradlew groovydocAll asciidoctor
 
       - name: Prepare Versioned Site
         run: |
           VERSION="${{ steps.version.outputs.version }}"
 
-          mkdir -p site/api/${VERSION}
-          mkdir -p site/guide/${VERSION}
+          mkdir -p site/plugins/api/${VERSION}
+          mkdir -p site/plugins/guide/${VERSION}
 
-          cp -r build/docs/groovydoc/* site/api/${VERSION}/
-          cp -r build/docs/asciidoc/* site/guide/${VERSION}/
+          cp -r plugins/build/docs/groovydoc/* site/plugins/api/${VERSION}/
+          cp -r plugins/build/docs/asciidoc/* site/plugins/guide/${VERSION}/
 
           # Also publish as 'latest' for convenient access
-          mkdir -p site/api/latest
-          mkdir -p site/guide/latest
+          mkdir -p site/plugins/api/latest
+          mkdir -p site/plugins/guide/latest
 
-          cp -r build/docs/groovydoc/* site/api/latest/
-          cp -r build/docs/asciidoc/* site/guide/latest/
+          cp -r site/plugins/api/${VERSION}/* site/plugins/api/latest/
+          cp -r site/plugins/guide/${VERSION}/* site/plugins/guide/latest/
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./site
+          destination_dir: .
           keep_files: true

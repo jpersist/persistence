@@ -1,0 +1,26 @@
+plugins {
+    id 'java-gradle-plugin'
+    id 'groovy'
+    id 'java-conventions'
+    id 'jacoco-conventions'
+    id 'testing-conventions'
+}
+
+tasks.withType(GroovyCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+if (project.name.endsWith('-gradle-plugin')) {
+    project.apply from: "${project.rootDir}/../gradle/plugin-portal-publishing.gradle"
+
+    project.plugins.withType(JavaGradlePluginPlugin).configureEach {
+        project.gradlePlugin.plugins.configureEach { pluginDescriptor ->
+            project.compatibility(pluginDescriptor) {
+                features {
+                    configurationCache = true
+                    isolatedProjects = true
+                }
+            }
+        }
+    }
+}
