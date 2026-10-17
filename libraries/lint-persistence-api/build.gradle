@@ -10,7 +10,7 @@ publishing {
 
             pom {
                 name = 'Lint Persistence API'
-                description = 'Defines the Service Provider Interface (SPI): `QueryParser` and `QueryParserFactory`'
+                description = 'Defines the Service Provider Interface (SPI): `NamedObjectParser` and `NamedObjectParserFactory`'
             }
         }
     }
