@@ -1,23 +1,24 @@
-plugins {
-    id 'com.gradle.enterprise' version '3.13.4'
+pluginManagement {
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+    }
 }
 
-gradleEnterprise {
-    if (System.getenv('CI') != null) {
-        buildScan {
-            publishAlways()
-            termsOfServiceUrl = 'https://gradle.com/terms-of-service'
-            termsOfServiceAgree = 'yes'
-        }
+plugins {
+    id 'com.gradle.develocity' version '4.6.0'
+}
+
+develocity {
+    buildScan {
+        publishing.onlyIf { System.getenv('CI') != null }
+
+        termsOfUseUrl = 'https://gradle.com/help/legal-terms-of-use'
+        termsOfUseAgree = 'yes'
     }
 }
 
 rootProject.name = 'jpersist'
 
-include 'plugins:eclipse-persistence-gradle-plugin'
-include 'plugins:hibernate-persistence-gradle-plugin'
-include 'plugins:jakarta-persistence-gradle-plugin'
-
-include 'plugins:persistence-gradle-plugin-functional-test'
-
 includeBuild 'libraries'
+includeBuild 'plugins'

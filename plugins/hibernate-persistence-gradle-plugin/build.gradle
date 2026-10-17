@@ -1,10 +1,10 @@
 plugins {
-    id 'java-gradle-plugin'
-    id 'groovy'
+    id 'plugin-conventions'
+    id 'publishing-conventions'
 }
 
 dependencies {
-    implementation project(':plugins:jakarta-persistence-gradle-plugin')
+    implementation project(':jakarta-persistence-gradle-plugin')
     implementation libs.hibernate.orm.core
 }
 

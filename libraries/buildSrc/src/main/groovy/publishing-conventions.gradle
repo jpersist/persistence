@@ -1,12 +1,6 @@
-apply plugin: 'maven-publish'
-apply plugin: 'signing'
-
-// 1. Automatically generate Source and Javadoc JARs required by Maven Central
-plugins.withType(JavaPlugin).configureEach {
-    java {
-        withSourcesJar()
-        withJavadocJar()
-    }
+plugins {
+    id 'maven-publish'
+    id 'signing'
 }
 
 tasks.withType(Sign).configureEach {
@@ -77,7 +71,7 @@ plugins.withType(JavaPlugin).configureEach {
     }
 }
 
-// 2. Cryptographically sign the artifacts using GPG (Only mandatory for full Releases)
+// Cryptographically sign the artifacts using GPG (Only mandatory for full Releases)
 signing {
     required { !version.endsWith("SNAPSHOT") && gradle.taskGraph.hasTask("publish") }
     def signingKey = providers.environmentVariable("GPG_SIGNING_KEY").orElse("").get()
