@@ -1,0 +1,48 @@
+plugins {
+    id 'java-library'
+    id 'jacoco'
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:6.0.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation libs.assertj.core
+}
+
+java {
+    withSourcesJar()
+    withJavadocJar()
+
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = 17
+}
+
+tasks.withType(Jar).configureEach {
+    manifest {
+        attributes(
+            'Implementation-Title': project.name,
+            'Implementation-Version': project.version
+        )
+    }
+}
+
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+    finalizedBy tasks.named('jacocoTestReport')
+    systemProperty 'file.encoding', 'UTF-8'
+}
+
+tasks.withType(JacocoReport).configureEach {
+    dependsOn test
+    reports {
+        csv.required = false
+        xml.required = true
+    }
+}

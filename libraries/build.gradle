@@ -19,54 +19,6 @@ allprojects {
     }
 }
 
-subprojects { subproject ->
-    apply from: "${rootDir}/gradle/maven-central-publishing.gradle"
-
-    plugins.withType(JavaPlugin).configureEach {
-        java {
-            toolchain {
-                languageVersion = JavaLanguageVersion.of(17)
-            }
-        }
-
-        sonar {
-            properties {
-                property "sonar.sources", "src/main/java"
-                property "sonar.tests", "src/test/java"
-                property "sonar.junit.reportPaths", "${project.layout.buildDirectory.get().asFile}/test-results/test"
-            }
-        }
-    }
-
-    tasks.withType(JavaCompile).configureEach {
-        options.encoding = 'UTF-8'
-        options.release = 17
-    }
-
-    tasks.withType(Jar).configureEach {
-        manifest {
-            attributes(
-                'Implementation-Title': subproject.name,
-                'Implementation-Version': subproject.version
-            )
-        }
-    }
-
-    tasks.withType(Test).configureEach {
-        useJUnitPlatform()
-        finalizedBy tasks.named('jacocoTestReport')
-        systemProperty 'file.encoding', 'UTF-8'
-    }
-
-    tasks.withType(JacocoReport).configureEach {
-        dependsOn test
-        reports {
-            csv.required = false
-            xml.required = true
-        }
-    }
-}
-
 reporting {
     reports {
         testAggregateTestReport(AggregateTestReport) {

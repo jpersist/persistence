@@ -6,8 +6,3 @@ repositories {
     mavenCentral()
     gradlePluginPortal()
 }
-
-dependencies {
-    // Make the compatibility plugin classes available inside our convention scripts
-    implementation 'org.gradle.plugin-compatibility:org.gradle.plugin-compatibility.gradle.plugin:1.1.0'
-}
