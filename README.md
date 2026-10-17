@@ -153,7 +153,7 @@ The plugin automatically detects your entity classes and generates the appropria
 
 If JPersist is saving your engineering team debugging hours, consider backing us!
 
-👉 **[Become a GitHub Sponsor](https://github.com/jpersist/persistence)**
+👉 **[Become a GitHub Sponsor](https://github.com/sponsors/jpersist)**
 
 ## 📄 License
 
