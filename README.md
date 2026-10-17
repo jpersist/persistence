@@ -1,10 +1,17 @@
 # 📦 JPersist: Zero-Boilerplate JPA Build Automation for Gradle
 
+[![Java Gradle CI](https://github.com/jpersist/persistence/actions/workflows/gradle-ci.yml/badge.svg)](https://github.com/jpersist/persistence/actions/workflows/gradle-ci.yml)
 ![GitHub Release](https://img.shields.io/github/v/release/jpersist/persistence)
-![Gradle Plugin Portal Version](https://img.shields.io/gradle-plugin-portal/v/io.github.jpersist.jpa)
-[![Quality gate status](https://sonarcloud.io/api/project_badges/measure?project=jpersist_persistence&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=jpersist_persistence)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=jpersist_persistence&metric=coverage)](https://sonarcloud.io/summary/new_code?id=jpersist_persistence)
 ![GitHub License](https://img.shields.io/github/license/jpersist/persistence)
+
+### 📊 Component Status Matrices
+
+| Component | Release Version | Quality Gate | Code Coverage |
+| :--- | :--- | :--- | :--- |
+| **🔌 Gradle Plugins** | ![Gradle Plugin Portal Version](https://img.shields.io/gradle-plugin-portal/v/io.github.jpersist.jpa) | [![Quality gate status](https://sonarcloud.io/api/project_badges/measure?project=jpersist_persistence_plugins&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=jpersist_persistence_plugins) | [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=jpersist_persistence_plugins&metric=coverage)](https://sonarcloud.io/summary/new_code?id=jpersist_persistence_plugins) |
+| **📦 Core Libraries** | ![Maven Central](https://img.shields.io/maven-central/v/io.github.jpersist.lint/lint-persistence-api) | [![Quality gate status](https://sonarcloud.io/api/project_badges/measure?project=jpersist_persistence_libraries&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=jpersist_persistence_libraries) | [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=jpersist_persistence_libraries&metric=coverage)](https://sonarcloud.io/summary/new_code?id=jpersist_persistence_libraries) |
+
+---
 
 ## 🧩 What is JPersist?
 
