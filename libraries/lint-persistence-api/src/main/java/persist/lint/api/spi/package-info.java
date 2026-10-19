@@ -1,19 +1,27 @@
 /**
- * Service Provider Interface (SPI) for build-time validation of named
- * JPA objects.
+ * Service Provider Interface (SPI) for build-time persistence validation.
  *
  * <p>This package defines the core abstractions used to parse and validate
- * named JPQL queries and stored procedures at build time, without requiring
- * a live database connection:</p>
+ * named JPQL queries, stored procedures, and database schemas at build
+ * time, without requiring a live database connection (except for schema
+ * validation):</p>
  *
  * <ul>
- *   <li>{@link persist.lint.api.spi.NamedObjectParser} — parses and
+ *   <li>{@link persist.lint.api.spi.PersistenceLinter} &ndash; marker
+ *       interface for all persistence linting operations.</li>
+ *   <li>{@link persist.lint.api.spi.PersistenceLinterFactory} &ndash; base
+ *       factory interface providing namespace resolution and generic
+ *       {@link java.util.ServiceLoader}-based discovery of linter
+ *       factories.</li>
+ *   <li>{@link persist.lint.api.spi.NamedObjectParser} &ndash; parses and
  *       semantically validates a named JPQL query or stored procedure
  *       declaration against the project's entity metamodel.</li>
- *   <li>{@link persist.lint.api.spi.NamedObjectParserFactory} — factory
- *       for creating {@code NamedObjectParser} instances; implementations
- *       are discovered at runtime via the {@link java.util.ServiceLoader}
- *       mechanism.</li>
+ *   <li>{@link persist.lint.api.spi.NamedObjectParserFactory} &ndash;
+ *       factory for creating {@code NamedObjectParser} instances.</li>
+ *   <li>{@link persist.lint.api.spi.SchemaValidator} &ndash; validates the
+ *       entity metamodel against a live database schema.</li>
+ *   <li>{@link persist.lint.api.spi.SchemaValidatorFactory} &ndash;
+ *       factory for creating {@code SchemaValidator} instances.</li>
  * </ul>
  *
  * <p>Provider implementations for specific JPA namespaces are shipped in

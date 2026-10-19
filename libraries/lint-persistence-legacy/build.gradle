@@ -19,7 +19,7 @@ publishing {
 
             pom {
                 name = 'Legacy Lint Persistence'
-                description = 'Legacy `javax.persistence` (JPA 2.x) provider. Uses Hibernate 5 and its AST-based query translator to validate JPQL queries.'
+                description = 'Legacy `javax.persistence` (JPA 2.x) provider. Uses Hibernate 5 and its AST-based query translator to validate JPQL queries and schemas.'
             }
         }
     }

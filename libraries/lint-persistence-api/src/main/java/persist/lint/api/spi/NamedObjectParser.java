@@ -17,7 +17,7 @@ import java.util.Set;
  * @see NamedObjectParserFactory
  * @see NamedObjectDescriptor
  */
-public interface NamedObjectParser {
+public interface NamedObjectParser extends PersistenceLinter {
 
     /**
      * Parses and semantically validates the given JPQL query string.

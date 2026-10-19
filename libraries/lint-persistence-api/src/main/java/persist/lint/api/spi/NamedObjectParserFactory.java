@@ -15,15 +15,7 @@ import java.util.ServiceLoader;
  * @since 2.0.0
  * @see NamedObjectParser
  */
-public interface NamedObjectParserFactory {
-
-    /**
-     * Returns the persistence namespace supported by this factory.
-     *
-     * @return the namespace identifier, for example {@code "javax"} for
-     *         JPA&nbsp;2.x or {@code "jakarta"} for JPA&nbsp;3.x
-     */
-    String getSupportedNamespace();
+public interface NamedObjectParserFactory extends PersistenceLinterFactory {
 
     /**
      * Creates a new {@link NamedObjectParser} configured with the given entity
@@ -52,21 +44,7 @@ public interface NamedObjectParserFactory {
      *                                  the resolved namespace
      */
     static NamedObjectParserFactory newNamedObjectParserFactory(String jpaVersion) {
-        // Resolve target namespace based on the semantic spec version map token
-        final String targetNamespace = switch (jpaVersion) {
-            case "2.0", "2.1", "2.2" -> "javax";
-            case "3.0", "3.1", "3.2" -> "jakarta";
-            default -> throw new IllegalArgumentException("Unsupported JPA version: " + jpaVersion);
-        };
-
-        // Drive JVM ServiceLoader API to dynamically discover strategies loaded into the isolated classloader
-        ServiceLoader<NamedObjectParserFactory> loader = ServiceLoader.load(NamedObjectParserFactory.class);
-
-        return loader.stream()
-            .map(ServiceLoader.Provider::get)
-            .filter(factory -> factory.getSupportedNamespace().equals(targetNamespace))
-            .findFirst()
-            .orElseThrow(() -> new IllegalStateException("Failed to discover a registered NamedObjectParserFactory provider for namespace: " + targetNamespace));
+        return PersistenceLinterFactory.newPersistenceLinterFactory(jpaVersion, NamedObjectParserFactory.class);
     }
 
 }

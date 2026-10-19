@@ -16,16 +16,10 @@ import java.util.List;
  * @since 2.0.0
  * @see JakartaNamedObjectParser
  */
-public class JakartaNamedObjectParserFactory implements NamedObjectParserFactory {
+public class JakartaNamedObjectParserFactory extends JakartaPersistenceLinterFactory implements NamedObjectParserFactory {
 
     /** Creates a new {@code JakartaNamedObjectParserFactory}. */
     public JakartaNamedObjectParserFactory() {}
-
-    /** {@inheritDoc} */
-    @Override
-    public String getSupportedNamespace() {
-        return "jakarta";
-    }
 
     /** {@inheritDoc} */
     @Override
