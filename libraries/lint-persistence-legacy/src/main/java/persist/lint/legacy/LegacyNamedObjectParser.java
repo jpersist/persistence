@@ -121,10 +121,10 @@ public class LegacyNamedObjectParser implements NamedObjectParser {
         var parameterTranslations = translator.getParameterTranslations();
         if (parameterTranslations != null) {
             // Collect named parameters (:skuCode)
-            namedParameters = new TreeSet<>(parameterTranslations.getNamedParameterInformationMap().keySet());
+            namedParameters.addAll(parameterTranslations.getNamedParameterInformationMap().keySet());
 
             // Collect positional parameters (?1)
-            positionalParameters = new TreeSet<>(parameterTranslations.getPositionalParameterInformationMap().keySet());
+            positionalParameters.addAll(parameterTranslations.getPositionalParameterInformationMap().keySet());
         }
 
         return NamedObjectDescriptor.of(name, queryString, namedParameters, positionalParameters);

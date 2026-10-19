@@ -1,11 +1,11 @@
-# 🔍 Lint Persistence Libraries: Build-Time JPQL Query Validation
+# 🔍 Lint Persistence Libraries: Build-Time JPA Validation
 
 ![Maven Central](https://img.shields.io/maven-central/v/io.github.jpersist.lint/lint-persistence-api)
 [![Quality gate status](https://sonarcloud.io/api/project_badges/measure?project=jpersist_persistence_libraries&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=jpersist_persistence_libraries)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=jpersist_persistence_libraries&metric=coverage)](https://sonarcloud.io/summary/new_code?id=jpersist_persistence_libraries)
 ![GitHub License](https://img.shields.io/github/license/jpersist/persistence)
 
-The **Lint Persistence Libraries** provide build-time validation of named JPQL queries defined in JPA projects. By compiling query strings against the entity metamodel at build time, syntax errors, unknown entity references, and invalid property paths are caught early — before the application is deployed.
+The **Lint Persistence Libraries** provide build-time validation of named JPQL queries and persistence schemas defined in JPA projects. By compiling query strings against the entity metamodel and comparing the mapped schema with a live database at build time, syntax errors, unknown entity references, invalid property paths, and schema mismatches are caught early — before the application is deployed.
 
 ---
 
@@ -13,9 +13,9 @@ The **Lint Persistence Libraries** provide build-time validation of named JPQL q
 
 | Module                         | Description                                                                                                                                                                                                     |
 |:-------------------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **`lint-persistence-api`**     | Defines the Service Provider Interface (SPI): `NamedObjectParser` and `NamedObjectParserFactory`. Contains no implementation; provider modules are discovered at runtime through the `ServiceLoader` mechanism. |
-| **`lint-persistence-jakarta`** | Jakarta Persistence (JPA 3.x) provider. Uses Hibernate ORM 6 to compile JPQL queries into Semantic Query Model (SQM) trees.                                                                                     |
-| **`lint-persistence-legacy`**  | Legacy `javax.persistence` (JPA 2.x) provider. Uses Hibernate 5 and its AST-based query translator to validate JPQL queries.                                                                                    |
+| **`lint-persistence-api`**     | Defines the Service Provider Interface (SPI): `PersistenceLinter` / `PersistenceLinterFactory` (root contracts), `NamedObjectParser` / `NamedObjectParserFactory` (query validation), and `SchemaValidator` / `SchemaValidatorFactory` (schema validation). Contains no implementation; provider modules are discovered at runtime through the `ServiceLoader` mechanism. |
+| **`lint-persistence-jakarta`** | Jakarta Persistence (JPA 3.x) provider. Uses Hibernate ORM 6 to compile JPQL queries into Semantic Query Model (SQM) trees and to validate persistence schemas against a live database.                            |
+| **`lint-persistence-legacy`**  | Legacy `javax.persistence` (JPA 2.x) provider. Uses Hibernate 5 and its AST-based query translator to validate JPQL queries and schemas.                                                                          |
 | **`lint-persistence-bom`**     | Bill of Materials (BOM) for convenient dependency management of all Lint Persistence modules.                                                                                                                   |
 
 ---
@@ -62,7 +62,25 @@ NamedObjectDescriptor procDescriptor = parser.parseStoredProcedure(
     Set.of("cutoffDate", "archiveTable"));
 ```
 
-The factory method accepts JPA version strings (`"2.0"` – `"2.2"` for `javax`, `"3.0"` – `"3.2"` for `jakarta`) and resolves the correct provider via the `ServiceLoader` API.
+### 3. Validate persistence schema against a database
+
+Use `SchemaValidatorFactory.newSchemaValidatorFactory(String)` to obtain the appropriate factory, then create a `SchemaValidator` to compare the entity metamodel with a live database schema:
+
+```java
+SchemaValidatorFactory factory = SchemaValidatorFactory.newSchemaValidatorFactory("3.1");
+SchemaValidator validator = factory.newSchemaValidator(entityClassNames);
+
+validator.validateSchema(Map.of(
+    "driver",   "org.postgresql.Driver",
+    "url",      "jdbc:postgresql://localhost:5432/mydb",
+    "username", "sa",
+    "password", "secret"
+));
+```
+
+Both factory methods accept JPA version strings (`"2.0"` – `"2.2"` for `javax`, `"3.0"` – `"3.2"` for `jakarta`) and resolve the correct provider via the `ServiceLoader` API.
+
+> **Tip:** You can also use the generic entry point `PersistenceLinterFactory.newPersistenceLinterFactory(jpaVersion, factoryClass)` to discover any `PersistenceLinterFactory` subtype by version.
 
 ---
 
@@ -70,18 +88,28 @@ The factory method accepts JPA version strings (`"2.0"` – `"2.2"` for `javax`,
 
 ```
 lint-persistence-api  (SPI)
- ├── NamedObjectParser        — parses and validates named queries and stored procedures
- ├── NamedObjectParserFactory — creates NamedObjectParser instances; discovered via ServiceLoader
- ├── NamedObjectDescriptor    — immutable result containing parsed metadata and parameters
- └── NamedObjectType          — QUERY or STORED_PROCEDURE
+ ├── PersistenceLinter          — root marker interface for all linting operations
+ ├── PersistenceLinterFactory   — base factory; generic ServiceLoader discovery by JPA version
+ ├── NamedObjectParser          — parses and validates named queries and stored procedures
+ ├── NamedObjectParserFactory   — creates NamedObjectParser instances
+ ├── SchemaValidator            — validates persistence schema against a live database
+ ├── SchemaValidatorFactory     — creates SchemaValidator instances
+ ├── NamedObjectDescriptor      — immutable result containing parsed metadata and parameters
+ └── NamedObjectType            — QUERY or STORED_PROCEDURE
 
-lint-persistence-jakarta  (Provider)
- ├── JakartaNamedObjectParser        — Hibernate 6 / SQM-based implementation
- └── JakartaNamedObjectParserFactory — registered for the "jakarta" namespace
+lint-persistence-jakarta  (Provider — "jakarta" namespace)
+ ├── JakartaPersistenceLinterFactory   — base factory for Jakarta providers
+ ├── JakartaNamedObjectParser          — Hibernate 6 / SQM-based query validation
+ ├── JakartaNamedObjectParserFactory   — creates JakartaNamedObjectParser instances
+ ├── JakartaSchemaValidator            — Hibernate 6-based schema validation
+ └── JakartaSchemaValidatorFactory     — creates JakartaSchemaValidator instances
 
-lint-persistence-legacy  (Provider)
- ├── LegacyNamedObjectParser         — Hibernate 5 / AST-based implementation
- └── LegacyNamedObjectParserFactory  — registered for the "javax" namespace
+lint-persistence-legacy  (Provider — "javax" namespace)
+ ├── LegacyPersistenceLinterFactory    — base factory for Legacy providers
+ ├── LegacyNamedObjectParser           — Hibernate 5 / AST-based query validation
+ ├── LegacyNamedObjectParserFactory    — creates LegacyNamedObjectParser instances
+ ├── LegacySchemaValidator             — Hibernate 5-based schema validation
+ └── LegacySchemaValidatorFactory      — creates LegacySchemaValidator instances
 
 lint-persistence-bom  (BOM)
  └── Aligns versions of all modules above

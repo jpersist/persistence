@@ -16,16 +16,10 @@ import java.util.List;
  * @since 2.0.0
  * @see LegacyNamedObjectParser
  */
-public class LegacyNamedObjectParserFactory implements NamedObjectParserFactory {
+public class LegacyNamedObjectParserFactory extends LegacyPersistenceLinterFactory implements NamedObjectParserFactory {
 
     /** Creates a new {@code LegacyNamedObjectParserFactory}. */
     public LegacyNamedObjectParserFactory() {}
-
-    /** {@inheritDoc} */
-    @Override
-    public String getSupportedNamespace() {
-        return "javax";
-    }
 
     /** {@inheritDoc} */
     @Override
