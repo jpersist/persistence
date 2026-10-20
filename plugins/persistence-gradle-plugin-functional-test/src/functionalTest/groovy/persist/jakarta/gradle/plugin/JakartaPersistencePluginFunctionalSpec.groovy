@@ -237,8 +237,13 @@ class JakartaPersistencePluginFunctionalSpec extends Specification {
         result.task(":test-validate-persistence-module:validatePersistenceSchema").outcome == TaskOutcome.FAILED
 
         and: "the intercepted console error logs contain explicit Hibernate schema validation traces"
-        result.output.contains("Initiating automated schema validation guard for unit: 'failing-validation-unit'")
-        result.output.contains("SchemaManagementException") || result.output.contains("Schema-validation: missing table")
+        // FIX: Update assertions to track the new v1.7.0 multi-tenant matrix execution headers
+        assert result.output.contains("⏳ Starting JPersist Multi-Tenant Schema Validation pipeline pass...")
+        assert result.output.contains("⚙️ Running schema verification matrix pass for tenant profile: [default]")
+        assert result.output.contains("🔍 Auditing entity mapping configurations for unit: 'failing-validation-unit'...")
+        assert result.output.contains("❌ SCHEMA MISMATCH FAILURE inside Tenant [default] for Unit [failing-validation-unit]:")
+        assert result.output.contains("Reason: Schema-validation: missing table [NON_EXISTING_TABLE]")
+        assert result.output.contains("JPersist Schema Validation failed: Encountered 1 mapping verification mismatches across the multi-tenant matrix.")
     }
 
     def "should successfully pass lintNamedQueries task when all @NamedQuery definitions contain valid JPQL syntax and entity property references"() {

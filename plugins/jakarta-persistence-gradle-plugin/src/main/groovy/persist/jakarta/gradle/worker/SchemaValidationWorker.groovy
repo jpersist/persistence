@@ -1,15 +1,18 @@
 package persist.jakarta.gradle.worker
 
-import jakarta.persistence.Persistence
-import jakarta.persistence.EntityManagerFactory
+import org.gradle.api.GradleException
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
+import persist.lint.api.spi.SchemaValidator
+import persist.lint.api.spi.SchemaValidatorFactory
 
 /**
  * Parameter interface for the {@link SchemaValidationWorker} work action.
  * <p>
- * Carries the persistence unit names and JDBC connection properties from the
+ * Carries the JPA version, persistence unit names, serialized multi-tenant
+ * connection profiles, and discovered entity class names from the
  * {@link persist.jakarta.gradle.task.ValidatePersistenceSchema} task into the
  * isolated worker process. All values are resolved eagerly by the task before
  * being passed to the worker.
@@ -20,6 +23,9 @@ import org.gradle.workers.WorkParameters
  */
 interface SchemaValidationParameters extends WorkParameters {
 
+    /** The JPA specification version for annotation namespace resolution. */
+    Property<String> getJpaVersion()
+
     /**
      * Comma-separated persistence unit names to validate.
      *
@@ -28,32 +34,23 @@ interface SchemaValidationParameters extends WorkParameters {
     Property<String> getPersistenceUnitNames()
 
     /**
-     * The JDBC connection URL for the validation database.
+     * Pipe-delimited tenant profiles ({@code Name|URL|Driver|User|Password})
+     * to validate sequentially.
      *
-     * @return The property tracking the JDBC URL.
+     * @return The list property tracking the serialized tenant profiles.
+     * @since 1.7.0
      */
-    Property<String> getValidationUrl()
+    ListProperty<String> getTenantProfiles()
 
     /**
-     * The fully qualified JDBC driver class name.
+     * Fully qualified entity class names discovered by the ASM bytecode
+     * scanner, used to initialize the SPI-loaded
+     * {@link persist.lint.api.spi.SchemaValidator}.
      *
-     * @return The property tracking the driver class name.
+     * @return The list property tracking the entity class names.
+     * @since 1.7.0
      */
-    Property<String> getValidationDriver()
-
-    /**
-     * The database user name.
-     *
-     * @return The property tracking the user name.
-     */
-    Property<String> getValidationUser()
-
-    /**
-     * The database password.
-     *
-     * @return The property tracking the password.
-     */
-    Property<String> getValidationPassword()
+    ListProperty<String> getDiscoveredEntityClasses()
 
 }
 
@@ -61,12 +58,13 @@ interface SchemaValidationParameters extends WorkParameters {
  * Gradle {@link WorkAction} that validates JPA entity mappings against a
  * database schema inside an isolated classloader.
  * <p>
- * For each persistence unit name supplied via
- * {@link SchemaValidationParameters#getPersistenceUnitNames()}, this worker
- * boots a standard JPA {@link jakarta.persistence.EntityManagerFactory} with
- * the {@code validate} schema generation action. If the entity metadata does
- * not match the database schema, the JPA provider throws an exception and the
- * enclosing Gradle task fails.
+ * The worker initializes an SPI-loaded {@link SchemaValidator} via
+ * {@link SchemaValidatorFactory} using the configured JPA version and the
+ * list of discovered entity class names. It then iterates over every
+ * serialized tenant profile and validates each active persistence unit
+ * against that tenant's database. If any tenant/unit combination produces
+ * a schema mismatch, the failure is recorded and the worker throws a
+ * {@link GradleException} after all profiles have been evaluated.
  * </p>
  * <p>
  * The worker is submitted by
@@ -84,32 +82,63 @@ abstract class SchemaValidationWorker implements WorkAction<SchemaValidationPara
 
     @Override
     void execute() {
-        String rawUnitNames = parameters.persistenceUnitNames.get()
-        List<String> unitNames = rawUnitNames.split(',').collect { it.trim() }.findAll { !it.empty }
+        String jpaVersion = parameters.jpaVersion.get()
+        String unitNamesPayload = parameters.persistenceUnitNames.get()
+        List<String> tenantProfiles = parameters.tenantProfiles.get()
+        List<String> discoveredEntityClasses = parameters.discoveredEntityClasses.get()
 
-        // Setup ephemeral H2 in-memory properties
-        Map<String, String> properties = [
-            "jakarta.persistence.jdbc.driver"              : parameters.validationDriver.get(),
-            "jakarta.persistence.jdbc.url"                 : parameters.validationUrl.get(),
-            "jakarta.persistence.jdbc.user"                : parameters.validationUser.get(),
-            "jakarta.persistence.jdbc.password"            : parameters.validationPassword.get(),
-            "jakarta.persistence.schema-generation.database.action": "validate",
-            "hibernate.hbm2ddl.auto"                       : "validate"
-        ]
+        SchemaValidator validator
+        try {
+            def validatorFactory = SchemaValidatorFactory.newSchemaValidatorFactory(jpaVersion)
+            validator = validatorFactory.newSchemaValidator(discoveredEntityClasses)
+        } catch (Exception e) {
+            throw new GradleException("JPersist Schema Validation failed on setup configuration.", e)
+        }
 
-        unitNames.each { unitName ->
-            println "⏳ Initiating automated schema validation guard for unit: '${unitName}'..."
-            try {
-                // Pure, strongly-typed standard JPA boot call
-                EntityManagerFactory emf = Persistence.createEntityManagerFactory(unitName, properties)
-                emf.close()
-            } catch (Exception e) {
-                System.err.println("❌ SCHEMA VALIDATION CRASHED FOR UNIT '${unitName}':")
-                throw e // Propagate to fail the Gradle task execution cleanly
+        println "⏳ Starting JPersist Multi-Tenant Schema Validation pipeline pass..."
+
+        List<String> activeUnits = unitNamesPayload.split(',').collect { it.trim() }.findAll { !it.isEmpty() }
+        int processingFailures = 0
+
+        // SEQUENTIAL MULTI-TENANT MATRIX EXECUTION LOOP
+        tenantProfiles.each { serializedProfile ->
+            def tokens = serializedProfile.split('\\|')
+            String tenantName = tokens[0]
+            String jdbcUrl = tokens[1]
+            String jdbcDriver = tokens[2]
+            String jdbcUser = tokens[3]
+            String jdbcPassword = tokens.length > 4 ? tokens[4] : ""
+
+            println "   ⚙️ Running schema verification matrix pass for tenant profile: [${tenantName}]"
+            println "      Target URL: ${jdbcUrl}"
+
+            activeUnits.each { unitName ->
+                try {
+                    println "      🔍 Auditing entity mapping configurations for unit: '${unitName}'..."
+
+                    validator.validateSchema([
+                        "url": jdbcUrl,
+                        "driver": jdbcDriver,
+                        "username": jdbcUser,
+                        "password": jdbcPassword
+                    ])
+
+                    println "      ✅ Tenant [${tenantName}] -> Unit '${unitName}' alignment checks passed."
+                } catch (Exception e) {
+                    processingFailures++
+                    System.err.println("   ❌ SCHEMA MISMATCH FAILURE inside Tenant [${tenantName}] for Unit [${unitName}]:")
+                    System.err.println("      Reason: ${e.getMessage() ?: e.toString()}")
+                }
             }
         }
 
-        println "✅ All schemas validated successfully!"
+        if (processingFailures > 0) {
+            throw new GradleException(
+                "JPersist Schema Validation failed: Encountered ${processingFailures} mapping verification mismatches across the multi-tenant matrix."
+            )
+        } else {
+            println "✅ Multi-tenant schema matrix validation completed successfully without errors!"
+        }
     }
 
 }
