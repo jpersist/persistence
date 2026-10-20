@@ -343,6 +343,11 @@ persistence {
 | `Property<String>`
 | `""` _(empty)_
 | The database password.
+
+| `tenants`
+| `NamedDomainObjectContainer<TenantValidationExtension>`
+| _empty_
+| Named container of multi-tenant database connection profiles. Each entry defines a separate tenant whose schema is validated independently. When empty, the base properties above are used as a single `default` profile. _(Since 1.7.0)_
 |===
 
 [source,groovy,indent=0,role="primary"]
@@ -374,6 +379,97 @@ persistence {
     }
 }
 ----
+
+==== Multi-Tenant Validation
+
+_Since 1.7.0_
+
+The `tenants` container inside the `validation` block allows declaring multiple named database profiles.
+When tenants are configured, the `validatePersistenceSchema` task iterates over each tenant and validates every active persistence unit against that tenant's database independently.
+Failures are collected across the entire tenant × unit matrix and reported in a single summary.
+
+When no tenants are configured, the base `url`, `driver`, `user`, and `password` properties are wrapped into a single `default` profile automatically, preserving backward compatibility.
+
+[source,groovy,indent=0,role="primary"]
+.Groovy
+----
+persistence {
+    main {
+        validation {
+            tenants {
+                primary {
+                    url = 'jdbc:h2:mem:primary_db;DB_CLOSE_DELAY=-1'
+                }
+                secondary {
+                    url = 'jdbc:h2:mem:secondary_db;DB_CLOSE_DELAY=-1'
+                    driver = 'org.h2.Driver'
+                    user = 'sa'
+                    password = ''
+                }
+            }
+        }
+    }
+}
+----
+
+[source,kotlin,indent=0,role="secondary"]
+.Kotlin
+----
+persistence {
+    create("main") {
+        validation {
+            tenants {
+                create("primary") {
+                    url.set("jdbc:h2:mem:primary_db;DB_CLOSE_DELAY=-1")
+                }
+                create("secondary") {
+                    url.set("jdbc:h2:mem:secondary_db;DB_CLOSE_DELAY=-1")
+                    driver.set("org.h2.Driver")
+                    user.set("sa")
+                    password.set("")
+                }
+            }
+        }
+    }
+}
+----
+
+==== `TenantValidationExtension` Properties
+
+_Since 1.7.0_
+
+Each entry in the `tenants` container is a `TenantValidationExtension` with its own JDBC connection properties.
+All properties default to an in-memory H2 database whose name is derived from the tenant name.
+
+[cols="2,2,3,4"]
+|===
+| Property | Type | Default | Description
+
+| `name`
+| `String`
+| _(container key)_
+| Read-only. The unique identifier for this tenant profile.
+
+| `url`
+| `Property<String>`
+| `"jdbc:h2:mem:<name>_validate_db;DB_CLOSE_DELAY=-1"`
+| The JDBC connection URL for this tenant.
+
+| `driver`
+| `Property<String>`
+| `"org.h2.Driver"`
+| The fully qualified JDBC driver class name for this tenant.
+
+| `user`
+| `Property<String>`
+| `"sa"`
+| The database user name for this tenant.
+
+| `password`
+| `Property<String>`
+| `""` _(empty)_
+| The database password for this tenant.
+|===
 
 === `LinterExtension` Properties
 
@@ -615,11 +711,18 @@ TIP: The task is automatically skipped when no persistence units are enabled.
 **Type:** `ValidatePersistenceSchema`
 
 Validates that the JPA entity mappings align correctly with the database schema by booting an isolated JVM worker process.
-Each persistence unit is validated using the standard JPA `Persistence.createEntityManagerFactory` API with the `validate` schema generation action against an in-memory H2 database.
+Since 1.7.0, validation is performed by an SPI-loaded `SchemaValidator` obtained via `SchemaValidatorFactory`, replacing the previous direct use of the JPA `Persistence` bootstrap API.
+The task iterates over every configured tenant profile and validates each active persistence unit against that tenant's database independently.
+Failures are collected across the entire tenant × unit matrix and reported in a single summary.
 
 [cols="2,2,2,4"]
 |===
 | Property | Type | Default | Description
+
+| `jpaVersion`
+| `Property<String>`
+| `"3.0"`
+| The JPA specification version used to determine the annotation namespace (`jakarta.persistence` vs `javax.persistence`) during bytecode scanning.
 
 | `persistenceUnitNames`
 | `Property<String>`
@@ -629,7 +732,17 @@ Each persistence unit is validated using the standard JPA `Persistence.createEnt
 | `validation`
 | `Property<ValidationExtension>`
 | _from extension_
-| Nested database connection configuration (URL, driver, user, password).
+| Nested database connection configuration (URL, driver, user, password) and optional multi-tenant `tenants` container.
+
+| `tenantProfiles`
+| `ListProperty<String>`
+| _from extension_
+| Serialized tenant database connection profiles (`Name\|URL\|Driver\|User\|Password`). When no explicit tenants are configured, a single `default` profile is synthesized from the base validation properties. _(Since 1.7.0)_
+
+| `discoveredEntityClasses`
+| `ListProperty<String>`
+| _auto-discovered_
+| Fully qualified entity class names discovered by the ASM bytecode scanner, forwarded to the SPI-loaded `SchemaValidator` for precise mapping resolution. _(Since 1.7.0)_
 
 | `resourcesDir`
 | `DirectoryProperty`

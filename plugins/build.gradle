@@ -48,7 +48,6 @@ tasks.named('check') {
 // coverage report so plugin code exercised inside TestKit builds is reflected
 // in the final coverage numbers
 tasks.named('functionalTestCodeCoverageReport', JacocoReport) {
-    doNotTrackState('Because accessing unreadable inputs or outputs is not supported.')
     subprojects.each { sub ->
         executionData.from(sub.layout.buildDirectory.file('jacoco/functionalTestRunner.exec'))
     }

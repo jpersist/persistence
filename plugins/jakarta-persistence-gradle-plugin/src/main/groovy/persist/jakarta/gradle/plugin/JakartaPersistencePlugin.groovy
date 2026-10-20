@@ -216,7 +216,7 @@ class JakartaPersistencePlugin implements Plugin<Project> {
 
                 configureGenerateJPAGraalVMMetadataTask(project, sourceSet, discoveredClassesProvider)
 
-                configureValidatePersistenceSchemaTask(project, sourceSet, extension)
+                configureValidatePersistenceSchemaTask(project, sourceSet, extension, discoveredClassesProvider)
 
                 configureLintNamedQueriesTask(project, sourceSet, extension)
             }
@@ -323,23 +323,19 @@ class JakartaPersistencePlugin implements Plugin<Project> {
         }
     }
 
-    private static void configureValidatePersistenceSchemaTask(Project project, SourceSet sourceSet, PersistenceExtension extension) {
+    private static void configureValidatePersistenceSchemaTask(Project project, SourceSet sourceSet, PersistenceExtension extension, Provider<List<String>> discoveredClassesProvider) {
         def processTaskName = sourceSet.name == 'main' ? "processPersistenceDescriptor" : "process${sourceSet.name.capitalize()}PersistenceDescriptor"
         def processTask = project.tasks.named(processTaskName, ProcessPersistenceDescriptor)
 
         // Register a single base validation driver task per SourceSet
         def validationTaskName = sourceSet.name == 'main' ? "validatePersistenceSchema" : "validate${sourceSet.name.capitalize()}PersistenceSchema"
 
-        extension.validation { validation ->
-            validation.url.convention("jdbc:h2:mem:schema_validate_db;DB_CLOSE_DELAY=-1")
-            validation.driver.convention("org.h2.Driver")
-            validation.user.convention("sa")
-            validation.password.convention("")
-        }
-
         project.tasks.register(validationTaskName, ValidatePersistenceSchema) { task ->
             task.group = LifecycleBasePlugin.VERIFICATION_GROUP
             task.description = "Validates the JPA schema alignment for all active units in the ${sourceSet.name} source set against an in-memory database snapshot."
+
+            // Pass the active spec version string from the top-level extension configuration block
+            task.jpaVersion.set(extension.version)
 
             // Lazily pull the active names list from the processor task at execution time
             task.persistenceUnitNames.set(project.provider {
@@ -348,6 +344,9 @@ class JakartaPersistencePlugin implements Plugin<Project> {
                 // Join names with a comma to pass them into our main worker process safely
                 return unitNames.join(',')
             })
+
+            // Wire the lazy ASM class discovery provider straight to the task!
+            task.discoveredEntityClasses.set(discoveredClassesProvider)
 
             // Lazily put validation extension to the validation task
             task.validation.set(extension.validation)

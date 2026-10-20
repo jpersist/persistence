@@ -81,6 +81,58 @@
     </tr>
 </table>
 
+<h2>What's New in v1.7.0</h2>
+<p>
+    Version 1.7.0 introduces <strong>multi-tenant schema validation</strong> to the
+    Jakarta Persistence plugin (<code>io.github.jpersist.jpa</code>):
+</p>
+<ul>
+    <li><strong>Multi-Tenant Validation Matrix</strong> &mdash; The
+        {@link persist.jakarta.gradle.task.ValidatePersistenceSchema validatePersistenceSchema}
+        task now iterates over a named set of tenant database profiles, validating
+        every active persistence unit against each tenant independently. Failures
+        are collected across the entire matrix and reported in a single summary.
+    </li>
+    <li><strong>Tenant DSL Extension</strong> &mdash; The new
+        {@link persist.jakarta.gradle.extension.TenantValidationExtension} class
+        represents a single tenant profile with its own JDBC connection properties.
+        Profiles are declared inside the {@code validation} block via a new
+        {@code tenants} named container:
+        <pre>
+persistence {
+    main {
+        validation {
+            tenants {
+                primary {
+                    url = 'jdbc:h2:mem:primary_db;DB_CLOSE_DELAY=-1'
+                }
+                secondary {
+                    url = 'jdbc:h2:mem:secondary_db;DB_CLOSE_DELAY=-1'
+                }
+            }
+        }
+    }
+}</pre>
+        When no tenants are configured, the base validation properties are used as
+        a single <code>default</code> profile for backward compatibility.
+    </li>
+    <li><strong>SPI-based Schema Validator</strong> &mdash; Schema validation is now
+        delegated to an SPI-loaded
+        {@link persist.lint.api.spi.SchemaValidator} obtained via
+        {@link persist.lint.api.spi.SchemaValidatorFactory}, replacing the
+        previous direct use of the JPA {@code Persistence} bootstrap API.
+    </li>
+    <li><strong>Entity Class Discovery</strong> &mdash; The task now receives a list
+        of entity class names discovered by the ASM bytecode scanner, forwarding
+        them to the SPI validator for precise mapping resolution.
+    </li>
+    <li><strong>ValidationExtension Refactoring</strong> &mdash;
+        {@link persist.jakarta.gradle.extension.ValidationExtension} has been
+        converted from an interface to an abstract class to support constructor
+        injection and the managed {@code tenants} container.
+    </li>
+</ul>
+
 <h2>What's New in v1.6.0</h2>
 <p>
     Version 1.6.0 introduces static compile-time named query linting to the
@@ -151,10 +203,11 @@ persistence {
         entity classes, enabling ahead-of-time (AOT) reflection registration for GraalVM
         native image compilation.
     </li>
-    <li><strong>Validation DSL Extension</strong> &mdash; The new
-        {@link persist.jakarta.gradle.extension.ValidationExtension} interface provides
+    <li><strong>Validation DSL Extension</strong> &mdash; The
+        {@link persist.jakarta.gradle.extension.ValidationExtension} class provides
         optional JDBC connection properties ({@code url}, {@code driver}, {@code user},
-        {@code password}) embedded inside
+        {@code password}) and an optional multi-tenant {@code tenants} container
+        embedded inside
         {@link persist.jakarta.gradle.extension.PersistenceExtension}. It is accessible
         via the {@link persist.jakarta.gradle.extension.PersistenceExtension#validation(org.gradle.api.Action) validation(Action)}
         DSL method.
