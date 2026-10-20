@@ -70,17 +70,26 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="package-signature">package <span class="element-name">persist.lint.jakarta</span></div>
 <section class="package-description" id="package-description">
-<div class="block">Jakarta Persistence named object parser implementation.
+<div class="block">Jakarta Persistence linter implementation.
 
- <p>This package provides a <a href="../api/spi/NamedObjectParser.html" title="interface in persist.lint.api.spi"><code>NamedObjectParser</code></a>
- implementation that targets the <code>jakarta.persistence</code> namespace
- (JPA&nbsp;3.x). It uses Hibernate ORM&nbsp;6 to compile JPQL query
- strings into Semantic Query Model (SQM) trees, verifying grammar,
- entity mappings, and property paths entirely offline.</p>
+ <p>This package provides <a href="../api/spi/NamedObjectParser.html" title="interface in persist.lint.api.spi"><code>NamedObjectParser</code></a>
+ and <a href="../api/spi/SchemaValidator.html" title="interface in persist.lint.api.spi"><code>SchemaValidator</code></a> implementations that
+ target the <code>jakarta.persistence</code> namespace (JPA&nbsp;3.x). It
+ uses Hibernate ORM&nbsp;6 to compile JPQL query strings into Semantic
+ Query Model (SQM) trees and to validate entity schemas against a live
+ database, verifying grammar, entity mappings, and property paths
+ entirely offline (except for schema validation).</p>
 
- <p>The <a href="JakartaNamedObjectParserFactory.html" title="class in persist.lint.jakarta"><code>JakartaNamedObjectParserFactory</code></a> is
- registered as a <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/ServiceLoader.html" title="class or interface in java.util" class="external-link"><code>ServiceLoader</code></a> provider for
- <a href="../api/spi/NamedObjectParserFactory.html" title="interface in persist.lint.api.spi"><code>NamedObjectParserFactory</code></a>.</p></div>
+ <ul>
+   <li><a href="JakartaPersistenceLinterFactory.html" title="class in persist.lint.jakarta"><code>JakartaPersistenceLinterFactory</code></a> &ndash;
+       abstract base providing the <code>"jakarta"</code> namespace.</li>
+   <li><a href="JakartaNamedObjectParserFactory.html" title="class in persist.lint.jakarta"><code>JakartaNamedObjectParserFactory</code></a> &ndash;
+       registered as a <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/ServiceLoader.html" title="class or interface in java.util" class="external-link"><code>ServiceLoader</code></a> provider for
+       <a href="../api/spi/NamedObjectParserFactory.html" title="interface in persist.lint.api.spi"><code>NamedObjectParserFactory</code></a>.</li>
+   <li><a href="JakartaSchemaValidatorFactory.html" title="class in persist.lint.jakarta"><code>JakartaSchemaValidatorFactory</code></a> &ndash;
+       registered as a <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/ServiceLoader.html" title="class or interface in java.util" class="external-link"><code>ServiceLoader</code></a> provider for
+       <a href="../api/spi/SchemaValidatorFactory.html" title="interface in persist.lint.api.spi"><code>SchemaValidatorFactory</code></a>.</li>
+ </ul></div>
 <dl class="notes">
 <dt>Since:</dt>
 <dd>2.0.0</dd>
@@ -89,6 +98,8 @@ loadScripts(document, 'script');</script>
 <ul class="tag-list">
 <li><a href="../api/spi/NamedObjectParser.html" title="interface in persist.lint.api.spi"><code>NamedObjectParser</code></a></li>
 <li><a href="../api/spi/NamedObjectParserFactory.html" title="interface in persist.lint.api.spi"><code>NamedObjectParserFactory</code></a></li>
+<li><a href="../api/spi/SchemaValidator.html" title="interface in persist.lint.api.spi"><code>SchemaValidator</code></a></li>
+<li><a href="../api/spi/SchemaValidatorFactory.html" title="interface in persist.lint.api.spi"><code>SchemaValidatorFactory</code></a></li>
 </ul>
 </dd>
 </dl>
@@ -108,6 +119,20 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color class-summary class-summary-tab2"><a href="JakartaNamedObjectParserFactory.html" title="class in persist.lint.jakarta">JakartaNamedObjectParserFactory</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block"><a href="../api/spi/NamedObjectParserFactory.html" title="interface in persist.lint.api.spi"><code>NamedObjectParserFactory</code></a> implementation for the Jakarta Persistence
+ namespace (<code>"jakarta"</code>).</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="JakartaPersistenceLinterFactory.html" title="class in persist.lint.jakarta">JakartaPersistenceLinterFactory</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block">Abstract base class for Jakarta Persistence linter factories.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="JakartaSchemaValidator.html" title="class in persist.lint.jakarta">JakartaSchemaValidator</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="block"><a href="../api/spi/SchemaValidator.html" title="interface in persist.lint.api.spi"><code>SchemaValidator</code></a> implementation for the Jakarta Persistence
+ namespace (<code>"jakarta"</code>).</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="JakartaSchemaValidatorFactory.html" title="class in persist.lint.jakarta">JakartaSchemaValidatorFactory</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block"><a href="../api/spi/SchemaValidatorFactory.html" title="interface in persist.lint.api.spi"><code>SchemaValidatorFactory</code></a> implementation for the Jakarta Persistence
  namespace (<code>"jakarta"</code>).</div>
 </div>
 </div>

@@ -65,23 +65,41 @@ loadScripts(document, 'script');</script>
 <div class="block"><a href="persist/lint/api/spi/NamedObjectParserFactory.html" title="interface in persist.lint.api.spi"><code>NamedObjectParserFactory</code></a> implementation for the Jakarta Persistence
  namespace (<code>"jakarta"</code>).</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="persist/lint/query/jakarta/JakartaQueryParser.html" title="class in persist.lint.query.jakarta">JakartaQueryParser</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">Deprecated.
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="persist/lint/jakarta/JakartaPersistenceLinterFactory.html" title="class in persist.lint.jakarta">JakartaPersistenceLinterFactory</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="block">Abstract base class for Jakarta Persistence linter factories.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="persist/lint/query/jakarta/JakartaQueryParser.html" title="class in persist.lint.query.jakarta">JakartaQueryParser</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">Deprecated.
 <div class="deprecation-comment">Use <a href="persist/lint/jakarta/JakartaNamedObjectParser.html" title="class in persist.lint.jakarta"><code>JakartaNamedObjectParser</code></a> instead.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="persist/lint/query/jakarta/JakartaQueryParserFactory.html" title="class in persist.lint.query.jakarta">JakartaQueryParserFactory</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">Deprecated.
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="persist/lint/query/jakarta/JakartaQueryParserFactory.html" title="class in persist.lint.query.jakarta">JakartaQueryParserFactory</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">Deprecated.
 <div class="deprecation-comment">Use <a href="persist/lint/jakarta/JakartaNamedObjectParserFactory.html" title="class in persist.lint.jakarta"><code>JakartaNamedObjectParserFactory</code></a> instead.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="persist/lint/legacy/LegacyNamedObjectParser.html" title="class in persist.lint.legacy">LegacyNamedObjectParser</a></div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="persist/lint/jakarta/JakartaSchemaValidator.html" title="class in persist.lint.jakarta">JakartaSchemaValidator</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="block"><a href="persist/lint/api/spi/SchemaValidator.html" title="interface in persist.lint.api.spi"><code>SchemaValidator</code></a> implementation for the Jakarta Persistence
+ namespace (<code>"jakarta"</code>).</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="persist/lint/jakarta/JakartaSchemaValidatorFactory.html" title="class in persist.lint.jakarta">JakartaSchemaValidatorFactory</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="block"><a href="persist/lint/api/spi/SchemaValidatorFactory.html" title="interface in persist.lint.api.spi"><code>SchemaValidatorFactory</code></a> implementation for the Jakarta Persistence
+ namespace (<code>"jakarta"</code>).</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="persist/lint/legacy/LegacyNamedObjectParser.html" title="class in persist.lint.legacy">LegacyNamedObjectParser</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block"><a href="persist/lint/api/spi/NamedObjectParser.html" title="interface in persist.lint.api.spi"><code>NamedObjectParser</code></a> implementation for the legacy
  <code>javax.persistence</code> namespace.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="persist/lint/legacy/LegacyNamedObjectParserFactory.html" title="class in persist.lint.legacy">LegacyNamedObjectParserFactory</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="persist/lint/legacy/LegacyNamedObjectParserFactory.html" title="class in persist.lint.legacy">LegacyNamedObjectParserFactory</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block"><a href="persist/lint/api/spi/NamedObjectParserFactory.html" title="interface in persist.lint.api.spi"><code>NamedObjectParserFactory</code></a> implementation for the legacy
  <code>javax.persistence</code> namespace (<code>"javax"</code>).</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="persist/lint/legacy/LegacyPersistenceLinterFactory.html" title="class in persist.lint.legacy">LegacyPersistenceLinterFactory</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="block">Abstract base class for legacy (javax) Persistence linter factories.</div>
 </div>
 <div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="persist/lint/query/legacy/LegacyQueryParser.html" title="class in persist.lint.query.legacy">LegacyQueryParser</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">Deprecated.
@@ -90,6 +108,16 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="persist/lint/query/legacy/LegacyQueryParserFactory.html" title="class in persist.lint.query.legacy">LegacyQueryParserFactory</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">Deprecated.
 <div class="deprecation-comment">Use <a href="persist/lint/legacy/LegacyNamedObjectParserFactory.html" title="class in persist.lint.legacy"><code>LegacyNamedObjectParserFactory</code></a> instead.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="persist/lint/legacy/LegacySchemaValidator.html" title="class in persist.lint.legacy">LegacySchemaValidator</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="block"><a href="persist/lint/api/spi/SchemaValidator.html" title="interface in persist.lint.api.spi"><code>SchemaValidator</code></a> implementation for the legacy
+ <code>javax.persistence</code> namespace (<code>"javax"</code>).</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="persist/lint/legacy/LegacySchemaValidatorFactory.html" title="class in persist.lint.legacy">LegacySchemaValidatorFactory</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="block"><a href="persist/lint/api/spi/SchemaValidatorFactory.html" title="interface in persist.lint.api.spi"><code>SchemaValidatorFactory</code></a> implementation for the legacy
+ <code>javax.persistence</code> namespace (<code>"javax"</code>).</div>
 </div>
 <div class="col-first even-row-color all-classes-table all-classes-table-tab4"><a href="persist/lint/api/NamedObjectDescriptor.html" title="class in persist.lint.api">NamedObjectDescriptor</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab4">
@@ -109,6 +137,14 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab3">
 <div class="block">Enumerates the kinds of named objects that can be validated at build time.</div>
 </div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="persist/lint/api/spi/PersistenceLinter.html" title="interface in persist.lint.api.spi">PersistenceLinter</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab1">
+<div class="block">Marker interface for all persistence linting operations.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="persist/lint/api/spi/PersistenceLinterFactory.html" title="interface in persist.lint.api.spi">PersistenceLinterFactory</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab1">
+<div class="block">Base factory interface for all persistence linter factories.</div>
+</div>
 <div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="persist/lint/query/spi/QueryParser.html" title="interface in persist.lint.query.spi">QueryParser</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab1">Deprecated.
 <div class="deprecation-comment">Use <a href="persist/lint/api/spi/NamedObjectParser.html" title="interface in persist.lint.api.spi"><code>NamedObjectParser</code></a> instead.</div>
@@ -116,6 +152,15 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="persist/lint/query/spi/QueryParserFactory.html" title="interface in persist.lint.query.spi">QueryParserFactory</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab1">Deprecated.
 <div class="deprecation-comment">Use <a href="persist/lint/api/spi/NamedObjectParserFactory.html" title="interface in persist.lint.api.spi"><code>NamedObjectParserFactory</code></a> instead.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="persist/lint/api/spi/SchemaValidator.html" title="interface in persist.lint.api.spi">SchemaValidator</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab1">
+<div class="block">Service provider interface for validating a JPA persistence schema
+ against a live database at build time.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="persist/lint/api/spi/SchemaValidatorFactory.html" title="interface in persist.lint.api.spi">SchemaValidatorFactory</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab1">
+<div class="block">Factory for creating <a href="persist/lint/api/spi/SchemaValidator.html" title="interface in persist.lint.api.spi"><code>SchemaValidator</code></a> instances.</div>
 </div>
 </div>
 </div>

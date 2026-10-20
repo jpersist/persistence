@@ -70,18 +70,26 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="package-signature">package <span class="element-name">persist.lint.legacy</span></div>
 <section class="package-description" id="package-description">
-<div class="block">Legacy (javax) Persistence named object parser implementation.
+<div class="block">Legacy (javax) Persistence linter implementation.
 
- <p>This package provides a <a href="../api/spi/NamedObjectParser.html" title="interface in persist.lint.api.spi"><code>NamedObjectParser</code></a>
- implementation that targets the <code>javax.persistence</code> namespace
- (JPA&nbsp;2.x). It uses Hibernate&nbsp;5 and its AST-based
- <code>QueryTranslatorFactory</code> to compile JPQL query strings,
- verifying HQL grammar, entity mappings, and property paths entirely
- offline.</p>
+ <p>This package provides <a href="../api/spi/NamedObjectParser.html" title="interface in persist.lint.api.spi"><code>NamedObjectParser</code></a>
+ and <a href="../api/spi/SchemaValidator.html" title="interface in persist.lint.api.spi"><code>SchemaValidator</code></a> implementations that
+ target the <code>javax.persistence</code> namespace (JPA&nbsp;2.x). It
+ uses Hibernate&nbsp;5 and its AST-based <code>QueryTranslatorFactory</code>
+ to compile JPQL query strings and to validate entity schemas against a
+ live database, verifying HQL grammar, entity mappings, and property
+ paths entirely offline (except for schema validation).</p>
 
- <p>The <a href="LegacyNamedObjectParserFactory.html" title="class in persist.lint.legacy"><code>LegacyNamedObjectParserFactory</code></a> is
- registered as a <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/ServiceLoader.html" title="class or interface in java.util" class="external-link"><code>ServiceLoader</code></a> provider for
- <a href="../api/spi/NamedObjectParserFactory.html" title="interface in persist.lint.api.spi"><code>NamedObjectParserFactory</code></a>.</p></div>
+ <ul>
+   <li><a href="LegacyPersistenceLinterFactory.html" title="class in persist.lint.legacy"><code>LegacyPersistenceLinterFactory</code></a> &ndash;
+       abstract base providing the <code>"javax"</code> namespace.</li>
+   <li><a href="LegacyNamedObjectParserFactory.html" title="class in persist.lint.legacy"><code>LegacyNamedObjectParserFactory</code></a> &ndash;
+       registered as a <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/ServiceLoader.html" title="class or interface in java.util" class="external-link"><code>ServiceLoader</code></a> provider for
+       <a href="../api/spi/NamedObjectParserFactory.html" title="interface in persist.lint.api.spi"><code>NamedObjectParserFactory</code></a>.</li>
+   <li><a href="LegacySchemaValidatorFactory.html" title="class in persist.lint.legacy"><code>LegacySchemaValidatorFactory</code></a> &ndash;
+       registered as a <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/ServiceLoader.html" title="class or interface in java.util" class="external-link"><code>ServiceLoader</code></a> provider for
+       <a href="../api/spi/SchemaValidatorFactory.html" title="interface in persist.lint.api.spi"><code>SchemaValidatorFactory</code></a>.</li>
+ </ul></div>
 <dl class="notes">
 <dt>Since:</dt>
 <dd>2.0.0</dd>
@@ -90,6 +98,8 @@ loadScripts(document, 'script');</script>
 <ul class="tag-list">
 <li><a href="../api/spi/NamedObjectParser.html" title="interface in persist.lint.api.spi"><code>NamedObjectParser</code></a></li>
 <li><a href="../api/spi/NamedObjectParserFactory.html" title="interface in persist.lint.api.spi"><code>NamedObjectParserFactory</code></a></li>
+<li><a href="../api/spi/SchemaValidator.html" title="interface in persist.lint.api.spi"><code>SchemaValidator</code></a></li>
+<li><a href="../api/spi/SchemaValidatorFactory.html" title="interface in persist.lint.api.spi"><code>SchemaValidatorFactory</code></a></li>
 </ul>
 </dd>
 </dl>
@@ -110,6 +120,20 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color class-summary class-summary-tab2"><a href="LegacyNamedObjectParserFactory.html" title="class in persist.lint.legacy">LegacyNamedObjectParserFactory</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block"><a href="../api/spi/NamedObjectParserFactory.html" title="interface in persist.lint.api.spi"><code>NamedObjectParserFactory</code></a> implementation for the legacy
+ <code>javax.persistence</code> namespace (<code>"javax"</code>).</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="LegacyPersistenceLinterFactory.html" title="class in persist.lint.legacy">LegacyPersistenceLinterFactory</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block">Abstract base class for legacy (javax) Persistence linter factories.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="LegacySchemaValidator.html" title="class in persist.lint.legacy">LegacySchemaValidator</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="block"><a href="../api/spi/SchemaValidator.html" title="interface in persist.lint.api.spi"><code>SchemaValidator</code></a> implementation for the legacy
+ <code>javax.persistence</code> namespace (<code>"javax"</code>).</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="LegacySchemaValidatorFactory.html" title="class in persist.lint.legacy">LegacySchemaValidatorFactory</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block"><a href="../api/spi/SchemaValidatorFactory.html" title="interface in persist.lint.api.spi"><code>SchemaValidatorFactory</code></a> implementation for the legacy
  <code>javax.persistence</code> namespace (<code>"javax"</code>).</div>
 </div>
 </div>

@@ -70,21 +70,29 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="package-signature">package <span class="element-name">persist.lint.api.spi</span></div>
 <section class="package-description" id="package-description">
-<div class="block">Service Provider Interface (SPI) for build-time validation of named
- JPA objects.
+<div class="block">Service Provider Interface (SPI) for build-time persistence validation.
 
  <p>This package defines the core abstractions used to parse and validate
- named JPQL queries and stored procedures at build time, without requiring
- a live database connection:</p>
+ named JPQL queries, stored procedures, and database schemas at build
+ time, without requiring a live database connection (except for schema
+ validation):</p>
 
  <ul>
-   <li><a href="NamedObjectParser.html" title="interface in persist.lint.api.spi"><code>NamedObjectParser</code></a> — parses and
+   <li><a href="PersistenceLinter.html" title="interface in persist.lint.api.spi"><code>PersistenceLinter</code></a> &ndash; marker
+       interface for all persistence linting operations.</li>
+   <li><a href="PersistenceLinterFactory.html" title="interface in persist.lint.api.spi"><code>PersistenceLinterFactory</code></a> &ndash; base
+       factory interface providing namespace resolution and generic
+       <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/ServiceLoader.html" title="class or interface in java.util" class="external-link"><code>ServiceLoader</code></a>-based discovery of linter
+       factories.</li>
+   <li><a href="NamedObjectParser.html" title="interface in persist.lint.api.spi"><code>NamedObjectParser</code></a> &ndash; parses and
        semantically validates a named JPQL query or stored procedure
        declaration against the project's entity metamodel.</li>
-   <li><a href="NamedObjectParserFactory.html" title="interface in persist.lint.api.spi"><code>NamedObjectParserFactory</code></a> — factory
-       for creating <code>NamedObjectParser</code> instances; implementations
-       are discovered at runtime via the <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/ServiceLoader.html" title="class or interface in java.util" class="external-link"><code>ServiceLoader</code></a>
-       mechanism.</li>
+   <li><a href="NamedObjectParserFactory.html" title="interface in persist.lint.api.spi"><code>NamedObjectParserFactory</code></a> &ndash;
+       factory for creating <code>NamedObjectParser</code> instances.</li>
+   <li><a href="SchemaValidator.html" title="interface in persist.lint.api.spi"><code>SchemaValidator</code></a> &ndash; validates the
+       entity metamodel against a live database schema.</li>
+   <li><a href="SchemaValidatorFactory.html" title="interface in persist.lint.api.spi"><code>SchemaValidatorFactory</code></a> &ndash;
+       factory for creating <code>SchemaValidator</code> instances.</li>
  </ul>
 
  <p>Provider implementations for specific JPA namespaces are shipped in
@@ -130,6 +138,23 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color class-summary class-summary-tab1"><a href="NamedObjectParserFactory.html" title="interface in persist.lint.api.spi">NamedObjectParserFactory</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab1">
 <div class="block">Factory for creating <a href="NamedObjectParser.html" title="interface in persist.lint.api.spi"><code>NamedObjectParser</code></a> instances.</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab1"><a href="PersistenceLinter.html" title="interface in persist.lint.api.spi">PersistenceLinter</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab1">
+<div class="block">Marker interface for all persistence linting operations.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab1"><a href="PersistenceLinterFactory.html" title="interface in persist.lint.api.spi">PersistenceLinterFactory</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab1">
+<div class="block">Base factory interface for all persistence linter factories.</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab1"><a href="SchemaValidator.html" title="interface in persist.lint.api.spi">SchemaValidator</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab1">
+<div class="block">Service provider interface for validating a JPA persistence schema
+ against a live database at build time.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab1"><a href="SchemaValidatorFactory.html" title="interface in persist.lint.api.spi">SchemaValidatorFactory</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab1">
+<div class="block">Factory for creating <a href="SchemaValidator.html" title="interface in persist.lint.api.spi"><code>SchemaValidator</code></a> instances.</div>
 </div>
 </div>
 </div>

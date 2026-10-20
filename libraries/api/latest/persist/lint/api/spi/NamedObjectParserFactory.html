@@ -87,11 +87,16 @@ loadScripts(document, 'script');</script>
 </div>
 <section class="class-description" id="class-description">
 <dl class="notes">
+<dt>All Superinterfaces:</dt>
+<dd><code><a href="PersistenceLinterFactory.html" title="interface in persist.lint.api.spi">PersistenceLinterFactory</a></code></dd>
+</dl>
+<dl class="notes">
 <dt>All Known Implementing Classes:</dt>
 <dd><code><a href="../../jakarta/JakartaNamedObjectParserFactory.html" title="class in persist.lint.jakarta">JakartaNamedObjectParserFactory</a></code>, <code><a href="../../legacy/LegacyNamedObjectParserFactory.html" title="class in persist.lint.legacy">LegacyNamedObjectParserFactory</a></code></dd>
 </dl>
 <hr>
-<div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">NamedObjectParserFactory</span></div>
+<div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">NamedObjectParserFactory</span><span class="extends-implements">
+extends <a href="PersistenceLinterFactory.html" title="interface in persist.lint.api.spi">PersistenceLinterFactory</a></span></div>
 <div class="block">Factory for creating <a href="NamedObjectParser.html" title="interface in persist.lint.api.spi"><code>NamedObjectParser</code></a> instances.
 
  <p>Implementations are discovered at runtime through the
@@ -123,26 +128,24 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getSupportedNamespace()" class="member-name-link">getSupportedNamespace</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="NamedObjectParser.html" title="interface in persist.lint.api.spi">NamedObjectParser</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#newNamedObjectParser(java.util.List)" class="member-name-link">newNamedObjectParser</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;discoveredClassNames)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Returns the persistence namespace supported by this factory.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="NamedObjectParser.html" title="interface in persist.lint.api.spi">NamedObjectParser</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#newNamedObjectParser(java.util.List)" class="member-name-link">newNamedObjectParser</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;discoveredClassNames)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Creates a new <a href="NamedObjectParser.html" title="interface in persist.lint.api.spi"><code>NamedObjectParser</code></a> configured with the given entity
  class names.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static <a href="NamedObjectParserFactory.html" title="interface in persist.lint.api.spi">NamedObjectParserFactory</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#newNamedObjectParserFactory(java.lang.String)" class="member-name-link">newNamedObjectParserFactory</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;jpaVersion)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static <a href="NamedObjectParserFactory.html" title="interface in persist.lint.api.spi">NamedObjectParserFactory</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#newNamedObjectParserFactory(java.lang.String)" class="member-name-link">newNamedObjectParserFactory</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;jpaVersion)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
 <div class="block">Discovers and returns the <a href="NamedObjectParserFactory.html" title="interface in persist.lint.api.spi"><code>NamedObjectParserFactory</code></a> implementation
  that matches the given JPA specification version.</div>
 </div>
 </div>
 </div>
 </div>
+<div class="inherited-list">
+<h3 id="methods-inherited-from-class-persist.lint.api.spi.PersistenceLinterFactory">Methods inherited from interface&nbsp;persist.lint.api.spi.<a href="PersistenceLinterFactory.html" title="interface in persist.lint.api.spi">PersistenceLinterFactory</a></h3>
+<code><a href="PersistenceLinterFactory.html#getSupportedNamespace()">getSupportedNamespace</a></code></div>
 </section>
 </li>
 </ul>
@@ -154,18 +157,6 @@ loadScripts(document, 'script');</script>
 <section class="method-details" id="method-detail">
 <h2>Method Details</h2>
 <ul class="member-list">
-<li>
-<section class="detail" id="getSupportedNamespace()">
-<h3>getSupportedNamespace</h3>
-<div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getSupportedNamespace</span>()</div>
-<div class="block">Returns the persistence namespace supported by this factory.</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>the namespace identifier, for example <code>"javax"</code> for
-         JPA&nbsp;2.x or <code>"jakarta"</code> for JPA&nbsp;3.x</dd>
-</dl>
-</section>
-</li>
 <li>
 <section class="detail" id="newNamedObjectParser(java.util.List)">
 <h3>newNamedObjectParser</h3>
