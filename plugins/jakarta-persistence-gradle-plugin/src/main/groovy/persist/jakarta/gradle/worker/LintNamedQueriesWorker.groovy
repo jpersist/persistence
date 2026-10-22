@@ -12,6 +12,7 @@ import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.Opcodes
 import persist.lint.api.NamedObjectDescriptor
+import persist.lint.api.spi.NamedObjectParser
 import persist.lint.api.spi.NamedObjectParserFactory
 
 /**
@@ -122,47 +123,10 @@ abstract class LintNamedQueriesWorker implements WorkAction<LintNamedQueriesPara
                 println "✅ In-memory verification metamodel generated successfully."
 
                 // 3a. VALIDATE STANDARD QUERIES
-                if (!discoveredQueries.isEmpty()) {
-                    println "⏳ Driving native ANTLR4 query semantic validation sweep..."
-                    discoveredQueries.each { name, queryString ->
-                        try {
-                            NamedObjectDescriptor descriptor = namedObjectParser.parseQuery(name, queryString)
-                            println "   ✅ Query '${name}' passed semantic compilation checks."
-
-                            if (!ignoreWarnings && descriptor.namedParameters() != null) {
-                                descriptor.namedParameters().each { String param ->
-                                    Helper.validateParameterStyle(name, param)
-                                }
-                            }
-                        } catch (Exception e) {
-                            errorCount++
-                            Throwable cause = e.getCause() ?: e
-                            System.err.println("   ❌ LINT ERROR in Query [${name}]: ${cause.getMessage() ?: cause.toString()}")
-                        }
-                    }
-                }
+                errorCount += Helper.validateDiscoveredQueries(namedObjectParser, discoveredQueries, ignoreWarnings)
 
                 // 3b. VALIDATE STORED PROCEDURES
-                if (!discoveredProcedures.isEmpty()) {
-                    println "⏳ Running parameters governance lint checks over named stored procedures..."
-                    discoveredProcedures.each { name, procedureMap ->
-                        procedureMap.each { procedureName, params ->
-                            try {
-                                namedObjectParser.parseStoredProcedure(name, procedureName, params)
-                                println "   ✅ Stored Procedure '${name}' [${procedureName}] metadata structural paths validated."
-
-                                if (!ignoreWarnings && params != null) {
-                                    params.each { String param ->
-                                        Helper.validateParameterStyle(name, param)
-                                    }
-                                }
-                            } catch (Exception e) {
-                                errorCount++
-                                System.err.println("   ❌ LINT ERROR in Stored Procedure [${name}]: ${e.getMessage()}")
-                            }
-                        }
-                    }
-                }
+                errorCount += Helper.validateDiscoveredStoredProcedures(namedObjectParser, discoveredProcedures, ignoreWarnings)
             }
         } catch (Exception e) {
             // Eager validation failures triggered during buildSessionFactory() end up here
@@ -297,6 +261,71 @@ abstract class LintNamedQueriesWorker implements WorkAction<LintNamedQueriesPara
                 println "      ⚠️ LINTER STYLE WARNING [${contextName}]: " +
                     "Parameter ':${paramName}' breaks strict camelCase style conventions."
             }
+        }
+
+        private static int validateDiscoveredQueries(NamedObjectParser parser,
+                                                     Map<String, String> discoveredQueries,
+                                                     boolean ignoreWarnings) {
+            int errorCount = 0;
+
+            if (!discoveredQueries.isEmpty()) {
+                println "⏳ Driving native ANTLR4 query semantic validation sweep..."
+                discoveredQueries.each { name, queryString ->
+                    try {
+                        NamedObjectDescriptor descriptor = parser.parseQuery(name, queryString)
+                        println "   ✅ Query '${name}' passed semantic compilation checks."
+
+                        Set<String> namedParams = descriptor.namedParameters()
+
+                        // Style Naming Governance Check
+                        if (!ignoreWarnings && descriptor.namedParameters() != null) {
+                            descriptor.namedParameters().each { String param ->
+                                validateParameterStyle(name, param)
+                            }
+                        }
+                    } catch (Exception e) {
+                        errorCount++
+                        Throwable cause = e.getCause() ?: e
+                        System.err.println("   ❌ LINT ERROR in Query [${name}]: ${cause.getMessage() ?: cause.toString()}")
+                    }
+                }
+            }
+
+            return errorCount;
+        }
+
+        private static int validateDiscoveredStoredProcedures(NamedObjectParser parser,
+                                                              Map<String, Map<String, Set<String>>> discoveredProcedures,
+                                                              boolean ignoreWarnings) {
+            int errorCount = 0;
+
+            if (!discoveredProcedures.isEmpty()) {
+                println "⏳ Running parameters governance lint checks over named stored procedures..."
+                discoveredProcedures.each { name, procedureMap ->
+                    procedureMap.each { procedureName, asmCapturedParams ->
+                        try {
+                            // Delegate validation pass to the core engine
+                            NamedObjectDescriptor descriptor = parser.parseStoredProcedure(name, procedureName, asmCapturedParams)
+                            println "   ✅ Stored Procedure '${name}' [${procedureName}] metadata structural paths validated."
+
+                            // Normalize nulls into clean empty sets to prevent NullPointerExceptions
+                            Set<String> verifiedAsmParams = asmCapturedParams ?: ([] as Set<String>)
+
+                            // Style Check Loop (Only runs if parameters are physically present)
+                            if (!ignoreWarnings && !verifiedAsmParams.isEmpty()) {
+                                verifiedAsmParams.each { String param ->
+                                    validateParameterStyle(name, param)
+                                }
+                            }
+                        } catch (Exception e) {
+                            errorCount++
+                            System.err.println("   ❌ LINT ERROR in Stored Procedure [${name}]: ${e.getMessage()}")
+                        }
+                    }
+                }
+            }
+
+            return errorCount;
         }
 
     }

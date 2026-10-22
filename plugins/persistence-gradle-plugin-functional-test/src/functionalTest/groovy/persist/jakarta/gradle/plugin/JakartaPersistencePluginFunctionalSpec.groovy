@@ -502,6 +502,79 @@ class JakartaPersistencePluginFunctionalSpec extends Specification {
         assert incrementalResult.task(":stock-management-persistence-module:lintNamedQueries").outcome == TaskOutcome.SUCCESS
     }
 
+    def "should execute lintNamedQueries task and fail the build when a query utilizes legacy unindexed positional parameters"() {
+        given: "a workspace module with a compiled JPA entity containing a banned legacy '?' placeholder"
+        File javaSourceDir = new File(testProjectDir.toFile(), "test-lint-valid-persistence-module/src/main/java/com/example/model")
+        javaSourceDir.mkdirs()
+        File entitySourceFile = new File(javaSourceDir, "LegacyPositionalEntity.java")
+        entitySourceFile.text = """
+            package com.example.model;
+
+            import jakarta.persistence.Entity;
+            import jakarta.persistence.Id;
+            import jakarta.persistence.NamedQuery;
+
+            @Entity
+            @NamedQuery(
+                name = "LegacyPositionalEntity.findBanned",
+                query = "SELECT l FROM LegacyPositionalEntity l WHERE l.status = ?"
+            )
+            public class LegacyPositionalEntity {
+                @Id
+                private Long id;
+                private String status;
+            }
+        """.stripIndent()
+
+        when: "triggering the query analysis linter task verification pass"
+        def runner = createRunner()
+            .withArguments(":test-lint-valid-persistence-module:compileJava", ":test-lint-valid-persistence-module:lintNamedQueries", "--stacktrace")
+        def result = runner.buildAndFail() // Must fail due to strict functional validation rules
+
+        then: "the lintNamedQueries task execution fails"
+        result.task(":test-lint-valid-persistence-module:lintNamedQueries").outcome == TaskOutcome.FAILED
+
+        and: "the output console logs explicitly trap the banned unindexed token error"
+        assert result.output.contains("❌ Critical: Metamodel initialization crash: Errors in named queries:")
+        assert result.output.contains("Error in query named 'LegacyPositionalEntity.findBanned': Unlabeled ordinal parameter ('?' rather than ?1)")
+    }
+
+    def "should successfully pass lintNamedQueries task when a named stored procedure contains zero parameters"() {
+        given: "a workspace module with an entity declaring a zero-parameter stored procedure cleanup task"
+        File javaSourceDir = new File(testProjectDir.toFile(), "test-lint-valid-persistence-module/src/main/java/com/example/model")
+        javaSourceDir.mkdirs()
+        File procedureEntityFile = new File(javaSourceDir, "ZeroParamProcedureEntity.java")
+        procedureEntityFile.text = """
+            package com.example.model;
+
+            import jakarta.persistence.Entity;
+            import jakarta.persistence.Id;
+            import jakarta.persistence.NamedStoredProcedureQuery;
+
+            @Entity
+            @NamedStoredProcedureQuery(
+                name = "ZeroParamProcedureEntity.executeGlobalCleanup",
+                procedureName = "sp_maintenance_cleanup"
+            )
+            public class ZeroParamProcedureEntity {
+                @Id
+                private Long id;
+            }
+        """.stripIndent()
+
+        when: "triggering the query analysis linter task pass"
+        def runner = createRunner()
+            .withArguments(":test-lint-valid-persistence-module:compileJava", ":test-lint-valid-persistence-module:lintNamedQueries", "--stacktrace")
+        def result = runner.build()
+
+        then: "the linter processes the zero-parameter stored procedure and passes cleanly"
+        result.task(":test-lint-valid-persistence-module:lintNamedQueries").outcome == TaskOutcome.SUCCESS
+
+        and: "the logs confirm immaculate metadata synchronization"
+        assert result.output.contains("✅ Stored Procedure 'ZeroParamProcedureEntity.executeGlobalCleanup' [sp_maintenance_cleanup] metadata structural paths validated.")
+        assert result.output.contains("✅ All processed static metadata structures validated successfully!")
+    }
+
     private GradleRunner createRunner() {
         def jacocoAgentJvmArg = System.getProperty('jacocoAgentJvmArg')
         def jacocoDestFile = System.getProperty('jacocoDestFile')
