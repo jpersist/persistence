@@ -13,7 +13,7 @@ The **Lint Persistence Libraries** provide build-time validation of named JPQL q
 
 | Module                         | Description                                                                                                                                                                                                     |
 |:-------------------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **`lint-persistence-api`**     | Defines the Service Provider Interface (SPI): `PersistenceLinter` / `PersistenceLinterFactory` (root contracts), `NamedObjectParser` / `NamedObjectParserFactory` (query validation), and `SchemaValidator` / `SchemaValidatorFactory` (schema validation). Contains no implementation; provider modules are discovered at runtime through the `ServiceLoader` mechanism. |
+| **`lint-persistence-api`**     | Defines the Service Provider Interface (SPI): `PersistenceLinter` / `PersistenceLinterFactory` (root contracts), `NamedObjectParser` / `NamedObjectParserFactory` (query validation), and `SchemaValidator` / `SchemaValidatorFactory` (schema validation). `NamedObjectParser` extends `AutoCloseable`, so instances should be used within a try-with-resources block. Contains no implementation; provider modules are discovered at runtime through the `ServiceLoader` mechanism. |
 | **`lint-persistence-jakarta`** | Jakarta Persistence (JPA 3.x) provider. Uses Hibernate ORM 6 to compile JPQL queries into Semantic Query Model (SQM) trees and to validate persistence schemas against a live database.                            |
 | **`lint-persistence-legacy`**  | Legacy `javax.persistence` (JPA 2.x) provider. Uses Hibernate 5 and its AST-based query translator to validate JPQL queries and schemas.                                                                          |
 | **`lint-persistence-bom`**     | Bill of Materials (BOM) for convenient dependency management of all Lint Persistence modules.                                                                                                                   |
@@ -48,19 +48,22 @@ Use `NamedObjectParserFactory.newNamedObjectParserFactory(String)` to obtain the
 
 ```java
 NamedObjectParserFactory factory = NamedObjectParserFactory.newNamedObjectParserFactory("3.1");
-NamedObjectParser parser = factory.newNamedObjectParser(entityClassNames);
 
-// Validate a named query
-NamedObjectDescriptor queryDescriptor = parser.parseQuery(
-    "Order.findByStatus",
-    "SELECT o FROM Order o WHERE o.status = :status");
+try (NamedObjectParser parser = factory.newNamedObjectParser(entityClassNames)) {
+    // Validate a named query
+    NamedObjectDescriptor queryDescriptor = parser.parseQuery(
+        "Order.findByStatus",
+        "SELECT o FROM Order o WHERE o.status = :status");
 
-// Validate a named stored procedure
-NamedObjectDescriptor procDescriptor = parser.parseStoredProcedure(
-    "Order.archiveOldOrders",
-    "sp_archive_orders",
-    Set.of("cutoffDate", "archiveTable"));
+    // Validate a named stored procedure
+    NamedObjectDescriptor procDescriptor = parser.parseStoredProcedure(
+        "Order.archiveOldOrders",
+        "sp_archive_orders",
+        Set.of("cutoffDate", "archiveTable"));
+}
 ```
+
+> **Note:** `NamedObjectParser` implements `AutoCloseable`. Always use try-with-resources to ensure the underlying Hibernate `SessionFactory` and `ServiceRegistry` are properly released.
 
 ### 3. Validate persistence schema against a database
 
@@ -90,7 +93,7 @@ Both factory methods accept JPA version strings (`"2.0"` – `"2.2"` for `javax`
 lint-persistence-api  (SPI)
  ├── PersistenceLinter          — root marker interface for all linting operations
  ├── PersistenceLinterFactory   — base factory; generic ServiceLoader discovery by JPA version
- ├── NamedObjectParser          — parses and validates named queries and stored procedures
+ ├── NamedObjectParser          — parses and validates named queries and stored procedures (AutoCloseable)
  ├── NamedObjectParserFactory   — creates NamedObjectParser instances
  ├── SchemaValidator            — validates persistence schema against a live database
  ├── SchemaValidatorFactory     — creates SchemaValidator instances

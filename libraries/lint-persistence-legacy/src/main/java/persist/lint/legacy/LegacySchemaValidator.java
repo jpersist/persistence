@@ -1,8 +1,10 @@
 package persist.lint.legacy;
 
 import org.hibernate.boot.MetadataSources;
+import org.hibernate.boot.registry.BootstrapServiceRegistry;
 import org.hibernate.boot.registry.BootstrapServiceRegistryBuilder;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.service.ServiceRegistry;
 import org.hibernate.tool.schema.internal.ExceptionHandlerHaltImpl;
 import org.hibernate.tool.schema.spi.SchemaManagementTool;
 import org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator;
@@ -48,36 +50,43 @@ public class LegacySchemaValidator implements SchemaValidator {
     /** {@inheritDoc} */
     @Override
     public void validateSchema(Map<String, String> connectionProperties) {
-        var bsr = new BootstrapServiceRegistryBuilder().build();
+        try (BootstrapServiceRegistry bsr = buildBootstrapServiceRegistry();
+             ServiceRegistry ssr = buildServiceRegistry(bsr, connectionProperties)) {
+            var metadataSources = new MetadataSources(ssr);
+            discoveredClasses.forEach(metadataSources::addAnnotatedClassName);
 
-        var ssr = new StandardServiceRegistryBuilder(bsr)
-                .applySetting("hibernate.dialect", "org.hibernate.dialect.H2Dialect")
-                .applySetting("hibernate.connection.driver_class", connectionProperties.get("driver"))
-                .applySetting("hibernate.connection.url", connectionProperties.get("url"))
-                .applySetting("hibernate.connection.username", connectionProperties.get("username"))
-                .applySetting("hibernate.connection.password", connectionProperties.get("password"))
-                .applySetting("hibernate.boot.allow_jdbc_metadata_access", "true")
-                .build();
+            var metadata = metadataSources.buildMetadata();
 
-        var metadataSources = new MetadataSources(ssr);
-        discoveredClasses.forEach(metadataSources::addAnnotatedClassName);
+            // 1. Retrieve the SchemaManagementTool from the Service Registry
+            var tool = ssr.getService(SchemaManagementTool.class);
 
-        var metadata = metadataSources.buildMetadata();
+            // 2. Fetch the SchemaValidator engine
+            var validator = tool.getSchemaValidator(Collections.emptyMap());
 
-        // 1. Retrieve the SchemaManagementTool from the Service Registry
-        var tool = ssr.getService(SchemaManagementTool.class);
-
-        // 2. Fetch the SchemaValidator engine
-        var validator = tool.getSchemaValidator(Collections.emptyMap());
-
-        // 3. Build execution settings (Halts execution and throws an exception on failure)
-        var options = SchemaManagementToolCoordinator.buildExecutionOptions(
+            // 3. Build execution settings (Halts execution and throws an exception on failure)
+            var options = SchemaManagementToolCoordinator.buildExecutionOptions(
                 Collections.emptyMap(),
                 ExceptionHandlerHaltImpl.INSTANCE
-        );
+            );
 
-        // 4. Perform the validation (Note: No ContributableMatcher parameter in v5)
-        validator.doValidation(metadata, options);
+            // 4. Perform the validation (Note: No ContributableMatcher parameter in v5)
+            validator.doValidation(metadata, options);
+        }
+    }
+
+    private static BootstrapServiceRegistry buildBootstrapServiceRegistry() {
+        return new BootstrapServiceRegistryBuilder().build();
+    }
+
+    private static ServiceRegistry buildServiceRegistry(BootstrapServiceRegistry bsr, Map<String, String> connectionProperties) {
+        return new StandardServiceRegistryBuilder(bsr)
+            .applySetting("hibernate.dialect", "org.hibernate.dialect.H2Dialect")
+            .applySetting("hibernate.connection.driver_class", connectionProperties.get("driver"))
+            .applySetting("hibernate.connection.url", connectionProperties.get("url"))
+            .applySetting("hibernate.connection.username", connectionProperties.get("username"))
+            .applySetting("hibernate.connection.password", connectionProperties.get("password"))
+            .applySetting("hibernate.boot.allow_jdbc_metadata_access", "true")
+            .build();
     }
 
 }

@@ -1,12 +1,11 @@
 package persist.lint.jakarta;
 
-import org.hibernate.boot.Metadata;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.query.hql.HqlTranslator;
-import org.hibernate.query.spi.QueryEngine;
 import org.hibernate.query.sqm.tree.SqmStatement;
+import org.hibernate.service.ServiceRegistry;
 import persist.lint.api.NamedObjectDescriptor;
 import persist.lint.api.spi.NamedObjectParser;
 
@@ -25,17 +24,26 @@ import java.util.TreeSet;
  * <p>Stored procedure declarations are validated by recording the procedure
  * name and its parameter names into a {@link NamedObjectDescriptor}.</p>
  *
- * <p>Instances are created through the {@link #from(List)} factory method.</p>
+ * <p>Instances are created through the {@link #from(List)} factory method.
+ * This class implements {@link AutoCloseable}; closing an instance releases
+ * the underlying Hibernate {@code SessionFactory} and
+ * {@code ServiceRegistry}. Always use try-with-resources.</p>
  *
  * @since 2.0.0
  * @see JakartaNamedObjectParserFactory
  */
 public class JakartaNamedObjectParser implements NamedObjectParser {
 
-    private final Metadata metadata;
+    private final SessionFactoryImplementor sessionFactory;
 
-    private JakartaNamedObjectParser(Metadata metadata) {
-        this.metadata = metadata;
+    private final ServiceRegistry serviceRegistry;
+
+    private final HqlTranslator translator;
+
+    private JakartaNamedObjectParser(ServiceRegistry serviceRegistry, SessionFactoryImplementor sessionFactory) {
+        this.serviceRegistry = serviceRegistry;
+        this.sessionFactory = sessionFactory;
+        this.translator = sessionFactory.getQueryEngine().getHqlTranslator();
     }
 
     /**
@@ -43,60 +51,40 @@ public class JakartaNamedObjectParser implements NamedObjectParser {
      * supplied entity class names.
      *
      * @param discoveredClassNames fully qualified names of JPA entity classes
-     * @return a parser ready to validate named queries and stored procedures
+     * @return a parser ready to validate named queries and stored procedures;
+     *         the caller is responsible for closing it when finished
      */
     public static JakartaNamedObjectParser from(List<String> discoveredClassNames) {
-        return new JakartaNamedObjectParser(buildMetadata(discoveredClassNames));
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public NamedObjectDescriptor parseQuery(String name, String queryString) {
-        try (SessionFactoryImplementor sessionFactory = from(metadata)) {
-            return parseQuery(name, queryString, sessionFactory);
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public NamedObjectDescriptor parseStoredProcedure(String name, String procedureName, Set<String> parameterNames) {
-        return NamedObjectDescriptor.of(name, procedureName, parameterNames);
-    }
-
-    /**
-     * Builds a Hibernate {@link Metadata} instance from the given entity
-     * class names using an offline H2 dialect configuration.
-     *
-     * @param discoveredClasses fully qualified names of JPA entity classes
-     * @return the compiled metadata
-     */
-    private static Metadata buildMetadata(List<String> discoveredClasses) {
-        // Pure, strongly-typed Hibernate 6 bootstrapping
         var ssr = new StandardServiceRegistryBuilder()
             .applySetting("hibernate.dialect", "org.hibernate.dialect.H2Dialect")
-            .applySetting("hibernate.connection.url", "jdbc:h2:mem:lintdb;DB_CLOSE_DELAY=-1")
             // Explicitly disable background JDBC metadata connections query passes!
             .applySetting("hibernate.boot.allow_jdbc_metadata_access", "false")
             // Disable DDL validation loops during compilation
             .applySetting("hibernate.hbm2ddl.auto", "none")
+            // Disable metadata builder cache processing to speed up bootstrap
+            .applySetting("hibernate.bytecode.provider", "none")
             .build();
 
         var metadataSources = new MetadataSources(ssr);
 
         // Strongly register every single ASM-discovered entity class natively!
-        discoveredClasses.forEach(metadataSources::addAnnotatedClassName);
+        discoveredClassNames.forEach(metadataSources::addAnnotatedClassName);
 
-        return metadataSources.getMetadataBuilder().build();
+        var metadata = metadataSources.getMetadataBuilder().build();
+
+        // Build the concrete SessionFactory mapping. Because DDL validation and JDBC lookups
+        // are disabled above, this builds almost instantly using purely reflection mappings.
+        SessionFactoryImplementor sf = (SessionFactoryImplementor) metadata.buildSessionFactory();
+
+        return new JakartaNamedObjectParser(ssr, sf);
     }
 
-    private static NamedObjectDescriptor parseQuery(String name, String queryString, SessionFactoryImplementor sessionFactory) {
-        // 1. In Hibernate 6, QueryPlanCache & repositories are managed by the centralized QueryEngine
-        QueryEngine queryEngine = sessionFactory.getQueryEngine();
-        HqlTranslator hqlTranslator = queryEngine.getHqlTranslator();
-
-        // 2. Use the HqlTranslator to compile the string into a Semantic Query Model (SQM) tree
+    /** {@inheritDoc} */
+    @Override
+    public NamedObjectDescriptor parseQuery(String name, String queryString) {
+        // Use the HqlTranslator to compile the string into a Semantic Query Model (SQM) tree
         // This verifies grammar, entity maps, fields, and functions completely offline
-        SqmStatement<?> sqmStatement = parseQuery(queryString, hqlTranslator);
+        SqmStatement<?> sqmStatement = translator.translate(queryString, Object.class);
 
         Set<String> namedParameters = new TreeSet<>();
         Set<Integer> positionalParameters = new TreeSet<>();
@@ -115,13 +103,22 @@ public class JakartaNamedObjectParser implements NamedObjectParser {
         return NamedObjectDescriptor.of(name, queryString, namedParameters, positionalParameters);
     }
 
-    private static SqmStatement<?> parseQuery(String queryString, HqlTranslator hqlTranslator) {
-        // Compile the HQL string into a Semantic Query Model (SQM) tree layout
-        return hqlTranslator.translate(queryString, Object.class);
+    /** {@inheritDoc} */
+    @Override
+    public NamedObjectDescriptor parseStoredProcedure(String name, String procedureName, Set<String> parameterNames) {
+        return NamedObjectDescriptor.of(name, procedureName, parameterNames);
     }
 
-    private static SessionFactoryImplementor from(Metadata metadata) {
-        return (SessionFactoryImplementor) metadata.buildSessionFactory();
+    /**
+     * Releases the Hibernate {@code SessionFactory} and
+     * {@code ServiceRegistry} held by this parser.
+     *
+     * {@inheritDoc}
+     */
+    @Override
+    public void close() throws Exception {
+        sessionFactory.close();
+        StandardServiceRegistryBuilder.destroy(serviceRegistry);
     }
 
 }
