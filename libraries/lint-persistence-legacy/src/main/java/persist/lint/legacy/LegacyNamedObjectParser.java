@@ -1,6 +1,5 @@
 package persist.lint.legacy;
 
-import org.hibernate.boot.Metadata;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
@@ -8,6 +7,7 @@ import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.hql.internal.ast.ASTQueryTranslatorFactory;
 import org.hibernate.hql.spi.QueryTranslator;
 import org.hibernate.hql.spi.QueryTranslatorFactory;
+import org.hibernate.service.ServiceRegistry;
 import persist.lint.api.NamedObjectDescriptor;
 import persist.lint.api.spi.NamedObjectParser;
 
@@ -28,17 +28,24 @@ import java.util.TreeSet;
  * <p>Stored procedure declarations are validated by recording the procedure
  * name and its parameter names into a {@link NamedObjectDescriptor}.</p>
  *
- * <p>Instances are created through the {@link #from(List)} factory method.</p>
+ * <p>Instances are created through the {@link #from(List)} factory method.
+ * This class implements {@link AutoCloseable}; closing an instance releases
+ * the underlying Hibernate {@code SessionFactory} and
+ * {@code ServiceRegistry}. Always use try-with-resources.</p>
  *
  * @since 2.0.0
  * @see LegacyNamedObjectParserFactory
  */
 public class LegacyNamedObjectParser implements NamedObjectParser {
 
-    private final Metadata metadata;
+    private final ServiceRegistry serviceRegistry;
+    private final SessionFactoryImplementor sessionFactory;
+    private final QueryTranslatorFactory translatorFactory;
 
-    private LegacyNamedObjectParser(Metadata metadata) {
-        this.metadata = metadata;
+    private LegacyNamedObjectParser(ServiceRegistry serviceRegistry, SessionFactoryImplementor sessionFactory) {
+        this.serviceRegistry = serviceRegistry;
+        this.sessionFactory = sessionFactory;
+        this.translatorFactory = new ASTQueryTranslatorFactory();
     }
 
     /**
@@ -46,60 +53,37 @@ public class LegacyNamedObjectParser implements NamedObjectParser {
      * supplied entity class names.
      *
      * @param discoveredClassNames fully qualified names of JPA entity classes
-     * @return a parser ready to validate named queries and stored procedures
+     * @return a parser ready to validate named queries and stored procedures;
+     *         the caller is responsible for closing it when finished
      */
     public static LegacyNamedObjectParser from(List<String> discoveredClassNames) {
-        return new LegacyNamedObjectParser(buildMetadata(discoveredClassNames));
+        // 1. Define settings required for a completely offline build-time validation
+        StandardServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
+            // Provide a dialect so the HQL compiler understands function mappings
+            .applySetting("hibernate.dialect", "org.hibernate.dialect.H2Dialect")
+            // Explicitly block background metadata connection sniffing loops
+            .applySetting("hibernate.boot.allow_jdbc_metadata_access", "false")
+            // Explicitly disable automatic database schema actions during linting
+            .applySetting("hibernate.hbm2ddl.auto", "none")
+            // Optional: Enforce strict compliance with JPA 2.2 spec rules
+            .applySetting("hibernate.jpa.compliance.query", "true")
+            // Bypasses runtime enhancement routines during testing loops
+            .applySetting("hibernate.bytecode.provider", "none")
+            .build();
+
+        var metadataSources = new MetadataSources(serviceRegistry);
+
+        discoveredClassNames.forEach(metadataSources::addAnnotatedClassName);
+
+        var metadata = metadataSources.getMetadataBuilder().build();
+
+        SessionFactoryImplementor sessionFactory = (SessionFactoryImplementor) metadata.buildSessionFactory();
+        return new LegacyNamedObjectParser(serviceRegistry, sessionFactory);
     }
 
     /** {@inheritDoc} */
     @Override
     public NamedObjectDescriptor parseQuery(String name, String queryString) {
-        try (SessionFactoryImplementor sessionFactory = from(metadata)) {
-            // Initialize the standard AST-based translator factory
-            QueryTranslatorFactory translatorFactory = new ASTQueryTranslatorFactory();
-
-            return parseQuery(name, queryString, translatorFactory, sessionFactory);
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public NamedObjectDescriptor parseStoredProcedure(String name, String procedureName, Set<String> parameterNames) {
-        return NamedObjectDescriptor.of(name, procedureName, parameterNames);
-    }
-
-    /**
-     * Builds a Hibernate {@link Metadata} instance from the given entity
-     * class names using an offline H2 dialect configuration.
-     *
-     * @param discoveredClasses fully qualified names of JPA entity classes
-     * @return the compiled metadata
-     */
-    private static Metadata buildMetadata(List<String> discoveredClasses) {
-        // Pure, strongly-typed legacy Hibernate 5 bootstrapping
-
-        // 1. Define settings required for a completely offline build-time validation
-        StandardServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
-            // Provide a dialect so the HQL compiler understands function mappings
-            .applySetting("hibernate.dialect", "org.hibernate.dialect.H2Dialect")
-            .applySetting("hibernate.connection.url", "jdbc:h2:mem:lintdb;DB_CLOSE_DELAY=-1")
-            // Explicitly disable automatic database schema actions during linting
-            .applySetting("hibernate.hbm2ddl.auto", "none")
-            // Optional: Enforce strict compliance with JPA 2.2 spec rules
-            .applySetting("hibernate.jpa.compliance.query", "true")
-            .build();
-
-        var metadataSources = new MetadataSources(serviceRegistry);
-
-        discoveredClasses.forEach(metadataSources::addAnnotatedClassName);
-
-        return metadataSources.getMetadataBuilder().build();
-    }
-
-    private static NamedObjectDescriptor parseQuery(String name, String queryString,
-                                   QueryTranslatorFactory translatorFactory,
-                                   SessionFactoryImplementor sessionFactory) {
         // Create a translator instance for this specific query string
         // The queryIdentifier can match your named query string key
         QueryTranslator translator = translatorFactory.createQueryTranslator(
@@ -130,8 +114,22 @@ public class LegacyNamedObjectParser implements NamedObjectParser {
         return NamedObjectDescriptor.of(name, queryString, namedParameters, positionalParameters);
     }
 
-    private static SessionFactoryImplementor from(Metadata metadata) {
-        return (SessionFactoryImplementor) metadata.buildSessionFactory();
+    /** {@inheritDoc} */
+    @Override
+    public NamedObjectDescriptor parseStoredProcedure(String name, String procedureName, Set<String> parameterNames) {
+        return NamedObjectDescriptor.of(name, procedureName, parameterNames);
+    }
+
+    /**
+     * Releases the Hibernate {@code SessionFactory} and
+     * {@code ServiceRegistry} held by this parser.
+     *
+     * {@inheritDoc}
+     */
+    @Override
+    public void close() throws Exception {
+        sessionFactory.close();
+        StandardServiceRegistryBuilder.destroy(serviceRegistry);
     }
 
 }

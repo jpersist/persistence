@@ -23,7 +23,8 @@ public interface NamedObjectParserFactory extends PersistenceLinterFactory {
      *
      * @param discoveredClassNames fully qualified class names of the JPA
      *                             entities to register in the metamodel
-     * @return a ready-to-use named object parser
+     * @return a ready-to-use named object parser; the caller is responsible
+     *         for closing it (preferably via try-with-resources)
      */
     NamedObjectParser newNamedObjectParser(List<String> discoveredClassNames);
 

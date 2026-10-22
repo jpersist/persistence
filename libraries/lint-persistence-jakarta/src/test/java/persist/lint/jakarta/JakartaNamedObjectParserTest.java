@@ -1,5 +1,6 @@
 package persist.lint.jakarta;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import persist.lint.query.jakarta.TestEntity;
@@ -125,6 +126,11 @@ class JakartaNamedObjectParserTest {
         assertThat(descriptor.name()).isEqualTo("Report.generateMonthly");
         assertThat(descriptor.value()).isEqualTo("sp_generate_report");
         assertThat(descriptor.namedParameters()).containsExactly("month");
+    }
+
+    @AfterEach
+    void cleanup() throws Exception {
+        parser.close();
     }
 
 }
