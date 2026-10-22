@@ -1,7 +1,7 @@
 [versions]
 jakarta-persistence = "3.1.0"
 lint-persistence= "2.1.1"
-hibernate-orm = "6.6.56.Final"
+hibernate-orm = "7.4.13.Final"
 spock = "2.3-groovy-4.0"
 asm = "9.10.1"
 
