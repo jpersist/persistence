@@ -3,7 +3,7 @@ package persist.jakarta.gradle.task
 import groovy.json.JsonOutput
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.file.ConfigurableFileTree
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
@@ -54,13 +54,20 @@ abstract class LintNamedQueries extends DefaultTask {
     abstract Property<Boolean> getIgnoreWarnings()
 
     /**
-     * The input source directory holding the compiled Java class files to be scanned via ASM.
-     * Annotated with @Incremental to instruct the Gradle engine to compute delta tracking states.
+     * The input source directories tracking active Java source code files (.java).
+     * Sourced from the active compilation source sets.
      */
     @Incremental
     @InputFiles
     @PathSensitive(PathSensitivity.RELATIVE)
-    abstract ConfigurableFileTree getCompiledClasses()
+    abstract ConfigurableFileCollection getSourceFiles()
+
+    /**
+     * The input source directory holding the compiled Java class files to be scanned via ASM.
+     */
+    @InputDirectory
+    @PathSensitive(PathSensitivity.RELATIVE)
+    abstract DirectoryProperty getCompiledClassesDir()
 
     /**
      * The complete runtime and compilation classpath containing the JPA provider binaries
@@ -85,7 +92,7 @@ abstract class LintNamedQueries extends DefaultTask {
 
     @TaskAction
     void lint(InputChanges inputChanges) {
-        File classesFolder = compiledClasses.getDir()
+        File classesFolder = compiledClassesDir.get().asFile
         Set<File> runtimeClasspathFiles = classpath.getFiles()
 
         boolean failOnValidationError = failOnError.get()
@@ -97,29 +104,44 @@ abstract class LintNamedQueries extends DefaultTask {
         List<String> removedClassFiles = []
         boolean isIncrementalPass = inputChanges.incremental
 
+        // Track files matching our target bytecode criteria
+        int totalTargetFiles = 0
         int totalProcessed = 0
         int totalSkipped = 0
 
-        // Count total matching .class files inside the tree context
-        int totalTargetFiles = compiledClasses.asFileTree.matching { include '**/*.class' }.files.size()
+        // Resolve total classes count directly from the file system directory pass
+        classesFolder.eachFileRecurse { file ->
+            if (file.name.endsWith('.class')) {
+                totalTargetFiles++
+            }
+        }
 
         if (isIncrementalPass) {
-            // Isolate strictly the added, modified, or removed .class bytecodes
-            inputChanges.getFileChanges(compiledClasses).each { change ->
-                if (change.file.name.endsWith('.class')) {
+            // Stream altered file collections from the immutable source repository graph
+            inputChanges.getFileChanges(sourceFiles).each { change ->
+                if (change.file.name.endsWith('.java')) {
                     String relativePath = change.normalizedPath
+
+                    // Translate the source java file structure path to its expected bytecode counterpart
+                    String classRelativePath = relativePath.substring(0, relativePath.lastIndexOf('.java')) + '.class'
+                    File correspondingClassFile = new File(classesFolder, classRelativePath)
+
                     if (change.changeType == ChangeType.REMOVED) {
-                        removedClassFiles.add(relativePath)
-                    } else {
-                        affectedClassFiles.add(change.file.absolutePath)
+                        removedClassFiles.add(classRelativePath)
+                    } else if (correspondingClassFile.exists()) {
+                        affectedClassFiles.add(correspondingClassFile.absolutePath)
                     }
                 }
             }
-            // In an incremental pass, processed files match the size of the delta
             totalProcessed = affectedClassFiles.size()
             totalSkipped = Math.max(0, totalTargetFiles - totalProcessed)
         } else {
-            // In a non-incremental full pass, every class file inside the directory is processed
+            // Full pass execution fallback: sweep all files present inside the compilation folder
+            classesFolder.eachFileRecurse { file ->
+                if (file.name.endsWith('.class')) {
+                    affectedClassFiles.add(file.absolutePath)
+                }
+            }
             totalProcessed = totalTargetFiles
             totalSkipped = 0
         }
