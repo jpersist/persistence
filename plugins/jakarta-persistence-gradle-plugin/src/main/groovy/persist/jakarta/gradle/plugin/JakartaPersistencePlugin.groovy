@@ -407,12 +407,22 @@ class JakartaPersistencePlugin implements Plugin<Project> {
             task.failOnError.set(extension.linter.failOnError)
             task.ignoreWarnings.set(extension.linter.ignoreWarnings)
 
+            // Feed the live sourceDirectories tree container.
+            // This is safe, entirely lazy, and supports multi-source directory layouts out of the box.
+            // Collects all source files but dynamically filter out any path matching the project's build directory execution tree
+            task.sourceFiles.from(project.provider {
+                sourceSet.java.sourceDirectories.asFileTree.matching {
+                    // Exclude any files residing inside the active layout build directory environment
+                    exclude { element ->
+                        element.file.absolutePath.replace('\\', '/').contains(project.layout.buildDirectory.get().asFile.absolutePath.replace('\\', '/'))
+                    }
+                }
+            })
+
             // Target the raw Java compilation output directory directly
             def compileJavaTask = project.tasks.named(sourceSet.compileJavaTaskName, JavaCompile)
-            task.compiledClasses.setDir(compileJavaTask.flatMap { it.destinationDirectory })
-            task.compiledClasses.include('**/*.class')
+            task.compiledClassesDir.set(compileJavaTask.flatMap { it.destinationDirectory })
             task.mustRunAfter(compileJavaTask)
-            task.dependsOn(compileJavaTask)
 
             // Feed compilation runtime configurations safely using execution views
             task.classpath.from(sourceSet.output.classesDirs)

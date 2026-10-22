@@ -410,9 +410,8 @@ class JakartaPersistencePluginFunctionalSpec extends Specification {
         def baselineResult = runner.build()
         assert baselineResult.task(":test-lint-valid-persistence-module:lintNamedQueries").outcome == TaskOutcome.SUCCESS
 
-        sleep(1000)
-
         when: "dynamically injecting a brand new entity class with a style violation token placeholder into the workspace directory structure"
+        sleep(1500)
         File javaSourceDir = new File(testProjectDir.toFile(), "test-lint-valid-persistence-module/src/main/java/com/example/model")
         javaSourceDir.mkdirs()
         File newEntityFile = new File(javaSourceDir, "IncrementalViolatorEntity.java")
@@ -436,9 +435,7 @@ class JakartaPersistencePluginFunctionalSpec extends Specification {
         """.stripIndent()
 
         // 2. Trigger a subsequent execution pass to evaluate the delta context
-        def incrementalResult = createRunner()
-            .withArguments(":test-lint-valid-persistence-module:compileJava", ":test-lint-valid-persistence-module:lintNamedQueries", "--stacktrace")
-            .build()
+        def incrementalResult = runner.build()
 
         then: "the incremental task successfully builds"
         // Allow both SUCCESS or UP_TO_DATE depending on how Gradle caches the file-less linter pass
@@ -457,18 +454,15 @@ class JakartaPersistencePluginFunctionalSpec extends Specification {
         runner.withArguments(":test-lint-valid-persistence-module:compileJava", ":test-lint-valid-persistence-module:lintNamedQueries", "--stacktrace")
         runner.build()
 
-        sleep(1000)
-
         when: "modifying a standard Java entity file without changing any named queries or parameter blocks"
+        sleep(1500)
         File javaSourceDir = new File(testProjectDir.toFile(), "test-lint-valid-persistence-module/src/main/java/com/example/model")
         File targetEntityFile = new File(javaSourceDir, "Product.java")
         assert targetEntityFile.exists()
 
         targetEntityFile.text.replace("@Table(name = \"product\")", "@Table(name = \"PRODUCT\")")
 
-        def incrementalResult = createRunner()
-            .withArguments(":test-lint-valid-persistence-module:compileJava", ":test-lint-valid-persistence-module:lintNamedQueries", "--stacktrace")
-            .build()
+        def incrementalResult = runner.build()
 
         then: "the task executes successfully or evaluates to UP_TO_DATE natively"
         def outcome = incrementalResult.task(":test-lint-valid-persistence-module:lintNamedQueries").outcome
@@ -481,9 +475,8 @@ class JakartaPersistencePluginFunctionalSpec extends Specification {
         runner.withArguments(":stock-management-persistence-module:compileJava", ":stock-management-persistence-module:lintNamedQueries", "--stacktrace")
         runner.build()
 
-        sleep(1000)
-
         when: "physically deleting the target entity class source file from the correct workspace module path"
+        sleep(1500)
         File javaSourceDir = new File(testProjectDir.toFile(), "stock-management-persistence-module/src/main/java/com/example/stockmanagement/model")
         File targetEntityFile = new File(javaSourceDir, "StockMovement.java")
         assert targetEntityFile.exists()
@@ -494,9 +487,7 @@ class JakartaPersistencePluginFunctionalSpec extends Specification {
 
         // If the folder becomes empty, our plugin's conditional registration
         // prevents the task from breaking due to missing build directory trees!
-        def incrementalResult = createRunner()
-            .withArguments(":stock-management-persistence-module:compileJava", ":stock-management-persistence-module:lintNamedQueries", "--stacktrace")
-            .build()
+        def incrementalResult = runner.build()
 
         then: "the linter processes the update and the execution finishes successfully"
         assert incrementalResult.task(":stock-management-persistence-module:lintNamedQueries").outcome == TaskOutcome.SUCCESS
