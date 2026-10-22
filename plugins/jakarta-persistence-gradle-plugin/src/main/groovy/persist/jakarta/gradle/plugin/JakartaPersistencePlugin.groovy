@@ -409,8 +409,10 @@ class JakartaPersistencePlugin implements Plugin<Project> {
 
             // Target the raw Java compilation output directory directly
             def compileJavaTask = project.tasks.named(sourceSet.compileJavaTaskName, JavaCompile)
-            task.compiledClassesDir.set(compileJavaTask.flatMap { it.destinationDirectory })
+            task.compiledClasses.setDir(compileJavaTask.flatMap { it.destinationDirectory })
+            task.compiledClasses.include('**/*.class')
             task.mustRunAfter(compileJavaTask)
+            task.dependsOn(compileJavaTask)
 
             // Feed compilation runtime configurations safely using execution views
             task.classpath.from(sourceSet.output.classesDirs)
@@ -429,6 +431,9 @@ class JakartaPersistencePlugin implements Plugin<Project> {
             task.classpath.from(project.files(project.buildscript.configurations.detachedConfiguration(
                 project.dependencies.create("com.h2database:h2:2.2.224")
             )))
+
+            // Automatically routes the JSON report file output to the standard build reports layout
+            task.lintReportFile.set(project.layout.buildDirectory.file("reports/${linterTaskName}/validation-report.json"))
         }
 
         // Link the linter task straight into Gradle's native check lifecycle

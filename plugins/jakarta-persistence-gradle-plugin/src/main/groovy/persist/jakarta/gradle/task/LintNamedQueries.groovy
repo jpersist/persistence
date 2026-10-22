@@ -1,11 +1,16 @@
 package persist.jakarta.gradle.task
 
+import groovy.json.JsonOutput
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.ConfigurableFileTree
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
+import org.gradle.work.ChangeType
 import org.gradle.work.DisableCachingByDefault
+import org.gradle.work.Incremental
+import org.gradle.work.InputChanges
 import org.gradle.workers.WorkerExecutor
 import persist.jakarta.gradle.worker.LintNamedQueriesWorker
 import javax.inject.Inject
@@ -50,12 +55,12 @@ abstract class LintNamedQueries extends DefaultTask {
 
     /**
      * The input source directory holding the compiled Java class files to be scanned via ASM.
+     * Annotated with @Incremental to instruct the Gradle engine to compute delta tracking states.
      */
-    @InputDirectory
+    @Incremental
+    @InputFiles
     @PathSensitive(PathSensitivity.RELATIVE)
-    @SkipWhenEmpty
-    @IgnoreEmptyDirectories
-    abstract DirectoryProperty getCompiledClassesDir()
+    abstract ConfigurableFileTree getCompiledClasses()
 
     /**
      * The complete runtime and compilation classpath containing the JPA provider binaries
@@ -63,6 +68,13 @@ abstract class LintNamedQueries extends DefaultTask {
      */
     @CompileClasspath
     abstract ConfigurableFileCollection getClasspath()
+
+    /**
+     * The generated JSON compilation report containing metrics regarding processed and skipped files.
+     * Acts as the mandatory @OutputFile checkpoint to satisfy Gradle's execution graph rules.
+     */
+    @OutputFile
+    abstract RegularFileProperty getLintReportFile()
 
     private final WorkerExecutor workerExecutor
 
@@ -72,25 +84,76 @@ abstract class LintNamedQueries extends DefaultTask {
     }
 
     @TaskAction
-    void lint() {
-        File classesFolder = compiledClassesDir.get().asFile
+    void lint(InputChanges inputChanges) {
+        File classesFolder = compiledClasses.getDir()
         Set<File> runtimeClasspathFiles = classpath.getFiles()
 
-        boolean failOnValidationError = failOnError.getOrElse(true)
-        boolean skipWarnings = ignoreWarnings.getOrElse(false)
+        boolean failOnValidationError = failOnError.get()
+        boolean skipWarnings = ignoreWarnings.get()
+        String version = jpaVersion.get()
 
-        String version = jpaVersion.getOrElse('3.0')
+        // 1. Differentiate between a full compilation pass and a localized delta pass
+        List<String> affectedClassFiles = []
+        List<String> removedClassFiles = []
+        boolean isIncrementalPass = inputChanges.incremental
 
-        // Leverage Worker API classloader isolation to prevent classpath pollution
+        int totalProcessed = 0
+        int totalSkipped = 0
+
+        // Count total matching .class files inside the tree context
+        int totalTargetFiles = compiledClasses.asFileTree.matching { include '**/*.class' }.files.size()
+
+        if (isIncrementalPass) {
+            // Isolate strictly the added, modified, or removed .class bytecodes
+            inputChanges.getFileChanges(compiledClasses).each { change ->
+                if (change.file.name.endsWith('.class')) {
+                    String relativePath = change.normalizedPath
+                    if (change.changeType == ChangeType.REMOVED) {
+                        removedClassFiles.add(relativePath)
+                    } else {
+                        affectedClassFiles.add(change.file.absolutePath)
+                    }
+                }
+            }
+            // In an incremental pass, processed files match the size of the delta
+            totalProcessed = affectedClassFiles.size()
+            totalSkipped = Math.max(0, totalTargetFiles - totalProcessed)
+        } else {
+            // In a non-incremental full pass, every class file inside the directory is processed
+            totalProcessed = totalTargetFiles
+            totalSkipped = 0
+        }
+
+        // 2. Submit execution payload across the ClassLoader barrier to the isolated worker container
         workerExecutor.classLoaderIsolation { workerSpec ->
             workerSpec.classpath.from(runtimeClasspathFiles)
             workerSpec.classpath.from(classesFolder)
         }.submit(LintNamedQueriesWorker) { params ->
-            params.getCompiledClassesDir().set(classesFolder)
-            params.getFailOnError().set(failOnValidationError)
-            params.getIgnoreWarnings().set(skipWarnings)
-            params.getJpaVersion().set(version)
+            params.compiledClassesDir.set(classesFolder)
+            params.failOnError.set(failOnValidationError)
+            params.ignoreWarnings.set(skipWarnings)
+            params.jpaVersion.set(version)
+
+            // Inject incremental delta tracing lists into parameters
+            params.incrementalPass.set(isIncrementalPass)
+            params.affectedClassFiles.set(affectedClassFiles)
+            params.removedClassFiles.set(removedClassFiles)
         }
+
+        // 3. Generate and save a structured JSON execution metrics report on the file system
+        Map reportMetadata = [
+            taskName          : name,
+            timestamp         : System.currentTimeMillis(),
+            incremental       : isIncrementalPass,
+            totalFilesDetected: totalTargetFiles,
+            processedFiles    : totalProcessed,
+            skippedFiles      : totalSkipped,
+            removedFiles      : removedClassFiles.size()
+        ]
+
+        File reportFile = lintReportFile.get().asFile
+        reportFile.parentFile.mkdirs()
+        reportFile.text = JsonOutput.prettyPrint(JsonOutput.toJson(reportMetadata))
     }
 
 }
