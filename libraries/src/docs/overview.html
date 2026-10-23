@@ -3,13 +3,66 @@
 <h1>Lint Persistence Libraries</h1>
 <p>
     The <strong>Lint Persistence Libraries</strong> provide build-time validation of
-    named JPQL queries and stored procedures defined in JPA projects. By compiling
-    query strings against the entity metamodel at build time, syntax errors, unknown
-    entity references, and invalid property paths are caught early — before the
-    application is deployed.
+    JPA persistence artifacts — named JPQL queries, stored procedure declarations,
+    and database schemas — without deploying the application. By compiling query
+    strings against the entity metamodel and comparing the metamodel with a live
+    database schema at build time, syntax errors, unknown entity references, invalid
+    property paths, and schema mismatches are caught early.
 </p>
 
-<h2>What's New in 2.0.0</h2>
+<h2>Architecture</h2>
+<p>
+    The library is organised around a two-level SPI hierarchy rooted in
+    {@link persist.lint.api.spi.PersistenceLinter} (the marker interface for all
+    linting operations) and {@link persist.lint.api.spi.PersistenceLinterFactory}
+    (the base factory with {@link java.util.ServiceLoader}-based discovery):
+</p>
+<ul>
+    <li>
+        <strong>{@link persist.lint.api.spi.NamedObjectParser}</strong> /
+        {@link persist.lint.api.spi.NamedObjectParserFactory} — parses and
+        validates named JPQL queries and stored procedure declarations,
+        returning {@link persist.lint.api.NamedObjectDescriptor} results
+        with parameter metadata.
+    </li>
+    <li>
+        <strong>{@link persist.lint.api.spi.SchemaValidator}</strong> /
+        {@link persist.lint.api.spi.SchemaValidatorFactory} — validates the
+        entity metamodel against a live database schema via JDBC.
+    </li>
+</ul>
+<p>
+    Provider implementations for each JPA namespace are shipped in separate
+    modules and are resolved at runtime by passing a JPA specification version
+    (e.g.&nbsp;{@code "3.1"} or {@code "2.2"}) to the appropriate factory
+    method. The version is mapped internally to a persistence namespace
+    ({@code "jakarta"} for JPA&nbsp;3.x, {@code "javax"} for JPA&nbsp;2.x).
+</p>
+
+<h2>What's New</h2>
+
+<h3>Version 2.1.0</h3>
+<p>
+    Version 2.1.0 introduces the unified linter hierarchy:
+</p>
+<ul>
+    <li>
+        {@link persist.lint.api.spi.PersistenceLinter} — marker interface that
+        serves as the root type for all linting operations.
+    </li>
+    <li>
+        {@link persist.lint.api.spi.PersistenceLinterFactory} — base factory
+        with generic discovery via
+        {@link persist.lint.api.spi.PersistenceLinterFactory#newPersistenceLinterFactory(String, Class)}.
+    </li>
+    <li>
+        {@link persist.lint.api.spi.SchemaValidator} and
+        {@link persist.lint.api.spi.SchemaValidatorFactory} — new SPI for
+        build-time database schema validation against the entity metamodel.
+    </li>
+</ul>
+
+<h3>Version 2.0.0</h3>
 <p>
     Version 2.0.0 introduces the {@link persist.lint.api.spi.NamedObjectParser}
     and {@link persist.lint.api.spi.NamedObjectParserFactory} APIs, which replace
@@ -27,25 +80,46 @@
     <dt><code>lint-persistence-api</code></dt>
     <dd>
         Defines the Service Provider Interface (SPI):
-        {@link persist.lint.api.spi.NamedObjectParser} and
-        {@link persist.lint.api.spi.NamedObjectParserFactory}.
+        {@link persist.lint.api.spi.PersistenceLinter},
+        {@link persist.lint.api.spi.PersistenceLinterFactory},
+        {@link persist.lint.api.spi.NamedObjectParser},
+        {@link persist.lint.api.spi.NamedObjectParserFactory},
+        {@link persist.lint.api.spi.SchemaValidator}, and
+        {@link persist.lint.api.spi.SchemaValidatorFactory}.
         This module contains no implementation; provider modules are discovered
         at runtime through the {@link java.util.ServiceLoader} mechanism.
+        It also hosts the shared model types
+        {@link persist.lint.api.NamedObjectDescriptor} and
+        {@link persist.lint.api.NamedObjectType}.
+        <br><br>
+        The legacy {@link persist.lint.query.spi} package
+        ({@link persist.lint.query.spi.QueryParser} and
+        {@link persist.lint.query.spi.QueryParserFactory}) is deprecated in
+        favour of the {@link persist.lint.api.spi} package.
     </dd>
 
     <dt><code>lint-persistence-jakarta</code></dt>
     <dd>
         Jakarta Persistence (JPA&nbsp;3.x) provider. Uses Hibernate ORM&nbsp;6
-        to compile JPQL queries into Semantic Query Model (SQM) trees.
-        See {@link persist.lint.jakarta.JakartaNamedObjectParserFactory}.
+        to compile JPQL queries into Semantic Query Model (SQM) trees and to
+        validate database schemas.
+        <br>Key classes:
+        {@link persist.lint.jakarta.JakartaNamedObjectParserFactory},
+        {@link persist.lint.jakarta.JakartaNamedObjectParser},
+        {@link persist.lint.jakarta.JakartaSchemaValidatorFactory}, and
+        {@link persist.lint.jakarta.JakartaSchemaValidator}.
     </dd>
 
     <dt><code>lint-persistence-legacy</code></dt>
     <dd>
         Legacy {@code javax.persistence} (JPA&nbsp;2.x) provider. Uses
         Hibernate&nbsp;5 and its AST-based query translator to validate
-        JPQL queries.
-        See {@link persist.lint.legacy.LegacyNamedObjectParserFactory}.
+        JPQL queries and database schemas.
+        <br>Key classes:
+        {@link persist.lint.legacy.LegacyNamedObjectParserFactory},
+        {@link persist.lint.legacy.LegacyNamedObjectParser},
+        {@link persist.lint.legacy.LegacySchemaValidatorFactory}, and
+        {@link persist.lint.legacy.LegacySchemaValidator}.
     </dd>
 
     <dt><code>lint-persistence-bom</code></dt>
@@ -56,6 +130,8 @@
 </dl>
 
 <h2>Getting Started</h2>
+
+<h3>Validating Named Queries and Stored Procedures</h3>
 <p>
     Use {@link persist.lint.api.spi.NamedObjectParserFactory#newNamedObjectParserFactory(String)}
     to obtain the appropriate factory for a given JPA specification version, then
@@ -64,18 +140,54 @@
 </p>
 <pre>{@code
     NamedObjectParserFactory factory = NamedObjectParserFactory.newNamedObjectParserFactory("3.1");
-    NamedObjectParser parser = factory.newNamedObjectParser(entityClassNames);
 
-    // Validate a named query
-    NamedObjectDescriptor queryDescriptor = parser.parseQuery(
-        "Order.findByStatus",
-        "SELECT o FROM Order o WHERE o.status = :status");
+    try (NamedObjectParser parser = factory.newNamedObjectParser(entityClassNames)) {
 
-    // Validate a named stored procedure
-    NamedObjectDescriptor procDescriptor = parser.parseStoredProcedure(
-        "Order.archiveOldOrders",
-        "sp_archive_orders",
-        Set.of("cutoffDate", "archiveTable"));
+        // Validate a named query
+        NamedObjectDescriptor queryDescriptor = parser.parseQuery(
+            "Order.findByStatus",
+            "SELECT o FROM Order o WHERE o.status = :status");
+
+        // Validate a named stored procedure
+        NamedObjectDescriptor procDescriptor = parser.parseStoredProcedure(
+            "Order.archiveOldOrders",
+            "sp_archive_orders",
+            Set.of("cutoffDate", "archiveTable"));
+    }
+}</pre>
+
+<h3>Validating Database Schemas</h3>
+<p>
+    Use {@link persist.lint.api.spi.SchemaValidatorFactory#newSchemaValidatorFactory(String)}
+    to obtain a schema validator factory, then create a
+    {@link persist.lint.api.spi.SchemaValidator} and validate the entity metamodel
+    against a live database:
+</p>
+<pre>{@code
+    SchemaValidatorFactory factory = SchemaValidatorFactory.newSchemaValidatorFactory("3.1");
+    SchemaValidator validator = factory.newSchemaValidator(entityClassNames);
+
+    validator.validateSchema(Map.of(
+        "driver",   "org.h2.Driver",
+        "url",      "jdbc:h2:mem:testdb",
+        "username", "sa",
+        "password", ""));
+}</pre>
+
+<h3>Generic Factory Discovery</h3>
+<p>
+    The {@link persist.lint.api.spi.PersistenceLinterFactory#newPersistenceLinterFactory(String, Class)}
+    method provides a generic way to discover any linter factory subtype for a
+    given JPA version:
+</p>
+<pre>{@code
+    // Equivalent to NamedObjectParserFactory.newNamedObjectParserFactory("3.1")
+    NamedObjectParserFactory parserFactory =
+        PersistenceLinterFactory.newPersistenceLinterFactory("3.1", NamedObjectParserFactory.class);
+
+    // Equivalent to SchemaValidatorFactory.newSchemaValidatorFactory("3.1")
+    SchemaValidatorFactory schemaFactory =
+        PersistenceLinterFactory.newPersistenceLinterFactory("3.1", SchemaValidatorFactory.class);
 }</pre>
 </body>
 </html>

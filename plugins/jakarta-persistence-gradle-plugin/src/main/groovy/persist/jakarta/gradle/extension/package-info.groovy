@@ -23,6 +23,11 @@
  *         Optional JDBC connection properties (URL, driver, user, password)
  *         used by the schema validation task. Defaults to an in-memory H2
  *         database when not configured.</li>
+ *     <li>{@link persist.jakarta.gradle.extension.TenantValidationExtension} &mdash;
+ *         Named DSL extension representing a single database tenant profile
+ *         for multi-tenant schema validation, carrying its own JDBC
+ *         connection properties inside the {@code validation.tenants}
+ *         container.</li>
  *     <li>{@link persist.jakarta.gradle.extension.LinterExtension} &mdash;
  *         Configuration options for the static compile-time
  *         {@code @NamedQuery} analysis linter, including toggles for enabling

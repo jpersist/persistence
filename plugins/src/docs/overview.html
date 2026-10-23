@@ -29,18 +29,6 @@
     </tr>
 </table>
 
-<h3>Platform <em>(deprecated)</em></h3>
-<table border="1" cellpadding="4" cellspacing="0">
-    <tr><th>Plugin ID</th><th>Description</th></tr>
-    <tr>
-        <td><code>io.github.jpersist.persistence-platform</code></td>
-        <td><strong>Deprecated</strong> &mdash; replaced by <code>io.github.jpersist.jpa</code>.
-            Declares a JPA implementation platform (BOM) dependency for centralized version alignment
-            across all configurations. See
-            {@link persist.platform.gradle.plugin.PersistencePlatformPlugin}.</td>
-    </tr>
-</table>
-
 <h3>EclipseLink</h3>
 <table border="1" cellpadding="4" cellspacing="0">
     <tr><th>Plugin ID</th><th>Description</th></tr>
@@ -246,7 +234,8 @@ dependencies {
     <li>{@link persist.jakarta.gradle.extension} &mdash; Jakarta Persistence DSL extension configuration model, including XML formatting options.</li>
     <li>{@link persist.jakarta.gradle.task} &mdash; Jakarta Persistence build-time task implementations, including schema validation, GraalVM metadata generation, and named query linting.</li>
     <li>{@link persist.jakarta.gradle.worker} &mdash; Gradle Worker API implementations for isolated JPA schema validation and named query analysis.</li>
-    <li>{@link persist.platform.gradle.plugin} &mdash; <em>(Deprecated)</em> Platform alignment plugin for centralized version management.</li>
+    <li>{@link persist.jakarta.gradle.task.delegate} &mdash; Version-specific strategy delegates for JPA persistence descriptor processing.</li>
+    <li>{@link persist.jakarta.gradle.task.registry} &mdash; Registry for mapping JPA specification versions to descriptor processing strategies.</li>
     <li>{@link persist.eclipse.gradle.plugin} &mdash; EclipseLink plugin implementations.</li>
     <li>{@link persist.eclipse.gradle.extension} &mdash; EclipseLink DSL extension configuration model.</li>
     <li>{@link persist.eclipse.gradle.task} &mdash; EclipseLink build-time task implementations.</li>

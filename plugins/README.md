@@ -5,7 +5,7 @@
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=jpersist_persistence_plugins&metric=coverage)](https://sonarcloud.io/summary/new_code?id=jpersist_persistence_plugins)
 ![GitHub License](https://img.shields.io/github/license/jpersist/persistence)
 
-**JPersist** is a suite of modern, high-performance, and Gradle Configuration Cache-compliant plugins that automate the configuration of enterprise Jakarta Persistence API (JPA) environments. It provides zero-configuration support for Hibernate and EclipseLink multi-module builds — including descriptor generation/merging, metamodel generation, bytecode enhancement/weaving, JPQL query linting, and GraalVM native-image metadata generation.
+**JPersist** is a suite of modern, high-performance, and Gradle Configuration Cache-compliant plugins that automate the configuration of enterprise Jakarta Persistence API (JPA) environments. It provides zero-configuration support for Hibernate and EclipseLink multi-module builds — including descriptor generation/merging, schema validation, metamodel generation, bytecode enhancement/weaving, JPQL query linting, and GraalVM native-image metadata generation.
 
 ---
 
@@ -33,7 +33,7 @@
 
 ```groovy
 plugins {
-    id 'io.github.jpersist.hibernate-persistence' version '1.6.0'
+    id 'io.github.jpersist.hibernate-persistence' version '1.7.0'
 }
 ```
 
@@ -41,7 +41,7 @@ plugins {
 
 ```groovy
 plugins {
-    id 'io.github.jpersist.eclipse-persistence' version '1.6.0'
+    id 'io.github.jpersist.eclipse-persistence' version '1.7.0'
 }
 ```
 
@@ -80,6 +80,7 @@ That's it — no additional XML configuration or annotation processing setup is 
 jakarta-persistence-gradle-plugin  (Core)
  └── JakartaPersistencePlugin
       ├── persistence.xml generation & merging
+      ├── Schema validation (single & multi-tenant)
       ├── JPQL @NamedQuery / @NamedStoredProcedureQuery lint
       └── GraalVM reflect-config.json generation
 
@@ -122,7 +123,7 @@ To generate the documentation locally:
 
 ```bash
 cd plugins
-../gradlew aggregateGroovydoc
+../gradlew groovydocAll
 ```
 
 The output is written to `build/docs/groovydoc/`.

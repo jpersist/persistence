@@ -17,6 +17,9 @@ import persist.lint.api.spi.PersistenceLinterFactory;
  */
 public abstract class LegacyPersistenceLinterFactory implements PersistenceLinterFactory {
 
+    /** Creates a new {@code LegacyPersistenceLinterFactory}. */
+    protected LegacyPersistenceLinterFactory() {}
+
     /** {@inheritDoc} */
     @Override
     public String getSupportedNamespace() {

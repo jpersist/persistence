@@ -14,7 +14,9 @@
  *     <li>{@link persist.jakarta.gradle.task.delegate.JPA20DescriptorProcessorDelegate} &mdash;
  *         Delegate for the JPA 2.0 specification.</li>
  *     <li>{@link persist.jakarta.gradle.task.delegate.JPA21DescriptorProcessorDelegate} &mdash;
- *         Delegate for the JPA 2.1 and 2.2 specifications.</li>
+ *         Delegate for the JPA 2.1 specification.</li>
+ *     <li>{@link persist.jakarta.gradle.task.delegate.JPA22DescriptorProcessorDelegate} &mdash;
+ *         Delegate for the JPA 2.2 specification.</li>
  *     <li>{@link persist.jakarta.gradle.task.delegate.JPA30DescriptorProcessorDelegate} &mdash;
  *         Delegate for the JPA 3.0 and 3.1 specifications.</li>
  *     <li>{@link persist.jakarta.gradle.task.delegate.JPA32DescriptorProcessorDelegate} &mdash;

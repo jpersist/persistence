@@ -1,7 +1,7 @@
 package persist.jakarta.gradle.task.delegate
 
 /**
- * Descriptor processor delegate for the JPA 2.2 specifications.
+ * Descriptor processor delegate for the JPA 2.2 specification.
  *
  * @since 1.5.0
  * @see AbstractDescriptorProcessorDelegate
