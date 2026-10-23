@@ -3,7 +3,7 @@ jakarta-persistence = "3.1.0"
 lint-persistence= "2.1.1"
 hibernate-orm = "6.6.56.Final"
 spock = "2.3-groovy-4.0"
-asm = "9.10.1"
+asm = "9.11"
 
 [libraries]
 jakarta-persistence-api = { group = "jakarta.persistence", name = "jakarta.persistence-api", version.ref = "jakarta-persistence" }
