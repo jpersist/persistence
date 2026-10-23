@@ -88,7 +88,7 @@ loadScripts(document, 'script');</script>
 <section class="class-description" id="class-description">
 <dl class="notes">
 <dt>All Superinterfaces:</dt>
-<dd><code><a href="PersistenceLinter.html" title="interface in persist.lint.api.spi">PersistenceLinter</a></code></dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/AutoCloseable.html" title="class or interface in java.lang" class="external-link">AutoCloseable</a></code>, <code><a href="PersistenceLinter.html" title="interface in persist.lint.api.spi">PersistenceLinter</a></code></dd>
 </dl>
 <dl class="notes">
 <dt>All Known Implementing Classes:</dt>
@@ -96,14 +96,25 @@ loadScripts(document, 'script');</script>
 </dl>
 <hr>
 <div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">NamedObjectParser</span><span class="extends-implements">
-extends <a href="PersistenceLinter.html" title="interface in persist.lint.api.spi">PersistenceLinter</a></span></div>
+extends <a href="PersistenceLinter.html" title="interface in persist.lint.api.spi">PersistenceLinter</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/AutoCloseable.html" title="class or interface in java.lang" class="external-link">AutoCloseable</a></span></div>
 <div class="block">Service provider interface for parsing and validating named JPA objects
  (queries and stored procedures) at build time.
 
  <p>Implementations compile a JPQL query string or validate a stored
  procedure declaration against the project's entity metamodel, verifying
  syntax, entity references, and property paths without requiring a live
- database connection.</p></div>
+ database connection.</p>
+
+ <p>This interface extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/AutoCloseable.html" title="class or interface in java.lang" class="external-link"><code>AutoCloseable</code></a>. Implementations typically
+ hold heavyweight resources such as a Hibernate <code>SessionFactory</code> and
+ <code>ServiceRegistry</code> that must be released after use. Callers should
+ always use try-with-resources to ensure proper cleanup:</p>
+
+ <pre><code>
+ try (NamedObjectParser parser = factory.newNamedObjectParser(entityClassNames)) {
+     parser.parseQuery(name, jpql);
+ }
+ </code></pre></div>
 <dl class="notes">
 <dt>Since:</dt>
 <dd>2.0.0</dd>
@@ -145,6 +156,9 @@ extends <a href="PersistenceLinter.html" title="interface in persist.lint.api.sp
 </div>
 </div>
 </div>
+<div class="inherited-list">
+<h3 id="methods-inherited-from-class-java.lang.AutoCloseable">Methods inherited from interface&nbsp;java.lang.<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/AutoCloseable.html" title="class or interface in java.lang" class="external-link">AutoCloseable</a></h3>
+<code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/AutoCloseable.html#close()" title="class or interface in java.lang" class="external-link">close</a></code></div>
 </section>
 </li>
 </ul>
@@ -168,7 +182,7 @@ extends <a href="PersistenceLinter.html" title="interface in persist.lint.api.sp
  exception.</p></div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>name</code> - the logical name of the query (e.g.&nbsp;the value of
+<dd><code>name</code> - the logical name of the query (e.g.,&nbsp;the value of
                     <code>@NamedQuery.name</code>)</dd>
 <dd><code>queryString</code> - the JPQL query string to validate</dd>
 <dt>Returns:</dt>

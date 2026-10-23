@@ -168,7 +168,8 @@ extends <a href="PersistenceLinterFactory.html" title="interface in persist.lint
 <dd><code>discoveredClassNames</code> - fully qualified class names of the JPA
                              entities to register in the metamodel</dd>
 <dt>Returns:</dt>
-<dd>a ready-to-use named object parser</dd>
+<dd>a ready-to-use named object parser; the caller is responsible
+         for closing it (preferably via try-with-resources)</dd>
 </dl>
 </section>
 </li>

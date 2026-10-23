@@ -91,7 +91,7 @@ loadScripts(document, 'script');</script>
 <section class="class-description" id="class-description">
 <dl class="notes">
 <dt>All Implemented Interfaces:</dt>
-<dd><code><a href="../api/spi/NamedObjectParser.html" title="interface in persist.lint.api.spi">NamedObjectParser</a></code>, <code><a href="../api/spi/PersistenceLinter.html" title="interface in persist.lint.api.spi">PersistenceLinter</a></code></dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/AutoCloseable.html" title="class or interface in java.lang" class="external-link">AutoCloseable</a></code>, <code><a href="../api/spi/NamedObjectParser.html" title="interface in persist.lint.api.spi">NamedObjectParser</a></code>, <code><a href="../api/spi/PersistenceLinter.html" title="interface in persist.lint.api.spi">PersistenceLinter</a></code></dd>
 </dl>
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">JakartaNamedObjectParser</span>
@@ -107,7 +107,10 @@ implements <a href="../api/spi/NamedObjectParser.html" title="interface in persi
  <p>Stored procedure declarations are validated by recording the procedure
  name and its parameter names into a <a href="../api/NamedObjectDescriptor.html" title="class in persist.lint.api"><code>NamedObjectDescriptor</code></a>.</p>
 
- <p>Instances are created through the <a href="#from(java.util.List)"><code>from(List)</code></a> factory method.</p></div>
+ <p>Instances are created through the <a href="#from(java.util.List)"><code>from(List)</code></a> factory method.
+ This class implements <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/AutoCloseable.html" title="class or interface in java.lang" class="external-link"><code>AutoCloseable</code></a>; closing an instance releases
+ the underlying Hibernate <code>SessionFactory</code> and
+ <code>ServiceRegistry</code>. Always use try-with-resources.</p></div>
 <dl class="notes">
 <dt>Since:</dt>
 <dd>2.0.0</dd>
@@ -132,23 +135,29 @@ implements <a href="../api/spi/NamedObjectParser.html" title="interface in persi
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="JakartaNamedObjectParser.html" title="class in persist.lint.jakarta">JakartaNamedObjectParser</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#from(java.util.List)" class="member-name-link">from</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;discoveredClassNames)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#close()" class="member-name-link">close</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Releases the Hibernate <code>SessionFactory</code> and
+ <code>ServiceRegistry</code> held by this parser.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="JakartaNamedObjectParser.html" title="class in persist.lint.jakarta">JakartaNamedObjectParser</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#from(java.util.List)" class="member-name-link">from</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;discoveredClassNames)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Creates a new <code>JakartaNamedObjectParser</code> configured with the
  supplied entity class names.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../api/NamedObjectDescriptor.html" title="class in persist.lint.api">NamedObjectDescriptor</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#parseQuery(java.lang.String,java.lang.String)" class="member-name-link">parseQuery</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../api/NamedObjectDescriptor.html" title="class in persist.lint.api">NamedObjectDescriptor</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#parseQuery(java.lang.String,java.lang.String)" class="member-name-link">parseQuery</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;queryString)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Parses and semantically validates the given JPQL query string.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../api/NamedObjectDescriptor.html" title="class in persist.lint.api">NamedObjectDescriptor</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#parseStoredProcedure(java.lang.String,java.lang.String,java.util.Set)" class="member-name-link">parseStoredProcedure</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../api/NamedObjectDescriptor.html" title="class in persist.lint.api">NamedObjectDescriptor</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#parseStoredProcedure(java.lang.String,java.lang.String,java.util.Set)" class="member-name-link">parseStoredProcedure</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;procedureName,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;parameterNames)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Validates a named stored procedure declaration.</div>
 </div>
 </div>
@@ -178,7 +187,8 @@ implements <a href="../api/spi/NamedObjectParser.html" title="interface in persi
 <dt>Parameters:</dt>
 <dd><code>discoveredClassNames</code> - fully qualified names of JPA entity classes</dd>
 <dt>Returns:</dt>
-<dd>a parser ready to validate named queries and stored procedures</dd>
+<dd>a parser ready to validate named queries and stored procedures;
+         the caller is responsible for closing it when finished</dd>
 </dl>
 </section>
 </li>
@@ -196,7 +206,7 @@ implements <a href="../api/spi/NamedObjectParser.html" title="interface in persi
 <dt>Specified by:</dt>
 <dd><code><a href="../api/spi/NamedObjectParser.html#parseQuery(java.lang.String,java.lang.String)">parseQuery</a></code>&nbsp;in interface&nbsp;<code><a href="../api/spi/NamedObjectParser.html" title="interface in persist.lint.api.spi">NamedObjectParser</a></code></dd>
 <dt>Parameters:</dt>
-<dd><code>name</code> - the logical name of the query (e.g.&nbsp;the value of
+<dd><code>name</code> - the logical name of the query (e.g.,&nbsp;the value of
                     <code>@NamedQuery.name</code>)</dd>
 <dd><code>queryString</code> - the JPQL query string to validate</dd>
 <dt>Returns:</dt>
@@ -228,6 +238,23 @@ implements <a href="../api/spi/NamedObjectParser.html" title="interface in persi
                        stored procedure</dd>
 <dt>Returns:</dt>
 <dd>a descriptor containing the stored procedure metadata</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="close()">
+<h3>close</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">close</span>()
+           throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Exception.html" title="class or interface in java.lang" class="external-link">Exception</a></span></div>
+<div class="block">Releases the Hibernate <code>SessionFactory</code> and
+ <code>ServiceRegistry</code> held by this parser.
+
+ </div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/AutoCloseable.html#close()" title="class or interface in java.lang" class="external-link">close</a></code>&nbsp;in interface&nbsp;<code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/AutoCloseable.html" title="class or interface in java.lang" class="external-link">AutoCloseable</a></code></dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Exception.html" title="class or interface in java.lang" class="external-link">Exception</a></code></dd>
 </dl>
 </section>
 </li>
