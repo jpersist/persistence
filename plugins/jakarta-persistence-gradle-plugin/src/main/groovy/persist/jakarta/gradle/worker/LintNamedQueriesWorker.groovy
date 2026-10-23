@@ -38,11 +38,22 @@ interface LintNamedQueriesParameters extends WorkParameters {
     /** The directory containing compiled {@code .class} files to scan. */
     DirectoryProperty getCompiledClassesDir()
 
-    // Incremental parameters mapping vectors
+    /**
+     * Whether this execution is an incremental delta pass ({@code true}) or
+     * a full sweep ({@code false}).
+     */
     Property<Boolean> getIncrementalPass()
 
+    /**
+     * Absolute paths of compiled class files affected by source changes
+     * during an incremental build pass.
+     */
     ListProperty<String> getAffectedClassFiles()
 
+    /**
+     * Relative paths of compiled class files that were removed since the
+     * last build pass.
+     */
     ListProperty<String> getRemovedClassFiles()
 }
 

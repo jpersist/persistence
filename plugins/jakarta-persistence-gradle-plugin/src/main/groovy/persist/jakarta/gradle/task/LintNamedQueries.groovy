@@ -85,11 +85,29 @@ abstract class LintNamedQueries extends DefaultTask {
 
     private final WorkerExecutor workerExecutor
 
+    /**
+     * Creates a new task instance.
+     *
+     * @param workerExecutor The Gradle {@link WorkerExecutor} used to submit
+     *                       the isolated linter work action.
+     */
     @Inject
     LintNamedQueries(WorkerExecutor workerExecutor) {
         this.workerExecutor = workerExecutor
     }
 
+    /**
+     * Executes the named query lint analysis.
+     * <p>
+     * Differentiates between a full sweep and an incremental delta pass based
+     * on the provided {@link InputChanges}. Modified source files are mapped
+     * to their compiled class counterparts and submitted to an isolated
+     * {@link LintNamedQueriesWorker} for AST validation. A JSON execution
+     * metrics report is written to {@link #getLintReportFile()}.
+     * </p>
+     *
+     * @param inputChanges The Gradle incremental input changes descriptor.
+     */
     @TaskAction
     void lint(InputChanges inputChanges) {
         File classesFolder = compiledClassesDir.get().asFile

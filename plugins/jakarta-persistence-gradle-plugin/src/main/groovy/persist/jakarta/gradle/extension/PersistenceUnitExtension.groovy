@@ -171,7 +171,7 @@ abstract class PersistenceUnitExtension {
     /**
      * Whether all discovered entity classes should be included.
      * <p>
-     * Defaults to {@code false}.
+     * Defaults to {@code true}.
      * </p>
      *
      * @return The lazy property tracking the include-all-classes flag.
@@ -261,18 +261,34 @@ abstract class PersistenceUnitExtension {
     }
 
     /**
-     * DSL Helper to add a single property:
+     * DSL helper to add a single vendor-specific property entry.
+     * <p>
+     * Example usage:
+     * <pre>
      * property 'eclipselink.weaving', 'static'
+     * </pre>
+     * </p>
+     *
+     * @param key   The property name.
+     * @param value The property value.
      */
     void property(String key, String value) {
         this.properties.put(key, value)
     }
 
     /**
-     * DSL Helper to configure a block of properties:
+     * Configures vendor-specific properties using a DSL closure.
+     * <p>
+     * Inside the closure, calls to {@link #property(String, String)} are
+     * delegated to this extension instance:
+     * <pre>
      * properties {
      *     property 'eclipselink.weaving', 'static'
      * }
+     * </pre>
+     * </p>
+     *
+     * @param closure The configuration closure applied with delegate-first strategy.
      */
     void properties(Closure<?> closure) {
         closure.setDelegate(this)

@@ -103,11 +103,7 @@ abstract class SchemaValidationWorker implements WorkAction<SchemaValidationPara
         // SEQUENTIAL MULTI-TENANT MATRIX EXECUTION LOOP
         tenantProfiles.each { serializedProfile ->
             def tokens = serializedProfile.split('\\|')
-            assert tokens.length > 3 : "Tenant profile token length must be greater than 3"
-            String tenantName = tokens[0]
-            String jdbcUrl = tokens[1]
-            String jdbcDriver = tokens[2]
-            String jdbcUser = tokens[3]
+            def (String tenantName, String jdbcUrl, String jdbcDriver, String jdbcUser) = tokens
             String jdbcPassword = tokens.length > 4 ? tokens[4] : ""
 
             println "   ⚙️ Running schema verification matrix pass for tenant profile: [${tenantName}]"

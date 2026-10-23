@@ -539,7 +539,7 @@ The namespace resolution is fully lazy: the version value is read at task execut
 | `2.0`, `2.1`, `2.2`
 | `javax.persistence`
 
-| `3.0`, `3.2` _(and later)_
+| `3.0`, `3.1`, `3.2`
 | `jakarta.persistence`
 |===
 
@@ -815,6 +815,11 @@ Processing runs inside an isolated Gradle Worker classloader.
 | `false`
 | Whether sub-critical semantic validation warnings should be muted.
 
+| `sourceFiles`
+| `ConfigurableFileCollection`
+| _from source set_
+| The Java source files tracked for incremental change detection. Modified sources are mapped to their compiled class counterparts for delta analysis.
+
 | `compiledClassesDir`
 | `DirectoryProperty`
 | _from source set output_
@@ -824,6 +829,11 @@ Processing runs inside an isolated Gradle Worker classloader.
 | `ConfigurableFileCollection`
 | _auto-configured_
 | The classpath including compiled classes and the lint persistence libraries.
+
+| `lintReportFile`
+| `RegularFileProperty`
+| `build/reports/lint-named-queries/<sourceSet>.json`
+| The output JSON file containing execution metrics (processed files, skipped files, error counts) from the lint analysis pass.
 |===
 
 TIP: The task is automatically skipped when the linter is disabled via `persistence.main.linter.enabled = false`.

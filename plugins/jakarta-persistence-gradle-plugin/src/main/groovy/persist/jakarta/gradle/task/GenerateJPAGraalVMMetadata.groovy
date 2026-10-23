@@ -30,6 +30,14 @@ abstract class GenerateJPAGraalVMMetadata extends DefaultTask {
     @OutputFile
     abstract RegularFileProperty getOutputFile()
 
+    /**
+     * Generates the {@code reflect-config.json} file from the discovered JPA entity classes.
+     * <p>
+     * Each class name is emitted as a JSON object with {@code allDeclaredConstructors},
+     * {@code allDeclaredFields}, and {@code allDeclaredMethods} set to {@code true},
+     * following the GraalVM native-image reflection metadata specification.
+     * </p>
+     */
     @TaskAction
     void generate() {
         List<String> classes = includedClasses.getOrElse([])
