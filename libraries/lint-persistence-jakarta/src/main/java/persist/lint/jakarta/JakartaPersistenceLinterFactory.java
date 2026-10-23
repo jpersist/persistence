@@ -17,6 +17,9 @@ import persist.lint.api.spi.PersistenceLinterFactory;
  */
 public abstract class JakartaPersistenceLinterFactory implements PersistenceLinterFactory {
 
+    /** Creates a new {@code JakartaPersistenceLinterFactory}. */
+    protected JakartaPersistenceLinterFactory() {}
+
     /** {@inheritDoc} */
     @Override
     public String getSupportedNamespace() {
