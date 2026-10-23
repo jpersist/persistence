@@ -41,8 +41,9 @@ Standard Gradle setups require verbose XML overrides, break incremental compilat
 - **EclipseLink Static Weaving** — Compile-time static weaving fully isolated from the Gradle daemon classpath.
 - **JPA Static Metamodel Generation** — Automatic annotation processor setup for type-safe Criteria API queries (both Hibernate and EclipseLink).
 - **Schema Validation** — Validates entity mappings against a database schema at build time using an isolated Gradle Worker process.
+- **Multi-Tenant Schema Validation** *(new in v1.7.0)* — Extends schema validation with named tenant profiles, each carrying its own JDBC connection properties for validating against multiple database tenants in a single build.
 - **GraalVM Native Image Metadata** — Generates `reflect-config.json` for all discovered JPA entities, enabling ahead-of-time reflection registration.
-- **Lint Named Queries** *(new in v1.6.0)* — Static, compile-time AST verification of `@NamedQuery` and `@NamedStoredProcedureQuery` definitions with JPQL/HQL syntax and parameter naming validation.
+- **Lint Named Queries** — Static, compile-time AST verification of `@NamedQuery` and `@NamedStoredProcedureQuery` definitions with JPQL/HQL syntax and parameter naming validation.
 
 ---
 
@@ -58,7 +59,7 @@ Apply the plugin matching your JPA provider. The `jpa` dependency configuration 
 
 ```groovy
 plugins {
-    id 'io.github.jpersist.hibernate-persistence' version '1.6.0'
+    id 'io.github.jpersist.hibernate-persistence' version '1.7.0'
 }
 
 dependencies {
@@ -75,7 +76,7 @@ dependencies {
 
 ```kotlin
 plugins {
-    id("io.github.jpersist.hibernate-persistence") version "1.6.0"
+    id("io.github.jpersist.hibernate-persistence") version "1.7.0"
 }
 
 dependencies {
@@ -94,7 +95,7 @@ dependencies {
 
 ```groovy
 plugins {
-    id 'io.github.jpersist.eclipse-persistence' version '1.6.0'
+    id 'io.github.jpersist.eclipse-persistence' version '1.7.0'
 }
 
 dependencies {
@@ -112,7 +113,7 @@ dependencies {
 
 ```kotlin
 plugins {
-    id("io.github.jpersist.eclipse-persistence") version "1.6.0"
+    id("io.github.jpersist.eclipse-persistence") version "1.7.0"
 }
 
 dependencies {
@@ -145,8 +146,9 @@ The plugin automatically detects your entity classes and generates the appropria
 
 ## 📚 Further Information
 
-- 📖 **API Reference:** [jpersist.github.io/persistence/api/latest](https://jpersist.github.io/persistence/api/latest/)
-- 📘 **User Guide:** [jpersist.github.io/persistence/guide/latest](https://jpersist.github.io/persistence/guide/latest/)
+- 📖 **Libraries API Reference (Javadoc):** [jpersist.github.io/persistence/libraries/api/latest](https://jpersist.github.io/persistence/libraries/api/latest/)
+- 📖 **Plugins API Reference (Groovydoc):** [jpersist.github.io/persistence/plugins/api/latest](https://jpersist.github.io/persistence/plugins/api/latest/)
+- 📘 **User Guide:** [jpersist.github.io/persistence/plugins/guide/latest](https://jpersist.github.io/persistence/plugins/guide/latest/)
 - 🚀 **Examples:** Complete runnable project templates in the [`examples/`](examples/) directory.
 
 ---
