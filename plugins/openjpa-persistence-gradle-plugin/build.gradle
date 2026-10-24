@@ -1,0 +1,34 @@
+plugins {
+    id 'plugin-conventions'
+    id 'publishing-conventions'
+}
+
+dependencies {
+    implementation project(':jakarta-persistence-gradle-plugin')
+}
+
+gradlePlugin {
+    plugins {
+        register('openjpaMetaModelGeneration') {
+            id = 'io.github.jpersist.openjpa-metamodelgen'
+            displayName = 'OpenJPA JPA Modelgen Processor Plugin'
+            description = 'Modern, cache-compliant plugin to automatically configure the Apache OpenJPA Static Canonical Model Generator.'
+            tags = ['jpa', 'jakarta-persistence', 'openjpa', 'modelgen']
+            implementationClass = 'persist.openjpa.gradle.plugin.OpenJPAMetaModelGenerationPlugin'
+        }
+        register('openjpaEnhancement') {
+            id = 'io.github.jpersist.openjpa-enhancement'
+            displayName = 'OpenJPA Bytecode Enhancement Plugin'
+            description = 'High-performance, cache-compliant plugin that executes programmatic compile-time bytecode enhancement for Apache OpenJPA entities.'
+            tags = ['jpa', 'jakarta-persistence', 'openjpa', 'bytecode-enhancement']
+            implementationClass = 'persist.openjpa.gradle.plugin.OpenJPAEnhancementPlugin'
+        }
+        register('openjpaPersistence') {
+            id = 'io.github.jpersist.openjpa-persistence'
+            displayName = 'OpenJPA Persistence Aggregate Plugin'
+            description = 'Aggregate utility plugin that automatically applies corporate-standard OpenJPA configurations, binding both the metamodel generator and compile-time enhancement out-of-the-box.'
+            tags = ['jpa', 'jakarta-persistence', 'openjpa', 'modelgen', 'bytecode-enhancement']
+            implementationClass = 'persist.openjpa.gradle.plugin.OpenJPAPersistencePlugin'
+        }
+    }
+}

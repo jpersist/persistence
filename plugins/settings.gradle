@@ -37,6 +37,7 @@ rootProject.name = 'plugins'
 include 'eclipse-persistence-gradle-plugin'
 include 'hibernate-persistence-gradle-plugin'
 include 'jakarta-persistence-gradle-plugin'
+include 'openjpa-persistence-gradle-plugin'
 include 'persistence-gradle-plugin-functional-test'
 
 includeBuild '../libraries'
