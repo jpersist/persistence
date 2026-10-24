@@ -1,0 +1,44 @@
+plugins {
+    id 'java-library'
+    id 'io.github.jpersist.openjpa-persistence'
+    id 'com.netflix.nebula.dependency-recommender' version '14.2.1'
+}
+
+dependencies {
+    jpa 'org.apache.openjpa:openjpa'
+
+    compileOnly 'javax.annotation:javax.annotation-api'
+    compileOnly 'javax.persistence:javax.persistence-api'
+
+    compileOnly 'org.antlr:antlr'
+    compileOnly 'org.apache.ant:ant'
+
+    compileOnly 'de.java2html:java2html'
+}
+
+dependencyRecommendations {
+    map recommendations: [
+        'javax.annotation:javax.annotation-api'   : '1.3.2',
+        'javax.persistence:javax.persistence-api' : '2.2',
+        'org.antlr:antlr'                         : '3.2',
+        'org.apache.ant:ant'                      : '1.8.4',
+        'org.apache.openjpa:openjpa'              : '3.2.2',
+        'de.java2html:java2html'                  : '5.0'
+    ]
+}
+
+openjpa {
+    main {
+        metamodel {
+            logLevel = 'TRACE'
+        }
+        enhancement {
+            addDefaultConstructor = true
+            enforcePropertyRestrictions = false
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+}
