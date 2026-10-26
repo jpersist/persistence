@@ -1,0 +1,48 @@
+plugins {
+    id 'java-platform'
+    id 'publishing-conventions'
+}
+
+javaPlatform {
+    allowDependencies()
+}
+
+dependencies {
+    constraints {
+        api project(':persistence-tools-api')
+        api project(':persistence-tools-jakarta')
+        api project(':persistence-tools-legacy')
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.javaPlatform
+
+            pom {
+                name = 'Persistence Tools BOM'
+                description = 'Bill of Materials (BOM) for convenient dependency management of all Persistence Tools modules'
+            }
+        }
+
+        relocation(MavenPublication) {
+            pom {
+                // Old artifact coordinates
+                groupId = 'io.github.jpersist.lint'
+                artifactId = 'lint-persistence-bom'
+                version = project.version
+
+                distributionManagement {
+                    relocation {
+                        // New artifact coordinates
+                        groupId = 'io.github.jpersist.tools'
+                        artifactId = 'persistence-tools-bom'
+                        version = project.version
+                        message = 'The JPersist Lint libraries have been renamed and relocated to align with the core tools ecosystem governance.'
+                    }
+                }
+            }
+        }
+    }
+}

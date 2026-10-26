@@ -6,9 +6,9 @@ plugins {
 }
 
 dependencies {
-    testReportAggregation project(':lint-persistence-api')
-    testReportAggregation project(':lint-persistence-jakarta')
-    testReportAggregation project(':lint-persistence-legacy')
+    testReportAggregation project(':persistence-tools-api')
+    testReportAggregation project(':persistence-tools-jakarta')
+    testReportAggregation project(':persistence-tools-legacy')
 }
 
 configurations.jacocoAggregation.extendsFrom(configurations.testReportAggregation)
@@ -49,7 +49,7 @@ sonar {
 tasks.register('aggregateJavadoc', Javadoc) {
     group = 'documentation'
     description = 'Generates aggregated Javadoc for all library modules.'
-    title = "Lint Persistence Libraries API"
+    title = "Persistence Tools Libraries API"
 
     def javaSubprojects = subprojects.findAll { it.plugins.hasPlugin('java-library') }
     dependsOn javaSubprojects.collect { it.tasks.named('classes') }

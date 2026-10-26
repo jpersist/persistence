@@ -20,8 +20,8 @@ develocity {
 
 rootProject.name = "libraries"
 
-include("lint-persistence-api")
-include("lint-persistence-jakarta")
-include("lint-persistence-legacy")
+include("persistence-tools-api")
+include("persistence-tools-jakarta")
+include("persistence-tools-legacy")
 
-include("lint-persistence-bom")
+include("persistence-tools-bom")
