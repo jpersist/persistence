@@ -33,6 +33,9 @@ publishing {
                 artifactId = 'lint-persistence-bom'
                 version = project.version
 
+                name = 'Lint Persistence BOM'
+                description = 'Bill of Materials (BOM) for convenient dependency management of all Lint Persistence modules'
+
                 distributionManagement {
                     relocation {
                         // New artifact coordinates
