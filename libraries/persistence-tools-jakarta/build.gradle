@@ -5,7 +5,7 @@ plugins {
 
 dependencies {
     implementation project(':persistence-tools-api')
-    compileOnly libs.hibernate.orm.core
+    implementation libs.hibernate.orm.core
 
     testImplementation libs.hibernate.orm.core
     testImplementation libs.jakarta.persistence.api
@@ -19,7 +19,7 @@ publishing {
 
             pom {
                 name = 'Jakarta Persistence Tools'
-                description = 'Jakarta Persistence (JPA 3.x) provider. Uses Hibernate ORM 6 to compile JPQL queries into Semantic Query Model (SQM) trees and to validate persistence schemas against a live database.'
+                description = 'Jakarta Persistence (JPA 3.x) provider'
             }
         }
 

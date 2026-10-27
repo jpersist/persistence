@@ -1,5 +1,6 @@
 package persist.lint.jakarta;
 
+import persist.jakarta.spi.JakartaPersistenceServiceProvider;
 import persist.lint.api.spi.PersistenceLinterFactory;
 
 /**
@@ -15,15 +16,9 @@ import persist.lint.api.spi.PersistenceLinterFactory;
  * @see JakartaNamedObjectParserFactory
  * @see JakartaSchemaValidatorFactory
  */
-public abstract class JakartaPersistenceLinterFactory implements PersistenceLinterFactory {
+public abstract class JakartaPersistenceLinterFactory extends JakartaPersistenceServiceProvider implements PersistenceLinterFactory {
 
     /** Creates a new {@code JakartaPersistenceLinterFactory}. */
     protected JakartaPersistenceLinterFactory() {}
-
-    /** {@inheritDoc} */
-    @Override
-    public String getSupportedNamespace() {
-        return "jakarta";
-    }
 
 }

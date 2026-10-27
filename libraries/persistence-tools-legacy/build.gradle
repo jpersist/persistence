@@ -5,7 +5,7 @@ plugins {
 
 dependencies {
     implementation project(':persistence-tools-api')
-    compileOnly libs.hibernate.core
+    implementation libs.hibernate.core
 
     testImplementation libs.hibernate.core
     testImplementation libs.javax.persistence.api
@@ -19,7 +19,7 @@ publishing {
 
             pom {
                 name = 'Legacy Persistence Tools'
-                description = 'Legacy `javax.persistence` (JPA 2.x) provider. Uses Hibernate 5 and its AST-based query translator to validate JPQL queries and schemas.'
+                description = 'Legacy `javax.persistence` (JPA 2.x) provider'
             }
         }
 

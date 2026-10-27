@@ -1,5 +1,7 @@
 package persist.lint.api.spi;
 
+import persist.api.spi.PersistenceServiceProvider;
+
 import java.util.ServiceLoader;
 
 /**
@@ -21,7 +23,7 @@ import java.util.ServiceLoader;
  * @see NamedObjectParserFactory
  * @see SchemaValidatorFactory
  */
-public interface PersistenceLinterFactory {
+public interface PersistenceLinterFactory extends PersistenceServiceProvider {
 
     /**
      * Returns the persistence namespace supported by this factory.
@@ -81,24 +83,7 @@ public interface PersistenceLinterFactory {
      * @since 2.1.0
      */
     static <T extends PersistenceLinterFactory> T newPersistenceLinterFactory(String jpaVersion, Class<T> factoryClass) {
-        // Resolve target namespace based on the semantic spec version map token
-        final String targetNamespace = switch (jpaVersion) {
-            case "2.0", "2.1", "2.2" -> "javax";
-            case "3.0", "3.1", "3.2" -> "jakarta";
-            default -> throw new IllegalArgumentException("Unsupported JPA version: " + jpaVersion);
-        };
-
-        // Get the simple name of the factory class
-        final String factoryClassSimpleName = factoryClass.getSimpleName();
-
-        // Drive JVM ServiceLoader API to dynamically discover strategies loaded into the isolated classloader
-        ServiceLoader<T> loader = ServiceLoader.load(factoryClass);
-
-        return loader.stream()
-            .map(ServiceLoader.Provider::get)
-            .filter(factory -> factory.getSupportedNamespace().equals(targetNamespace))
-            .findFirst()
-            .orElseThrow(() -> new IllegalStateException("Failed to discover a registered " + factoryClassSimpleName + " provider for namespace: " + targetNamespace));
+        return PersistenceServiceProvider.getServiceProvider(jpaVersion, factoryClass);
     }
 
 }
