@@ -1,0 +1,45 @@
+plugins {
+    id 'library-conventions'
+    id 'publishing-conventions'
+}
+
+dependencies {
+    implementation project(':persistence-tools-api')
+    implementation libs.hibernate.orm.core
+
+    testImplementation libs.hibernate.orm.core
+    testImplementation libs.jakarta.persistence.api
+    testImplementation 'com.h2database:h2:2.2.224'
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            pom {
+                name = 'Jakarta Persistence Tools'
+                description = 'Jakarta Persistence (JPA 3.x) provider'
+            }
+        }
+
+        relocation(MavenPublication) {
+            pom {
+                // Old artifact coordinates
+                groupId = 'io.github.jpersist.lint'
+                artifactId = 'lint-persistence-jakarta'
+                version = project.version
+
+                distributionManagement {
+                    relocation {
+                        // New artifact coordinates
+                        groupId = 'io.github.jpersist.tools'
+                        artifactId = 'persistence-tools-jakarta'
+                        version = project.version
+                        message = 'The JPersist Lint libraries have been renamed and relocated to align with the core tools ecosystem governance.'
+                    }
+                }
+            }
+        }
+    }
+}
