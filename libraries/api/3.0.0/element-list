@@ -1,0 +1,10 @@
+persist.api.spi
+persist.hibernate.enhance.jakarta
+persist.hibernate.enhance.legacy
+persist.hibernate.enhance.spi
+persist.jakarta.spi
+persist.legacy.spi
+persist.lint.api
+persist.lint.api.spi
+persist.lint.jakarta
+persist.lint.legacy
