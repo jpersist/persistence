@@ -21,6 +21,9 @@ publishing {
                 artifactId = 'lint-persistence-api'
                 version = project.version
 
+                name = 'Lint Persistence API'
+                description = 'Defines the Service Provider Interface (SPI): `PersistenceLinter` / `PersistenceLinterFactory` (root contracts), `NamedObjectParser` / `NamedObjectParserFactory` (query validation), and `SchemaValidator` / `SchemaValidatorFactory` (schema validation)'
+
                 distributionManagement {
                     relocation {
                         // New artifact coordinates

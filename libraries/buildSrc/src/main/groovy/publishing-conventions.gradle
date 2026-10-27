@@ -8,38 +8,6 @@ tasks.withType(Sign).configureEach {
 }
 
 publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            // Metadata required by Sonatype/Maven Central compliance
-            pom {
-                name = project.name
-                description = 'Modern, cache-compliant Gradle tooling for Jakarta Persistence API frameworks.'
-                url = 'https://github.com/jpersist/persistence'
-
-                licenses {
-                    license {
-                        name = 'The Apache License, Version 2.0'
-                        url = 'https://apache.org'
-                    }
-                }
-
-                developers {
-                    developer {
-                        id = 'yannickebongue'
-                        name = 'Yannick Ebongue'
-                        email = 'yannickebongue@gmail.com'
-                    }
-                }
-
-                scm {
-                    connection = 'scm:git:git@github.com:jpersist/persistence.git'
-                    developerConnection = 'scm:git:git@github.com:jpersist/persistence.git'
-                    url = 'https://github.com/jpersist/persistence'
-                }
-            }
-        }
-    }
-
     repositories {
         maven {
             name = "MavenCentral"
@@ -56,16 +24,53 @@ publishing {
     }
 }
 
+// 🌟 FIX UNIVERSEL METADATA : Listen for ANY publication added to the project
+// This automatically injects the required corporate profiles into every POM container!
+publishing.publications.configureEach { MavenPublication publication ->
+    pom {
+        // Fallback or dynamic assignment if not overwritten by the sub-module
+        if (name.getOrElse("").isEmpty()) {
+            name = project.name
+        }
+        url = 'https://github.com/jpersist/persistence'
+
+        licenses {
+            license {
+                name = 'The Apache License, Version 2.0'
+                url = 'https://apache.org'
+            }
+        }
+
+        developers {
+            developer {
+                id = 'yannickebongue'
+                name = 'Yannick Ebongue'
+                email = 'yannickebongue@gmail.com'
+            }
+        }
+
+        scm {
+            connection = 'scm:git:git@github.com:jpersist/persistence.git'
+            developerConnection = 'scm:git:git@github.com:jpersist/persistence.git'
+            url = 'https://github.com/jpersist/persistence'
+        }
+    }
+}
+
 // Wait for the JavaPlugin to be applied before extracting and binding the component metadata.
 // This guarantees your compiled jars, sources, and javadocs are attached to the publication seamlessly!
-plugins.withType(JavaPlugin).configureEach {
-    publishing.publications.named('mavenJava', MavenPublication).configure {
-        versionMapping {
-            usage('java-api') {
-                fromResolutionOf('runtimeClasspath')
-            }
-            usage('java-runtime') {
-                fromResolutionResult()
+afterEvaluate {
+    plugins.withType(JavaPlugin).configureEach {
+        if (publishing.publications.findByName('mavenJava')) {
+            publishing.publications.named('mavenJava', MavenPublication).configure {
+                versionMapping {
+                    usage('java-api') {
+                        fromResolutionOf('runtimeClasspath')
+                    }
+                    usage('java-runtime') {
+                        fromResolutionResult()
+                    }
+                }
             }
         }
     }
@@ -78,5 +83,7 @@ signing {
     def signingPassword = providers.environmentVariable("GPG_SIGNING_PASSWORD").orElse("").get()
 
     useInMemoryPgpKeys(signingKey, signingPassword)
-    sign publishing.publications.mavenJava
+
+    // Switch from signing a single explicit target to signing the entire publications configuration bank
+    sign publishing.publications
 }
