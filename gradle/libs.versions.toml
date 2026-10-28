@@ -1,6 +1,6 @@
 [versions]
 persistence-tools= "3.0.0"
-spock = "2.3-groovy-4.0"
+spock = "2.5-groovy-4.0"
 asm = "9.10.1"
 
 [libraries]
