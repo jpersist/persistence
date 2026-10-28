@@ -10,6 +10,8 @@ import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentSelector
 import org.gradle.api.artifacts.result.DependencyResult
 import org.gradle.api.attributes.Attribute
+import org.gradle.api.file.CopySpec
+import org.gradle.api.file.FileTree
 import org.gradle.api.plugins.JavaLibraryPlugin
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.compile.JavaCompile
@@ -232,13 +234,22 @@ class JakartaPersistencePlugin implements Plugin<Project> {
                     }
                 }
 
+                // Shared lazy source files collection pipeline filtered from buildDir paths
+                def activeSourceFilesProvider = project.provider {
+                    sourceSet.java.sourceDirectories.asFileTree.matching {
+                        exclude { element ->
+                            element.file.absolutePath.replace('\\', '/').contains(project.layout.buildDirectory.get().asFile.absolutePath.replace('\\', '/'))
+                        }
+                    }
+                }
+
                 configureProcessPersistenceDescriptorTask(project, sourceSet, extension, discoveredClassesProvider, jarFileConfigProvider)
 
-                configureGenerateJPAGraalVMMetadataTask(project, sourceSet, discoveredClassesProvider)
+                configureGenerateJPAGraalVMMetadataTask(project, sourceSet, discoveredClassesProvider, activeSourceFilesProvider)
 
-                configureValidatePersistenceSchemaTask(project, sourceSet, extension, discoveredClassesProvider)
+                configureValidatePersistenceSchemaTask(project, sourceSet, extension, discoveredClassesProvider, activeSourceFilesProvider)
 
-                configureLintNamedQueriesTask(project, sourceSet, extension)
+                configureLintNamedQueriesTask(project, sourceSet, extension, activeSourceFilesProvider)
             }
         }
     }
@@ -318,8 +329,8 @@ class JakartaPersistencePlugin implements Plugin<Project> {
             resourcesTask.exclude("META-INF/persistence.xml")
 
             // Place the generated file into META-INF/ within the resources output
-            resourcesTask.from(processTask.flatMap { it.destinationFile }) {
-                into("META-INF")
+            resourcesTask.from(processTask.flatMap { it.destinationFile }) { CopySpec spec ->
+                spec.into("META-INF")
             }
         }
     }
@@ -329,17 +340,25 @@ class JakartaPersistencePlugin implements Plugin<Project> {
      * given source set, wiring the discovered entity class names into the GraalVM
      * {@code reflect-config.json} generation pipeline.
      *
-     * @param project                   The Gradle project.
-     * @param sourceSet                 The source set to configure.
-     * @param discoveredClassesProvider Lazy provider for discovered JPA entity class names.
+     * @param project                      The Gradle project.
+     * @param sourceSet                    The source set to configure.
+     * @param discoveredClassesProvider    Lazy provider for discovered JPA entity class names.
+     * @param activeSourceFilesProvider    Lazy provider for the filtered source file tree used for incremental input tracking.
      */
-    private static void configureGenerateJPAGraalVMMetadataTask(Project project, SourceSet sourceSet, Provider<List<String>> discoveredClassesProvider) {
+    private static void configureGenerateJPAGraalVMMetadataTask(Project project,
+                                                                SourceSet sourceSet,
+                                                                Provider<List<String>> discoveredClassesProvider,
+                                                                Provider<FileTree> activeSourceFilesProvider) {
         // 1. Register GraalVM Native Image Metadata Generation Task
         def graalVMTaskName = sourceSet.name == 'main' ? "generateJPAGraalVMMetadata" : "generate${sourceSet.name.capitalize()}JPAGraalVMMetadata"
+
+        def compileJavaTask = project.tasks.named(sourceSet.compileJavaTaskName, JavaCompile)
 
         def graalVMTaskProvider = project.tasks.register(graalVMTaskName, GenerateJPAGraalVMMetadata) { task ->
             task.group = LifecycleBasePlugin.BUILD_GROUP
             task.description = "Generates GraalVM reflect-config.json metadata for source set ${sourceSet.name}"
+
+            task.sourceFiles.from(activeSourceFilesProvider)
 
             // Natively hook into your existing high-speed lazy ASM bytecode scanner!
             task.includedClasses.set(discoveredClassesProvider)
@@ -349,6 +368,9 @@ class JakartaPersistencePlugin implements Plugin<Project> {
             String targetPath = "generated/graalvm-resources/${sourceSet.name}/META-INF/native-image/${groupPath}/${project.name}/reflect-config.json"
 
             task.outputFile.set(project.layout.buildDirectory.file(targetPath))
+
+            // Enforce an explicit dependency rule on the compileJava task instance.
+            task.mustRunAfter(compileJavaTask)
         }
 
         // 2. Wire the generated GraalVM output directory straight back as an active resource path!
@@ -368,12 +390,17 @@ class JakartaPersistencePlugin implements Plugin<Project> {
      * given source set, wiring multi-tenant connection profiles, discovered entity
      * classes, and an isolated classpath carrying the JPA provider and H2 driver.
      *
-     * @param project                   The Gradle project.
-     * @param sourceSet                 The source set to configure.
-     * @param extension                 The persistence extension providing DSL configuration.
-     * @param discoveredClassesProvider Lazy provider for discovered JPA entity class names.
+     * @param project                      The Gradle project.
+     * @param sourceSet                    The source set to configure.
+     * @param extension                    The persistence extension providing DSL configuration.
+     * @param discoveredClassesProvider    Lazy provider for discovered JPA entity class names.
+     * @param activeSourceFilesProvider    Lazy provider for the filtered source file tree used for incremental input tracking.
      */
-    private static void configureValidatePersistenceSchemaTask(Project project, SourceSet sourceSet, PersistenceExtension extension, Provider<List<String>> discoveredClassesProvider) {
+    private static void configureValidatePersistenceSchemaTask(Project project,
+                                                               SourceSet sourceSet,
+                                                               PersistenceExtension extension,
+                                                               Provider<List<String>> discoveredClassesProvider,
+                                                               Provider<FileTree> activeSourceFilesProvider) {
         def processTaskName = sourceSet.name == 'main' ? "processPersistenceDescriptor" : "process${sourceSet.name.capitalize()}PersistenceDescriptor"
         def processTask = project.tasks.named(processTaskName, ProcessPersistenceDescriptor)
 
@@ -397,6 +424,8 @@ class JakartaPersistencePlugin implements Plugin<Project> {
 
             // Wire the lazy ASM class discovery provider straight to the task!
             task.discoveredEntityClasses.set(discoveredClassesProvider)
+
+            task.sourceFiles.from(activeSourceFilesProvider)
 
             // Lazily put validation extension to the validation task
             task.validation.set(extension.validation)
@@ -434,6 +463,9 @@ class JakartaPersistencePlugin implements Plugin<Project> {
             task.getClasspath().from(project.files(project.buildscript.configurations.detachedConfiguration(
                 project.dependencies.create("com.h2database:h2:2.2.224")
             )))
+
+            // Route the JSON schema verification report path natively into the build reports tree layout
+            task.getValidationReportFile().set(project.layout.buildDirectory.file("reports/persistence/${validationTaskName}-report.json"))
         }
     }
 
@@ -442,11 +474,15 @@ class JakartaPersistencePlugin implements Plugin<Project> {
      * set, wiring incremental source file tracking, the linter classpath, and the
      * JSON execution report output.
      *
-     * @param project   The Gradle project.
-     * @param sourceSet The source set to configure.
-     * @param extension The persistence extension providing linter DSL configuration.
+     * @param project                      The Gradle project.
+     * @param sourceSet                    The source set to configure.
+     * @param extension                    The persistence extension providing linter DSL configuration.
+     * @param activeSourceFilesProvider    Lazy provider for the filtered source file tree used for incremental input tracking.
      */
-    private static void configureLintNamedQueriesTask(Project project, SourceSet sourceSet, PersistenceExtension extension) {
+    private static void configureLintNamedQueriesTask(Project project,
+                                                      SourceSet sourceSet,
+                                                      PersistenceExtension extension,
+                                                      Provider<FileTree> activeSourceFilesProvider) {
         // Enforce a strict named convention pattern (e.g., lintNamedQueries or lintTestNamedQueries)
         String linterTaskName = sourceSet.name == 'main' ? "lintNamedQueries" : "lint${sourceSet.name.capitalize()}NamedQueries"
 
@@ -469,14 +505,7 @@ class JakartaPersistencePlugin implements Plugin<Project> {
             // Feed the live sourceDirectories tree container.
             // This is safe, entirely lazy, and supports multi-source directory layouts out of the box.
             // Collects all source files but dynamically filter out any path matching the project's build directory execution tree
-            task.sourceFiles.from(project.provider {
-                sourceSet.java.sourceDirectories.asFileTree.matching {
-                    // Exclude any files residing inside the active layout build directory environment
-                    exclude { element ->
-                        element.file.absolutePath.replace('\\', '/').contains(project.layout.buildDirectory.get().asFile.absolutePath.replace('\\', '/'))
-                    }
-                }
-            })
+            task.sourceFiles.from(activeSourceFilesProvider)
 
             // Target the raw Java compilation output directory directly
             def compileJavaTask = project.tasks.named(sourceSet.compileJavaTaskName, JavaCompile)
