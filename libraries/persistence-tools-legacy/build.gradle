@@ -4,12 +4,10 @@ plugins {
 }
 
 dependencies {
-    implementation project(':persistence-tools-api')
-    implementation libs.hibernate.core
+    api project(':persistence-tools-api')
+    api libs.hibernate.core
 
-    testImplementation libs.hibernate.core
-    testImplementation libs.javax.persistence.api
-    testImplementation 'com.h2database:h2:1.4.200'
+    testRuntimeOnly 'com.h2database:h2:1.4.200'
 }
 
 publishing {
