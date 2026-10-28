@@ -104,9 +104,7 @@ abstract class EclipseWeaveTask extends DefaultTask {
     @Internal
     abstract ConfigurableFileCollection getJarFileClasspath()
 
-    /**
-     * An internal worker reference providing isolated process execution operations.
-     */
+    /** The injected Gradle execution operations service for forking isolated JVM processes. */
     private ExecOperations execOperations
 
     /**

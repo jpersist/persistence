@@ -28,6 +28,18 @@ import persist.openjpa.gradle.extension.OpenJPAExtension
  */
 class OpenJPAMetaModelGenerationPlugin implements Plugin<Project> {
 
+    /**
+     * Applies the OpenJPA metamodel annotation processor configuration to the target project.
+     * <p>
+     * Registers the {@code openjpa} extension container (if not already present),
+     * wires per-source-set compiler arguments derived from
+     * {@link persist.openjpa.gradle.extension.MetaModelExtension}, and provisions the
+     * default {@code org.apache.openjpa:openjpa} dependency on the
+     * {@code modelgenProcessor} configuration when no user override is present.
+     * </p>
+     *
+     * @param project The target Gradle project.
+     */
     @Override
     void apply(Project project) {
         project.plugins.apply(JavaPlugin)

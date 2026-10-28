@@ -51,6 +51,17 @@ import persist.eclipse.gradle.extension.EclipselinkExtension
  */
 class EclipseJpaModelgenPlugin implements Plugin<Project> {
 
+    /**
+     * Applies the EclipseLink JPA Modelgen annotation processor configuration to the target project.
+     * <p>
+     * Registers the {@code eclipselink} extension container, wires per-source-set
+     * compiler arguments for {@code persistence.xml} and ORM descriptor discovery,
+     * and provisions the default annotation processor dependency via the
+     * {@code modelgenProcessor} configuration when no user override is present.
+     * </p>
+     *
+     * @param project The target Gradle project.
+     */
     @Override
     void apply(Project project) {
         project.plugins.apply(JavaPlugin)

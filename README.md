@@ -137,9 +137,9 @@ The plugin automatically detects your entity classes and generates the appropria
 | `plugins/jakarta-persistence-gradle-plugin`   | Core plugin — generates/merges `persistence.xml`, validates schemas, generates GraalVM metadata, and lints named queries. |
 | `plugins/hibernate-persistence-gradle-plugin` | Hibernate aggregate plugin — metamodel generation and compile-time bytecode enhancement.                                  |
 | `plugins/eclipse-persistence-gradle-plugin`   | EclipseLink aggregate plugin — metamodel generation and compile-time static weaving.                                      |
-| `libraries/lint-persistence-api`              | SPI contract and core interfaces for the named query linter.                                                              |
-| `libraries/lint-persistence-jakarta`          | Jakarta Persistence (3.x) linter implementation.                                                                          |
-| `libraries/lint-persistence-legacy`           | Legacy JPA (2.x) linter implementation.                                                                                   |
+| `libraries/persistence-tools-api`              | SPI contract and core interfaces for the named query linter.                                                              |
+| `libraries/persistence-tools-jakarta`          | Jakarta Persistence (3.x) linter implementation.                                                                          |
+| `libraries/persistence-tools-legacy`           | Legacy JPA (2.x) linter implementation.                                                                                   |
 | `examples/`                                   | Runnable example projects for Hibernate, EclipseLink, and standalone Jakarta Persistence.                                 |
 
 ---

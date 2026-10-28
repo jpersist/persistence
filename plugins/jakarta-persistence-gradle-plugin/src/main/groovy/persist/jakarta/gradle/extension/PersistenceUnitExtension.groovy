@@ -28,6 +28,7 @@ import javax.inject.Inject
  */
 abstract class PersistenceUnitExtension {
 
+    /** The persistence-unit name used as the key in the {@link org.gradle.api.NamedDomainObjectContainer}. */
     private final String name
 
     /**

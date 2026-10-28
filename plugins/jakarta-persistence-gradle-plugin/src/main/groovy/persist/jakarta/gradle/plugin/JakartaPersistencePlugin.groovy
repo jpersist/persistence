@@ -2,6 +2,7 @@ package persist.jakarta.gradle.plugin
 
 import groovy.io.FileType
 import groovy.xml.XmlParser
+import org.gradle.api.GradleException
 import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.component.ModuleComponentSelector
@@ -24,11 +25,14 @@ import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.language.jvm.tasks.ProcessResources
+import persist.api.spi.PersistenceServiceProvider
 import persist.jakarta.gradle.extension.PersistenceExtension
 import persist.jakarta.gradle.task.GenerateJPAGraalVMMetadata
 import persist.jakarta.gradle.task.LintNamedQueries
 import persist.jakarta.gradle.task.ProcessPersistenceDescriptor
 import persist.jakarta.gradle.task.ValidatePersistenceSchema
+
+import java.util.jar.Manifest
 
 /**
  * Gradle plugin that manages Jakarta Persistence (JPA) descriptor generation.
@@ -132,11 +136,27 @@ import persist.jakarta.gradle.task.ValidatePersistenceSchema
  */
 class JakartaPersistencePlugin implements Plugin<Project> {
 
+    /** Pre-Jakarta JPA specification versions that use the {@code javax.persistence} namespace. */
     private static final List<String> LEGACY_JPA_VERSIONS = ['2.0', '2.1', '2.2']
 
-    // Define the custom attribute key for jar files location routing
+    /**
+     * Custom Gradle variant attribute used to override the relative path of a
+     * JAR file inside the generated {@code persistence.xml} {@code <jar-file>}
+     * entries.
+     */
     static final Attribute<String> JAR_LOCATION_ATTRIBUTE = Attribute.of('io.github.jpersist.jpa.location', String)
 
+    /**
+     * Applies the Jakarta Persistence plugin configuration to the target project.
+     * <p>
+     * Registers the {@code jpa} and {@code modelgenProcessor} configurations, the
+     * {@code persistence} extension container, and per-source-set task registrations
+     * for descriptor processing, GraalVM metadata generation, schema validation,
+     * and named query linting.
+     * </p>
+     *
+     * @param project The target Gradle project.
+     */
     @Override
     void apply(Project project) {
         project.plugins.apply(JavaPlugin)
@@ -223,6 +243,17 @@ class JakartaPersistencePlugin implements Plugin<Project> {
         }
     }
 
+    /**
+     * Registers and configures a {@link ProcessPersistenceDescriptor} task for the
+     * given source set, wiring it into the build lifecycle between resource processing
+     * and class compilation.
+     *
+     * @param project                   The Gradle project.
+     * @param sourceSet                 The source set to configure.
+     * @param extension                 The persistence extension providing DSL configuration.
+     * @param discoveredClassesProvider Lazy provider for discovered JPA entity class names.
+     * @param jarFileConfigProvider     Lazy provider for the jar-file dependency configuration.
+     */
     private static void configureProcessPersistenceDescriptorTask(Project project, SourceSet sourceSet, PersistenceExtension extension,
                                                                   Provider<List<String>> discoveredClassesProvider,
                                                                   NamedDomainObjectProvider<Configuration> jarFileConfigProvider) {
@@ -293,6 +324,15 @@ class JakartaPersistencePlugin implements Plugin<Project> {
         }
     }
 
+    /**
+     * Registers and configures a {@link GenerateJPAGraalVMMetadata} task for the
+     * given source set, wiring the discovered entity class names into the GraalVM
+     * {@code reflect-config.json} generation pipeline.
+     *
+     * @param project                   The Gradle project.
+     * @param sourceSet                 The source set to configure.
+     * @param discoveredClassesProvider Lazy provider for discovered JPA entity class names.
+     */
     private static void configureGenerateJPAGraalVMMetadataTask(Project project, SourceSet sourceSet, Provider<List<String>> discoveredClassesProvider) {
         // 1. Register GraalVM Native Image Metadata Generation Task
         def graalVMTaskName = sourceSet.name == 'main' ? "generateJPAGraalVMMetadata" : "generate${sourceSet.name.capitalize()}JPAGraalVMMetadata"
@@ -323,6 +363,16 @@ class JakartaPersistencePlugin implements Plugin<Project> {
         }
     }
 
+    /**
+     * Registers and configures a {@link ValidatePersistenceSchema} task for the
+     * given source set, wiring multi-tenant connection profiles, discovered entity
+     * classes, and an isolated classpath carrying the JPA provider and H2 driver.
+     *
+     * @param project                   The Gradle project.
+     * @param sourceSet                 The source set to configure.
+     * @param extension                 The persistence extension providing DSL configuration.
+     * @param discoveredClassesProvider Lazy provider for discovered JPA entity class names.
+     */
     private static void configureValidatePersistenceSchemaTask(Project project, SourceSet sourceSet, PersistenceExtension extension, Provider<List<String>> discoveredClassesProvider) {
         def processTaskName = sourceSet.name == 'main' ? "processPersistenceDescriptor" : "process${sourceSet.name.capitalize()}PersistenceDescriptor"
         def processTask = project.tasks.named(processTaskName, ProcessPersistenceDescriptor)
@@ -387,6 +437,15 @@ class JakartaPersistencePlugin implements Plugin<Project> {
         }
     }
 
+    /**
+     * Registers and configures a {@link LintNamedQueries} task for the given source
+     * set, wiring incremental source file tracking, the linter classpath, and the
+     * JSON execution report output.
+     *
+     * @param project   The Gradle project.
+     * @param sourceSet The source set to configure.
+     * @param extension The persistence extension providing linter DSL configuration.
+     */
     private static void configureLintNamedQueriesTask(Project project, SourceSet sourceSet, PersistenceExtension extension) {
         // Enforce a strict named convention pattern (e.g., lintNamedQueries or lintTestNamedQueries)
         String linterTaskName = sourceSet.name == 'main' ? "lintNamedQueries" : "lint${sourceSet.name.capitalize()}NamedQueries"
@@ -450,6 +509,52 @@ class JakartaPersistencePlugin implements Plugin<Project> {
         project.tasks.named(LifecycleBasePlugin.CHECK_TASK_NAME) { checkTask ->
             checkTask.dependsOn(linterTaskName)
         }
+    }
+
+    /**
+     * Resolves the version of the {@code persistence-tools-api} library that is
+     * currently on the plugin's own classpath.
+     * <p>
+     * The version is extracted from the {@code Implementation-Version} attribute
+     * of the {@code META-INF/MANIFEST.MF} inside the JAR that contains the
+     * {@link PersistenceServiceProvider} SPI class. This allows downstream
+     * plugins (e.g.&nbsp;the Hibernate enhancement plugin) to declare matching
+     * provider dependencies at the exact same version without hard-coding
+     * version strings.
+     * </p>
+     *
+     * @return The resolved version string, or {@code null} when the version
+     *         cannot be determined (e.g.&nbsp;when running from exploded classes
+     *         during development).
+     * @throws org.gradle.api.GradleException if the version lookup encounters
+     *         an unexpected I/O or security error.
+     *
+     * @since 1.8.0
+     */
+    static String resolvePersistenceToolsVersion() {
+        String version = null
+        try {
+            // Locate the physical protection domain URL of our core SPI class template
+            def classCodeSourceLocation = PersistenceServiceProvider.class.protectionDomain.codeSource?.location
+            if (classCodeSourceLocation != null) {
+                def classPathString = classCodeSourceLocation.toString()
+
+                // If running from an active packaged distribution archive (.jar)
+                if (classPathString.endsWith('.jar')) {
+                    def manifestUrl = new URL("jar:${classPathString}!/META-INF/MANIFEST.MF")
+                    manifestUrl.openStream().withCloseable { stream ->
+                        def manifest = new Manifest(stream)
+                        def implementationVersion = manifest.mainAttributes.getValue("Implementation-Version")
+                        if (implementationVersion != null && !implementationVersion.trim().isEmpty()) {
+                            version = implementationVersion.trim()
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new GradleException("Unable to resolve persistence tools version: ${e.message}", e)
+        }
+        return version
     }
 
     /**
@@ -560,6 +665,16 @@ class JakartaPersistencePlugin implements Plugin<Project> {
         return jpaClasses.sort()
     }
 
+    /**
+     * Resolves the first-level JAR file dependency names from the given
+     * configuration, applying custom location overrides from both the
+     * {@link #JAR_LOCATION_ATTRIBUTE} variant attribute and the per-unit
+     * {@link persist.jakarta.gradle.extension.PersistenceUnitExtension#getJarFileMappings() jarFileMappings} DSL map.
+     *
+     * @param jarFileConfigProvider The lazy provider for the jar-file dependency configuration.
+     * @param processTask          The descriptor processor task carrying unit configurations.
+     * @return A list of resolved JAR file name strings (possibly with custom path prefixes).
+     */
     private static List<String> resolveFirstLevelJarFileNames(NamedDomainObjectProvider<Configuration> jarFileConfigProvider,
                                                               ProcessPersistenceDescriptor processTask) {
         def jarFileConfig = jarFileConfigProvider.get()

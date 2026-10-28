@@ -20,12 +20,16 @@ abstract class GenerateJPAGraalVMMetadata extends DefaultTask {
 
     /**
      * The compiled, ASM-discovered fully qualified class names from the source set.
+     *
+     * @return The lazy list property tracking the entity class names.
      */
     @Input
     abstract ListProperty<String> getIncludedClasses()
 
     /**
      * The location where the final reflect-config.json will be written.
+     *
+     * @return The lazy file property tracking the output file location.
      */
     @OutputFile
     abstract RegularFileProperty getOutputFile()

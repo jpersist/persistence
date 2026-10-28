@@ -32,6 +32,18 @@ import persist.openjpa.gradle.task.OpenJPAEnhanceTask
  */
 class OpenJPAEnhancementPlugin implements Plugin<Project> {
 
+    /**
+     * Applies the OpenJPA bytecode enhancement configuration to the target project.
+     * <p>
+     * Registers the {@code openjpa} extension container (if not already present),
+     * creates per-source-set isolated classpath configurations, registers
+     * {@link OpenJPAEnhanceTask} instances that fork the OpenJPA {@code PCEnhancer}
+     * tool, hooks them into the build lifecycle, and provisions the default
+     * {@code org.apache.openjpa:openjpa} dependency when no user override is present.
+     * </p>
+     *
+     * @param project The target Gradle project.
+     */
     @Override
     void apply(Project project) {
         project.plugins.apply(JavaPlugin)

@@ -74,6 +74,15 @@ interface LintNamedQueriesParameters extends WorkParameters {
  */
 abstract class LintNamedQueriesWorker implements WorkAction<LintNamedQueriesParameters> {
 
+    /**
+     * Executes the named query lint analysis inside the isolated worker process.
+     * <p>
+     * Scans compiled class files using ASM to discover {@code @NamedQuery} and
+     * {@code @NamedStoredProcedureQuery} annotations, then validates query syntax
+     * via the SPI-loaded ANTLR4 parser and checks parameter naming conventions.
+     * Supports both full sweep and incremental delta passes.
+     * </p>
+     */
     @Override
     void execute() {
         File classesDir = parameters.compiledClassesDir.get().asFile
@@ -158,11 +167,29 @@ abstract class LintNamedQueriesWorker implements WorkAction<LintNamedQueriesPara
         }
     }
 
+    /**
+     * ASM {@link ClassVisitor} that scans compiled class files for JPA annotation
+     * metadata, collecting {@code @NamedQuery} and {@code @NamedStoredProcedureQuery}
+     * definitions along with entity class names.
+     */
     private static class ComprehensiveMetadataScanner extends ClassVisitor {
+
+        /** Collected named query definitions keyed by query name. */
         private final Map<String, String> queries
+
+        /** Collected stored procedure definitions keyed by procedure annotation name. */
         private final Map<String, Map<String, Set<String>>> procedures
+
+        /** Collected fully qualified entity class names discovered during the scan. */
         private final List<String> classes
 
+        /**
+         * Creates a new scanner targeting ASM API version {@link Opcodes#ASM9}.
+         *
+         * @param queries    The mutable map to populate with discovered named queries.
+         * @param procedures The mutable map to populate with discovered stored procedures.
+         * @param classes    The mutable list to populate with discovered class names.
+         */
         ComprehensiveMetadataScanner(Map<String, String> queries, Map<String, Map<String, Set<String>>> procedures, List<String> classes) {
             super(Opcodes.ASM9)
             this.queries = queries
@@ -170,6 +197,7 @@ abstract class LintNamedQueriesWorker implements WorkAction<LintNamedQueriesPara
             this.classes = classes
         }
 
+        /** {@inheritDoc} */
         @Override
         void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
             if (name) {
@@ -178,6 +206,7 @@ abstract class LintNamedQueriesWorker implements WorkAction<LintNamedQueriesPara
             super.visit(version, access, name, signature, superName, interfaces)
         }
 
+        /** {@inheritDoc} */
         @Override
         AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
             if (descriptor in ['Ljakarta/persistence/NamedQuery;', 'Ljavax/persistence/NamedQuery;']) {
@@ -190,39 +219,76 @@ abstract class LintNamedQueriesWorker implements WorkAction<LintNamedQueriesPara
         }
     }
 
+    /**
+     * ASM {@link AnnotationVisitor} that extracts the {@code name} and {@code query}
+     * attributes from a single {@code @NamedQuery} annotation instance.
+     */
     private static class NamedQueryDataExtractor extends AnnotationVisitor {
+
+        /** The target map where the extracted query name and JPQL string are stored. */
         private final Map<String, String> registry
+
+        /** The annotation's {@code name} attribute value. */
         private String name = ""
+
+        /** The annotation's {@code query} attribute value (JPQL/HQL string). */
         private String query = ""
 
+        /**
+         * Creates a new extractor writing results into the given registry map.
+         *
+         * @param registry The mutable map to populate with the extracted query entry.
+         */
         NamedQueryDataExtractor(Map<String, String> registry) { super(Opcodes.ASM9); this.registry = registry }
 
+        /** {@inheritDoc} */
         @Override
         void visit(String name, Object value) {
             if (name == "name") this.name = value.toString()
             else if (name == "query") this.query = value.toString()
         }
 
+        /** {@inheritDoc} */
         @Override
         void visitEnd() {
             if (name && query) registry.put(name, query)
         }
     }
 
+    /**
+     * ASM {@link AnnotationVisitor} that extracts the {@code name}, {@code procedureName},
+     * and nested {@code parameters[].name} attributes from a single
+     * {@code @NamedStoredProcedureQuery} annotation instance.
+     */
     private static class StoredProcedureDataExtractor extends AnnotationVisitor {
+
+        /** The target map where extracted procedure metadata is stored. */
         private final Map<String, Map<String, Set<String>>> registry
+
+        /** The annotation's {@code name} attribute value. */
         private String name = ""
+
+        /** The annotation's {@code procedureName} attribute value. */
         private String procedureName = ""
+
+        /** Ordered set of parameter names extracted from the nested {@code parameters} array. */
         private Set<String> parameterNames = new TreeSet<>()
 
+        /**
+         * Creates a new extractor writing results into the given registry map.
+         *
+         * @param registry The mutable map to populate with the extracted procedure entry.
+         */
         StoredProcedureDataExtractor(Map<String, Map<String, Set<String>>> registry) { super(Opcodes.ASM9); this.registry = registry }
 
+        /** {@inheritDoc} */
         @Override
         void visit(String name, Object value) {
             if (name == "name") this.name = value.toString()
             else if (name == "procedureName") this.procedureName = value.toString()
         }
 
+        /** {@inheritDoc} */
         @Override
         AnnotationVisitor visitArray(String name) {
             if (name == "parameters") {
@@ -241,6 +307,7 @@ abstract class LintNamedQueriesWorker implements WorkAction<LintNamedQueriesPara
             return null
         }
 
+        /** {@inheritDoc} */
         @Override
         void visitEnd() {
             if (name && procedureName) {
@@ -249,8 +316,26 @@ abstract class LintNamedQueriesWorker implements WorkAction<LintNamedQueriesPara
         }
     }
 
+    /**
+     * Static helper that encapsulates ASM bytecode scanning and SPI-based
+     * query/procedure validation logic.
+     * <p>
+     * Isolating these methods in a plain static inner class prevents Groovy's
+     * dynamic method dispatch from routing calls through Gradle's decorated
+     * worker proxy.
+     * </p>
+     */
     private static class Helper {
 
+        /**
+         * Scans a single compiled class file using ASM, collecting named query
+         * and stored procedure annotations plus the class name.
+         *
+         * @param classFile  The {@code .class} file to scan.
+         * @param queries    The mutable map to populate with discovered named queries.
+         * @param procedures The mutable map to populate with discovered stored procedures.
+         * @param classes    The mutable list to populate with discovered class names.
+         */
         private static void sweepClassFile(File classFile, Map queries, Map procedures, List classes) {
             classFile.withInputStream { is ->
                 try {
@@ -274,6 +359,15 @@ abstract class LintNamedQueriesWorker implements WorkAction<LintNamedQueriesPara
             }
         }
 
+        /**
+         * Validates all discovered {@code @NamedQuery} definitions against the
+         * ANTLR4-based JPQL/HQL parser and checks parameter naming conventions.
+         *
+         * @param parser            The SPI-loaded named object parser instance.
+         * @param discoveredQueries The map of query name to JPQL/HQL string.
+         * @param ignoreWarnings    Whether to suppress style warning diagnostics.
+         * @return The number of validation errors encountered.
+         */
         private static int validateDiscoveredQueries(NamedObjectParser parser,
                                                      Map<String, String> discoveredQueries,
                                                      boolean ignoreWarnings) {
@@ -305,6 +399,15 @@ abstract class LintNamedQueriesWorker implements WorkAction<LintNamedQueriesPara
             return errorCount;
         }
 
+        /**
+         * Validates all discovered {@code @NamedStoredProcedureQuery} definitions
+         * and checks parameter naming conventions against strict camelCase rules.
+         *
+         * @param parser               The SPI-loaded named object parser instance.
+         * @param discoveredProcedures The map of procedure annotation name to procedure metadata.
+         * @param ignoreWarnings       Whether to suppress style warning diagnostics.
+         * @return The number of validation errors encountered.
+         */
         private static int validateDiscoveredStoredProcedures(NamedObjectParser parser,
                                                               Map<String, Map<String, Set<String>>> discoveredProcedures,
                                                               boolean ignoreWarnings) {

@@ -56,6 +56,8 @@ abstract class LintNamedQueries extends DefaultTask {
     /**
      * The input source directories tracking active Java source code files (.java).
      * Sourced from the active compilation source sets.
+     *
+     * @return The file collection managing the incremental source file inputs.
      */
     @Incremental
     @InputFiles
@@ -64,6 +66,8 @@ abstract class LintNamedQueries extends DefaultTask {
 
     /**
      * The input source directory holding the compiled Java class files to be scanned via ASM.
+     *
+     * @return The lazy directory property tracking the compiled classes directory.
      */
     @InputDirectory
     @PathSensitive(PathSensitivity.RELATIVE)
@@ -72,6 +76,8 @@ abstract class LintNamedQueries extends DefaultTask {
     /**
      * The complete runtime and compilation classpath containing the JPA provider binaries
      * (Hibernate/EclipseLink) used to drive the internal semantic parsing engine.
+     *
+     * @return The file collection managing the linter's runtime classpath.
      */
     @CompileClasspath
     abstract ConfigurableFileCollection getClasspath()
@@ -79,10 +85,13 @@ abstract class LintNamedQueries extends DefaultTask {
     /**
      * The generated JSON compilation report containing metrics regarding processed and skipped files.
      * Acts as the mandatory @OutputFile checkpoint to satisfy Gradle's execution graph rules.
+     *
+     * @return The lazy file property tracking the JSON report output location.
      */
     @OutputFile
     abstract RegularFileProperty getLintReportFile()
 
+    /** The Gradle worker executor used to submit isolated linter work actions. */
     private final WorkerExecutor workerExecutor
 
     /**

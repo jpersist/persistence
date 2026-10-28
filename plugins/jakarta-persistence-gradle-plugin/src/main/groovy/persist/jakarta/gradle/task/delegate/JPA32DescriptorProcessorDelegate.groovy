@@ -8,6 +8,7 @@ package persist.jakarta.gradle.task.delegate
  */
 class JPA32DescriptorProcessorDelegate extends AbstractDescriptorProcessorDelegate {
 
+    /** {@inheritDoc} */
     @Override
     List<String> getSupportedVersions() {
         return ["3.2"]

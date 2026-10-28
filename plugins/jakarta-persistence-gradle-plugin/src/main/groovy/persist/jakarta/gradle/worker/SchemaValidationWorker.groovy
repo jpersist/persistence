@@ -80,6 +80,15 @@ interface SchemaValidationParameters extends WorkParameters {
  */
 abstract class SchemaValidationWorker implements WorkAction<SchemaValidationParameters> {
 
+    /**
+     * Executes the multi-tenant schema validation pipeline.
+     * <p>
+     * Initializes the SPI-loaded {@link SchemaValidator}, iterates over every
+     * serialized tenant profile, validates each active persistence unit against
+     * that tenant's database, and throws a {@link GradleException} if any
+     * schema mismatches are detected.
+     * </p>
+     */
     @Override
     void execute() {
         String jpaVersion = parameters.jpaVersion.get()

@@ -49,6 +49,8 @@ abstract class OpenJPAEnhanceTask extends DefaultTask {
 
     /**
      * The directory containing the processed resources (specifically META-INF/persistence.xml).
+     *
+     * @return The lazy directory property tracking the processed resources directory.
      */
     @InputDirectory
     @PathSensitive(PathSensitivity.RELATIVE)
@@ -56,6 +58,8 @@ abstract class OpenJPAEnhanceTask extends DefaultTask {
 
     /**
      * The directory containing the clean compiled .class files to be enhanced in place.
+     *
+     * @return The lazy directory property tracking the source classes directory.
      */
     @InputDirectory
     @PathSensitive(PathSensitivity.RELATIVE)
@@ -64,22 +68,29 @@ abstract class OpenJPAEnhanceTask extends DefaultTask {
 
     /**
      * The isolated output directory where the enhanced class files are written.
+     *
+     * @return The lazy directory property tracking the enhanced output directory.
      */
     @OutputDirectory
     abstract DirectoryProperty getTargetClassesDir()
 
     /**
      * The isolated runtime classpath carrying OpenJPA core toolset binaries.
+     *
+     * @return The file collection managing the OpenJPA enhancer toolset dependencies.
      */
     @CompileClasspath
     abstract ConfigurableFileCollection getEnhancerClasspath()
 
     /**
      * The complete compile dependencies of the module, required by OpenJPA to inspect relationship types.
+     *
+     * @return The file collection managing the project's compilation dependencies.
      */
     @CompileClasspath
     abstract ConfigurableFileCollection getCompileClasspath()
 
+    /** The injected Gradle execution operations service for forking isolated JVM processes. */
     private final ExecOperations execOperations
 
     /**

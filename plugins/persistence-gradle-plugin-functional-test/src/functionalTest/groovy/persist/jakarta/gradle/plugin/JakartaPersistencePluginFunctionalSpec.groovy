@@ -36,6 +36,7 @@ class JakartaPersistencePluginFunctionalSpec extends Specification {
     def "should generate a valid persistence.xml from scratch using Extension DSL"() {
         given: "a build script utilizing the persistence extension"
         def runner = createRunner()
+            .withArguments(':common-persistence-module:classes', '--stacktrace')
 
         when: "running the classes task"
         def result = runner.build()
@@ -97,6 +98,7 @@ class JakartaPersistencePluginFunctionalSpec extends Specification {
     def "should intelligently merge configuration values into an existing template persistence.xml"() {
         given: "a template persistence.xml in the source resources directory"
         def runner = createRunner()
+            .withArguments(':bookstore-persistence-module:classes', '--stacktrace')
 
         when: "executing the build"
         def result = runner.build()
@@ -164,6 +166,7 @@ class JakartaPersistencePluginFunctionalSpec extends Specification {
     def "should inject custom jar file location prefixes when namespaced attributes are declared"() {
         given: "a template persistence.xml in the source resources directory"
         def runner = createRunner()
+            .withArguments(':bookstore-service-module:classes', '--stacktrace')
 
         when: "executing the build"
         def result = runner.build()
@@ -193,6 +196,7 @@ class JakartaPersistencePluginFunctionalSpec extends Specification {
     def "should automatically generate a valid GraalVM reflect-config.json metadata file"() {
         given: "a standard build execution context"
         def runner = createRunner()
+            .withArguments(':common-persistence-module:classes', '--stacktrace')
 
         when: "running the classes compilation and processing pipeline"
         def result = runner.build()
