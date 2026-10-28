@@ -4,11 +4,9 @@ plugins {
 }
 
 dependencies {
-    implementation libs.jakarta.persistence.api
+    implementation platform(libs.persistence.tools.bom.get())
+    implementation libs.bundles.persistence.tools
     implementation libs.asm
-
-    implementation platform(libs.lint.persistence.bom.get())
-    implementation libs.bundles.lint.persistence
 }
 
 gradlePlugin {

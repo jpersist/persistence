@@ -34,6 +34,16 @@ import org.gradle.api.tasks.SourceSetContainer
  */
 class HibernateJpamodelgenPlugin implements Plugin<Project> {
 
+    /**
+     * Applies the Hibernate JPA Modelgen annotation processor configuration to the target project.
+     * <p>
+     * Registers the annotation processor generated source directory for each source set
+     * and provisions the default {@code hibernate-jpamodelgen} dependency on the
+     * {@code modelgenProcessor} configuration when no user override is present.
+     * </p>
+     *
+     * @param project The target Gradle project.
+     */
     @Override
     void apply(Project project) {
         project.plugins.apply(JavaPlugin)

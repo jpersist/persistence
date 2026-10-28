@@ -8,6 +8,7 @@ package persist.jakarta.gradle.task.delegate
  */
 class JPA21DescriptorProcessorDelegate extends AbstractDescriptorProcessorDelegate {
 
+    /** {@inheritDoc} */
     @Override
     List<String> getSupportedVersions() {
         return ["2.1"]

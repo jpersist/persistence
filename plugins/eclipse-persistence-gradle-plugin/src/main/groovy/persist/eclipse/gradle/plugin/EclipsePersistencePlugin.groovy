@@ -20,6 +20,12 @@ import persist.jakarta.gradle.plugin.JakartaPersistencePlugin
  */
 class EclipsePersistencePlugin implements Plugin<Project> {
 
+    /**
+     * Applies the Jakarta Persistence, EclipseLink Modelgen, and EclipseLink Static Weave
+     * plugins to the target project.
+     *
+     * @param project The target Gradle project.
+     */
     @Override
     void apply(Project project) {
         project.plugins.apply(JakartaPersistencePlugin)

@@ -63,6 +63,17 @@ import persist.eclipse.gradle.task.EclipseWeaveTask
  */
 class EclipseStaticWeavePlugin implements Plugin<Project> {
 
+    /**
+     * Applies the EclipseLink static weaving configuration to the target project.
+     * <p>
+     * Creates the {@code weave} configuration, registers per-source-set
+     * {@link EclipseWeaveTask} instances with isolated classpath resolution, hooks
+     * the weave task into the build lifecycle, and provisions the default
+     * {@code org.eclipse.persistence.jpa} dependency when no user override is present.
+     * </p>
+     *
+     * @param project The target Gradle project.
+     */
     @Override
     void apply(Project project) {
         project.plugins.apply(JavaPlugin)

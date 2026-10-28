@@ -22,6 +22,12 @@ import persist.jakarta.gradle.plugin.JakartaPersistencePlugin
  */
 class OpenJPAPersistencePlugin implements Plugin<Project> {
 
+    /**
+     * Applies the Jakarta Persistence, OpenJPA Enhancement, and OpenJPA MetaModel Generation
+     * plugins to the target project.
+     *
+     * @param project The target Gradle project.
+     */
     @Override
     void apply(Project project) {
         project.plugins.apply(JakartaPersistencePlugin)

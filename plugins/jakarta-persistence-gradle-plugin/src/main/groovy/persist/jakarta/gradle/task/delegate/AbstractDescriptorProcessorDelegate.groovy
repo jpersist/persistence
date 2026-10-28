@@ -27,6 +27,14 @@ import javax.xml.transform.stream.StreamSource
  */
 abstract class AbstractDescriptorProcessorDelegate implements DescriptorProcessorDelegate {
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Resolves the {@link JPAVersionStrategyRegistry} for the given XML version,
+     * then delegates to either {@code Helper.mergeDescriptor} (when a source file
+     * exists) or {@code Helper.generateDescriptor} (when generating from scratch).
+     * </p>
+     */
     @Override
     void process(File source, File target, List<String> managedClasses, List<String> resolvedJars,
                  List<PersistenceUnitExtension> configuredUnits, Map<String, String> settings, String xmlVersion) {

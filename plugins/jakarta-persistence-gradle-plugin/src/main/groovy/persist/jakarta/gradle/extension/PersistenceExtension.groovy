@@ -45,6 +45,7 @@ import javax.inject.Inject
  */
 abstract class PersistenceExtension {
 
+    /** The source set name used as the key in the {@link org.gradle.api.NamedDomainObjectContainer}. */
     private final String name;
 
     /**

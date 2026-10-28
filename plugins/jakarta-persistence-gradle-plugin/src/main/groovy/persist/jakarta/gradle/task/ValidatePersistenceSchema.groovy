@@ -92,6 +92,8 @@ abstract class ValidatePersistenceSchema extends DefaultTask {
 
     /**
      * The built-in resource destination directory containing the META-INF/persistence.xml structure.
+     *
+     * @return The lazy directory property tracking the processed resources directory.
      */
     @InputDirectory
     @PathSensitive(PathSensitivity.RELATIVE)
@@ -100,10 +102,13 @@ abstract class ValidatePersistenceSchema extends DefaultTask {
     /**
      * The complete runtime and compilation classpath containing the compiled entity classes,
      * the JPA provider implementation binaries (Hibernate/EclipseLink), and the H2 driver.
+     *
+     * @return The file collection managing the schema validation runtime classpath.
      */
     @CompileClasspath
     abstract ConfigurableFileCollection getClasspath()
 
+    /** The Gradle worker executor used to submit isolated schema validation work actions. */
     private final WorkerExecutor workerExecutor
 
     /**

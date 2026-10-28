@@ -5,7 +5,9 @@ plugins {
 
 dependencies {
     implementation project(':jakarta-persistence-gradle-plugin')
-    implementation libs.hibernate.orm.core
+
+    implementation platform(libs.persistence.tools.bom.get())
+    implementation libs.persistence.tools.api
 }
 
 gradlePlugin {

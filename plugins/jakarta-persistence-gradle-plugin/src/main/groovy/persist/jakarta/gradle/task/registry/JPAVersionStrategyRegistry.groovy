@@ -37,8 +37,20 @@ class JPAVersionStrategyRegistry {
     /** The version-specific strategy that performs descriptor processing. */
     final DescriptorProcessorDelegate delegate
 
+    /**
+     * Thread-safe map holding all registered version-to-strategy bindings.
+     * Populated eagerly during static class initialization.
+     */
     private static final Map<String, JPAVersionStrategyRegistry> REGISTRY = new ConcurrentHashMap<>()
 
+    /**
+     * Creates a new registry entry with the given XML metadata and delegate.
+     *
+     * @param version        The XML version attribute for the root element.
+     * @param namespace      The XML namespace URI.
+     * @param schemaLocation The XSD schema location URL.
+     * @param delegate       The version-specific descriptor processing strategy.
+     */
     private JPAVersionStrategyRegistry(String version, String namespace, String schemaLocation,
                                        DescriptorProcessorDelegate delegate) {
         this.version = version
