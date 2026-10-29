@@ -10,9 +10,11 @@ import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentSelector
 import org.gradle.api.artifacts.result.DependencyResult
 import org.gradle.api.attributes.Attribute
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.CopySpec
 import org.gradle.api.file.FileTree
 import org.gradle.api.plugins.JavaLibraryPlugin
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.language.base.plugins.LifecycleBasePlugin
@@ -450,14 +452,8 @@ class JakartaPersistencePlugin implements Plugin<Project> {
             // compileClasspath contains Hibernate/EclipseLink but does NOT track processResources outputs!
             task.getClasspath().from(project.configurations.named(sourceSet.compileClasspathConfigurationName))
 
-            // 3. Add the Plugin's own compiled files directory so SchemaValidationWorker can be found
-            // This safely uses the class protection domain location which we verified is stable
-            def pluginLocation = JakartaPersistencePlugin.class.protectionDomain.codeSource?.location
-            if (pluginLocation != null) {
-                task.getClasspath().from(project.files(pluginLocation))
-            } else {
-                task.getClasspath().from(project.files(JakartaPersistencePlugin.class.classLoader.getResource(".")).builtBy())
-            }
+            // 3. 🌟 OPTIMIZED TOOLSET EXTRACTION: Direct extraction from active Plugin ClassLoader
+            task.getClasspath().from(resolvePersistenceToolsFiles(project, extension.version, JakartaPersistencePlugin.classLoader))
 
             // 4. Transparently inject the H2 driver file on-the-fly for the user
             task.getClasspath().from(project.files(project.buildscript.configurations.detachedConfiguration(
@@ -517,12 +513,7 @@ class JakartaPersistencePlugin implements Plugin<Project> {
             task.classpath.from(project.configurations.named(sourceSet.compileClasspathConfigurationName))
 
             // Ensure the plugin's own compiled files directory is attached to locate the worker classes
-            def pluginLocation = JakartaPersistencePlugin.class.protectionDomain.codeSource?.location
-            if (pluginLocation != null) {
-                task.classpath.from(project.files(pluginLocation))
-            } else {
-                task.classpath.from(project.files(JakartaPersistencePlugin.class.classLoader.getResource(".")).builtBy())
-            }
+            task.classpath.from(resolvePersistenceToolsFiles(project, extension.version, JakartaPersistencePlugin.classLoader))
 
             // Transparently inject the H2 driver dependency directly from a localized detached setup on-the-fly!
             // This provides 'org.h2.Driver' directly into the worker's classloader isolation sandbox.
@@ -537,6 +528,44 @@ class JakartaPersistencePlugin implements Plugin<Project> {
         // Link the linter task straight into Gradle's native check lifecycle
         project.tasks.named(LifecycleBasePlugin.CHECK_TASK_NAME) { checkTask ->
             checkTask.dependsOn(linterTaskName)
+        }
+    }
+
+    static Provider<ConfigurableFileCollection> resolvePersistenceToolsFiles(Project project,
+                                                                             Provider<String> jpaVersionProvider,
+                                                                             ClassLoader classLoader) {
+        return project.provider {
+            def version = jpaVersionProvider.get()
+            boolean isLegacy = isLegacyJpaVersion(version)
+            String markerClassName = isLegacy
+                ? "persist.legacy.spi.LegacyPersistenceServiceProvider"
+                : "persist.jakarta.spi.JakartaPersistenceServiceProvider"
+
+            try {
+                // Attempt to locate the classes on the active plugin/buildscript classpath wrapper context
+                Class<?> providerClass = Class.forName(markerClassName, false, classLoader)
+                def codeSourceLocation = providerClass.protectionDomain.codeSource?.location
+
+                if (codeSourceLocation != null) {
+                    def toolsApiLocation = PersistenceServiceProvider.class.protectionDomain.codeSource?.location
+                    // Return the array of physical file locations discovered inside the environment
+                    return project.files(codeSourceLocation, toolsApiLocation)
+                }
+            } catch (Exception ignored) {
+                // Fallback strategy if executing inside a standard standalone build outside the mono-repo context
+                // Note: Since we cannot return a GAV string provider here inside project.files(),
+                // we resolve it as a detached dependency placeholder inside the fallback block.
+                def toolsVersion = resolvePersistenceToolsVersion()
+                String providerArtifact = isLegacy ? "persistence-tools-legacy" : "persistence-tools-jakarta"
+
+                // Return the resolved files of a detached configuration context to bypass the file constraints safely
+                def detachedConfig = project.configurations.detachedConfiguration(
+                    project.dependencies.create("io.github.jpersist.tools:${providerArtifact}:${toolsVersion}")
+                )
+                return project.files(detachedConfig)
+            }
+
+            return project.files()
         }
     }
 

@@ -9,7 +9,6 @@ import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.jvm.tasks.Jar
 import org.gradle.language.base.plugins.LifecycleBasePlugin
-import persist.api.spi.PersistenceServiceProvider
 import persist.hibernate.gradle.extension.HibernateExtension
 import persist.hibernate.gradle.task.HibernateEnhancementTask
 import persist.jakarta.gradle.extension.PersistenceExtension
@@ -111,48 +110,17 @@ class HibernateEnhancementPlugin implements Plugin<Project> {
                     config.canBeResolved = true
 
                     // Wire version constraints and coordinates dynamically at configuration time
-                    config.extendsFrom(project.configurations.maybeCreate('jpa'))
+                    config.extendsFrom(project.configurations.named(sourceSet.compileClasspathConfigurationName))
                 }
 
                 // 🌟 TECHNICAL BREAKTHROUGH: ClassLoader Extraction Loop
                 // Instead of calling project.dependencies.add with remote text coordinates,
                 // harvest the physical jar files that are already part of the plugin's active buildscript classpath context.
                 project.configurations.named(enhanceConfigName).configure { config ->
-                    Set<Object> files = []
                     // We add a lazy FileCollection wrapper which Gradle handles perfectly at execution time
-                    config.dependencies.add(project.dependencies.create(project.files(project.provider {
-                        def version = activeVersionProvider.get()
-                        boolean isLegacy = ["2.0", "2.1", "2.2"].contains(version)
-                        String markerClassName = isLegacy
-                            ? "persist.hibernate.enhance.legacy.LegacyHibernateEnhancerProvider"
-                            : "persist.hibernate.enhance.jakarta.JakartaHibernateEnhancerProvider"
-
-                        try {
-                            // Attempt to locate the classes on the active plugin/buildscript classpath wrapper context
-                            Class<?> providerClass = Class.forName(markerClassName, false, HibernateEnhancementPlugin.class.classLoader)
-                            def codeSourceLocation = providerClass.protectionDomain.codeSource?.location
-
-                            if (codeSourceLocation != null) {
-                                def toolsApiLocation = PersistenceServiceProvider.class.protectionDomain.codeSource?.location
-                                // Return the array of physical file locations discovered inside the environment
-                                files.addAll([codeSourceLocation, toolsApiLocation])
-                            }
-                        } catch (ClassNotFoundException ignored) {
-                            // Fallback strategy if executing inside a standard standalone build outside the mono-repo context
-                            // Note: Since we cannot return a GAV string provider here inside project.files(),
-                            // we resolve it as a detached dependency placeholder inside the fallback block.
-                            def toolsVersion = JakartaPersistencePlugin.resolvePersistenceToolsVersion()
-                            String providerArtifact = isLegacy ? "persistence-tools-legacy" : "persistence-tools-jakarta"
-
-                            // Return the resolved files of a detached configuration context to bypass the file constraints safely
-                            def detachedConfig = project.configurations.detachedConfiguration(
-                                project.dependencies.create("io.github.jpersist.tools:${providerArtifact}:${toolsVersion}")
-                            )
-                            files.add(detachedConfig.files)
-                        }
-
-                        return files
-                    })))
+                    config.dependencies.add(project.dependencies.create(project.files(
+                        JakartaPersistencePlugin.resolvePersistenceToolsFiles(project, activeVersionProvider, HibernateEnhancementPlugin.classLoader)
+                    )))
                 }
 
                 // Register the task completely outside the compile task configuration execution context
