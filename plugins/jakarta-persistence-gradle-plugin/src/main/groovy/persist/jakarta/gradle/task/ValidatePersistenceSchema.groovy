@@ -1,18 +1,25 @@
 package persist.jakarta.gradle.task
 
+import groovy.json.JsonOutput
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.CompileClasspath
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Nested
+import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
+import org.gradle.work.ChangeType
 import org.gradle.work.DisableCachingByDefault
+import org.gradle.work.Incremental
+import org.gradle.work.InputChanges
 import org.gradle.workers.WorkerExecutor
 import persist.jakarta.gradle.extension.ValidationExtension
 import persist.jakarta.gradle.worker.SchemaValidationWorker
@@ -91,6 +98,17 @@ abstract class ValidatePersistenceSchema extends DefaultTask {
     abstract ListProperty<String> getDiscoveredEntityClasses()
 
     /**
+     * The input source files collection used to calculate incremental deltas
+     * immune to compiler erasures.
+     *
+     * @return The configurable file collection of tracked source files.
+     */
+    @Incremental
+    @InputFiles
+    @PathSensitive(PathSensitivity.RELATIVE)
+    abstract ConfigurableFileCollection getSourceFiles()
+
+    /**
      * The built-in resource destination directory containing the META-INF/persistence.xml structure.
      *
      * @return The lazy directory property tracking the processed resources directory.
@@ -98,6 +116,16 @@ abstract class ValidatePersistenceSchema extends DefaultTask {
     @InputDirectory
     @PathSensitive(PathSensitivity.RELATIVE)
     abstract DirectoryProperty getResourcesDir()
+
+    /**
+     * The generated JSON schema validation audit metrics report.
+     * Acts as the mandatory {@code @OutputFile} checkpoint to satisfy Gradle's
+     * incremental task contract.
+     *
+     * @return The lazy file property tracking the validation report output location.
+     */
+    @OutputFile
+    abstract RegularFileProperty getValidationReportFile()
 
     /**
      * The complete runtime and compilation classpath containing the compiled entity classes,
@@ -126,20 +154,59 @@ abstract class ValidatePersistenceSchema extends DefaultTask {
      * Executes schema validation by submitting a
      * {@link SchemaValidationWorker} to an isolated classloader worker process.
      * <p>
+     * When executed incrementally, only entities whose source files have been
+     * added or modified are forwarded to the worker. If no tracked entity
+     * source files have changed, the task skips database bootstrapping entirely.
+     * A non-incremental (full) pass validates every discovered entity class.
+     * </p>
+     * <p>
      * The worker receives the persistence unit names, the serialized
      * multi-tenant connection profiles, the discovered entity class names,
      * and the full runtime classpath. For each tenant profile, every active
      * persistence unit is validated via the SPI-loaded
      * {@link persist.lint.api.spi.SchemaValidator}.
      * </p>
+     *
+     * @param inputChanges The Gradle incremental input changes descriptor.
      */
     @TaskAction
-    void validate() {
+    void validate(InputChanges inputChanges) {
         def version = jpaVersion.get()
         def unitNames = persistenceUnitNames.get()
         def classpathFiles = classpath.files
         def resourcesFolder = resourcesDir.get().asFile
-        def entityClasses = discoveredEntityClasses.get()
+        def fullEntityClasses = discoveredEntityClasses.get()
+        def isIncrementalPass = inputChanges.incremental
+
+        List<String> affectedEntities = []
+        List<String> removedEntities = []
+
+        if (isIncrementalPass) {
+            // Track source adjustments lazily from the immutable source directories stream
+            inputChanges.getFileChanges(getSourceFiles()).each { change ->
+                if (change.file.name.endsWith('.java')) {
+                    String relativePath = change.normalizedPath
+                    // Translate source file path (com/example/model/User.java) to binary class name
+                    String className = relativePath.substring(0, relativePath.lastIndexOf('.java')).replace('/', '.')
+
+                    if (change.changeType == ChangeType.REMOVED) {
+                        removedEntities.add(className)
+                    } else if (fullEntityClasses.contains(className)) {
+                        affectedEntities.add(className)
+                    }
+                }
+            }
+
+            // If an incremental step registers no active entity modifications,
+            // the task can gracefully skip heavy database bootstrapping entirely.
+            if (affectedEntities.isEmpty() && removedEntities.isEmpty()) {
+                logger.lifecycle("✅ JPersist Schema Validation up-to-date. No tracked entity file modifications detected.")
+                return
+            }
+        } else {
+            // Full pass execution flow: process every discovered entity class mapping natively
+            affectedEntities.addAll(fullEntityClasses)
+        }
 
         // Extract credentials lazily, fallback safely to standard H2 constants if absent
         def extension = validation.get()
@@ -155,6 +222,9 @@ abstract class ValidatePersistenceSchema extends DefaultTask {
             profiles.add("default|${extension.url.get()}|${extension.driver.get()}|${extension.user.get()}|${extension.password.get()}".toString())
         }
 
+        logger.lifecycle("⏳ Starting JPersist Multi-Tenant Schema Validation pipeline pass...")
+        logger.lifecycle("🔍 Auditing ${affectedEntities.size()} active entities across ${profiles.size()} tenant profiles (Incremental: ${isIncrementalPass}).")
+
         // Submit the action with isolated ClassLoader bindings managed natively by Gradle
         workerExecutor.classLoaderIsolation { workerSpec ->
             // Feed the project classpath, the dynamic resources root folder, and H2 elements
@@ -167,8 +237,32 @@ abstract class ValidatePersistenceSchema extends DefaultTask {
             // Pass the serialized matrix string array to the validation worker parameters queue
             params.tenantProfiles.set(profiles)
             // Forward the entity class name tokens safely to the isolated worker container
-            params.discoveredEntityClasses.set(entityClasses)
+            params.discoveredEntityClasses.set(affectedEntities)
         }
+
+        // 🌟 Write execution analytics details to the target report file
+        writeValidationMetricsReport(isIncrementalPass, affectedEntities.size(), fullEntityClasses.size() - affectedEntities.size())
+    }
+
+    /**
+     * Writes a JSON execution metrics report summarizing the validation pass.
+     *
+     * @param incremental    Whether the pass was incremental.
+     * @param processedCount The number of entity classes that were validated.
+     * @param skippedCount   The number of entity classes that were skipped.
+     */
+    private void writeValidationMetricsReport(boolean incremental, int processedCount, int skippedCount) {
+        Map<String, ?> reportMetadata = [
+            taskName          : name,
+            timestamp         : System.currentTimeMillis(),
+            incremental       : incremental,
+            processedEntities : processedCount,
+            skippedEntities   : skippedCount,
+            status            : "SUCCESS"
+        ]
+        File reportFile = validationReportFile.get().asFile
+        reportFile.parentFile.mkdirs()
+        reportFile.text = JsonOutput.prettyPrint(JsonOutput.toJson(reportMetadata))
     }
 
 }
