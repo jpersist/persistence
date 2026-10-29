@@ -8,6 +8,7 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
@@ -16,6 +17,8 @@ import org.gradle.work.ChangeType
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.Incremental
 import org.gradle.work.InputChanges
+
+import javax.inject.Inject
 
 /**
  * Generates a GraalVM native image {@code reflect-config.json} file
@@ -47,12 +50,37 @@ abstract class GenerateJPAGraalVMMetadata extends DefaultTask {
     abstract ListProperty<String> getIncludedClasses()
 
     /**
-     * The location where the final reflect-config.json will be written.
+     * The location where the final {@code reflect-config.json} will be written.
+     *
+     * <p>This is the primary output property for the task. It replaces the
+     * deprecated {@link #getOutputFile()} property.
      *
      * @return The lazy file property tracking the output file location.
+     * @since 1.8.0
      */
     @OutputFile
+    abstract RegularFileProperty getReflectConfigFile()
+
+    /**
+     * The location where the final {@code reflect-config.json} will be written.
+     *
+     * @return The lazy file property tracking the output file location.
+     * @deprecated Use {@link #getReflectConfigFile()} instead. This property is
+     * retained for backward compatibility and will be removed in a future release.
+     */
+    @Internal
+    @Deprecated
     abstract RegularFileProperty getOutputFile()
+
+    @Inject
+    GenerateJPAGraalVMMetadata() {
+        // 🌟 RE-ROUTING GATEWAY: Wire conventions bi-directionally to ensure absolute backward compatibility
+        // 1. If 'reflectConfigFile' is set, 'outputFile' mirrors its target automatically
+        getOutputFile().convention(getReflectConfigFile())
+
+        // 2. If a legacy script overrides 'outputFile' directly, propagate that value back to the new property
+        getReflectConfigFile().set(getOutputFile())
+    }
 
     /**
      * Generates the {@code reflect-config.json} file from the discovered JPA entity classes.
@@ -72,7 +100,7 @@ abstract class GenerateJPAGraalVMMetadata extends DefaultTask {
      */
     @TaskAction
     void generate(InputChanges inputChanges) {
-        File jsonFile = outputFile.get().asFile
+        File jsonFile = reflectConfigFile.get().asFile
         List<String> activeClasses = includedClasses.get()
         boolean isIncrementalPass = inputChanges.incremental
 

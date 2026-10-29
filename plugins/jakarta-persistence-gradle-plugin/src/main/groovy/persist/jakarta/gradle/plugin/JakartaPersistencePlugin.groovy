@@ -367,7 +367,7 @@ class JakartaPersistencePlugin implements Plugin<Project> {
             String groupPath = project.group ? project.group.toString().replace('.', '/') : 'unspecified'
             String targetPath = "generated/graalvm-resources/${sourceSet.name}/META-INF/native-image/${groupPath}/${project.name}/reflect-config.json"
 
-            task.outputFile.set(project.layout.buildDirectory.file(targetPath))
+            task.reflectConfigFile.set(project.layout.buildDirectory.file(targetPath))
 
             // Enforce an explicit dependency rule on the compileJava task instance.
             task.mustRunAfter(compileJavaTask)
@@ -531,7 +531,7 @@ class JakartaPersistencePlugin implements Plugin<Project> {
             )))
 
             // Automatically routes the JSON report file output to the standard build reports layout
-            task.lintReportFile.set(project.layout.buildDirectory.file("reports/${linterTaskName}/validation-report.json"))
+            task.lintReportFile.set(project.layout.buildDirectory.file("reports/persistence/${linterTaskName}-report.json"))
         }
 
         // Link the linter task straight into Gradle's native check lifecycle

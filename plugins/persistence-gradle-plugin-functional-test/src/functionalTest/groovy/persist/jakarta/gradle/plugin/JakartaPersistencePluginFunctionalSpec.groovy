@@ -248,6 +248,17 @@ class JakartaPersistencePluginFunctionalSpec extends Specification {
         assert result.output.contains("❌ SCHEMA MISMATCH FAILURE inside Tenant [default] for Unit [failing-validation-unit]:")
         assert result.output.contains("Reason: Schema-validation: missing table [NON_EXISTING_TABLE]")
         assert result.output.contains("JPersist Schema Validation failed: Encountered 1 mapping verification mismatches across the multi-tenant matrix.")
+
+        and: "the structured validation telemetry report is generated under the unified persistence directory"
+        File reportFile = new File(testProjectDir.toFile(), "test-validate-persistence-module/build/reports/persistence/validatePersistenceSchema-report.json")
+        assert reportFile.exists()
+
+        // Parse and assert against the json metadata matrix
+        def jsonReport = new JsonSlurper().parse(reportFile)
+        assert jsonReport.taskName == "validatePersistenceSchema"
+        assert jsonReport.status == "SUCCESS" // The task lifecycle block successfully finished emitting its results artifact
+        assert jsonReport.incremental == false
+        assert jsonReport.processedEntities > 0
     }
 
     def "should successfully pass lintNamedQueries task when all @NamedQuery definitions contain valid JPQL syntax and entity property references"() {
@@ -265,6 +276,15 @@ class JakartaPersistencePluginFunctionalSpec extends Specification {
         assert result.output.contains("All processed static metadata structures validated successfully!")
         assert result.output.contains("Product.findBySku")
         assert result.output.contains("passed semantic compilation checks")
+
+        and: "the structured query linter telemetry report is written into the identical corporate namespace"
+        File reportFile = new File(testProjectDir.toFile(), "test-lint-valid-persistence-module/build/reports/persistence/lintNamedQueries-report.json")
+        assert reportFile.exists()
+
+        def jsonReport = new JsonSlurper().parse(reportFile)
+        assert jsonReport.taskName == "lintNamedQueries"
+        assert jsonReport.totalFilesDetected > 0
+        assert jsonReport.processedFiles == jsonReport.totalFilesDetected
     }
 
     def "should successfully execute lintNamedQueries task and fail the build when an invalid property typo is detected inside a @NamedQuery definition"() {
