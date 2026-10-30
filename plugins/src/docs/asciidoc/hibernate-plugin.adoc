@@ -1,10 +1,12 @@
+[#hibernate-plugin]
 = Hibernate Plugin
 
 Plugin ID: `io.github.jpersist.hibernate-persistence`
 
 The `io.github.jpersist.hibernate-persistence` plugin provides a complete Hibernate persistence pipeline out-of-the-box.
-It automatically applies the core `io.github.jpersist.jpa` plugin (see <<jakarta-plugin.adoc#,Jakarta Persistence Plugin>>), the Hibernate JPA static metamodel generator, and compile-time bytecode enhancement for Hibernate-based projects.
+It automatically applies the core `io.github.jpersist.jpa` plugin (see xref:jakarta-plugin.adoc#jakarta-persistence-plugin[Jakarta Persistence Plugin]), the Hibernate JPA static metamodel generator, and compile-time bytecode enhancement for Hibernate-based projects.
 
+[#applying-the-plugin-2]
 == Applying the Plugin
 
 [source,groovy,indent=0,role="primary",subs="attributes+"]
@@ -38,6 +40,7 @@ dependencies {
 TIP: The `jpa` configuration is provided by the core Jakarta Persistence plugin (applied transitively).
 Use it to declare a Hibernate platform BOM so that all Hibernate module versions are aligned automatically.
 
+[#sub-plugins-2]
 == Sub-Plugins
 
 The aggregate `io.github.jpersist.hibernate-persistence` plugin is a convenience macro that applies the following three plugins:
@@ -47,7 +50,7 @@ The aggregate `io.github.jpersist.hibernate-persistence` plugin is a convenience
 | Plugin ID | Description
 
 | `io.github.jpersist.jpa`
-| The core Jakarta Persistence plugin — registers the `persistence` DSL extension, generates or merges `persistence.xml` descriptors, validates persistence schema, and generates GraalVM native image metadata. See <<jakarta-plugin.adoc#,Jakarta Persistence Plugin>>.
+| The core Jakarta Persistence plugin — registers the `persistence` DSL extension, generates or merges `persistence.xml` descriptors, validates persistence schema, and generates GraalVM native image metadata. See xref:jakarta-plugin.adoc#jakarta-persistence-plugin[Jakarta Persistence Plugin].
 
 | `io.github.jpersist.hibernate-jpamodelgen`
 | Configures Hibernate's JPA static metamodel generator (`hibernate-jpamodelgen`) as an annotation processor for every source set, enabling type-safe Criteria API queries.
@@ -74,6 +77,7 @@ plugins {
 }
 ----
 
+[#jpa-static-metamodel-generation-2]
 == JPA Static Metamodel Generation
 
 The `io.github.jpersist.hibernate-jpamodelgen` sub-plugin automatically:
@@ -86,6 +90,7 @@ No additional configuration is needed — the annotation processor version is re
 
 For each JPA entity class annotated with `@Entity`, `@Embeddable`, or `@MappedSuperclass`, Hibernate generates a corresponding static metamodel class (e.g. `Person_`) that provides compile-time-safe attribute references for Criteria API queries.
 
+[#dsl-extension-hibernate]
 == DSL Extension: `hibernate`
 
 The `io.github.jpersist.hibernate-enhancement` sub-plugin registers a `hibernate` DSL extension block at the project level.
@@ -117,6 +122,7 @@ hibernate {
 }
 ----
 
+[#hibernateextension-properties]
 === `HibernateExtension` Properties
 
 [cols="2,2,2,4"]
@@ -129,6 +135,7 @@ hibernate {
 | Nested configuration block controlling Hibernate compile-time bytecode enhancement options.
 |===
 
+[#enhancementextension-properties]
 === `EnhancementExtension` Properties
 
 [cols="2,2,2,4"]
@@ -184,6 +191,7 @@ hibernate {
 }
 ----
 
+[#tasks-2]
 == Tasks
 
 The plugin registers the following task per Java source set.
@@ -191,8 +199,9 @@ For the `main` source set the task name is `hibernateEnhanceClasses`; for other 
 
 NOTE: _(Since 1.7.0)_ The enhancement task is only registered for source sets whose `java.srcDirs` contain at least one directory that physically exists on disk. Source sets with no on-disk Java source directories are silently skipped, preventing clean IDE workspaces from being cluttered with empty tasks (e.g. `hibernateEnhanceTestClasses`).
 
-In addition, all tasks inherited from the core `io.github.jpersist.jpa` plugin (`processPersistenceDescriptor`, `validatePersistenceSchema`, `generateJPAGraalVMMetadata`, `lintNamedQueries`) are also available. See <<jakarta-plugin.adoc#,Jakarta Persistence Plugin>> for their documentation.
+In addition, all tasks inherited from the core `io.github.jpersist.jpa` plugin (`processPersistenceDescriptor`, `validatePersistenceSchema`, `generateJPAGraalVMMetadata`, `lintNamedQueries`) are also available. See xref:jakarta-plugin.adoc#jakarta-persistence-plugin[Jakarta Persistence Plugin] for their documentation.
 
+[#hibernateenhanceclasses]
 === `hibernateEnhanceClasses`
 
 **Group:** `build` +

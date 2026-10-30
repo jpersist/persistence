@@ -1,10 +1,12 @@
+[#jakarta-persistence-plugin]
 = Jakarta Persistence Plugin
 
 Plugin ID: `io.github.jpersist.jpa`
 
-The `io.github.jpersist.jpa` plugin is the core implementation of the JPersist plugin suite and facilitates the integration of provider platform plugins such as EclipseLink and Hibernate.
+The `io.github.jpersist.jpa` plugin is the core implementation of the JPersist plugin suite and facilitates the integration of provider platform plugins such as EclipseLink, Hibernate, and OpenJPA.
 It automatically applies the `java` plugin, registers a `persistence` DSL extension, and creates per-source-set tasks for descriptor generation, schema validation, GraalVM native image metadata generation, and static compile-time named query linting.
 
+[#applying-the-plugin-1]
 == Applying the Plugin
 
 [source,groovy,indent=0,role="primary",subs="attributes+"]
@@ -23,6 +25,7 @@ plugins {
 }
 ----
 
+[#the-jpa-configuration]
 == The `jpa` Configuration
 
 The plugin registers a `jpa` dependency configuration that propagates platform/BOM version constraints into all standard Java configurations (`implementation`, `compileOnly`, `annotationProcessor`, `runtimeOnly`).
@@ -48,6 +51,7 @@ dependencies {
 }
 ----
 
+[#the-modelgenprocessor-configuration]
 === The `modelgenProcessor` Configuration
 
 The plugin also registers a global, non-resolvable `modelgenProcessor` configuration container that centralizes modelgen annotation processor dependencies. _(Since 1.7.0)_
@@ -71,6 +75,7 @@ dependencies {
 }
 ----
 
+[#dsl-extension-persistence]
 == DSL Extension: `persistence`
 
 The `persistence` block is a `NamedDomainObjectContainer` scoped per Java source set.
@@ -132,6 +137,7 @@ persistence {
 }
 ----
 
+[#persistenceextension-properties]
 === `PersistenceExtension` Properties
 
 [cols="2,2,2,4"]
@@ -164,6 +170,7 @@ persistence {
 | Key-value pairs passed to the XML `Transformer` that formats the output `persistence.xml`.
 |===
 
+[#default-output-properties]
 ==== Default Output Properties
 
 * `indent` = `yes`
@@ -197,6 +204,7 @@ persistence {
 }
 ----
 
+[#persistenceunitextension-properties]
 === `PersistenceUnitExtension` Properties
 
 [cols="2,2,2,4"]
@@ -318,6 +326,7 @@ persistence {
 }
 ----
 
+[#validationextension-properties]
 === `ValidationExtension` Properties
 
 [cols="2,2,3,4"]
@@ -380,6 +389,7 @@ persistence {
 }
 ----
 
+[#multi-tenant-validation]
 ==== Multi-Tenant Validation
 
 _Since 1.7.0_
@@ -434,6 +444,7 @@ persistence {
 }
 ----
 
+[#tenantvalidationextension-properties]
 ==== `TenantValidationExtension` Properties
 
 _Since 1.7.0_
@@ -471,6 +482,7 @@ All properties default to an in-memory H2 database whose name is derived from th
 | The database password for this tenant.
 |===
 
+[#linterextension-properties]
 === `LinterExtension` Properties
 
 _Since 1.6.0_
@@ -523,6 +535,7 @@ persistence {
 }
 ----
 
+[#legacy-jpa-namespace-support]
 == Legacy JPA Namespace Support
 
 _Since 1.5.4_
@@ -577,12 +590,14 @@ persistence {
 
 TIP: No additional configuration is needed — the plugin detects the legacy version and adjusts the bytecode scanning annotations automatically.
 
+[#dependency-routing-with-jarfile]
 == Dependency Routing with `jarFile`
 
 For multi-module projects, the plugin registers a `jarFile` dependency configuration per source set that allows you to declare module dependencies injected as `<jar-file>` entries in the generated `persistence.xml`.
 
 The `jarFile` configuration extends `implementation` (and `api` when the `java-library` plugin is present).
 
+[#using-the-location-attribute]
 === Using the Location Attribute
 
 [source,groovy,indent=0,role="primary"]
@@ -609,6 +624,7 @@ dependencies {
 }
 ----
 
+[#using-dsl-jar-file-mappings]
 === Using DSL Jar File Mappings
 
 You can also declare custom jar-file path mappings directly inside a persistence unit:
@@ -645,12 +661,14 @@ persistence {
 }
 ----
 
+[#tasks-1]
 == Tasks
 
 The plugin registers the following tasks per Java source set. For the `main` source set the task names are as shown below; for other source sets (e.g. `test`) the source set name is capitalized and inserted (e.g. `processTestPersistenceDescriptor`).
 
 NOTE: _(Since 1.7.0)_ Per-source-set tasks and configurations are only registered when the source set's `java.srcDirs` or `resources.srcDirs` contain at least one directory that physically exists on disk. Source sets with no on-disk directories are silently skipped, preventing clean IDE workspaces from being cluttered with empty tasks (e.g. `lintTestNamedQueries`).
 
+[#processpersistencedescriptor]
 === `processPersistenceDescriptor`
 
 **Group:** `build` +
@@ -705,6 +723,7 @@ The task automatically discovers JPA entity classes annotated with `@Entity`, `@
 
 TIP: The task is automatically skipped when no persistence units are enabled.
 
+[#validatepersistenceschema]
 === `validatePersistenceSchema`
 
 **Group:** `verification` +
@@ -732,7 +751,7 @@ Failures are collected across the entire tenant × unit matrix and reported in a
 | `validation`
 | `Property<ValidationExtension>`
 | _from extension_
-| Nested database connection configuration (URL, driver, user, password) and optional multi-tenant `tenants` container.
+| Nested database connection configuration (URL, driver, user, password,) and optional multi-tenant `tenants` container.
 
 | `tenantProfiles`
 | `ListProperty<String>`
@@ -744,10 +763,20 @@ Failures are collected across the entire tenant × unit matrix and reported in a
 | _auto-discovered_
 | Fully qualified entity class names discovered by the ASM bytecode scanner, forwarded to the SPI-loaded `SchemaValidator` for precise mapping resolution. _(Since 1.7.0)_
 
+| `sourceFiles`
+| `ConfigurableFileCollection`
+| _from source set_
+| The Java source files tracked for incremental change detection. Modified sources are mapped to their compiled class counterparts for delta analysis.
+
 | `resourcesDir`
 | `DirectoryProperty`
 | _from `processResources`_
 | The resources directory containing `META-INF/persistence.xml`.
+
+| `validationReportFile`
+| `RegularFileProperty`
+| `build/reports/persistence/validatePersistenceSchema-report.json`
+| The output JSON file containing execution metrics (incremental flag, processed entities, skipped entities) from the validation pass. The report is written under the consolidated `reports/persistence/` directory.
 
 | `classpath`
 | `ConfigurableFileCollection`
@@ -759,6 +788,7 @@ NOTE: The H2 JDBC driver (`com.h2database:h2:2.2.224`) is transparently injected
 
 TIP: The task is automatically skipped when no active persistence unit names are present.
 
+[#generatejpagraalvmmetadata]
 === `generateJPAGraalVMMetadata`
 
 **Group:** `build` +
@@ -772,19 +802,30 @@ The generated JSON follows the GraalVM reachability metadata format and register
 |===
 | Property | Type | Default | Description
 
+| `sourceFiles`
+| `ConfigurableFileCollection`
+| _from source set_
+| The Java source files tracked for incremental change detection. Monitored incrementally to detect additions, modifications, and removals without relying on compiler output timestamps.
+
 | `includedClasses`
 | `ListProperty<String>`
 | _auto-discovered_
 | Fully qualified class names of discovered JPA entity classes.
 
-| `outputFile`
+| `reflectConfigFile`
 | `RegularFileProperty`
 | `build/generated/graalvm-resources/main/META-INF/native-image/<group>/<name>/reflect-config.json`
-| The location where the `reflect-config.json` is written. The path follows GraalVM standard conventions using the project group and name.
+| _(Since 1.8.0)_ The primary output location where the `reflect-config.json` is written. The path follows GraalVM standard conventions using the project group and name.
+
+| `outputFile`
+| `RegularFileProperty`
+| _convention from `reflectConfigFile`_
+| _(Deprecated since 1.8.0)_ Legacy alias for `reflectConfigFile`. Retained for backward compatibility; delegates to `reflectConfigFile` via Gradle conventions. Use `reflectConfigFile` instead — this property will be removed in a future release.
 |===
 
 The generated resource directory is automatically added to the source set resources, ensuring the JSON file is indexed by IDEs and packaged into the final JAR.
 
+[#lintnamedqueries]
 === `lintNamedQueries`
 
 _Since 1.6.0_
@@ -832,8 +873,29 @@ Processing runs inside an isolated Gradle Worker classloader.
 
 | `lintReportFile`
 | `RegularFileProperty`
-| `build/reports/lint-named-queries/<sourceSet>.json`
-| The output JSON file containing execution metrics (processed files, skipped files, error counts) from the lint analysis pass.
+| `build/reports/persistence/lintNamedQueries-report.json`
+| The output JSON file containing execution metrics (processed files, skipped files, error counts) from the lint analysis pass. The report is written under the consolidated `reports/persistence/` directory.
 |===
 
 TIP: The task is automatically skipped when the linter is disabled via `persistence.main.linter.enabled = false`.
+
+[#consolidated-reporting-architecture]
+== Consolidated Reporting Architecture
+
+_Since 1.8.0_
+
+All verification and analysis tasks write their output reports under a single `${buildDir}/reports/persistence/` directory tree.
+This consolidated layout replaces the previous scattered report locations and makes it easier to locate, aggregate, and publish build reports.
+
+[cols="2,4"]
+|===
+| Task | Report Path
+
+| `validatePersistenceSchema`
+| `build/reports/persistence/validatePersistenceSchema-report.json`
+
+| `lintNamedQueries`
+| `build/reports/persistence/lintNamedQueries-report.json`
+|===
+
+Provider-specific tasks (EclipseLink, Hibernate, OpenJPA) that produce build artifacts continue to write to their own conventional output directories, while the core JPA verification reports are unified here.

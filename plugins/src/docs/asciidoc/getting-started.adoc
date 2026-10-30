@@ -1,15 +1,18 @@
+[#getting-started]
 = Getting Started
 
 This section covers the requirements and basic setup to start using JPersist plugins in your Gradle project.
 
+[#requirements]
 == Requirements
 
 * **Gradle:** 7.4+ or 8.x+ / 9.x+
 * **Java:** JDK 17 or higher (required by modern Jakarta specifications)
 
+[#choosing-a-plugin]
 == Choosing a Plugin
 
-JPersist provides three main plugins depending on your JPA provider:
+JPersist provides four main plugins depending on your JPA provider:
 
 [cols="1,2,1"]
 |===
@@ -26,12 +29,18 @@ JPersist provides three main plugins depending on your JPA provider:
 | `io.github.jpersist.eclipse-persistence`
 | Descriptor generation, metamodel generation, and static weaving
 | EclipseLink
+
+| `io.github.jpersist.openjpa-persistence`
+| Descriptor generation, metamodel generation, and bytecode enhancement
+| OpenJPA
 |===
 
-TIP: The provider-specific plugins (`hibernate-persistence` and `eclipse-persistence`) automatically apply the `io.github.jpersist.jpa` plugin, so you only need to apply one.
+TIP: The provider-specific plugins (`hibernate-persistence`, `eclipse-persistence`, and `openjpa-persistence`) automatically apply the `io.github.jpersist.jpa` plugin, so you only need to apply one.
 
+[#applying-the-plugin]
 == Applying the Plugin
 
+[#hibernate-example-1]
 === Hibernate example
 
 [source,groovy,indent=0,role="primary",subs="attributes+"]
@@ -50,6 +59,7 @@ plugins {
 }
 ----
 
+[#eclipselink-example-1]
 === EclipseLink example
 
 [source,groovy,indent=0,role="primary",subs="attributes+"]
@@ -68,10 +78,31 @@ plugins {
 }
 ----
 
+[#openjpa-example-1]
+=== OpenJPA example
+
+[source,groovy,indent=0,role="primary",subs="attributes+"]
+.Groovy
+----
+plugins {
+    id 'io.github.jpersist.openjpa-persistence' version '{project-version}'
+}
+----
+
+[source,kotlin,indent=0,role="secondary",subs="attributes+"]
+.Kotlin
+----
+plugins {
+    id("io.github.jpersist.openjpa-persistence") version "{project-version}"
+}
+----
+
+[#adding-dependencies]
 == Adding Dependencies
 
 Use the `jpa` configuration to declare your JPA provider platform BOM. This centralizes version management across all compilation scopes.
 
+[#hibernate-example-2]
 === Hibernate example
 
 [source,groovy,indent=0,role="primary"]
@@ -94,6 +125,7 @@ dependencies {
 }
 ----
 
+[#eclipselink-example-2]
 === EclipseLink example
 
 [source,groovy,indent=0,role="primary"]
@@ -115,6 +147,29 @@ dependencies {
 
     compileOnly("jakarta.persistence:jakarta.persistence-api")
     implementation("org.eclipse.persistence:org.eclipse.persistence.core")
+}
+----
+
+[#openjpa-example-2]
+=== OpenJPA example
+
+[source,groovy,indent=0,role="primary"]
+.Groovy
+----
+dependencies {
+    jpa 'org.apache.openjpa:openjpa:4.0.0'
+
+    compileOnly 'jakarta.persistence:jakarta.persistence-api:3.1.0'
+}
+----
+
+[source,kotlin,indent=0,role="secondary"]
+.Kotlin
+----
+dependencies {
+    jpa("org.apache.openjpa:openjpa:4.0.0")
+
+    compileOnly("jakarta.persistence:jakarta.persistence-api:3.1.0")
 }
 ----
 

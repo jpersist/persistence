@@ -7,8 +7,8 @@
     <em>descriptor generation &amp; merging</em>, <em>schema validation</em>,
     <em>static metamodel generation</em>, <em>bytecode enhancement/weaving</em>,
     <em>GraalVM native image metadata generation</em>, and <em>static compile-time
-    named query linting</em> &mdash; for both <strong>EclipseLink</strong> and
-    <strong>Hibernate</strong>.
+    named query linting</em> &mdash; for <strong>EclipseLink</strong>,
+    <strong>Hibernate</strong>, and <strong>OpenJPA</strong>.
 </p>
 
 <h2>Available Plugins</h2>
@@ -20,12 +20,12 @@
         <td><code>io.github.jpersist.jpa</code></td>
         <td>Manages Jakarta Persistence (JPA) descriptor generation and merging,
             schema validation, GraalVM native image metadata generation, and
-            static compile-time named query linting. Creates the {@code jpa}
+            static compile-time named query linting. Creates the <code>jpa</code>
             dependency configuration for platform/BOM version alignment and registers the
-            {@code persistence} extension DSL with {@code processPersistenceDescriptor},
-            {@code validatePersistenceSchema}, {@code generateJPAGraalVMMetadata}, and
-            {@code lintNamedQueries} tasks.
-            See {@link persist.jakarta.gradle.plugin.JakartaPersistencePlugin}.</td>
+            <code>persistence</code> extension DSL with <code>processPersistenceDescriptor</code>,
+            <code>validatePersistenceSchema</code>, <code>generateJPAGraalVMMetadata</code>, and
+            <code>lintNamedQueries</code> tasks.
+            See <a href="persist/jakarta/gradle/plugin/JakartaPersistencePlugin.html">JakartaPersistencePlugin</a>.</td>
     </tr>
 </table>
 
@@ -35,17 +35,17 @@
     <tr>
         <td><code>io.github.jpersist.eclipse-jpa-modelgen</code></td>
         <td>Generates JPA static canonical metamodel classes using the EclipseLink annotation processor.
-            See {@link persist.eclipse.gradle.plugin.EclipseJpaModelgenPlugin}.</td>
+            See <a href="persist/eclipse/gradle/plugin/EclipseJpaModelgenPlugin.html">EclipseJpaModelgenPlugin</a>.</td>
     </tr>
     <tr>
         <td><code>io.github.jpersist.eclipse-static-weave</code></td>
         <td>Performs compile-time bytecode weaving via the EclipseLink StaticWeave tool.
-            See {@link persist.eclipse.gradle.plugin.EclipseStaticWeavePlugin}.</td>
+            See <a href="persist/eclipse/gradle/plugin/EclipseStaticWeavePlugin.html">EclipseStaticWeavePlugin</a>.</td>
     </tr>
     <tr>
         <td><code>io.github.jpersist.eclipse-persistence</code></td>
         <td>Aggregate plugin applying both EclipseLink modelgen and static weave plugins.
-            See {@link persist.eclipse.gradle.plugin.EclipsePersistencePlugin}.</td>
+            See <a href="persist/eclipse/gradle/plugin/EclipsePersistencePlugin.html">EclipsePersistencePlugin</a>.</td>
     </tr>
 </table>
 
@@ -55,157 +55,80 @@
     <tr>
         <td><code>io.github.jpersist.hibernate-jpamodelgen</code></td>
         <td>Registers the Hibernate JPA annotation processor for static metamodel generation.
-            See {@link persist.hibernate.gradle.plugin.HibernateJpamodelgenPlugin}.</td>
+            See <a href="persist/hibernate/gradle/plugin/HibernateJpamodelgenPlugin.html">HibernateJpamodelgenPlugin</a>.</td>
     </tr>
     <tr>
         <td><code>io.github.jpersist.hibernate-enhancement</code></td>
         <td>Performs compile-time bytecode enhancement using Hibernate's Enhancer engine.
-            See {@link persist.hibernate.gradle.plugin.HibernateEnhancementPlugin}.</td>
+            See <a href="persist/hibernate/gradle/plugin/HibernateEnhancementPlugin.html">HibernateEnhancementPlugin</a>.</td>
     </tr>
     <tr>
         <td><code>io.github.jpersist.hibernate-persistence</code></td>
         <td>Aggregate plugin applying both Hibernate modelgen and enhancement plugins.
-            See {@link persist.hibernate.gradle.plugin.HibernatePersistencePlugin}.</td>
+            See <a href="persist/hibernate/gradle/plugin/HibernatePersistencePlugin.html">HibernatePersistencePlugin</a>.</td>
     </tr>
 </table>
 
-<h2>What's New in v1.7.0</h2>
-<p>
-    Version 1.7.0 introduces <strong>multi-tenant schema validation</strong> to the
-    Jakarta Persistence plugin (<code>io.github.jpersist.jpa</code>):
-</p>
-<ul>
-    <li><strong>Multi-Tenant Validation Matrix</strong> &mdash; The
-        {@link persist.jakarta.gradle.task.ValidatePersistenceSchema validatePersistenceSchema}
-        task now iterates over a named set of tenant database profiles, validating
-        every active persistence unit against each tenant independently. Failures
-        are collected across the entire matrix and reported in a single summary.
-    </li>
-    <li><strong>Tenant DSL Extension</strong> &mdash; The new
-        {@link persist.jakarta.gradle.extension.TenantValidationExtension} class
-        represents a single tenant profile with its own JDBC connection properties.
-        Profiles are declared inside the {@code validation} block via a new
-        {@code tenants} named container:
-        <pre>
-persistence {
-    main {
-        validation {
-            tenants {
-                primary {
-                    url = 'jdbc:h2:mem:primary_db;DB_CLOSE_DELAY=-1'
-                }
-                secondary {
-                    url = 'jdbc:h2:mem:secondary_db;DB_CLOSE_DELAY=-1'
-                }
-            }
-        }
-    }
-}</pre>
-        When no tenants are configured, the base validation properties are used as
-        a single <code>default</code> profile for backward compatibility.
-    </li>
-    <li><strong>SPI-based Schema Validator</strong> &mdash; Schema validation is now
-        delegated to an SPI-loaded
-        {@link persist.lint.api.spi.SchemaValidator} obtained via
-        {@link persist.lint.api.spi.SchemaValidatorFactory}, replacing the
-        previous direct use of the JPA {@code Persistence} bootstrap API.
-    </li>
-    <li><strong>Entity Class Discovery</strong> &mdash; The task now receives a list
-        of entity class names discovered by the ASM bytecode scanner, forwarding
-        them to the SPI validator for precise mapping resolution.
-    </li>
-    <li><strong>ValidationExtension Refactoring</strong> &mdash;
-        {@link persist.jakarta.gradle.extension.ValidationExtension} has been
-        converted from an interface to an abstract class to support constructor
-        injection and the managed {@code tenants} container.
-    </li>
-</ul>
+<h3>OpenJPA</h3>
+<table border="1" cellpadding="4" cellspacing="0">
+    <tr><th>Plugin ID</th><th>Description</th></tr>
+    <tr>
+        <td><code>io.github.jpersist.openjpa-metamodelgen</code></td>
+        <td>Generates JPA static canonical metamodel classes using the OpenJPA annotation processor.
+            See <a href="persist/openjpa/gradle/plugin/OpenJPAMetaModelGenerationPlugin.html">OpenJPAMetaModelGenerationPlugin</a>.</td>
+    </tr>
+    <tr>
+        <td><code>io.github.jpersist.openjpa-enhancement</code></td>
+        <td>Performs compile-time PCEnhancer bytecode enhancement for OpenJPA entities in an isolated JVM process.
+            See <a href="persist/openjpa/gradle/plugin/OpenJPAEnhancementPlugin.html">OpenJPAEnhancementPlugin</a>.</td>
+    </tr>
+    <tr>
+        <td><code>io.github.jpersist.openjpa-persistence</code></td>
+        <td>Aggregate plugin applying both OpenJPA metamodel generation and bytecode enhancement plugins.
+            See <a href="persist/openjpa/gradle/plugin/OpenJPAPersistencePlugin.html">OpenJPAPersistencePlugin</a>.</td>
+    </tr>
+</table>
 
-<h2>What's New in v1.6.0</h2>
+<h2>What's New in v1.8.0</h2>
 <p>
-    Version 1.6.0 introduces static compile-time named query linting to the
-    Jakarta Persistence plugin (<code>io.github.jpersist.jpa</code>):
+    Version 1.8.0 introduces <strong>Apache OpenJPA provider support</strong> and
+    <strong>consolidated build reporting</strong>:
 </p>
 <ul>
-    <li><strong>Lint Named Queries</strong> &mdash; A new
-        {@link persist.jakarta.gradle.task.LintNamedQueries lintNamedQueries}
-        task performs a static, compile-time AST verification pass over all
-        {@code @NamedQuery} and {@code @NamedStoredProcedureQuery} definitions
-        discovered in the compiled source set output. The task uses ASM bytecode
-        scanning to locate query annotations, then validates JPQL/HQL syntax and
-        parameter naming conventions using an ANTLR4-based parser loaded via SPI.
-        Processing runs inside an isolated Gradle Worker classloader.
+    <li><strong>OpenJPA Provider Support</strong> &mdash; A new
+        <a href="persist/openjpa/gradle/plugin/OpenJPAPersistencePlugin.html">openjpa-persistence</a>
+        aggregate plugin brings first-class Apache OpenJPA support to jPersist.
+        It applies the core JPA plugin together with two new OpenJPA-specific plugins:
+        <a href="persist/openjpa/gradle/plugin/OpenJPAMetaModelGenerationPlugin.html">openjpa-metamodelgen</a>
+        for static canonical metamodel generation, and
+        <a href="persist/openjpa/gradle/plugin/OpenJPAEnhancementPlugin.html">openjpa-enhancement</a>
+        for compile-time PCEnhancer bytecode enhancement executed in an isolated JVM process.
     </li>
-    <li><strong>Linter DSL Extension</strong> &mdash; The new
-        {@link persist.jakarta.gradle.extension.LinterExtension} interface provides
-        configuration options ({@code enabled}, {@code failOnError},
-        {@code ignoreWarnings}) embedded inside
-        {@link persist.jakarta.gradle.extension.PersistenceExtension}. It is accessible
-        via the {@link persist.jakarta.gradle.extension.PersistenceExtension#linter(org.gradle.api.Action) linter(Action)}
-        DSL method:
-        <pre>
-persistence {
-    main {
-        linter {
-            enabled = true
-            failOnError = true
-            ignoreWarnings = false
-        }
-    }
-}</pre>
+    <li><strong>OpenJPA DSL Extension</strong> &mdash; The new
+        <a href="persist/openjpa/gradle/extension/OpenJPAExtension.html">OpenJPAExtension</a> provides
+        per-source-set configuration for OpenJPA, with nested
+        <a href="persist/openjpa/gradle/extension/MetaModelExtension.html">metaModel</a> and
+        <a href="persist/openjpa/gradle/extension/EnhancementExtension.html">enhancement</a>
+        blocks. An <code>enhancement</code> dependency configuration is created for
+        declaring PCEnhancer classpath dependencies.
     </li>
-</ul>
-
-<h2>What's New in v1.5.0</h2>
-<p>
-    Version 1.5.0 introduces three major features to the Jakarta Persistence plugin
-    (<code>io.github.jpersist.jpa</code>):
-</p>
-<ul>
-    <li><strong>JPA Schema Validation</strong> &mdash; A new
-        {@link persist.jakarta.gradle.task.ValidatePersistenceSchema validatePersistenceSchema}
-        task boots an isolated JVM worker process to validate that JPA entity mappings
-        match the database schema. The task uses Gradle's
-        {@link org.gradle.workers.WorkerExecutor} with classloader isolation to avoid
-        classpath conflicts with the Gradle daemon. Database connection properties are
-        configurable via the new {@link persist.jakarta.gradle.extension.ValidationExtension validation}
-        DSL block inside each source set's {@code persistence} extension:
-        <pre>
-persistence {
-    main {
-        validation {
-            url = 'jdbc:h2:mem:my_validation_db;DB_CLOSE_DELAY=-1'
-            driver = 'org.h2.Driver'
-            user = 'sa'
-            password = ''
-        }
-    }
-}</pre>
-        When no properties are configured, the task defaults to an in-memory H2 database.
-        See {@link persist.jakarta.gradle.worker.SchemaValidationWorker} for implementation
-        details.
+    <li><strong>Consolidated Reporting Architecture</strong> &mdash; All build-time
+        report outputs (persistence descriptors, GraalVM metadata, lint reports) are
+        now unified under <code>${buildDir}/reports/persistence/</code>. The
+        <code>reflectConfigFile</code> property replaces the deprecated <code>outputFile</code>
+        on the GraalVM metadata generation task.
     </li>
-    <li><strong>GraalVM Native Image Support</strong> &mdash; A new
-        {@link persist.jakarta.gradle.task.GenerateJPAGraalVMMetadata generateJPAGraalVMMetadata}
-        task produces a {@code reflect-config.json} file containing all discovered JPA
-        entity classes, enabling ahead-of-time (AOT) reflection registration for GraalVM
-        native image compilation.
-    </li>
-    <li><strong>Validation DSL Extension</strong> &mdash; The
-        {@link persist.jakarta.gradle.extension.ValidationExtension} class provides
-        optional JDBC connection properties ({@code url}, {@code driver}, {@code user},
-        {@code password}) and an optional multi-tenant {@code tenants} container
-        embedded inside
-        {@link persist.jakarta.gradle.extension.PersistenceExtension}. It is accessible
-        via the {@link persist.jakarta.gradle.extension.PersistenceExtension#validation(org.gradle.api.Action) validation(Action)}
-        DSL method.
+    <li><strong>GraalVM Metadata Property Rename</strong> &mdash; The
+        <a href="persist/jakarta/gradle/task/GenerateJPAGraalVMMetadata.html">generateJPAGraalVMMetadata</a>
+        task introduces <code>reflectConfigFile</code> as the primary output property.
+        The former <code>outputFile</code> property is deprecated since v1.8.0.
     </li>
 </ul>
 
 <h2>Quick Start</h2>
 <pre>
 plugins {
-    id 'io.github.jpersist.hibernate-persistence'  // or 'io.github.jpersist.eclipse-persistence'
+    id 'io.github.jpersist.hibernate-persistence'  // or 'eclipse-persistence' / 'openjpa-persistence'
 }
 
 dependencies {
@@ -226,22 +149,32 @@ dependencies {
         for every source set (<code>main</code>, <code>test</code>, custom variants).</li>
     <li><strong>Eclipse IDE integration</strong> &mdash; Plugins hook into Eclipse Buildship to register
         generated source directories in the IDE classpath.</li>
+    <li><strong>Consolidated reporting</strong> &mdash; All build-time reports (descriptors, GraalVM
+        metadata, lint reports) are output under a unified <code>reports/persistence/</code>
+        directory tree.</li>
+    <li><strong>Provider-agnostic core</strong> &mdash; The <code>io.github.jpersist.jpa</code>
+        core plugin is shared across EclipseLink, Hibernate, and OpenJPA aggregator
+        plugins, ensuring consistent descriptor generation and validation behavior
+        regardless of the chosen JPA provider.</li>
 </ul>
 
 <h2>Package Organization</h2>
 <ul>
-    <li>{@link persist.jakarta.gradle.plugin} &mdash; Jakarta Persistence plugin for JPA descriptor generation and version management.</li>
-    <li>{@link persist.jakarta.gradle.extension} &mdash; Jakarta Persistence DSL extension configuration model, including XML formatting options.</li>
-    <li>{@link persist.jakarta.gradle.task} &mdash; Jakarta Persistence build-time task implementations, including schema validation, GraalVM metadata generation, and named query linting.</li>
-    <li>{@link persist.jakarta.gradle.worker} &mdash; Gradle Worker API implementations for isolated JPA schema validation and named query analysis.</li>
-    <li>{@link persist.jakarta.gradle.task.delegate} &mdash; Version-specific strategy delegates for JPA persistence descriptor processing.</li>
-    <li>{@link persist.jakarta.gradle.task.registry} &mdash; Registry for mapping JPA specification versions to descriptor processing strategies.</li>
-    <li>{@link persist.eclipse.gradle.plugin} &mdash; EclipseLink plugin implementations.</li>
-    <li>{@link persist.eclipse.gradle.extension} &mdash; EclipseLink DSL extension configuration model.</li>
-    <li>{@link persist.eclipse.gradle.task} &mdash; EclipseLink build-time task implementations.</li>
-    <li>{@link persist.hibernate.gradle.plugin} &mdash; Hibernate plugin implementations.</li>
-    <li>{@link persist.hibernate.gradle.extension} &mdash; Hibernate DSL extension configuration model.</li>
-    <li>{@link persist.hibernate.gradle.task} &mdash; Hibernate build-time task implementations.</li>
+    <li><a href="persist/jakarta/gradle/plugin/package-summary.html">persist.jakarta.gradle.plugin</a> &mdash; Jakarta Persistence plugin for JPA descriptor generation and version management.</li>
+    <li><a href="persist/jakarta/gradle/extension/package-summary.html">persist.jakarta.gradle.extension</a> &mdash; Jakarta Persistence DSL extension configuration model, including XML formatting options.</li>
+    <li><a href="persist/jakarta/gradle/task/package-summary.html">persist.jakarta.gradle.task</a> &mdash; Jakarta Persistence build-time task implementations, including schema validation, GraalVM metadata generation, and named query linting.</li>
+    <li><a href="persist/jakarta/gradle/worker/package-summary.html">persist.jakarta.gradle.worker</a> &mdash; Gradle Worker API implementations for isolated JPA schema validation and named query analysis.</li>
+    <li><a href="persist/jakarta/gradle/task/delegate/package-summary.html">persist.jakarta.gradle.task.delegate</a> &mdash; Version-specific strategy delegates for JPA persistence descriptor processing.</li>
+    <li><a href="persist/jakarta/gradle/task/registry/package-summary.html">persist.jakarta.gradle.task.registry</a> &mdash; Registry for mapping JPA specification versions to descriptor processing strategies.</li>
+    <li><a href="persist/eclipse/gradle/plugin/package-summary.html">persist.eclipse.gradle.plugin</a> &mdash; EclipseLink plugin implementations.</li>
+    <li><a href="persist/eclipse/gradle/extension/package-summary.html">persist.eclipse.gradle.extension</a> &mdash; EclipseLink DSL extension configuration model.</li>
+    <li><a href="persist/eclipse/gradle/task/package-summary.html">persist.eclipse.gradle.task</a> &mdash; EclipseLink build-time task implementations.</li>
+    <li><a href="persist/hibernate/gradle/plugin/package-summary.html">persist.hibernate.gradle.plugin</a> &mdash; Hibernate plugin implementations.</li>
+    <li><a href="persist/hibernate/gradle/extension/package-summary.html">persist.hibernate.gradle.extension</a> &mdash; Hibernate DSL extension configuration model.</li>
+    <li><a href="persist/hibernate/gradle/task/package-summary.html">persist.hibernate.gradle.task</a> &mdash; Hibernate build-time task implementations.</li>
+    <li><a href="persist/openjpa/gradle/plugin/package-summary.html">persist.openjpa.gradle.plugin</a> &mdash; OpenJPA plugin implementations, including the aggregate persistence, metamodel generation, and bytecode enhancement plugins.</li>
+    <li><a href="persist/openjpa/gradle/extension/package-summary.html">persist.openjpa.gradle.extension</a> &mdash; OpenJPA DSL extension configuration model with MetaModel and Enhancement nested blocks.</li>
+    <li><a href="persist/openjpa/gradle/task/package-summary.html">persist.openjpa.gradle.task</a> &mdash; OpenJPA build-time task implementations, including PCEnhancer bytecode enhancement.</li>
 </ul>
 
 <p>

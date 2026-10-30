@@ -24,6 +24,17 @@ cd examples/hibernate-example
 gradle build
 ```
 
+## OpenJPA Example
+
+The [`openjpa-example`](openjpa-example) project demonstrates how to use the `io.github.jpersist.openjpa-persistence` plugin. It applies OpenJPA bytecode enhancement (PCEnhancer) and JPA metamodel generation to a simple `Person` entity.
+
+### Usage
+
+```bash
+cd examples/openjpa-example
+gradle build
+```
+
 ## Jakarta Persistence Example
 
 The [`jakarta-persistence-example`](jakarta-persistence-example) project demonstrates how to use the `io.github.jpersist.jpa` plugin. It processes a `persistence.xml` descriptor by merging extension-defined overrides into a user-provided template, or generates one from scratch using the `persistence` DSL.

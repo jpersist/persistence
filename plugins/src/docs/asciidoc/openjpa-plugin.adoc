@@ -1,0 +1,329 @@
+[#openjpa-plugin]
+= OpenJPA Plugin
+
+Plugin ID: `io.github.jpersist.openjpa-persistence`
+
+_Since 1.8.0_
+
+The `io.github.jpersist.openjpa-persistence` plugin provides a complete Apache OpenJPA persistence pipeline out-of-the-box.
+It automatically applies the core `io.github.jpersist.jpa` plugin (see xref:jakarta-plugin.adoc#jakarta-persistence-plugin[Jakarta Persistence Plugin]), the OpenJPA static canonical metamodel generator, and compile-time bytecode enhancement (PCEnhancer) for OpenJPA-based projects.
+
+[#applying-the-plugin-4]
+== Applying the Plugin
+
+[source,groovy,indent=0,role="primary",subs="attributes+"]
+.Groovy
+----
+plugins {
+    id 'io.github.jpersist.openjpa-persistence' version '{project-version}'
+}
+
+dependencies {
+    jpa 'org.apache.openjpa:openjpa:4.0.0'
+
+    compileOnly 'jakarta.persistence:jakarta.persistence-api:3.1.0'
+}
+----
+
+[source,kotlin,indent=0,role="secondary",subs="attributes+"]
+.Kotlin
+----
+plugins {
+    id("io.github.jpersist.openjpa-persistence") version "{project-version}"
+}
+
+dependencies {
+    jpa("org.apache.openjpa:openjpa:4.0.0")
+
+    compileOnly("jakarta.persistence:jakarta.persistence-api:3.1.0")
+}
+----
+
+TIP: The `jpa` configuration is provided by the core Jakarta Persistence plugin (applied transitively).
+Use it to declare an OpenJPA platform BOM so that all OpenJPA module versions are aligned automatically.
+
+[#sub-plugins-4]
+== Sub-Plugins
+
+The aggregate `io.github.jpersist.openjpa-persistence` plugin is a convenience macro that applies the following three plugins:
+
+[cols="2,4"]
+|===
+| Plugin ID | Description
+
+| `io.github.jpersist.jpa`
+| The core Jakarta Persistence plugin — registers the `persistence` DSL extension, generates or merges `persistence.xml` descriptors, validates persistence schema, and generates GraalVM native image metadata. See xref:jakarta-plugin.adoc#jakarta-persistence-plugin[Jakarta Persistence Plugin].
+
+| `io.github.jpersist.openjpa-metamodelgen`
+| Configures the OpenJPA annotation processor for static canonical metamodel class generation (e.g., `Entity_`), enabling type-safe Criteria API queries.
+
+| `io.github.jpersist.openjpa-enhancement`
+| Registers the `openjpa` DSL extension and creates a bytecode enhancement task for every source set whose Java source directories physically exist on disk, forking the OpenJPA `PCEnhancer` tool in an isolated JVM process.
+|===
+
+You can apply sub-plugins individually if you only need a subset of the functionality:
+
+[source,groovy,indent=0,role="primary",subs="attributes+"]
+.Groovy
+----
+plugins {
+    id 'io.github.jpersist.openjpa-enhancement' version '{project-version}'
+}
+----
+
+[source,kotlin,indent=0,role="secondary",subs="attributes+"]
+.Kotlin
+----
+plugins {
+    id("io.github.jpersist.openjpa-enhancement") version "{project-version}"
+}
+----
+
+[#jpa-static-metamodel-generation-4]
+== JPA Static Metamodel Generation
+
+The `io.github.jpersist.openjpa-metamodelgen` sub-plugin automatically:
+
+* Applies the `java` plugin.
+* Adds `org.apache.openjpa:openjpa` to the unified global `modelgenProcessor` configuration container (registered by the `io.github.jpersist.jpa` plugin), but only if the user has not declared any custom dependencies in the `modelgenProcessor` configuration. This allows user overrides inside `modelgenProcessor` to propagate cleanly and safely skip the built-in default.
+* Registers the annotation processor generated source directory (`build/generated/sources/annotationProcessor/java/<sourceSet>`) into the source set's Java source directories for seamless IDE indexing.
+* Wires per-source-set compiler arguments derived from the `metamodel` DSL block (log level, source version, naming conventions, etc.) into each `compileJava` task.
+
+No additional configuration is needed — the annotation processor version is resolved from the OpenJPA platform BOM declared through the `jpa` configuration.
+
+For each JPA entity class annotated with `@Entity`, `@Embeddable`, or `@MappedSuperclass`, OpenJPA generates a corresponding static metamodel class (e.g. `Person_`) that provides compile-time-safe attribute references for Criteria API queries.
+
+[#dsl-extension-openjpa]
+== DSL Extension: `openjpa`
+
+The `io.github.jpersist.openjpa-enhancement` sub-plugin registers an `openjpa` DSL extension block at the project level.
+It is a `NamedDomainObjectContainer` scoped per Java source set, exposing nested `metamodel` and `enhancement` sub-blocks to control metamodel generation and compile-time bytecode transformation behavior.
+
+[source,groovy,indent=0,role="primary"]
+.Groovy
+----
+openjpa {
+    main {
+        metamodel {
+            enabled = true
+            logLevel = 'TRACE'
+        }
+
+        enhancement {
+            addDefaultConstructor = true
+            enforcePropertyRestrictions = false
+        }
+    }
+}
+----
+
+[source,kotlin,indent=0,role="secondary"]
+.Kotlin
+----
+openjpa {
+    create("main") {
+        metamodel {
+            enabled.set(true)
+            logLevel.set(MetaModelExtension.LogLevel.TRACE)
+        }
+
+        enhancement {
+            addDefaultConstructor.set(true)
+            enforcePropertyRestrictions.set(false)
+        }
+    }
+}
+----
+
+[#openjpaextension-properties]
+=== `OpenJPAExtension` Properties
+
+[cols="2,2,2,4"]
+|===
+| Property | Type | Default | Description
+
+| `metamodel`
+| `MetaModelExtension`
+| _see below_
+| Nested configuration block controlling OpenJPA static canonical metamodel generation options.
+
+| `enhancement`
+| `EnhancementExtension`
+| _see below_
+| Nested configuration block controlling OpenJPA compile-time bytecode enhancement options.
+|===
+
+[#metamodelextension-properties]
+=== `MetaModelExtension` Properties
+
+[cols="2,2,2,4"]
+|===
+| Property | Type | Default | Description
+
+| `enabled`
+| `Property<Boolean>`
+| `true`
+| Toggles whether the OpenJPA metamodel annotation processor is active. When set to `true`, the processor generates static canonical metamodel classes for all discovered JPA entity types during compilation.
+
+| `logLevel`
+| `Property<LogLevel>`
+| _none_
+| Configures the logging verbosity level used by the OpenJPA annotation processor. Accepts one of `TRACE`, `INFO`, `WARN`, or `ERROR`.
+
+| `source`
+| `Property<Integer>`
+| _none_
+| Configures the Java source compatibility version for the generated metamodel classes. Forwarded as the `-Aopenjpa.source` compiler argument.
+
+| `naming`
+| `Property<String>`
+| _none_
+| Configures a custom naming policy for the generated metamodel class identifiers. Forwarded as the `-Aopenjpa.naming` compiler argument.
+
+| `header`
+| `Property<String>`
+| _none_
+| Configures a custom header comment to prepend to the generated metamodel source files. Forwarded as the `-Aopenjpa.header` compiler argument.
+
+| `addGeneratedAnnotation`
+| `Property<String>`
+| _none_
+| Configures whether the `@Generated` annotation should be added to the generated metamodel classes. Forwarded as the `-Aopenjpa.addGeneratedAnnotation` compiler argument.
+|===
+
+[#enhancementextension-properties-2]
+=== `EnhancementExtension` Properties
+
+[cols="2,2,2,4"]
+|===
+| Property | Type | Default | Description
+
+| `addDefaultConstructor`
+| `Property<Boolean>`
+| `true`
+| Toggles whether the OpenJPA enhancer should add a default no-argument constructor to entity classes that lack one. When set to `true`, the enhancer automatically inserts a protected no-arg constructor, satisfying the JPA specification requirement.
+
+| `enforcePropertyRestrictions`
+| `Property<Boolean>`
+| `false`
+| Toggles whether the OpenJPA enhancer should enforce property access restrictions on persistent entity fields. When set to `true`, the enhancer validates that persistent properties conform to JavaBean access pattern conventions.
+|===
+
+Example enabling only default constructor injection:
+
+[source,groovy,indent=0,role="primary"]
+.Groovy
+----
+openjpa {
+    main {
+        enhancement {
+            addDefaultConstructor = true
+            enforcePropertyRestrictions = false
+        }
+    }
+}
+----
+
+[source,kotlin,indent=0,role="secondary"]
+.Kotlin
+----
+openjpa {
+    create("main") {
+        enhancement {
+            addDefaultConstructor.set(true)
+            enforcePropertyRestrictions.set(false)
+        }
+    }
+}
+----
+
+[#tasks-4]
+== Tasks
+
+The plugin registers the following task per Java source set.
+For the `main` source set the task name is `openjpaEnhanceClasses`; for other source sets (e.g. `test`) the source set name is used (e.g. `openjpaEnhanceTestClasses`).
+
+NOTE: The enhancement task is only registered for source sets whose `java.srcDirs` contain at least one directory that physically exists on disk. Source sets with no on-disk Java source directories are silently skipped.
+
+In addition, all tasks inherited from the core `io.github.jpersist.jpa` plugin (`processPersistenceDescriptor`, `validatePersistenceSchema`, `generateJPAGraalVMMetadata`, `lintNamedQueries`) are also available. See xref:jakarta-plugin.adoc#jakarta-persistence-plugin[Jakarta Persistence Plugin] for their documentation.
+
+[#openjpaenhanceclasses]
+=== `openjpaEnhanceClasses`
+
+**Group:** `build` +
+**Type:** `OpenJPAEnhanceTask`
+
+Performs compile-time bytecode enhancement on OpenJPA entity classes by forking the OpenJPA `PCEnhancer` tool in an isolated JVM process.
+The task reads raw compiled `.class` files from the Java compilation output directory, copies them into an isolated target directory, and runs the PCEnhancer in-place on the copies.
+
+The enhanced classes are automatically included in the final JAR with higher priority than the original unenhanced classes (using `DuplicatesStrategy.EXCLUDE`), so no additional packaging configuration is needed.
+
+[cols="2,2,2,4"]
+|===
+| Property | Type | Default | Description
+
+| `sourceClassesDir`
+| `DirectoryProperty`
+| _from `compileJava` output_
+| The input directory containing the raw, unenhanced compiled Java class files. Bound from the Java compilation task's destination directory.
+
+| `targetClassesDir`
+| `DirectoryProperty`
+| `build/enhanced/classes/java/<sourceSet>`
+| The isolated output directory where enhanced class files are written. Keeping this separate from the compile output preserves Gradle's incremental build and `UP-TO-DATE` checking.
+
+| `resourcesDir`
+| `DirectoryProperty`
+| _from `processResources` output_
+| The processed resources directory containing `META-INF/persistence.xml`. The task depends on `processResources` to ensure the descriptor is fully generated before enhancement begins.
+
+| `enhancerClasspath`
+| `ConfigurableFileCollection`
+| _from `enhancement` config_
+| The isolated runtime classpath carrying OpenJPA core toolset binaries used to run the `PCEnhancer`.
+
+| `compileClasspath`
+| `ConfigurableFileCollection`
+| _from source set_
+| The full compilation classpath necessary for OpenJPA to inspect, resolve, and validate complex relationships, types, or embedded enums during the bytecode analysis phase.
+
+| `addDefaultConstructor`
+| `Property<Boolean>`
+| `true`
+| Whether to add default no-argument constructors to entities. Bound from `openjpa.main.enhancement.addDefaultConstructor`.
+
+| `enforcePropertyRestrictions`
+| `Property<Boolean>`
+| `false`
+| Whether to enforce property access restrictions. Bound from `openjpa.main.enhancement.enforcePropertyRestrictions`.
+|===
+
+NOTE: The task is annotated with `@DisableCachingByDefault` because enhancement modifies class bytecode in place. It is automatically skipped with a `NO-SOURCE` outcome when no compiled classes are present in the source directory. The task also requires a `META-INF/persistence.xml` to be present in the processed resources directory — it is silently skipped otherwise.
+
+TIP: The task is wired into the build lifecycle automatically — it runs after both `compileJava` and `processResources`, and before `classes`, so the enhanced bytecode is ready for both testing and packaging without manual task ordering.
+
+[#dependencies-configuration-enhancement]
+== Dependencies Configuration: `enhancement`
+
+The plugin registers a global `enhancement` dependency configuration that resolves the OpenJPA toolset binaries used by the `PCEnhancer` at enhancement time.
+If the `jpa` configuration is present (from the core Jakarta Persistence plugin), the `enhancement` configuration automatically extends from it.
+
+When no explicit dependency is declared in the `enhancement` configuration, the plugin provisions a default `org.apache.openjpa:openjpa` dependency automatically.
+
+[source,groovy,indent=0,role="primary"]
+.Groovy
+----
+dependencies {
+    enhancement 'org.apache.openjpa:openjpa:4.0.0'
+}
+----
+
+[source,kotlin,indent=0,role="secondary"]
+.Kotlin
+----
+dependencies {
+    enhancement("org.apache.openjpa:openjpa:4.0.0")
+}
+----
+
+TIP: In most cases you do not need to declare this dependency explicitly — the default is provisioned automatically from the BOM version resolved through the `jpa` configuration.

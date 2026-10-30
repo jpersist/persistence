@@ -39,10 +39,12 @@ Standard Gradle setups require verbose XML overrides, break incremental compilat
 - **Descriptor Generation & Merging** — Generates or intelligently merges `persistence.xml` descriptors per source set using ASM bytecode scanning for automatic entity class discovery.
 - **Hibernate Bytecode Enhancement** — Compile-time enhancement for lazy initialization, dirty tracking, and association management without runtime agents.
 - **EclipseLink Static Weaving** — Compile-time static weaving fully isolated from the Gradle daemon classpath.
-- **JPA Static Metamodel Generation** — Automatic annotation processor setup for type-safe Criteria API queries (both Hibernate and EclipseLink).
+- **OpenJPA Bytecode Enhancement** *(new in v1.8.0)* — Compile-time PCEnhancer-based bytecode enhancement for OpenJPA entities, forked in an isolated JVM process.
+- **JPA Static Metamodel Generation** — Automatic annotation processor setup for type-safe Criteria API queries (Hibernate, EclipseLink, and OpenJPA).
 - **Schema Validation** — Validates entity mappings against a database schema at build time using an isolated Gradle Worker process.
 - **Multi-Tenant Schema Validation** *(new in v1.7.0)* — Extends schema validation with named tenant profiles, each carrying its own JDBC connection properties for validating against multiple database tenants in a single build.
-- **GraalVM Native Image Metadata** — Generates `reflect-config.json` for all discovered JPA entities, enabling ahead-of-time reflection registration.
+- **GraalVM Native Image Metadata** — Generates `reflect-config.json` for all discovered JPA entities, enabling ahead-of-time reflection registration. *(v1.8.0: new `reflectConfigFile` property; `outputFile` deprecated)*
+- **Consolidated Reporting** *(new in v1.8.0)* — All verification reports (schema validation, query linting) are written to a unified `${buildDir}/reports/persistence/` directory for streamlined CI/CD artifact collection.
 - **Lint Named Queries** — Static, compile-time AST verification of `@NamedQuery` and `@NamedStoredProcedureQuery` definitions with JPQL/HQL syntax and parameter naming validation.
 
 ---
@@ -59,7 +61,7 @@ Apply the plugin matching your JPA provider. The `jpa` dependency configuration 
 
 ```groovy
 plugins {
-    id 'io.github.jpersist.hibernate-persistence' version '1.7.0'
+    id 'io.github.jpersist.hibernate-persistence' version '1.8.0'
 }
 
 dependencies {
@@ -76,7 +78,7 @@ dependencies {
 
 ```kotlin
 plugins {
-    id("io.github.jpersist.hibernate-persistence") version "1.7.0"
+    id("io.github.jpersist.hibernate-persistence") version "1.8.0"
 }
 
 dependencies {
@@ -95,7 +97,7 @@ dependencies {
 
 ```groovy
 plugins {
-    id 'io.github.jpersist.eclipse-persistence' version '1.7.0'
+    id 'io.github.jpersist.eclipse-persistence' version '1.8.0'
 }
 
 dependencies {
@@ -113,7 +115,7 @@ dependencies {
 
 ```kotlin
 plugins {
-    id("io.github.jpersist.eclipse-persistence") version "1.7.0"
+    id("io.github.jpersist.eclipse-persistence") version "1.8.0"
 }
 
 dependencies {
@@ -121,6 +123,42 @@ dependencies {
 
     compileOnly("jakarta.persistence:jakarta.persistence-api")
     implementation("org.eclipse.persistence:org.eclipse.persistence.core")
+}
+```
+</details>
+
+### 🦊 OpenJPA Setup
+
+<details open>
+  <summary><b>Groovy DSL</b></summary>
+  <br>
+
+```groovy
+plugins {
+    id 'io.github.jpersist.openjpa-persistence' version '1.8.0'
+}
+
+dependencies {
+    jpa 'org.apache.openjpa:openjpa:4.0.0'
+
+    compileOnly 'jakarta.persistence:jakarta.persistence-api:3.1.0'
+}
+```
+</details>
+
+<details>
+  <summary><b>Kotlin DSL</b></summary>
+  <br>
+
+```kotlin
+plugins {
+    id("io.github.jpersist.openjpa-persistence") version "1.8.0"
+}
+
+dependencies {
+    jpa("org.apache.openjpa:openjpa:4.0.0")
+
+    compileOnly("jakarta.persistence:jakarta.persistence-api:3.1.0")
 }
 ```
 </details>
@@ -137,9 +175,11 @@ The plugin automatically detects your entity classes and generates the appropria
 | `plugins/jakarta-persistence-gradle-plugin`   | Core plugin — generates/merges `persistence.xml`, validates schemas, generates GraalVM metadata, and lints named queries. |
 | `plugins/hibernate-persistence-gradle-plugin` | Hibernate aggregate plugin — metamodel generation and compile-time bytecode enhancement.                                  |
 | `plugins/eclipse-persistence-gradle-plugin`   | EclipseLink aggregate plugin — metamodel generation and compile-time static weaving.                                      |
-| `libraries/persistence-tools-api`              | SPI contract and core interfaces for the named query linter.                                                              |
-| `libraries/persistence-tools-jakarta`          | Jakarta Persistence (3.x) linter implementation.                                                                          |
-| `libraries/persistence-tools-legacy`           | Legacy JPA (2.x) linter implementation.                                                                                   |
+| `plugins/openjpa-persistence-gradle-plugin`    | OpenJPA aggregate plugin — metamodel generation and compile-time PCEnhancer bytecode enhancement.                         |
+| `libraries/persistence-tools-api`              | SPI contract and core interfaces for the named query linter (`io.github.jpersist.tools:persistence-tools-api`).           |
+| `libraries/persistence-tools-jakarta`          | Jakarta Persistence (3.x) linter implementation (`io.github.jpersist.tools:persistence-tools-jakarta`).                   |
+| `libraries/persistence-tools-legacy`           | Legacy JPA (2.x) linter implementation (`io.github.jpersist.tools:persistence-tools-legacy`).                             |
+| `libraries/persistence-tools-bom`              | BOM (Bill of Materials) for aligning all persistence-tools library versions.                                               |
 | `examples/`                                   | Runnable example projects for Hibernate, EclipseLink, and standalone Jakarta Persistence.                                 |
 
 ---

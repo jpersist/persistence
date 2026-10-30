@@ -5,7 +5,7 @@
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=jpersist_persistence_plugins&metric=coverage)](https://sonarcloud.io/summary/new_code?id=jpersist_persistence_plugins)
 ![GitHub License](https://img.shields.io/github/license/jpersist/persistence)
 
-**JPersist** is a suite of modern, high-performance, and Gradle Configuration Cache-compliant plugins that automate the configuration of enterprise Jakarta Persistence API (JPA) environments. It provides zero-configuration support for Hibernate and EclipseLink multi-module builds — including descriptor generation/merging, schema validation, metamodel generation, bytecode enhancement/weaving, JPQL query linting, and GraalVM native-image metadata generation.
+**JPersist** is a suite of modern, high-performance, and Gradle Configuration Cache-compliant plugins that automate the configuration of enterprise Jakarta Persistence API (JPA) environments. It provides zero-configuration support for Hibernate, EclipseLink, and OpenJPA multi-module builds — including descriptor generation/merging, schema validation, metamodel generation, bytecode enhancement/weaving, JPQL query linting, GraalVM native-image metadata generation, and consolidated build reporting.
 
 ---
 
@@ -20,8 +20,11 @@
 | **`io.github.jpersist.eclipse-persistence`**   | EclipseLink Persistence Aggregate Plugin  | Aggregate plugin that automatically applies both the model generator and compile-time static weaving.                                                                                                                                     |
 | **`io.github.jpersist.eclipse-jpa-modelgen`**  | EclipseLink JPA Modelgen Processor Plugin | Modern, cache-compliant plugin to automatically configure the EclipseLink Canonical Model Generator.                                                                                                                                      |
 | **`io.github.jpersist.eclipse-static-weave`**  | EclipseLink Static Weaving Plugin         | Executes incremental compile-time bytecode weaving for EclipseLink entity performance enhancement.                                                                                                                                        |
+| **`io.github.jpersist.openjpa-persistence`**   | OpenJPA Persistence Aggregate Plugin      | Aggregate plugin providing Apache OpenJPA configuration, binding metamodel generation and compile-time PCEnhancer bytecode enhancement out-of-the-box. *(new in v1.8.0)*                                                                  |
+| **`io.github.jpersist.openjpa-metamodelgen`**  | OpenJPA JPA Modelgen Processor Plugin     | Modern, cache-compliant plugin to automatically configure the OpenJPA static canonical metamodel annotation processor. *(new in v1.8.0)*                                                                                                  |
+| **`io.github.jpersist.openjpa-enhancement`**   | OpenJPA Bytecode Enhancement Plugin       | High-performance, cache-compliant plugin that executes compile-time PCEnhancer bytecode enhancement for OpenJPA entities in an isolated JVM process. *(new in v1.8.0)*                                                                    |
 
-> **Tip:** The provider-specific aggregate plugins (`hibernate-persistence` and `eclipse-persistence`) automatically apply the `io.github.jpersist.jpa` plugin, so you only need to apply one.
+> **Tip:** The provider-specific aggregate plugins (`hibernate-persistence`, `eclipse-persistence`, and `openjpa-persistence`) automatically apply the `io.github.jpersist.jpa` plugin, so you only need to apply one.
 
 ---
 
@@ -33,7 +36,7 @@
 
 ```groovy
 plugins {
-    id 'io.github.jpersist.hibernate-persistence' version '1.7.0'
+    id 'io.github.jpersist.hibernate-persistence' version '1.8.0'
 }
 ```
 
@@ -41,7 +44,15 @@ plugins {
 
 ```groovy
 plugins {
-    id 'io.github.jpersist.eclipse-persistence' version '1.7.0'
+    id 'io.github.jpersist.eclipse-persistence' version '1.8.0'
+}
+```
+
+#### OpenJPA
+
+```groovy
+plugins {
+    id 'io.github.jpersist.openjpa-persistence' version '1.8.0'
 }
 ```
 
@@ -70,6 +81,16 @@ dependencies {
 }
 ```
 
+#### OpenJPA
+
+```groovy
+dependencies {
+    jpa 'org.apache.openjpa:openjpa:4.0.0'
+
+    compileOnly 'jakarta.persistence:jakarta.persistence-api:3.1.0'
+}
+```
+
 That's it — no additional XML configuration or annotation processing setup is required. The plugin automatically detects your entity classes and generates the appropriate `persistence.xml` at build time.
 
 ---
@@ -93,6 +114,11 @@ eclipse-persistence-gradle-plugin  (EclipseLink Provider)
  ├── EclipsePersistencePlugin        — aggregate: applies jpa + jpa-modelgen + static-weave
  ├── EclipseJpaModelgenPlugin        — annotation processor configuration
  └── EclipseStaticWeavePlugin        — compile-time static weaving
+
+openjpa-persistence-gradle-plugin  (OpenJPA Provider)  [new in v1.8.0]
+ ├── OpenJPAPersistencePlugin        — aggregate: applies jpa + metamodelgen + enhancement
+ ├── OpenJPAMetaModelGenerationPlugin — annotation processor configuration
+ └── OpenJPAEnhancementPlugin        — compile-time PCEnhancer bytecode enhancement
 
 persistence-gradle-plugin-functional-test  (Functional Tests)
  └── Cross-plugin integration tests via Gradle TestKit

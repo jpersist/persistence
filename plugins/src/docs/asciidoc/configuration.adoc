@@ -1,12 +1,15 @@
+[#configuration]
 = Configuration
 
 This section covers advanced configuration topics for JPersist plugins.
 
+[#multi-module-projects]
 == Multi-Module Projects
 
 In multi-module Gradle projects, declare the provider-specific plugin once in the root build file with `apply false`, then apply it individually in each module that contains JPA entities.
 Use the `jarFile` dependency configuration together with DSL jar-file mappings to declare cross-module entity dependencies so that `<jar-file>` entries are correctly generated in `persistence.xml`.
 
+[#root-build-gradle]
 === Root `build.gradle`
 
 [source,groovy,indent=0,role="primary",subs="attributes+"]
@@ -41,6 +44,7 @@ subprojects {
 
 TIP: Declaring the plugin with `apply false` in the root project makes the plugin available to subprojects without applying it at the root level. Each subproject then opts in explicitly.
 
+[#entity-module-build-gradle]
 === Entity Module `build.gradle`
 
 The entity module defines JPA entity classes and applies both `java-library` and the Hibernate persistence plugin.
@@ -74,6 +78,7 @@ dependencies {
 }
 ----
 
+[#service-module-build-gradle]
 === Service Module `build.gradle`
 
 The service module depends on the entity module.
@@ -135,8 +140,9 @@ persistence {
 
 The `jarFile` dependency ensures that the entity module's JAR is resolved at build time.
 The DSL `jarFile` mapping inside `persistenceUnits` controls the exact `<jar-file>` path written to `persistence.xml`.
-See <<jakarta-plugin.adoc#,Jakarta Persistence Plugin>> for the full documentation on the `jarFile` dependency routing and DSL jar-file mappings.
+See xref:jakarta-plugin.adoc#jakarta-persistence-plugin[Jakarta Persistence Plugin] for the full documentation on the `jarFile` dependency routing and DSL jar-file mappings.
 
+[#jpa-version-selection]
 == JPA Version Selection
 
 The `persistence` extension defaults to JPA 3.0. To target a different specification version, set the `version` property:
@@ -163,11 +169,13 @@ persistence {
 
 Supported versions: `2.0`, `2.1`, `2.2`, `3.0`, `3.1` and `3.2`.
 
+[#gradle-configuration-cache]
 == Gradle Configuration Cache
 
 All JPersist plugins are fully compatible with Gradle's Configuration Cache.
 No special configuration is required — the plugins use lazy `Property` and `Provider` APIs throughout to ensure safe serialization of the build configuration.
 
+[#ide-integration]
 == IDE Integration
 
 JPersist automatically hooks into Buildship (Eclipse) and IntelliJ IDEA project synchronization.

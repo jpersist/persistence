@@ -1,11 +1,13 @@
+[#eclipselink-plugin]
 = EclipseLink Plugin
 
 Plugin ID: `io.github.jpersist.eclipse-persistence`
 
 The `io.github.jpersist.eclipse-persistence` plugin provides a complete EclipseLink persistence pipeline out-of-the-box.
 It is the core implementation of the JPersist plugin suite for EclipseLink and facilitates the integration of provider platform capabilities such as JPA static metamodel generation and compile-time static bytecode weaving.
-It automatically applies the core `io.github.jpersist.jpa` plugin (see <<jakarta-plugin.adoc#,Jakarta Persistence Plugin>>), the EclipseLink canonical metamodel generator, and compile-time static weaving for EclipseLink-based projects.
+It automatically applies the core `io.github.jpersist.jpa` plugin (see xref:jakarta-plugin.adoc#jakarta-persistence-plugin[Jakarta Persistence Plugin]), the EclipseLink canonical metamodel generator, and compile-time static weaving for EclipseLink-based projects.
 
+[#applying-the-plugin-3]
 == Applying the Plugin
 
 [source,groovy,indent=0,role="primary",subs="attributes+"]
@@ -41,6 +43,7 @@ dependencies {
 TIP: The `jpa` configuration is provided by the core Jakarta Persistence plugin (applied transitively).
 Use it to declare an EclipseLink platform BOM so that all EclipseLink module versions are aligned automatically.
 
+[#sub-plugins-3]
 == Sub-Plugins
 
 The aggregate `io.github.jpersist.eclipse-persistence` plugin is a convenience macro that applies the following three plugins:
@@ -50,7 +53,7 @@ The aggregate `io.github.jpersist.eclipse-persistence` plugin is a convenience m
 | Plugin ID | Description
 
 | `io.github.jpersist.jpa`
-| The core Jakarta Persistence plugin — registers the `persistence` DSL extension, generates or merges `persistence.xml` descriptors, validates persistence schema, and generates GraalVM native image metadata. See <<jakarta-plugin.adoc#,Jakarta Persistence Plugin>>.
+| The core Jakarta Persistence plugin — registers the `persistence` DSL extension, generates or merges `persistence.xml` descriptors, validates persistence schema, and generates GraalVM native image metadata. See xref:jakarta-plugin.adoc#jakarta-persistence-plugin[Jakarta Persistence Plugin].
 
 | `io.github.jpersist.eclipse-jpa-modelgen`
 | Configures EclipseLink's canonical metamodel generator (`org.eclipse.persistence.jpa.modelgen.processor`) as an annotation processor for every source set, enabling type-safe Criteria API queries.
@@ -77,6 +80,7 @@ plugins {
 }
 ----
 
+[#jpa-static-metamodel-generation-3]
 == JPA Static Metamodel Generation
 
 The `io.github.jpersist.eclipse-jpa-modelgen` sub-plugin automatically:
@@ -110,6 +114,7 @@ For this reason, the user *must* provide a `persistence.xml` template with at le
 </persistence>
 ----
 
+[#dsl-extension-eclipselink]
 == DSL Extension: `eclipselink`
 
 The `io.github.jpersist.eclipse-jpa-modelgen` sub-plugin registers an `eclipselink` DSL extension block at the project level.
@@ -140,6 +145,7 @@ eclipselink {
 }
 ----
 
+[#eclipselinkextension-properties]
 === `EclipselinkExtension` Properties
 
 [cols="2,2,2,4"]
@@ -157,6 +163,7 @@ eclipselink {
 | Nested configuration block controlling the EclipseLink canonical metamodel generator options for this source set.
 |===
 
+[#jpamodelgenextension-properties-3]
 === `JpaModelgenExtension` Properties
 
 [cols="2,2,2,4"]
@@ -195,14 +202,16 @@ eclipselink {
 }
 ----
 
+[#tasks-3]
 == Tasks
 
 The plugin registers the following task per Java source set.
 
 NOTE: _(Since 1.7.0)_ The weaving task is only registered for source sets whose `java.srcDirs` contain at least one directory that physically exists on disk. Source sets with no on-disk Java source directories are silently skipped, preventing clean IDE workspaces from being cluttered with empty tasks (e.g. `eclipseWeaveTestClasses`).
 
-In addition, all tasks inherited from the core `io.github.jpersist.jpa` plugin (`processPersistenceDescriptor`, `validatePersistenceSchema`, `generateJPAGraalVMMetadata`, `lintNamedQueries`) are also available. See <<jakarta-plugin.adoc#,Jakarta Persistence Plugin>> for their documentation.
+In addition, all tasks inherited from the core `io.github.jpersist.jpa` plugin (`processPersistenceDescriptor`, `validatePersistenceSchema`, `generateJPAGraalVMMetadata`, `lintNamedQueries`) are also available. See xref:jakarta-plugin.adoc#jakarta-persistence-plugin[Jakarta Persistence Plugin] for their documentation.
 
+[#eclipseweaveclasses]
 === `eclipseWeaveClasses`
 
 **Group:** `build` +
@@ -257,6 +266,7 @@ NOTE: During execution, the task creates a temporary staging sandbox, copies pro
 
 TIP: The task is wired into the build lifecycle automatically — it runs after `compileJava` and before `classes`, so the woven bytecode is ready for both testing and packaging without manual task ordering.
 
+[#the-weave-configuration]
 == The `weave` Configuration
 
 The `io.github.jpersist.eclipse-static-weave` sub-plugin creates a `weave` dependency configuration that carries the EclipseLink runtime libraries needed by the `StaticWeave` processor.
