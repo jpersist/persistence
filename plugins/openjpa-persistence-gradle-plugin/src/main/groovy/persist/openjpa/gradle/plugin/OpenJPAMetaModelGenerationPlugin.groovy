@@ -26,7 +26,7 @@ import persist.openjpa.gradle.extension.OpenJPAExtension
  *
  * @since 1.8.0
  */
-class OpenJPAMetaModelGenerationPlugin implements Plugin<Project> {
+class OpenJPAMetaModelGenerationPlugin extends OpenJPABasePlugin {
 
     /**
      * Applies the OpenJPA metamodel annotation processor configuration to the target project.
@@ -42,13 +42,9 @@ class OpenJPAMetaModelGenerationPlugin implements Plugin<Project> {
      */
     @Override
     void apply(Project project) {
-        project.plugins.apply(JavaPlugin)
+        super.apply(project)
 
         NamedDomainObjectContainer<OpenJPAExtension> container = project.extensions.findByName('openjpa') as NamedDomainObjectContainer<OpenJPAExtension>
-        if (container == null) {
-            container = project.objects.domainObjectContainer(OpenJPAExtension)
-            project.extensions.add('openjpa', container)
-        }
 
         project.extensions.getByType(SourceSetContainer).configureEach { sourceSet ->
             OpenJPAExtension extension = container.maybeCreate(sourceSet.name)

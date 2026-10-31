@@ -1,6 +1,8 @@
 package persist.jakarta.gradle.worker
 
 import org.gradle.api.GradleException
+import org.gradle.api.logging.Logger
+import org.gradle.api.logging.Logging
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.workers.WorkAction
@@ -80,6 +82,8 @@ interface SchemaValidationParameters extends WorkParameters {
  */
 abstract class SchemaValidationWorker implements WorkAction<SchemaValidationParameters> {
 
+    private final Logger logger = Logging.getLogger(SchemaValidationWorker)
+
     /**
      * Executes the multi-tenant schema validation pipeline.
      * <p>
@@ -96,6 +100,7 @@ abstract class SchemaValidationWorker implements WorkAction<SchemaValidationPara
         List<String> tenantProfiles = parameters.tenantProfiles.get()
         List<String> discoveredEntityClasses = parameters.discoveredEntityClasses.get()
 
+        def log = logger
         SchemaValidator validator
         try {
             def validatorFactory = SchemaValidatorFactory.newSchemaValidatorFactory(jpaVersion)
@@ -104,7 +109,7 @@ abstract class SchemaValidationWorker implements WorkAction<SchemaValidationPara
             throw new GradleException("JPersist Schema Validation failed on setup configuration.", e)
         }
 
-        println "⏳ Starting JPersist Multi-Tenant Schema Validation pipeline pass..."
+        log.lifecycle("⏳ Starting JPersist Multi-Tenant Schema Validation pipeline pass...")
 
         List<String> activeUnits = unitNamesPayload.split(',').collect { it.trim() }.findAll { !it.isEmpty() }
         int processingFailures = 0
@@ -115,12 +120,12 @@ abstract class SchemaValidationWorker implements WorkAction<SchemaValidationPara
             def (String tenantName, String jdbcUrl, String jdbcDriver, String jdbcUser) = tokens
             String jdbcPassword = tokens.length > 4 ? tokens[4] : ""
 
-            println "   ⚙️ Running schema verification matrix pass for tenant profile: [${tenantName}]"
-            println "      Target URL: ${jdbcUrl}"
+            log.lifecycle("   ⚙️ Running schema verification matrix pass for tenant profile: [${tenantName}]")
+            log.lifecycle("      Target URL: ${jdbcUrl}")
 
             activeUnits.each { unitName ->
                 try {
-                    println "      🔍 Auditing entity mapping configurations for unit: '${unitName}'..."
+                    log.lifecycle("      🔍 Auditing entity mapping configurations for unit: '${unitName}'...")
 
                     validator.validateSchema([
                         "url": jdbcUrl,
@@ -129,11 +134,11 @@ abstract class SchemaValidationWorker implements WorkAction<SchemaValidationPara
                         "password": jdbcPassword
                     ])
 
-                    println "      ✅ Tenant [${tenantName}] -> Unit '${unitName}' alignment checks passed."
+                    log.lifecycle("      ✅ Tenant [${tenantName}] -> Unit '${unitName}' alignment checks passed.")
                 } catch (Exception e) {
                     processingFailures++
-                    System.err.println("   ❌ SCHEMA MISMATCH FAILURE inside Tenant [${tenantName}] for Unit [${unitName}]:")
-                    System.err.println("      Reason: ${e.getMessage() ?: e.toString()}")
+                    log.error("   ❌ SCHEMA MISMATCH FAILURE inside Tenant [${tenantName}] for Unit [${unitName}]:")
+                    log.error("      Reason: ${e.getMessage() ?: e.toString()}")
                 }
             }
         }
@@ -143,7 +148,7 @@ abstract class SchemaValidationWorker implements WorkAction<SchemaValidationPara
                 "JPersist Schema Validation failed: Encountered ${processingFailures} mapping verification mismatches across the multi-tenant matrix."
             )
         } else {
-            println "✅ Multi-tenant schema matrix validation completed successfully without errors!"
+            log.lifecycle("✅ Multi-tenant schema matrix validation completed successfully without errors!")
         }
     }
 

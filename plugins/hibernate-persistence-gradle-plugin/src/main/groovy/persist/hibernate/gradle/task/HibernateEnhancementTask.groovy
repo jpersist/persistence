@@ -32,11 +32,11 @@ import javax.inject.Inject
  * build system.
  * </p>
  * <p>
- * The {@link #getEnhanceClasspath() enhanceClasspath} carries the JPersist
+ * The {@link HibernateEnhancementTask#getEnhanceClasspath() enhanceClasspath} carries the JPersist
  * {@code persistence-tools-api}, the namespace-specific provider
  * ({@code persistence-tools-jakarta} or {@code persistence-tools-legacy}), and the
- * Hibernate core binaries. The {@link #getCompileClasspath() compileClasspath} carries
- * the project's own compilation dependencies so the worker can resolve entity
+ * Hibernate core binaries. The {@link HibernateEnhancementTask#getCompileClasspath() compileClasspath}
+ * carries the project's own compilation dependencies so the worker can resolve entity
  * relationships, embedded types, and enums.
  * </p>
  *

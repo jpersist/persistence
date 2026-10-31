@@ -3,6 +3,8 @@ package persist.jakarta.gradle.worker
 import groovy.io.FileType
 import org.gradle.api.GradleException
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.logging.Logger
+import org.gradle.api.logging.Logging
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.workers.WorkAction
@@ -74,6 +76,8 @@ interface LintNamedQueriesParameters extends WorkParameters {
  */
 abstract class LintNamedQueriesWorker implements WorkAction<LintNamedQueriesParameters> {
 
+    private final Logger logger = Logging.getLogger(LintNamedQueriesWorker)
+
     /**
      * Executes the named query lint analysis inside the isolated worker process.
      * <p>
@@ -98,9 +102,11 @@ abstract class LintNamedQueriesWorker implements WorkAction<LintNamedQueriesPara
         Map<String, Map<String, Set<String>>> discoveredProcedures = [:]
         List<String> discoveredClasses = []
 
+        def log = logger
+
         // 1. ASM Bytecode Sweep Channel
         if (isIncremental) {
-            println "⚡ Processing linter inputs incrementally. Auditing ${affectedFiles.size()} modified class boundaries..."
+            log.lifecycle("⚡ Processing linter inputs incrementally. Auditing ${affectedFiles.size()} modified class boundaries...")
             affectedFiles.forEach { filePath ->
                 File classFile = new File(filePath)
                 if (classFile.exists()) {
@@ -108,10 +114,10 @@ abstract class LintNamedQueriesWorker implements WorkAction<LintNamedQueriesPara
                 }
             }
             if (!removedFiles.isEmpty()) {
-                println "🗑️ Detected ${removedFiles.size()} removed entities. Evicting structural caches."
+                log.lifecycle("🗑️ Detected ${removedFiles.size()} removed entities. Evicting structural caches.")
             }
         } else {
-            println "⏳ Performing complete structural sweep linter pass over: ${classesDir.name}..."
+            log.lifecycle("⏳ Performing complete structural sweep linter pass over: ${classesDir.name}...")
             classesDir.traverse(type: FileType.FILES, nameFilter: ~/.*\.class$/) { classFile ->
                 Helper.sweepClassFile(classFile, discoveredQueries, discoveredProcedures, discoveredClasses)
             }
@@ -120,16 +126,16 @@ abstract class LintNamedQueriesWorker implements WorkAction<LintNamedQueriesPara
         int totalObjects = discoveredQueries.size() + discoveredProcedures.size()
 
         if (totalObjects == 0 && isIncremental) {
-            println "✅ No annotations alterations detected inside the modified entities. Build up-to-date."
+            log.lifecycle("✅ No annotations alterations detected inside the modified entities. Build up-to-date.")
             return
         }
 
         if (totalObjects == 0) {
-            println "✅ No named metadata configurations declared in this source set. Pass complete."
+            log.lifecycle("✅ No named metadata configurations declared in this source set. Pass complete.")
             return
         }
 
-        println "📊 Discovered ${totalObjects} static structural items to validate."
+        log.lifecycle("📊 Discovered ${totalObjects} static structural items to validate.")
 
         int errorCount = 0
 
@@ -140,7 +146,7 @@ abstract class LintNamedQueriesWorker implements WorkAction<LintNamedQueriesPara
 
             // Open the closeable parser inside a safe container block
             factory.newNamedObjectParser(discoveredClasses).withCloseable { namedObjectParser ->
-                println "✅ In-memory verification metamodel generated successfully."
+                log.lifecycle("✅ In-memory verification metamodel generated successfully.")
 
                 // 3a. VALIDATE STANDARD QUERIES
                 errorCount += Helper.validateDiscoveredQueries(namedObjectParser, discoveredQueries, ignoreWarnings)
@@ -150,7 +156,7 @@ abstract class LintNamedQueriesWorker implements WorkAction<LintNamedQueriesPara
             }
         } catch (Exception e) {
             // Eager validation failures triggered during buildSessionFactory() end up here
-            System.err.println("❌ Critical: Metamodel initialization crash: " + e.getMessage())
+            log.error("❌ Critical: Metamodel initialization crash: " + e.getMessage())
             if (failOnError) {
                 throw new GradleException("JPersist Linter failed on setup configuration.", e)
             }
@@ -158,12 +164,12 @@ abstract class LintNamedQueriesWorker implements WorkAction<LintNamedQueriesPara
         }
 
         if (errorCount > 0) {
-            System.err.println("⚠️ JPersist Static Linter found ${errorCount} structural metadata errors!")
+            log.error("⚠️ JPersist Static Linter found ${errorCount} structural metadata errors!")
             if (failOnError) {
                 throw new GradleException("Build failed due to ${errorCount} invalid named metadata definitions.")
             }
         } else {
-            println "✅ All processed static metadata structures validated successfully!"
+            log.lifecycle("✅ All processed static metadata structures validated successfully!")
         }
     }
 
