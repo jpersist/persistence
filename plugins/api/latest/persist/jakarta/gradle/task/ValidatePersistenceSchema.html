@@ -101,9 +101,9 @@ if (location.href.indexOf('is-external=true') == -1) {
             <!-- todo: direct known subclasses -->
             <hr>
 
-<pre>@org.gradle.work.DisableCachingByDefault(because: Validates active database schema state at execution time)
+<pre>@<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/work/DisableCachingByDefault.html' title='DisableCachingByDefault'>DisableCachingByDefault</a>(because: Validates active database schema state at execution time)
 abstract class ValidatePersistenceSchema
-extends org.gradle.api.DefaultTask</pre>
+extends <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html' title='DefaultTask'>DefaultTask</a></pre>
 
     <p> Boots an isolated JVM worker process to validate that the JPA entity configurations
  perfectly match the generated schema layout using an in-memory database baseline. <DL><DT><B>Since:</B></DT><DD>1.5.0</DD></DL></p>
@@ -132,7 +132,7 @@ extends org.gradle.api.DefaultTask</pre>
                             <th class="colLast" scope="col">Fields</th>
                         </tr>
                                                 <tr class="altColor">
-                            <td class="colFirst"><strong><code>class org.gradle.api.DefaultTask</code></strong></td>
+                            <td class="colFirst"><strong><code>class <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html' title='DefaultTask'>DefaultTask</a></code></strong></td>
                             <td class="colLast"><code>TASK_NAME, TASK_DESCRIPTION, TASK_GROUP, TASK_TYPE, TASK_DEPENDS_ON, TASK_OVERWRITE, TASK_ACTION, TASK_CONSTRUCTOR_ARGS</code></td>
                         </tr>
 
@@ -163,7 +163,7 @@ extends org.gradle.api.DefaultTask</pre>
                         
                         <tr class="altColor">
                             <td class="colFirst">
-                                <code><strong><a href="#ValidatePersistenceSchema(org.gradle.workers.WorkerExecutor)">ValidatePersistenceSchema</a></strong>(org.gradle.workers.WorkerExecutor workerExecutor)</code><br>Creates a new task instance.</td>
+                                <code><strong><a href="#ValidatePersistenceSchema(org.gradle.workers.WorkerExecutor)">ValidatePersistenceSchema</a></strong>(<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/workers/WorkerExecutor.html' title='WorkerExecutor'>WorkerExecutor</a> workerExecutor)</code><br>Creates a new task instance.</td>
                         </tr>
                         
                     </table>
@@ -189,54 +189,68 @@ extends org.gradle.api.DefaultTask</pre>
                         
                         <tr class="altColor">
                             <td class="colFirst"><code></code></td>
-                            <td class="colLast"><code>abstract&nbsp;org.gradle.api.file.ConfigurableFileCollection</code></td>
+                            <td class="colLast"><code>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/file/ConfigurableFileCollection.html' title='ConfigurableFileCollection'>ConfigurableFileCollection</a></code></td>
                             <td class="colLast"><code><strong><a href="#getClasspath()">getClasspath</a></strong>()</code><br>The complete runtime and compilation classpath containing the compiled entity classes,
  the JPA provider implementation binaries (Hibernate/EclipseLink), and the H2 driver.</td>
                         </tr>
                         
                         <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
-                            <td class="colLast"><code>abstract&nbsp;org.gradle.api.provider.ListProperty&lt;java.lang.String&gt;</code></td>
+                            <td class="colLast"><code>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/ListProperty.html' title='ListProperty'>ListProperty</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt;</code></td>
                             <td class="colLast"><code><strong><a href="#getDiscoveredEntityClasses()">getDiscoveredEntityClasses</a></strong>()</code><br>The list of fully qualified entity class names discovered by the ASM
  bytecode scanner during the compile phase.</td>
                         </tr>
                         
                         <tr class="altColor">
                             <td class="colFirst"><code></code></td>
-                            <td class="colLast"><code>abstract&nbsp;org.gradle.api.provider.Property&lt;java.lang.String&gt;</code></td>
+                            <td class="colLast"><code>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Property.html' title='Property'>Property</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt;</code></td>
                             <td class="colLast"><code><strong><a href="#getJpaVersion()">getJpaVersion</a></strong>()</code><br>The JPA specification version used to determine the annotation namespace
  (<CODE>jakarta.persistence</CODE> vs <CODE>javax.persistence</CODE>) during bytecode scanning.</td>
                         </tr>
                         
                         <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
-                            <td class="colLast"><code>abstract&nbsp;org.gradle.api.provider.Property&lt;java.lang.String&gt;</code></td>
+                            <td class="colLast"><code>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Property.html' title='Property'>Property</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt;</code></td>
                             <td class="colLast"><code><strong><a href="#getPersistenceUnitNames()">getPersistenceUnitNames</a></strong>()</code><br>A comma-separated list of persistence unit names to validate.</td>
                         </tr>
                         
                         <tr class="altColor">
                             <td class="colFirst"><code></code></td>
-                            <td class="colLast"><code>abstract&nbsp;org.gradle.api.file.DirectoryProperty</code></td>
+                            <td class="colLast"><code>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/file/DirectoryProperty.html' title='DirectoryProperty'>DirectoryProperty</a></code></td>
                             <td class="colLast"><code><strong><a href="#getResourcesDir()">getResourcesDir</a></strong>()</code><br>The built-in resource destination directory containing the META-INF/persistence.xml structure.</td>
                         </tr>
                         
                         <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
-                            <td class="colLast"><code>abstract&nbsp;org.gradle.api.provider.ListProperty&lt;java.lang.String&gt;</code></td>
-                            <td class="colLast"><code><strong><a href="#getTenantProfiles()">getTenantProfiles</a></strong>()</code><br>The serialized list of tenant database connection profiles to validate
- against. </td>
+                            <td class="colLast"><code>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/file/ConfigurableFileCollection.html' title='ConfigurableFileCollection'>ConfigurableFileCollection</a></code></td>
+                            <td class="colLast"><code><strong><a href="#getSourceFiles()">getSourceFiles</a></strong>()</code><br>The input source files collection used to calculate incremental deltas
+ immune to compiler erasures.</td>
                         </tr>
                         
                         <tr class="altColor">
                             <td class="colFirst"><code></code></td>
-                            <td class="colLast"><code>abstract&nbsp;org.gradle.api.provider.Property&lt;<a href='../../../../persist/jakarta/gradle/extension/ValidationExtension.html' title='ValidationExtension'>ValidationExtension</a>&gt;</code></td>
+                            <td class="colLast"><code>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/ListProperty.html' title='ListProperty'>ListProperty</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt;</code></td>
+                            <td class="colLast"><code><strong><a href="#getTenantProfiles()">getTenantProfiles</a></strong>()</code><br>The serialized list of tenant database connection profiles to validate
+ against. </td>
+                        </tr>
+                        
+                        <tr class="rowColor">
+                            <td class="colFirst"><code></code></td>
+                            <td class="colLast"><code>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Property.html' title='Property'>Property</a>&lt;<a href='../../../../persist/jakarta/gradle/extension/ValidationExtension.html' title='ValidationExtension'>ValidationExtension</a>&gt;</code></td>
                             <td class="colLast"><code><strong><a href="#getValidation()">getValidation</a></strong>()</code><br>Nested database connection configuration used during schema validation.</td>
+                        </tr>
+                        
+                        <tr class="altColor">
+                            <td class="colFirst"><code></code></td>
+                            <td class="colLast"><code>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/file/RegularFileProperty.html' title='RegularFileProperty'>RegularFileProperty</a></code></td>
+                            <td class="colLast"><code><strong><a href="#getValidationReportFile()">getValidationReportFile</a></strong>()</code><br>The generated JSON schema validation audit metrics report.
+ </td>
                         </tr>
                         
                         <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>void</code></td>
-                            <td class="colLast"><code><strong><a href="#validate()">validate</a></strong>()</code><br>Executes schema validation by submitting a
+                            <td class="colLast"><code><strong><a href="#validate(org.gradle.work.InputChanges)">validate</a></strong>(<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/work/InputChanges.html' title='InputChanges'>InputChanges</a> inputChanges)</code><br>Executes schema validation by submitting a
  <a href='../../../../persist/jakarta/gradle/worker/SchemaValidationWorker.html' title='SchemaValidationWorker'>SchemaValidationWorker</a> to an isolated classloader worker process.</td>
                         </tr>
                         
@@ -255,8 +269,8 @@ extends org.gradle.api.DefaultTask</pre>
                         </tr>
                         
                         <tr class="altColor">
-                            <td class="colFirst"><code>class org.gradle.api.DefaultTask</code></td>
-                            <td class="colLast"><code>org.gradle.api.DefaultTask#acceptServiceReferences(java.util.Set), org.gradle.api.DefaultTask#appendParallelSafeAction(org.gradle.api.Action), org.gradle.api.DefaultTask#compareTo(java.lang.Object), org.gradle.api.DefaultTask#compareTo(org.gradle.api.Task), org.gradle.api.DefaultTask#configure(groovy.lang.Closure), org.gradle.api.DefaultTask#configure(groovy.lang.Closure), org.gradle.api.DefaultTask#dependsOn([Ljava.lang.Object;), org.gradle.api.DefaultTask#doFirst(groovy.lang.Closure), org.gradle.api.DefaultTask#doFirst(java.lang.String, org.gradle.api.Action), org.gradle.api.DefaultTask#doFirst(org.gradle.api.Action), org.gradle.api.DefaultTask#doLast(groovy.lang.Closure), org.gradle.api.DefaultTask#doLast(java.lang.String, org.gradle.api.Action), org.gradle.api.DefaultTask#doLast(org.gradle.api.Action), org.gradle.api.DefaultTask#doNotTrackState(java.lang.String), org.gradle.api.DefaultTask#doNotTrackStateIf(java.lang.String, org.gradle.api.specs.Spec), org.gradle.api.DefaultTask#equals(java.lang.Object), org.gradle.api.DefaultTask#finalizedBy([Ljava.lang.Object;), org.gradle.api.DefaultTask#getActions(), org.gradle.api.DefaultTask#getAnt(), org.gradle.api.DefaultTask#getAsDynamicObject(), org.gradle.api.DefaultTask#getClass(), org.gradle.api.DefaultTask#getDependsOn(), org.gradle.api.DefaultTask#getDescription(), org.gradle.api.DefaultTask#getDestroyables(), org.gradle.api.DefaultTask#getDidWork(), org.gradle.api.DefaultTask#getEnabled(), org.gradle.api.DefaultTask#getExtensions(), org.gradle.api.DefaultTask#getFinalizedBy(), org.gradle.api.DefaultTask#getGroup(), org.gradle.api.DefaultTask#getIdentityPath(), org.gradle.api.DefaultTask#getImpliesSubProjects(), org.gradle.api.DefaultTask#getInputs(), org.gradle.api.DefaultTask#getInputs(), org.gradle.api.DefaultTask#getLifecycleDependencies(), org.gradle.api.DefaultTask#getLifecycleDependencies(), org.gradle.api.DefaultTask#getLocalState(), org.gradle.api.DefaultTask#getLogger(), org.gradle.api.DefaultTask#getLogging(), org.gradle.api.DefaultTask#getLoggingManager(), org.gradle.api.DefaultTask#getMustRunAfter(), org.gradle.api.DefaultTask#getName(), org.gradle.api.DefaultTask#getOnlyIf(), org.gradle.api.DefaultTask#getOutputs(), org.gradle.api.DefaultTask#getOutputs(), org.gradle.api.DefaultTask#getPath(), org.gradle.api.DefaultTask#getProject(), org.gradle.api.DefaultTask#getReasonNotToTrackState(), org.gradle.api.DefaultTask#getReasonTaskIsIncompatibleWithConfigurationCache(), org.gradle.api.DefaultTask#getReasonsNotToTrackState(), org.gradle.api.DefaultTask#getRequiredServices(), org.gradle.api.DefaultTask#getSharedResources(), org.gradle.api.DefaultTask#getShouldRunAfter(), org.gradle.api.DefaultTask#getStandardOutputCapture(), org.gradle.api.DefaultTask#getState(), org.gradle.api.DefaultTask#getState(), org.gradle.api.DefaultTask#getTaskActions(), org.gradle.api.DefaultTask#getTaskDependencies(), org.gradle.api.DefaultTask#getTaskDependencies(), org.gradle.api.DefaultTask#getTaskIdentity(), org.gradle.api.DefaultTask#getTemporaryDir(), org.gradle.api.DefaultTask#getTemporaryDirFactory(), org.gradle.api.DefaultTask#getTimeout(), org.gradle.api.DefaultTask#hasProperty(java.lang.String), org.gradle.api.DefaultTask#hasTaskActions(), org.gradle.api.DefaultTask#hashCode(), org.gradle.api.DefaultTask#injectIntoNewInstance(org.gradle.api.internal.project.ProjectInternal, org.gradle.api.internal.project.taskfactory.TaskIdentity, java.util.concurrent.Callable), org.gradle.api.DefaultTask#isCompatibleWithConfigurationCache(), org.gradle.api.DefaultTask#isEnabled(), org.gradle.api.DefaultTask#isHasCustomActions(), org.gradle.api.DefaultTask#mustRunAfter([Ljava.lang.Object;), org.gradle.api.DefaultTask#notCompatibleWithConfigurationCache(java.lang.String), org.gradle.api.DefaultTask#notify(), org.gradle.api.DefaultTask#notifyAll(), org.gradle.api.DefaultTask#onlyIf(groovy.lang.Closure), org.gradle.api.DefaultTask#onlyIf(java.lang.String, org.gradle.api.specs.Spec), org.gradle.api.DefaultTask#onlyIf(org.gradle.api.specs.Spec), org.gradle.api.DefaultTask#prependParallelSafeAction(org.gradle.api.Action), org.gradle.api.DefaultTask#property(java.lang.String), org.gradle.api.DefaultTask#restoreOnlyIf(org.gradle.api.specs.Spec), org.gradle.api.DefaultTask#restoreTaskActions(java.util.List), org.gradle.api.DefaultTask#setActions(java.util.List), org.gradle.api.DefaultTask#setDependsOn(java.lang.Iterable), org.gradle.api.DefaultTask#setDescription(java.lang.String), org.gradle.api.DefaultTask#setDidWork(boolean), org.gradle.api.DefaultTask#setEnabled(boolean), org.gradle.api.DefaultTask#setFinalizedBy(java.lang.Iterable), org.gradle.api.DefaultTask#setGroup(java.lang.String), org.gradle.api.DefaultTask#setImpliesSubProjects(boolean), org.gradle.api.DefaultTask#setMustRunAfter(java.lang.Iterable), org.gradle.api.DefaultTask#setOnlyIf(groovy.lang.Closure), org.gradle.api.DefaultTask#setOnlyIf(java.lang.String, org.gradle.api.specs.Spec), org.gradle.api.DefaultTask#setOnlyIf(org.gradle.api.specs.Spec), org.gradle.api.DefaultTask#setProperty(java.lang.String, java.lang.Object), org.gradle.api.DefaultTask#setShouldRunAfter(java.lang.Iterable), org.gradle.api.DefaultTask#shouldRunAfter([Ljava.lang.Object;), org.gradle.api.DefaultTask#toString(), org.gradle.api.DefaultTask#usesService(org.gradle.api.provider.Provider), org.gradle.api.DefaultTask#wait(), org.gradle.api.DefaultTask#wait(long), org.gradle.api.DefaultTask#wait(long, int)</code></td>
+                            <td class="colFirst"><code>class <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html' title='DefaultTask'>DefaultTask</a></code></td>
+                            <td class="colLast"><code><a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#acceptServiceReferences(java.util.Set)' title='acceptServiceReferences'>acceptServiceReferences</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#appendParallelSafeAction(org.gradle.api.Action)' title='appendParallelSafeAction'>appendParallelSafeAction</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#compareTo(java.lang.Object)' title='compareTo'>compareTo</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#compareTo(org.gradle.api.Task)' title='compareTo'>compareTo</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#configure(groovy.lang.Closure)' title='configure'>configure</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#configure(groovy.lang.Closure)' title='configure'>configure</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#dependsOn([Ljava.lang.Object;)' title='dependsOn'>dependsOn</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#doFirst(groovy.lang.Closure)' title='doFirst'>doFirst</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#doFirst(java.lang.String, org.gradle.api.Action)' title='doFirst'>doFirst</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#doFirst(org.gradle.api.Action)' title='doFirst'>doFirst</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#doLast(groovy.lang.Closure)' title='doLast'>doLast</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#doLast(java.lang.String, org.gradle.api.Action)' title='doLast'>doLast</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#doLast(org.gradle.api.Action)' title='doLast'>doLast</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#doNotTrackState(java.lang.String)' title='doNotTrackState'>doNotTrackState</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#doNotTrackStateIf(java.lang.String, org.gradle.api.specs.Spec)' title='doNotTrackStateIf'>doNotTrackStateIf</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#equals(java.lang.Object)' title='equals'>equals</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#finalizedBy([Ljava.lang.Object;)' title='finalizedBy'>finalizedBy</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#getActions()' title='getActions'>getActions</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#getAnt()' title='getAnt'>getAnt</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#getAsDynamicObject()' title='getAsDynamicObject'>getAsDynamicObject</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#getClass()' title='getClass'>getClass</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#getDependsOn()' title='getDependsOn'>getDependsOn</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#getDescription()' title='getDescription'>getDescription</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#getDestroyables()' title='getDestroyables'>getDestroyables</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#getDidWork()' title='getDidWork'>getDidWork</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#getEnabled()' title='getEnabled'>getEnabled</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#getExtensions()' title='getExtensions'>getExtensions</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#getFinalizedBy()' title='getFinalizedBy'>getFinalizedBy</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#getGroup()' title='getGroup'>getGroup</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#getIdentityPath()' title='getIdentityPath'>getIdentityPath</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#getImpliesSubProjects()' title='getImpliesSubProjects'>getImpliesSubProjects</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#getInputs()' title='getInputs'>getInputs</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#getInputs()' title='getInputs'>getInputs</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#getLifecycleDependencies()' title='getLifecycleDependencies'>getLifecycleDependencies</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#getLifecycleDependencies()' title='getLifecycleDependencies'>getLifecycleDependencies</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#getLocalState()' title='getLocalState'>getLocalState</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#getLogger()' title='getLogger'>getLogger</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#getLogging()' title='getLogging'>getLogging</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#getLoggingManager()' title='getLoggingManager'>getLoggingManager</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#getMustRunAfter()' title='getMustRunAfter'>getMustRunAfter</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#getName()' title='getName'>getName</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#getOnlyIf()' title='getOnlyIf'>getOnlyIf</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#getOutputs()' title='getOutputs'>getOutputs</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#getOutputs()' title='getOutputs'>getOutputs</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#getPath()' title='getPath'>getPath</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#getProject()' title='getProject'>getProject</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#getReasonNotToTrackState()' title='getReasonNotToTrackState'>getReasonNotToTrackState</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#getReasonTaskIsIncompatibleWithConfigurationCache()' title='getReasonTaskIsIncompatibleWithConfigurationCache'>getReasonTaskIsIncompatibleWithConfigurationCache</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#getReasonsNotToTrackState()' title='getReasonsNotToTrackState'>getReasonsNotToTrackState</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#getRequiredServices()' title='getRequiredServices'>getRequiredServices</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#getSharedResources()' title='getSharedResources'>getSharedResources</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#getShouldRunAfter()' title='getShouldRunAfter'>getShouldRunAfter</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#getStandardOutputCapture()' title='getStandardOutputCapture'>getStandardOutputCapture</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#getState()' title='getState'>getState</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#getState()' title='getState'>getState</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#getTaskActions()' title='getTaskActions'>getTaskActions</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#getTaskDependencies()' title='getTaskDependencies'>getTaskDependencies</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#getTaskDependencies()' title='getTaskDependencies'>getTaskDependencies</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#getTaskIdentity()' title='getTaskIdentity'>getTaskIdentity</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#getTemporaryDir()' title='getTemporaryDir'>getTemporaryDir</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#getTemporaryDirFactory()' title='getTemporaryDirFactory'>getTemporaryDirFactory</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#getTimeout()' title='getTimeout'>getTimeout</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#hasProperty(java.lang.String)' title='hasProperty'>hasProperty</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#hasTaskActions()' title='hasTaskActions'>hasTaskActions</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#hashCode()' title='hashCode'>hashCode</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#injectIntoNewInstance(org.gradle.api.internal.project.ProjectInternal, org.gradle.api.internal.project.taskfactory.TaskIdentity, java.util.concurrent.Callable)' title='injectIntoNewInstance'>injectIntoNewInstance</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#isCompatibleWithConfigurationCache()' title='isCompatibleWithConfigurationCache'>isCompatibleWithConfigurationCache</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#isEnabled()' title='isEnabled'>isEnabled</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#isHasCustomActions()' title='isHasCustomActions'>isHasCustomActions</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#mustRunAfter([Ljava.lang.Object;)' title='mustRunAfter'>mustRunAfter</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#notCompatibleWithConfigurationCache(java.lang.String)' title='notCompatibleWithConfigurationCache'>notCompatibleWithConfigurationCache</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#notify()' title='notify'>notify</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#notifyAll()' title='notifyAll'>notifyAll</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#onlyIf(groovy.lang.Closure)' title='onlyIf'>onlyIf</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#onlyIf(java.lang.String, org.gradle.api.specs.Spec)' title='onlyIf'>onlyIf</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#onlyIf(org.gradle.api.specs.Spec)' title='onlyIf'>onlyIf</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#prependParallelSafeAction(org.gradle.api.Action)' title='prependParallelSafeAction'>prependParallelSafeAction</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#property(java.lang.String)' title='property'>property</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#restoreOnlyIf(org.gradle.api.specs.Spec)' title='restoreOnlyIf'>restoreOnlyIf</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#restoreTaskActions(java.util.List)' title='restoreTaskActions'>restoreTaskActions</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#setActions(java.util.List)' title='setActions'>setActions</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#setDependsOn(java.lang.Iterable)' title='setDependsOn'>setDependsOn</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#setDescription(java.lang.String)' title='setDescription'>setDescription</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#setDidWork(boolean)' title='setDidWork'>setDidWork</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#setEnabled(boolean)' title='setEnabled'>setEnabled</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#setFinalizedBy(java.lang.Iterable)' title='setFinalizedBy'>setFinalizedBy</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#setGroup(java.lang.String)' title='setGroup'>setGroup</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#setImpliesSubProjects(boolean)' title='setImpliesSubProjects'>setImpliesSubProjects</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#setMustRunAfter(java.lang.Iterable)' title='setMustRunAfter'>setMustRunAfter</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#setOnlyIf(groovy.lang.Closure)' title='setOnlyIf'>setOnlyIf</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#setOnlyIf(java.lang.String, org.gradle.api.specs.Spec)' title='setOnlyIf'>setOnlyIf</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#setOnlyIf(org.gradle.api.specs.Spec)' title='setOnlyIf'>setOnlyIf</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#setProperty(java.lang.String, java.lang.Object)' title='setProperty'>setProperty</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#setShouldRunAfter(java.lang.Iterable)' title='setShouldRunAfter'>setShouldRunAfter</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#shouldRunAfter([Ljava.lang.Object;)' title='shouldRunAfter'>shouldRunAfter</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#toString()' title='toString'>toString</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#usesService(org.gradle.api.provider.Provider)' title='usesService'>usesService</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#wait()' title='wait'>wait</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#wait(long)' title='wait'>wait</a>, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTask.html#wait(long, int)' title='wait'>wait</a></code></td>
                         </tr>
                     </table>
                    </ul>
@@ -290,8 +304,8 @@ extends org.gradle.api.DefaultTask</pre>
                         <a name="ValidatePersistenceSchema(org.gradle.workers.WorkerExecutor)"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>@javax.inject.Inject<br><strong>ValidatePersistenceSchema</strong>(org.gradle.workers.WorkerExecutor workerExecutor)</h4>
-                                <p> Creates a new task instance. <DL><DT><B>Parameters:</B></DT><DD><code>workerExecutor</code> -  The Gradle org.gradle.workers.WorkerExecutor used to submit
+                                <h4>@<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/javax/inject/Inject.html' title='Inject'>Inject</a><br><strong>ValidatePersistenceSchema</strong>(<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/workers/WorkerExecutor.html' title='WorkerExecutor'>WorkerExecutor</a> workerExecutor)</h4>
+                                <p> Creates a new task instance. <DL><DT><B>Parameters:</B></DT><DD><code>workerExecutor</code> -  The Gradle <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/workers/WorkerExecutor.html' title='WorkerExecutor'>WorkerExecutor</a> used to submit
                        the isolated schema validation work action.</DD></DL></p>
                             </li>
                         </ul>
@@ -312,16 +326,16 @@ extends org.gradle.api.DefaultTask</pre>
                         <a name="getClasspath()"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>@org.gradle.api.tasks.CompileClasspath<br>abstract&nbsp;org.gradle.api.file.ConfigurableFileCollection <strong>getClasspath</strong>()</h4>
+                                <h4>@<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/tasks/CompileClasspath.html' title='CompileClasspath'>CompileClasspath</a><br>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/file/ConfigurableFileCollection.html' title='ConfigurableFileCollection'>ConfigurableFileCollection</a> <strong>getClasspath</strong>()</h4>
                                 <p> The complete runtime and compilation classpath containing the compiled entity classes,
- the JPA provider implementation binaries (Hibernate/EclipseLink), and the H2 driver.</p>
+ the JPA provider implementation binaries (Hibernate/EclipseLink), and the H2 driver. <DL><DT><B>Returns:</B></DT><DD>The file collection managing the schema validation runtime classpath.</DD></DL></p>
                             </li>
                         </ul>
                     
                         <a name="getDiscoveredEntityClasses()"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>@org.gradle.api.tasks.Input<br>abstract&nbsp;org.gradle.api.provider.ListProperty&lt;java.lang.String&gt; <strong>getDiscoveredEntityClasses</strong>()</h4>
+                                <h4>@<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/tasks/Input.html' title='Input'>Input</a><br>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/ListProperty.html' title='ListProperty'>ListProperty</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt; <strong>getDiscoveredEntityClasses</strong>()</h4>
                                 <p> The list of fully qualified entity class names discovered by the ASM
  bytecode scanner during the compile phase.
  <p>
@@ -335,7 +349,7 @@ extends org.gradle.api.DefaultTask</pre>
                         <a name="getJpaVersion()"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>@org.gradle.api.tasks.Input<br>abstract&nbsp;org.gradle.api.provider.Property&lt;java.lang.String&gt; <strong>getJpaVersion</strong>()</h4>
+                                <h4>@<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/tasks/Input.html' title='Input'>Input</a><br>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Property.html' title='Property'>Property</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt; <strong>getJpaVersion</strong>()</h4>
                                 <p> The JPA specification version used to determine the annotation namespace
  (<CODE>jakarta.persistence</CODE> vs <CODE>javax.persistence</CODE>) during bytecode scanning.
  <p>Defaults to <CODE>"3.0"</CODE>.</p> <DL><DT><B>Returns:</B></DT><DD>The lazy property tracking the JPA version string.</DD></DL></p>
@@ -345,7 +359,7 @@ extends org.gradle.api.DefaultTask</pre>
                         <a name="getPersistenceUnitNames()"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>@org.gradle.api.tasks.Input<br>abstract&nbsp;org.gradle.api.provider.Property&lt;java.lang.String&gt; <strong>getPersistenceUnitNames</strong>()</h4>
+                                <h4>@<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/tasks/Input.html' title='Input'>Input</a><br>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Property.html' title='Property'>Property</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt; <strong>getPersistenceUnitNames</strong>()</h4>
                                 <p> A comma-separated list of persistence unit names to validate.
  <p>
  Each name must correspond to a <CODE>&lt;persistence-unit&gt;</CODE> declared
@@ -357,15 +371,24 @@ extends org.gradle.api.DefaultTask</pre>
                         <a name="getResourcesDir()"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>@org.gradle.api.tasks.InputDirectory<br>@org.gradle.api.tasks.PathSensitive(value: PathSensitivity.RELATIVE)<br>abstract&nbsp;org.gradle.api.file.DirectoryProperty <strong>getResourcesDir</strong>()</h4>
-                                <p> The built-in resource destination directory containing the META-INF/persistence.xml structure.</p>
+                                <h4>@<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/tasks/InputDirectory.html' title='InputDirectory'>InputDirectory</a><br>@<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/tasks/PathSensitive.html' title='PathSensitive'>PathSensitive</a>(value: PathSensitivity.RELATIVE)<br>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/file/DirectoryProperty.html' title='DirectoryProperty'>DirectoryProperty</a> <strong>getResourcesDir</strong>()</h4>
+                                <p> The built-in resource destination directory containing the META-INF/persistence.xml structure. <DL><DT><B>Returns:</B></DT><DD>The lazy directory property tracking the processed resources directory.</DD></DL></p>
+                            </li>
+                        </ul>
+                    
+                        <a name="getSourceFiles()"><!-- --></a>
+                        <ul class="blockListLast">
+                            <li class="blockList">
+                                <h4>@<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/work/Incremental.html' title='Incremental'>Incremental</a><br>@<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/tasks/InputFiles.html' title='InputFiles'>InputFiles</a><br>@<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/tasks/PathSensitive.html' title='PathSensitive'>PathSensitive</a>(value: PathSensitivity.RELATIVE)<br>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/file/ConfigurableFileCollection.html' title='ConfigurableFileCollection'>ConfigurableFileCollection</a> <strong>getSourceFiles</strong>()</h4>
+                                <p> The input source files collection used to calculate incremental deltas
+ immune to compiler erasures. <DL><DT><B>Returns:</B></DT><DD>The configurable file collection of tracked source files.</DD></DL></p>
                             </li>
                         </ul>
                     
                         <a name="getTenantProfiles()"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>@org.gradle.api.tasks.Input<br>abstract&nbsp;org.gradle.api.provider.ListProperty&lt;java.lang.String&gt; <strong>getTenantProfiles</strong>()</h4>
+                                <h4>@<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/tasks/Input.html' title='Input'>Input</a><br>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/ListProperty.html' title='ListProperty'>ListProperty</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt; <strong>getTenantProfiles</strong>()</h4>
                                 <p> The serialized list of tenant database connection profiles to validate
  against. Each entry is a pipe-delimited string of the form
  <CODE>Name|URL|Driver|User|Password</CODE>.
@@ -380,24 +403,40 @@ extends org.gradle.api.DefaultTask</pre>
                         <a name="getValidation()"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>@org.gradle.api.tasks.Nested<br>abstract&nbsp;org.gradle.api.provider.Property&lt;<a href='../../../../persist/jakarta/gradle/extension/ValidationExtension.html' title='ValidationExtension'>ValidationExtension</a>&gt; <strong>getValidation</strong>()</h4>
+                                <h4>@<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/tasks/Nested.html' title='Nested'>Nested</a><br>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Property.html' title='Property'>Property</a>&lt;<a href='../../../../persist/jakarta/gradle/extension/ValidationExtension.html' title='ValidationExtension'>ValidationExtension</a>&gt; <strong>getValidation</strong>()</h4>
                                 <p> Nested database connection configuration used during schema validation. <DL><DT><B>Returns:</B></DT><DD>The lazy property wrapping the <a href='../../../../persist/jakarta/gradle/extension/ValidationExtension.html' title='ValidationExtension'>ValidationExtension</a>.</DD></DL><DL><DT><B>See Also:</B></DT><DD><a href='../../../../persist/jakarta/gradle/extension/ValidationExtension.html' title='ValidationExtension'>ValidationExtension</a></DD></DL></p>
                             </li>
                         </ul>
                     
-                        <a name="validate()"><!-- --></a>
+                        <a name="getValidationReportFile()"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>@org.gradle.api.tasks.TaskAction<br>void <strong>validate</strong>()</h4>
+                                <h4>@<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/tasks/OutputFile.html' title='OutputFile'>OutputFile</a><br>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/file/RegularFileProperty.html' title='RegularFileProperty'>RegularFileProperty</a> <strong>getValidationReportFile</strong>()</h4>
+                                <p> The generated JSON schema validation audit metrics report.
+ Acts as the mandatory <CODE>@OutputFile</CODE> checkpoint to satisfy Gradle's
+ incremental task contract. <DL><DT><B>Returns:</B></DT><DD>The lazy file property tracking the validation report output location.</DD></DL></p>
+                            </li>
+                        </ul>
+                    
+                        <a name="validate(org.gradle.work.InputChanges)"><!-- --></a>
+                        <ul class="blockListLast">
+                            <li class="blockList">
+                                <h4>@<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/tasks/TaskAction.html' title='TaskAction'>TaskAction</a><br>void <strong>validate</strong>(<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/work/InputChanges.html' title='InputChanges'>InputChanges</a> inputChanges)</h4>
                                 <p> Executes schema validation by submitting a
  <a href='../../../../persist/jakarta/gradle/worker/SchemaValidationWorker.html' title='SchemaValidationWorker'>SchemaValidationWorker</a> to an isolated classloader worker process.
+ <p>
+ When executed incrementally, only entities whose source files have been
+ added or modified are forwarded to the worker. If no tracked entity
+ source files have changed, the task skips database bootstrapping entirely.
+ A non-incremental (full) pass validates every discovered entity class.
+ </p>
  <p>
  The worker receives the persistence unit names, the serialized
  multi-tenant connection profiles, the discovered entity class names,
  and the full runtime classpath. For each tenant profile, every active
  persistence unit is validated via the SPI-loaded
  persist.lint.api.spi.SchemaValidator.
- </p></p>
+ </p> <DL><DT><B>Parameters:</B></DT><DD><code>inputChanges</code> -  The Gradle incremental input changes descriptor.</DD></DL></p>
                             </li>
                         </ul>
                     

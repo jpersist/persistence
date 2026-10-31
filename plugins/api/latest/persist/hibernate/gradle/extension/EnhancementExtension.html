@@ -104,7 +104,7 @@ if (location.href.indexOf('is-external=true') == -1) {
 
     <p> Configuration options for Hibernate's programmatic compile-time bytecode enhancement engine.
  <p>
- This interface exposes lazy org.gradle.api.provider.Property flags that control how entity classes are modified
+ This interface exposes lazy <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Property.html' title='Property'>Property</a> flags that control how entity classes are modified
  post-compilation. By manipulating bytecode at compile time, applications gain performance benefits
  such as field-level lazy loading and direct interceptor tracking, completely bypassing the need
  for dynamic proxies or lazy initialization exceptions during active runtime transactions.
@@ -163,25 +163,25 @@ if (location.href.indexOf('is-external=true') == -1) {
                         
                         <tr class="altColor">
                             <td class="colFirst"><code></code></td>
-                            <td class="colLast"><code>abstract&nbsp;org.gradle.api.provider.Property&lt;java.lang.Boolean&gt;</code></td>
+                            <td class="colLast"><code>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Property.html' title='Property'>Property</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html' title='Boolean'>Boolean</a>&gt;</code></td>
                             <td class="colLast"><code><strong><a href="#getEnableAssociationManagement()">getEnableAssociationManagement</a></strong>()</code><br>Toggles whether to enhance entity bytecode to automatically manage bidirectional associations.</td>
                         </tr>
                         
                         <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
-                            <td class="colLast"><code>abstract&nbsp;org.gradle.api.provider.Property&lt;java.lang.Boolean&gt;</code></td>
+                            <td class="colLast"><code>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Property.html' title='Property'>Property</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html' title='Boolean'>Boolean</a>&gt;</code></td>
                             <td class="colLast"><code><strong><a href="#getEnableDirtyTracking()">getEnableDirtyTracking</a></strong>()</code><br>Toggles whether to enhance entity bytecode to support self-contained, active inline dirty tracking.</td>
                         </tr>
                         
                         <tr class="altColor">
                             <td class="colFirst"><code></code></td>
-                            <td class="colLast"><code>abstract&nbsp;org.gradle.api.provider.Property&lt;java.lang.Boolean&gt;</code></td>
+                            <td class="colLast"><code>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Property.html' title='Property'>Property</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html' title='Boolean'>Boolean</a>&gt;</code></td>
                             <td class="colLast"><code><strong><a href="#getEnableExtendedEnhancement()">getEnableExtendedEnhancement</a></strong>()</code><br>Toggles whether to enable advanced extended bytecode enhancements.</td>
                         </tr>
                         
                         <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
-                            <td class="colLast"><code>abstract&nbsp;org.gradle.api.provider.Property&lt;java.lang.Boolean&gt;</code></td>
+                            <td class="colLast"><code>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Property.html' title='Property'>Property</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html' title='Boolean'>Boolean</a>&gt;</code></td>
                             <td class="colLast"><code><strong><a href="#getEnableLazyInitialization()">getEnableLazyInitialization</a></strong>()</code><br>Toggles whether to enhance entity bytecode to support field-level lazy initialization.</td>
                         </tr>
                         
@@ -220,7 +220,7 @@ if (location.href.indexOf('is-external=true') == -1) {
                         <a name="getEnableAssociationManagement()"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>abstract&nbsp;org.gradle.api.provider.Property&lt;java.lang.Boolean&gt; <strong>getEnableAssociationManagement</strong>()</h4>
+                                <h4>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Property.html' title='Property'>Property</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html' title='Boolean'>Boolean</a>&gt; <strong>getEnableAssociationManagement</strong>()</h4>
                                 <p> Toggles whether to enhance entity bytecode to automatically manage bidirectional associations.
  <p>
  When set to <CODE>true</CODE>, setting one side of a bidirectional relationship automatically updates the other side
@@ -233,7 +233,7 @@ if (location.href.indexOf('is-external=true') == -1) {
                         <a name="getEnableDirtyTracking()"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>abstract&nbsp;org.gradle.api.provider.Property&lt;java.lang.Boolean&gt; <strong>getEnableDirtyTracking</strong>()</h4>
+                                <h4>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Property.html' title='Property'>Property</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html' title='Boolean'>Boolean</a>&gt; <strong>getEnableDirtyTracking</strong>()</h4>
                                 <p> Toggles whether to enhance entity bytecode to support self-contained, active inline dirty tracking.
  <p>
  When set to <CODE>true</CODE>, entities actively track their own internal state mutations. This allows Hibernate
@@ -247,7 +247,7 @@ if (location.href.indexOf('is-external=true') == -1) {
                         <a name="getEnableExtendedEnhancement()"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>abstract&nbsp;org.gradle.api.provider.Property&lt;java.lang.Boolean&gt; <strong>getEnableExtendedEnhancement</strong>()</h4>
+                                <h4>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Property.html' title='Property'>Property</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html' title='Boolean'>Boolean</a>&gt; <strong>getEnableExtendedEnhancement</strong>()</h4>
                                 <p> Toggles whether to enable advanced extended bytecode enhancements.
  <p>
  When set to <CODE>true</CODE>, Hibernate expands its byte-level enhancement scope beyond simple entity definitions
@@ -260,7 +260,7 @@ if (location.href.indexOf('is-external=true') == -1) {
                         <a name="getEnableLazyInitialization()"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>abstract&nbsp;org.gradle.api.provider.Property&lt;java.lang.Boolean&gt; <strong>getEnableLazyInitialization</strong>()</h4>
+                                <h4>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Property.html' title='Property'>Property</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html' title='Boolean'>Boolean</a>&gt; <strong>getEnableLazyInitialization</strong>()</h4>
                                 <p> Toggles whether to enhance entity bytecode to support field-level lazy initialization.
  <p>
  When set to <CODE>true</CODE>, specific fields or relationships annotated for lazy fetching can be loaded

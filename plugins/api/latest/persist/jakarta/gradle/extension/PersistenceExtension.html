@@ -102,23 +102,23 @@ if (location.href.indexOf('is-external=true') == -1) {
             <hr>
 
 <pre>abstract class PersistenceExtension
-extends java.lang.Object</pre>
+extends <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html' title='Object'>Object</a></pre>
 
     <p> Named DSL extension for the Jakarta Persistence plugin, scoped per Java source set.
  <p>
  Instances of this class are managed inside a
- org.gradle.api.NamedDomainObjectContainer registered under the
+ <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/NamedDomainObjectContainer.html' title='NamedDomainObjectContainer'>NamedDomainObjectContainer</a> registered under the
  <CODE>persistence</CODE> project extension. The plugin automatically creates one
  instance per Java source set (e.g.&nbsp;<CODE>main</CODE>, <CODE>test</CODE>), using
  the source set name as the container key. Each instance exposes the JPA
  specification version and a nested
- org.gradle.api.NamedDomainObjectContainer of
+ <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/NamedDomainObjectContainer.html' title='NamedDomainObjectContainer'>NamedDomainObjectContainer</a> of
  <a href='../../../../persist/jakarta/gradle/extension/PersistenceUnitExtension.html' title='PersistenceUnitExtension'>PersistenceUnitExtension</a> instances, allowing build scripts to
  declaratively define one or more persistence units per source set.
  </p>
  <p>
  Declared as <CODE>abstract</CODE> so that Gradle's managed-property engine can
- generate the backing implementation for lazy org.gradle.api.provider.Property
+ generate the backing implementation for lazy <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Property.html' title='Property'>Property</a>
  fields.
  </p>
  <p>Example usage:</p>
@@ -169,7 +169,7 @@ extends java.lang.Object</pre>
                         </tr>
                         
                         <tr class="rowColor">
-                            <td class="colFirst"><code><strong>org.gradle.api.NamedDomainObjectContainer&lt;<a href='../../../../persist/jakarta/gradle/extension/PersistenceUnitExtension.html' title='PersistenceUnitExtension'>PersistenceUnitExtension</a>&gt;</strong></code>&nbsp;</td>
+                            <td class="colFirst"><code><strong><a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/NamedDomainObjectContainer.html' title='NamedDomainObjectContainer'>NamedDomainObjectContainer</a>&lt;<a href='../../../../persist/jakarta/gradle/extension/PersistenceUnitExtension.html' title='PersistenceUnitExtension'>PersistenceUnitExtension</a>&gt;</strong></code>&nbsp;</td>
                             <td class="colLast"><code><a href="#persistenceUnits">persistenceUnits</a></code><br>Container of named <a href='../../../../persist/jakarta/gradle/extension/PersistenceUnitExtension.html' title='PersistenceUnitExtension'>PersistenceUnitExtension</a> instances.</td>
                         </tr>
                         
@@ -203,7 +203,7 @@ extends java.lang.Object</pre>
                         
                         <tr class="altColor">
                             <td class="colFirst">
-                                <code><strong><a href="#PersistenceExtension(java.lang.String, org.gradle.api.model.ObjectFactory)">PersistenceExtension</a></strong>(java.lang.String name, org.gradle.api.model.ObjectFactory objects)</code><br>Creates a new extension instance.</td>
+                                <code><strong><a href="#PersistenceExtension(java.lang.String, org.gradle.api.model.ObjectFactory)">PersistenceExtension</a></strong>(<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a> name, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/model/ObjectFactory.html' title='ObjectFactory'>ObjectFactory</a> objects)</code><br>Creates a new extension instance.</td>
                         </tr>
                         
                     </table>
@@ -229,39 +229,39 @@ extends java.lang.Object</pre>
                         
                         <tr class="altColor">
                             <td class="colFirst"><code></code></td>
-                            <td class="colLast"><code>java.lang.String</code></td>
+                            <td class="colLast"><code><a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a></code></td>
                             <td class="colLast"><code><strong><a href="#getName()">getName</a></strong>()</code><br>Returns the source set persistence name.</td>
                         </tr>
                         
                         <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
-                            <td class="colLast"><code>abstract&nbsp;org.gradle.api.provider.MapProperty&lt;java.lang.String, java.lang.String&gt;</code></td>
-                            <td class="colLast"><code><strong><a href="#getOutputProperties()">getOutputProperties</a></strong>()</code><br>Key-value pairs passed to the XML javax.xml.transform.Transformer
+                            <td class="colLast"><code>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/MapProperty.html' title='MapProperty'>MapProperty</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt;</code></td>
+                            <td class="colLast"><code><strong><a href="#getOutputProperties()">getOutputProperties</a></strong>()</code><br>Key-value pairs passed to the XML <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/javax/xml/transform/Transformer.html' title='Transformer'>Transformer</a>
  that formats the generated <CODE>persistence.xml</CODE>.</td>
                         </tr>
                         
                         <tr class="altColor">
                             <td class="colFirst"><code></code></td>
-                            <td class="colLast"><code>abstract&nbsp;org.gradle.api.provider.Property&lt;java.lang.String&gt;</code></td>
+                            <td class="colLast"><code>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Property.html' title='Property'>Property</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt;</code></td>
                             <td class="colLast"><code><strong><a href="#getVersion()">getVersion</a></strong>()</code><br>The JPA specification version written into the generated <CODE>persistence.xml</CODE>.</td>
                         </tr>
                         
                         <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>void</code></td>
-                            <td class="colLast"><code><strong><a href="#linter(Action)">linter</a></strong>(org.gradle.api.Action&lt;? super <a href='../../../../persist/jakarta/gradle/extension/LinterExtension.html' title='LinterExtension'>LinterExtension</a>&gt; action)</code><br>Configures the static<DL><DT><B>NamedQuery:</B></DT><DD>analysis linter options.</DD></DL> </td>
+                            <td class="colLast"><code><strong><a href="#linter(Action)">linter</a></strong>(<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/Action.html' title='Action'>Action</a>&lt;? super <a href='../../../../persist/jakarta/gradle/extension/LinterExtension.html' title='LinterExtension'>LinterExtension</a>&gt; action)</code><br>Configures the static<DL><DT><B>NamedQuery:</B></DT><DD>analysis linter options.</DD></DL> </td>
                         </tr>
                         
                         <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>void</code></td>
-                            <td class="colLast"><code><strong><a href="#outputProperty(java.lang.String, java.lang.String)">outputProperty</a></strong>(java.lang.String key, java.lang.String value)</code><br>Sets a single XML transformer output property.</td>
+                            <td class="colLast"><code><strong><a href="#outputProperty(java.lang.String, java.lang.String)">outputProperty</a></strong>(<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a> key, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a> value)</code><br>Sets a single XML transformer output property.</td>
                         </tr>
                         
                         <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>void</code></td>
-                            <td class="colLast"><code><strong><a href="#persistenceUnits(Action)">persistenceUnits</a></strong>(org.gradle.api.Action&lt;? super org.gradle.api.NamedDomainObjectContainer&lt;<a href='../../../../persist/jakarta/gradle/extension/PersistenceUnitExtension.html' title='PersistenceUnitExtension'>PersistenceUnitExtension</a>&gt;&gt; action)</code><br>Configures the <a href='#persistenceUnits'>persistenceUnits</a> container using the given action.</td>
+                            <td class="colLast"><code><strong><a href="#persistenceUnits(Action)">persistenceUnits</a></strong>(<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/Action.html' title='Action'>Action</a>&lt;? super <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/NamedDomainObjectContainer.html' title='NamedDomainObjectContainer'>NamedDomainObjectContainer</a>&lt;<a href='../../../../persist/jakarta/gradle/extension/PersistenceUnitExtension.html' title='PersistenceUnitExtension'>PersistenceUnitExtension</a>&gt;&gt; action)</code><br>Configures the <a href='#persistenceUnits'>persistenceUnits</a> container using the given action.</td>
                         </tr>
                         
                         <tr class="altColor">
@@ -273,7 +273,7 @@ extends java.lang.Object</pre>
                         <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>void</code></td>
-                            <td class="colLast"><code><strong><a href="#validation(Action)">validation</a></strong>(org.gradle.api.Action&lt;? super <a href='../../../../persist/jakarta/gradle/extension/ValidationExtension.html' title='ValidationExtension'>ValidationExtension</a>&gt; action)</code><br>Configures the <a href='#validation'>validation</a> extension using the given action.</td>
+                            <td class="colLast"><code><strong><a href="#validation(Action)">validation</a></strong>(<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/Action.html' title='Action'>Action</a>&lt;? super <a href='../../../../persist/jakarta/gradle/extension/ValidationExtension.html' title='ValidationExtension'>ValidationExtension</a>&gt; action)</code><br>Configures the <a href='#validation'>validation</a> extension using the given action.</td>
                         </tr>
                         
                     </table>
@@ -291,8 +291,8 @@ extends java.lang.Object</pre>
                         </tr>
                         
                         <tr class="altColor">
-                            <td class="colFirst"><code>class java.lang.Object</code></td>
-                            <td class="colLast"><code>java.lang.Object#equals(java.lang.Object), java.lang.Object#getClass(), java.lang.Object#hashCode(), java.lang.Object#notify(), java.lang.Object#notifyAll(), java.lang.Object#toString(), java.lang.Object#wait(), java.lang.Object#wait(long), java.lang.Object#wait(long, int)</code></td>
+                            <td class="colFirst"><code>class <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html' title='Object'>Object</a></code></td>
+                            <td class="colLast"><code><a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)' title='equals'>equals</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#getClass()' title='getClass'>getClass</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#hashCode()' title='hashCode'>hashCode</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#notify()' title='notify'>notify</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#notifyAll()' title='notifyAll'>notifyAll</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#toString()' title='toString'>toString</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait()' title='wait'>wait</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait(long)' title='wait'>wait</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait(long, int)' title='wait'>wait</a></code></td>
                         </tr>
                     </table>
                    </ul>
@@ -322,7 +322,7 @@ extends java.lang.Object</pre>
                         <a name="linter"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>@org.gradle.api.tasks.Nested<br>final&nbsp;<a href='../../../../persist/jakarta/gradle/extension/LinterExtension.html'>LinterExtension</a> <strong>linter</strong></h4>
+                                <h4>@<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/tasks/Nested.html' title='Nested'>Nested</a><br>final&nbsp;<a href='../../../../persist/jakarta/gradle/extension/LinterExtension.html'>LinterExtension</a> <strong>linter</strong></h4>
                                 <p> Nested configuration for the static compile-time <CODE>@NamedQuery</CODE>
  analysis linter.
  <p>
@@ -336,7 +336,7 @@ extends java.lang.Object</pre>
                         <a name="persistenceUnits"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>final&nbsp;org.gradle.api.NamedDomainObjectContainer&lt;<a href='../../../../persist/jakarta/gradle/extension/PersistenceUnitExtension.html' title='PersistenceUnitExtension'>PersistenceUnitExtension</a>&gt; <strong>persistenceUnits</strong></h4>
+                                <h4>final&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/NamedDomainObjectContainer.html' title='NamedDomainObjectContainer'>NamedDomainObjectContainer</a>&lt;<a href='../../../../persist/jakarta/gradle/extension/PersistenceUnitExtension.html' title='PersistenceUnitExtension'>PersistenceUnitExtension</a>&gt; <strong>persistenceUnits</strong></h4>
                                 <p> Container of named <a href='../../../../persist/jakarta/gradle/extension/PersistenceUnitExtension.html' title='PersistenceUnitExtension'>PersistenceUnitExtension</a> instances.
  <p>
  Each entry maps to a <CODE>&lt;persistence-unit&gt;</CODE> element in the generated
@@ -378,9 +378,9 @@ extends java.lang.Object</pre>
                         <a name="PersistenceExtension(java.lang.String, org.gradle.api.model.ObjectFactory)"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>@javax.inject.Inject<br><strong>PersistenceExtension</strong>(java.lang.String name, org.gradle.api.model.ObjectFactory objects)</h4>
-                                <p> Creates a new extension instance. <DL><DT><B>Parameters:</B></DT><DD><code>name</code> -     The source set name used as the container key.</DD><DD><code>objects</code> -  The Gradle org.gradle.api.model.ObjectFactory used to create the
-                org.gradle.api.NamedDomainObjectContainer.</DD></DL></p>
+                                <h4>@<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/javax/inject/Inject.html' title='Inject'>Inject</a><br><strong>PersistenceExtension</strong>(<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a> name, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/model/ObjectFactory.html' title='ObjectFactory'>ObjectFactory</a> objects)</h4>
+                                <p> Creates a new extension instance. <DL><DT><B>Parameters:</B></DT><DD><code>name</code> -     The source set name used as the container key.</DD><DD><code>objects</code> -  The Gradle <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/model/ObjectFactory.html' title='ObjectFactory'>ObjectFactory</a> used to create the
+                <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/NamedDomainObjectContainer.html' title='NamedDomainObjectContainer'>NamedDomainObjectContainer</a>.</DD></DL></p>
                             </li>
                         </ul>
                     
@@ -400,11 +400,11 @@ extends java.lang.Object</pre>
                         <a name="getName()"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>@org.gradle.api.tasks.Input<br>java.lang.String <strong>getName</strong>()</h4>
+                                <h4>@<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/tasks/Input.html' title='Input'>Input</a><br><a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a> <strong>getName</strong>()</h4>
                                 <p> Returns the source set persistence name.
  <p>
  Read-only because it serves as the key for the
- org.gradle.api.NamedDomainObjectContainer.
+ <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/NamedDomainObjectContainer.html' title='NamedDomainObjectContainer'>NamedDomainObjectContainer</a>.
  </p> <DL><DT><B>Returns:</B></DT><DD>The source set name.</DD></DL></p>
                             </li>
                         </ul>
@@ -412,8 +412,8 @@ extends java.lang.Object</pre>
                         <a name="getOutputProperties()"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>@org.gradle.api.tasks.Input<br>abstract&nbsp;org.gradle.api.provider.MapProperty&lt;java.lang.String, java.lang.String&gt; <strong>getOutputProperties</strong>()</h4>
-                                <p> Key-value pairs passed to the XML javax.xml.transform.Transformer
+                                <h4>@<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/tasks/Input.html' title='Input'>Input</a><br>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/MapProperty.html' title='MapProperty'>MapProperty</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt; <strong>getOutputProperties</strong>()</h4>
+                                <p> Key-value pairs passed to the XML <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/javax/xml/transform/Transformer.html' title='Transformer'>Transformer</a>
  that formats the generated <CODE>persistence.xml</CODE>.
  <p>
  Defaults include <CODE>indent=yes</CODE>, <CODE>omit-xml-declaration=no</CODE>,
@@ -427,7 +427,7 @@ extends java.lang.Object</pre>
                         <a name="getVersion()"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>@org.gradle.api.tasks.Input<br>abstract&nbsp;org.gradle.api.provider.Property&lt;java.lang.String&gt; <strong>getVersion</strong>()</h4>
+                                <h4>@<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/tasks/Input.html' title='Input'>Input</a><br>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Property.html' title='Property'>Property</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt; <strong>getVersion</strong>()</h4>
                                 <p> The JPA specification version written into the generated <CODE>persistence.xml</CODE>.
  <p>
  Defaults to <CODE>"3.0"</CODE> (Jakarta Persistence 3.0).
@@ -438,7 +438,7 @@ extends java.lang.Object</pre>
                         <a name="linter(Action)"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>void <strong>linter</strong>(org.gradle.api.Action&lt;? super <a href='../../../../persist/jakarta/gradle/extension/LinterExtension.html' title='LinterExtension'>LinterExtension</a>&gt; action)</h4>
+                                <h4>void <strong>linter</strong>(<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/Action.html' title='Action'>Action</a>&lt;? super <a href='../../../../persist/jakarta/gradle/extension/LinterExtension.html' title='LinterExtension'>LinterExtension</a>&gt; action)</h4>
                                 <p> Configures the static<DL><DT><B>NamedQuery:</B></DT><DD>analysis linter options.</DD></DL> <DL><DT><B>Parameters:</B></DT><DD><code>action</code> -  The configuration action to apply to the linter extension parameters.</DD></DL><DL><DT><B>Since:</B></DT><DD>1.6.0</DD></DL></p>
                             </li>
                         </ul>
@@ -446,7 +446,7 @@ extends java.lang.Object</pre>
                         <a name="outputProperty(java.lang.String, java.lang.String)"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>void <strong>outputProperty</strong>(java.lang.String key, java.lang.String value)</h4>
+                                <h4>void <strong>outputProperty</strong>(<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a> key, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a> value)</h4>
                                 <p> Sets a single XML transformer output property.
  <p>
  Convenience method typically called inside a <a href='#transformer(groovy.lang.Closure)'>transformer(Closure)</a>
@@ -468,7 +468,7 @@ extends java.lang.Object</pre>
                         <a name="persistenceUnits(Action)"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>void <strong>persistenceUnits</strong>(org.gradle.api.Action&lt;? super org.gradle.api.NamedDomainObjectContainer&lt;<a href='../../../../persist/jakarta/gradle/extension/PersistenceUnitExtension.html' title='PersistenceUnitExtension'>PersistenceUnitExtension</a>&gt;&gt; action)</h4>
+                                <h4>void <strong>persistenceUnits</strong>(<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/Action.html' title='Action'>Action</a>&lt;? super <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/NamedDomainObjectContainer.html' title='NamedDomainObjectContainer'>NamedDomainObjectContainer</a>&lt;<a href='../../../../persist/jakarta/gradle/extension/PersistenceUnitExtension.html' title='PersistenceUnitExtension'>PersistenceUnitExtension</a>&gt;&gt; action)</h4>
                                 <p> Configures the <a href='#persistenceUnits'>persistenceUnits</a> container using the given action.
  <p>
  This method enables the standard Gradle nested-closure notation in build
@@ -511,7 +511,7 @@ extends java.lang.Object</pre>
                         <a name="validation(Action)"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>void <strong>validation</strong>(org.gradle.api.Action&lt;? super <a href='../../../../persist/jakarta/gradle/extension/ValidationExtension.html' title='ValidationExtension'>ValidationExtension</a>&gt; action)</h4>
+                                <h4>void <strong>validation</strong>(<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/Action.html' title='Action'>Action</a>&lt;? super <a href='../../../../persist/jakarta/gradle/extension/ValidationExtension.html' title='ValidationExtension'>ValidationExtension</a>&gt; action)</h4>
                                 <p> Configures the <a href='#validation'>validation</a> extension using the given action.
  <p>
  This method enables the standard Gradle nested-closure notation in build

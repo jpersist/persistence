@@ -99,7 +99,7 @@ if (location.href.indexOf('is-external=true') == -1) {
 
             <dl>
                 <dt>All Implemented Interfaces and Traits:</dt>
-                <dd>org.gradle.api.Plugin&lt;org.gradle.api.Project&gt;</dd>
+                <dd><a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/Plugin.html' title='Plugin'>Plugin</a>&lt;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/Project.html' title='Project'>Project</a>&gt;</dd>
             </dl>
     
 
@@ -107,14 +107,14 @@ if (location.href.indexOf('is-external=true') == -1) {
             <hr>
 
 <pre>class EclipseJpaModelgenPlugin
-extends java.lang.Object
-implements org.gradle.api.Plugin&lt;org.gradle.api.Project&gt;</pre>
+extends <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html' title='Object'>Object</a>
+implements <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/Plugin.html' title='Plugin'>Plugin</a>&lt;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/Project.html' title='Project'>Project</a>&gt;</pre>
 
     <p> Main entry point for the EclipseLink JPA Modelgen Processor Plugin.
  <p>
  This plugin automates the generation of the JPA static canonical metamodel using
  the EclipseLink JpaModelgen Annotation Processor. It applies the standard
- Gradle org.gradle.api.plugins.JavaPlugin, provisions the required processing
+ Gradle <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/plugins/JavaPlugin.html' title='JavaPlugin'>JavaPlugin</a>, provisions the required processing
  dependencies safely using a lazy version fallback mechanism, dynamically injects
  compiler arguments targeting the appropriate <code>persistence.xml</code> configuration file path,
  and registers the annotation processor generated source directory into each source set
@@ -211,7 +211,7 @@ implements org.gradle.api.Plugin&lt;org.gradle.api.Project&gt;</pre>
                         <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>void</code></td>
-                            <td class="colLast"><code><strong><a href="#apply(org.gradle.api.Project)">apply</a></strong>(org.gradle.api.Project project)</code><br></td>
+                            <td class="colLast"><code><strong><a href="#apply(org.gradle.api.Project)">apply</a></strong>(<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/Project.html' title='Project'>Project</a> project)</code><br>Applies the EclipseLink JPA Modelgen annotation processor configuration to the target project.</td>
                         </tr>
                         
                     </table>
@@ -229,8 +229,8 @@ implements org.gradle.api.Plugin&lt;org.gradle.api.Project&gt;</pre>
                         </tr>
                         
                         <tr class="altColor">
-                            <td class="colFirst"><code>class java.lang.Object</code></td>
-                            <td class="colLast"><code>java.lang.Object#equals(java.lang.Object), java.lang.Object#getClass(), java.lang.Object#hashCode(), java.lang.Object#notify(), java.lang.Object#notifyAll(), java.lang.Object#toString(), java.lang.Object#wait(), java.lang.Object#wait(long), java.lang.Object#wait(long, int)</code></td>
+                            <td class="colFirst"><code>class <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html' title='Object'>Object</a></code></td>
+                            <td class="colLast"><code><a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)' title='equals'>equals</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#getClass()' title='getClass'>getClass</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#hashCode()' title='hashCode'>hashCode</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#notify()' title='notify'>notify</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#notifyAll()' title='notifyAll'>notifyAll</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#toString()' title='toString'>toString</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait()' title='wait'>wait</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait(long)' title='wait'>wait</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait(long, int)' title='wait'>wait</a></code></td>
                         </tr>
                     </table>
                    </ul>
@@ -285,8 +285,14 @@ implements org.gradle.api.Plugin&lt;org.gradle.api.Project&gt;</pre>
                         <a name="apply(org.gradle.api.Project)"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>@java.lang.Override<br>void <strong>apply</strong>(org.gradle.api.Project project)</h4>
-                                <p></p>
+                                <h4>@<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Override.html' title='Override'>Override</a><br>void <strong>apply</strong>(<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/Project.html' title='Project'>Project</a> project)</h4>
+                                <p> Applies the EclipseLink JPA Modelgen annotation processor configuration to the target project.
+ <p>
+ Registers the <CODE>eclipselink</CODE> extension container, wires per-source-set
+ compiler arguments for <CODE>persistence.xml</CODE> and ORM descriptor discovery,
+ and provisions the default annotation processor dependency via the
+ <CODE>modelgenProcessor</CODE> configuration when no user override is present.
+ </p> <DL><DT><B>Parameters:</B></DT><DD><code>project</code> -  The target Gradle project.</DD></DL></p>
                             </li>
                         </ul>
                     

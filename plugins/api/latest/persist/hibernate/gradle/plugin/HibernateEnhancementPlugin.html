@@ -99,7 +99,7 @@ if (location.href.indexOf('is-external=true') == -1) {
 
             <dl>
                 <dt>All Implemented Interfaces and Traits:</dt>
-                <dd>org.gradle.api.Plugin&lt;org.gradle.api.Project&gt;</dd>
+                <dd><a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/Plugin.html' title='Plugin'>Plugin</a>&lt;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/Project.html' title='Project'>Project</a>&gt;</dd>
             </dl>
     
 
@@ -107,12 +107,12 @@ if (location.href.indexOf('is-external=true') == -1) {
             <hr>
 
 <pre>class HibernateEnhancementPlugin
-extends java.lang.Object
-implements org.gradle.api.Plugin&lt;org.gradle.api.Project&gt;</pre>
+extends <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html' title='Object'>Object</a>
+implements <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/Plugin.html' title='Plugin'>Plugin</a>&lt;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/Project.html' title='Project'>Project</a>&gt;</pre>
 
     <p> Main entry point for the Hibernate Bytecode Enhancement Plugin.
  <p>
- This plugin applies the org.gradle.api.plugins.JavaPlugin, registers a customizable
+ This plugin applies the <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/plugins/JavaPlugin.html' title='JavaPlugin'>JavaPlugin</a>, registers a customizable
  <code>hibernate</code> configuration extension block, and dynamically instantiates an independent
  <a href='../../../../persist/hibernate/gradle/task/HibernateEnhancementTask.html' title='HibernateEnhancementTask'>HibernateEnhancementTask</a> for every active project source set layout whose
  <CODE>java.srcDirs</CODE> contain at least one directory that physically exists on disk.
@@ -127,7 +127,19 @@ implements org.gradle.api.Plugin&lt;org.gradle.api.Project&gt;</pre>
  at least one physical Java source directory present on disk. Source sets with no existing
  <CODE>java.srcDirs</CODE> directories are silently skipped, preventing clean IDE workspaces
  from being cluttered with empty tasks (e.g.&nbsp;<CODE>hibernateEnhanceTestClasses</CODE>).
- </p> <DL><DT><B>See Also:</B></DT><DD><a href='../../../../persist/hibernate/gradle/extension/HibernateExtension.html' title='HibernateExtension'>HibernateExtension</a></DD></DL></p>
+ </p>
+ <p>
+ <b>Since 1.8.0:</b> The enhancement task now delegates bytecode transformation to an
+ isolated <a href='../../../../persist/hibernate/gradle/worker/EnhancementWorker.html' title='EnhancementWorker'>EnhancementWorker</a> submitted via
+ <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/workers/WorkerExecutor.html#classLoaderIsolation' title='classLoaderIsolation'>classLoaderIsolation</a>.
+ The plugin resolves the active JPA specification version from the
+ <a href='../../../../persist/jakarta/gradle/extension/PersistenceExtension.html' title='PersistenceExtension'>PersistenceExtension</a> registered by the
+ <a href='../../../../persist/jakarta/gradle/plugin/JakartaPersistencePlugin.html' title='JakartaPersistencePlugin'>JakartaPersistencePlugin</a> and dynamically selects the correct
+ Persistence Tools provider library (<CODE>persistence-tools-jakarta</CODE> or
+ <CODE>persistence-tools-legacy</CODE>) into a per-source-set isolated classpath
+ configuration. This decouples the enhancement task from direct Hibernate API
+ imports and ensures the Gradle daemon's classpath remains unpolluted.
+ </p> <DL><DT><B>See Also:</B></DT><DD><a href='../../../../persist/hibernate/gradle/extension/HibernateExtension.html' title='HibernateExtension'>HibernateExtension</a></DD><DD><a href='../../../../persist/hibernate/gradle/worker/EnhancementWorker.html' title='EnhancementWorker'>EnhancementWorker</a></DD></DL></p>
 
           </li>
     </ul>
@@ -191,7 +203,7 @@ implements org.gradle.api.Plugin&lt;org.gradle.api.Project&gt;</pre>
                         <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>void</code></td>
-                            <td class="colLast"><code><strong><a href="#apply(org.gradle.api.Project)">apply</a></strong>(org.gradle.api.Project project)</code><br></td>
+                            <td class="colLast"><code><strong><a href="#apply(org.gradle.api.Project)">apply</a></strong>(<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/Project.html' title='Project'>Project</a> project)</code><br>Applies the Hibernate bytecode enhancement configuration to the target project.</td>
                         </tr>
                         
                     </table>
@@ -209,8 +221,8 @@ implements org.gradle.api.Plugin&lt;org.gradle.api.Project&gt;</pre>
                         </tr>
                         
                         <tr class="altColor">
-                            <td class="colFirst"><code>class java.lang.Object</code></td>
-                            <td class="colLast"><code>java.lang.Object#equals(java.lang.Object), java.lang.Object#getClass(), java.lang.Object#hashCode(), java.lang.Object#notify(), java.lang.Object#notifyAll(), java.lang.Object#toString(), java.lang.Object#wait(), java.lang.Object#wait(long), java.lang.Object#wait(long, int)</code></td>
+                            <td class="colFirst"><code>class <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html' title='Object'>Object</a></code></td>
+                            <td class="colLast"><code><a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)' title='equals'>equals</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#getClass()' title='getClass'>getClass</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#hashCode()' title='hashCode'>hashCode</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#notify()' title='notify'>notify</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#notifyAll()' title='notifyAll'>notifyAll</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#toString()' title='toString'>toString</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait()' title='wait'>wait</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait(long)' title='wait'>wait</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait(long, int)' title='wait'>wait</a></code></td>
                         </tr>
                     </table>
                    </ul>
@@ -265,8 +277,14 @@ implements org.gradle.api.Plugin&lt;org.gradle.api.Project&gt;</pre>
                         <a name="apply(org.gradle.api.Project)"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>@java.lang.Override<br>void <strong>apply</strong>(org.gradle.api.Project project)</h4>
-                                <p></p>
+                                <h4>@<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Override.html' title='Override'>Override</a><br>void <strong>apply</strong>(<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/Project.html' title='Project'>Project</a> project)</h4>
+                                <p> Applies the Hibernate bytecode enhancement configuration to the target project.
+ <p>
+ Registers the <CODE>hibernate</CODE> extension, resolves the active JPA specification
+ version from the <a href='../../../../persist/jakarta/gradle/extension/PersistenceExtension.html' title='PersistenceExtension'>PersistenceExtension</a>, creates per-source-set isolated
+ classpath configurations carrying the correct Persistence Tools provider, and
+ registers <a href='../../../../persist/hibernate/gradle/task/HibernateEnhancementTask.html' title='HibernateEnhancementTask'>HibernateEnhancementTask</a> instances wired into the build lifecycle.
+ </p> <DL><DT><B>Parameters:</B></DT><DD><code>project</code> -  The target Gradle project.</DD></DL></p>
                             </li>
                         </ul>
                     

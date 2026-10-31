@@ -102,19 +102,19 @@ if (location.href.indexOf('is-external=true') == -1) {
             <hr>
 
 <pre>abstract class PersistenceUnitExtension
-extends java.lang.Object</pre>
+extends <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html' title='Object'>Object</a></pre>
 
     <p> Per-unit DSL configuration for a single <CODE>&lt;persistence-unit&gt;</CODE> element.
  <p>
  Instances are created automatically by the
- org.gradle.api.NamedDomainObjectContainer in
+ <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/NamedDomainObjectContainer.html' title='NamedDomainObjectContainer'>NamedDomainObjectContainer</a> in
  <a href='../../../../persist/jakarta/gradle/extension/PersistenceExtension.html#persistenceUnits' title='PersistenceExtension.persistenceUnits'>PersistenceExtension.persistenceUnits</a>. The container entry name
  becomes the <CODE>name</CODE> attribute of the persistence unit.
  </p>
  <p>
  Declared as <CODE>abstract</CODE> so that Gradle's managed-property engine can
  generate the backing implementation for lazy
- org.gradle.api.provider.Property fields.
+ <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Property.html' title='Property'>Property</a> fields.
  </p> <DL><DT><B>Since:</B></DT><DD>1.1.0</DD></DL></p>
 
           </li>
@@ -152,7 +152,7 @@ extends java.lang.Object</pre>
                         
                         <tr class="altColor">
                             <td class="colFirst">
-                                <code><strong><a href="#PersistenceUnitExtension(java.lang.String)">PersistenceUnitExtension</a></strong>(java.lang.String name)</code><br>Creates a new persistence-unit configuration with the given name.</td>
+                                <code><strong><a href="#PersistenceUnitExtension(java.lang.String)">PersistenceUnitExtension</a></strong>(<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a> name)</code><br>Creates a new persistence-unit configuration with the given name.</td>
                         </tr>
                         
                     </table>
@@ -178,100 +178,100 @@ extends java.lang.Object</pre>
                         
                         <tr class="altColor">
                             <td class="colFirst"><code></code></td>
-                            <td class="colLast"><code>abstract&nbsp;org.gradle.api.provider.Property&lt;java.lang.String&gt;</code></td>
+                            <td class="colLast"><code>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Property.html' title='Property'>Property</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt;</code></td>
                             <td class="colLast"><code><strong><a href="#getDataSource()">getDataSource</a></strong>()</code><br>The JNDI name of the data source for this persistence unit.</td>
                         </tr>
                         
                         <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
-                            <td class="colLast"><code>abstract&nbsp;org.gradle.api.provider.Property&lt;java.lang.String&gt;</code></td>
+                            <td class="colLast"><code>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Property.html' title='Property'>Property</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt;</code></td>
                             <td class="colLast"><code><strong><a href="#getDescription()">getDescription</a></strong>()</code><br>An optional human-readable description for the persistence unit.</td>
                         </tr>
                         
                         <tr class="altColor">
                             <td class="colFirst"><code></code></td>
-                            <td class="colLast"><code>abstract&nbsp;org.gradle.api.provider.Property&lt;java.lang.Boolean&gt;</code></td>
+                            <td class="colLast"><code>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Property.html' title='Property'>Property</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html' title='Boolean'>Boolean</a>&gt;</code></td>
                             <td class="colLast"><code><strong><a href="#getEnabled()">getEnabled</a></strong>()</code><br>Controls whether this persistence unit is included during descriptor
  generation.</td>
                         </tr>
                         
                         <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
-                            <td class="colLast"><code>abstract&nbsp;org.gradle.api.provider.Property&lt;java.lang.Boolean&gt;</code></td>
+                            <td class="colLast"><code>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Property.html' title='Property'>Property</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html' title='Boolean'>Boolean</a>&gt;</code></td>
                             <td class="colLast"><code><strong><a href="#getExcludedUnlistedClasses()">getExcludedUnlistedClasses</a></strong>()</code><br>Whether unlisted entity classes should be excluded from the persistence unit.</td>
                         </tr>
                         
                         <tr class="altColor">
                             <td class="colFirst"><code></code></td>
-                            <td class="colLast"><code>abstract&nbsp;org.gradle.api.provider.Property&lt;java.lang.Boolean&gt;</code></td>
+                            <td class="colLast"><code>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Property.html' title='Property'>Property</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html' title='Boolean'>Boolean</a>&gt;</code></td>
                             <td class="colLast"><code><strong><a href="#getIncludeAllClasses()">getIncludeAllClasses</a></strong>()</code><br>Whether all discovered entity classes should be included.</td>
                         </tr>
                         
                         <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
-                            <td class="colLast"><code>abstract&nbsp;org.gradle.api.provider.MapProperty&lt;java.lang.String, java.lang.String&gt;</code></td>
+                            <td class="colLast"><code>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/MapProperty.html' title='MapProperty'>MapProperty</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt;</code></td>
                             <td class="colLast"><code><strong><a href="#getJarFileMappings()">getJarFileMappings</a></strong>()</code><br>Map tracking custom jar-file element layout translations.</td>
                         </tr>
                         
                         <tr class="altColor">
                             <td class="colFirst"><code></code></td>
-                            <td class="colLast"><code>abstract&nbsp;org.gradle.api.provider.Property&lt;java.lang.Boolean&gt;</code></td>
+                            <td class="colLast"><code>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Property.html' title='Property'>Property</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html' title='Boolean'>Boolean</a>&gt;</code></td>
                             <td class="colLast"><code><strong><a href="#getJta()">getJta</a></strong>()</code><br>Whether the <a href='#getDataSource()'>data source</a> is JTA-managed.</td>
                         </tr>
                         
                         <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
-                            <td class="colLast"><code>abstract&nbsp;org.gradle.api.provider.ListProperty&lt;java.lang.String&gt;</code></td>
+                            <td class="colLast"><code>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/ListProperty.html' title='ListProperty'>ListProperty</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt;</code></td>
                             <td class="colLast"><code><strong><a href="#getMappingFiles()">getMappingFiles</a></strong>()</code><br>A list of ORM mapping file paths to include in the persistence unit.</td>
                         </tr>
                         
                         <tr class="altColor">
                             <td class="colFirst"><code></code></td>
-                            <td class="colLast"><code>java.lang.String</code></td>
+                            <td class="colLast"><code><a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a></code></td>
                             <td class="colLast"><code><strong><a href="#getName()">getName</a></strong>()</code><br>Returns the persistence-unit name.</td>
                         </tr>
                         
                         <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
-                            <td class="colLast"><code>abstract&nbsp;org.gradle.api.provider.MapProperty&lt;java.lang.String, java.lang.String&gt;</code></td>
+                            <td class="colLast"><code>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/MapProperty.html' title='MapProperty'>MapProperty</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt;</code></td>
                             <td class="colLast"><code><strong><a href="#getProperties()">getProperties</a></strong>()</code><br>Vendor-specific JPA properties to include in the
  <CODE>&lt;properties&gt;</CODE> block of the persistence unit.</td>
                         </tr>
                         
                         <tr class="altColor">
                             <td class="colFirst"><code></code></td>
-                            <td class="colLast"><code>abstract&nbsp;org.gradle.api.provider.Property&lt;java.lang.String&gt;</code></td>
+                            <td class="colLast"><code>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Property.html' title='Property'>Property</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt;</code></td>
                             <td class="colLast"><code><strong><a href="#getProvider()">getProvider</a></strong>()</code><br>The fully qualified class name of the JPA persistence provider.</td>
                         </tr>
                         
                         <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
-                            <td class="colLast"><code>abstract&nbsp;org.gradle.api.provider.Property&lt;java.lang.String&gt;</code></td>
+                            <td class="colLast"><code>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Property.html' title='Property'>Property</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt;</code></td>
                             <td class="colLast"><code><strong><a href="#getSharedCacheMode()">getSharedCacheMode</a></strong>()</code><br>Whether the shared (second-level) cache is enabled.</td>
                         </tr>
                         
                         <tr class="altColor">
                             <td class="colFirst"><code></code></td>
-                            <td class="colLast"><code>abstract&nbsp;org.gradle.api.provider.Property&lt;java.lang.String&gt;</code></td>
+                            <td class="colLast"><code>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Property.html' title='Property'>Property</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt;</code></td>
                             <td class="colLast"><code><strong><a href="#getTransactionType()">getTransactionType</a></strong>()</code><br>The JPA transaction type (<CODE>RESOURCE_LOCAL</CODE> or <CODE>JTA</CODE>).</td>
                         </tr>
                         
                         <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
-                            <td class="colLast"><code>abstract&nbsp;org.gradle.api.provider.Property&lt;java.lang.String&gt;</code></td>
+                            <td class="colLast"><code>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Property.html' title='Property'>Property</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt;</code></td>
                             <td class="colLast"><code><strong><a href="#getValidationMode()">getValidationMode</a></strong>()</code><br>The Bean Validation mode (<CODE>AUTO</CODE>, <CODE>CALLBACK</CODE>, or <CODE>NONE</CODE>).</td>
                         </tr>
                         
                         <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>void</code></td>
-                            <td class="colLast"><code><strong><a href="#jarFile(org.gradle.api.Project, Closure)">jarFile</a></strong>(org.gradle.api.Project project, groovy.lang.Closure&lt;java.lang.String&gt; pathConfiguration)</code><br>Declaratively configures a local project dependency layout mapping inside the descriptor.</td>
+                            <td class="colLast"><code><strong><a href="#jarFile(org.gradle.api.Project, Closure)">jarFile</a></strong>(<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/Project.html' title='Project'>Project</a> project, groovy.lang.Closure&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt; pathConfiguration)</code><br>Declaratively configures a local project dependency layout mapping inside the descriptor.</td>
                         </tr>
                         
                         <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>void</code></td>
-                            <td class="colLast"><code><strong><a href="#jarFile(java.lang.String, java.lang.String)">jarFile</a></strong>(java.lang.String dependencyNotation, java.lang.String structuredPath)</code><br>Declaratively configures a fixed external dependency coordinate path string mapping inside the descriptor.</td>
+                            <td class="colLast"><code><strong><a href="#jarFile(java.lang.String, java.lang.String)">jarFile</a></strong>(<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a> dependencyNotation, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a> structuredPath)</code><br>Declaratively configures a fixed external dependency coordinate path string mapping inside the descriptor.</td>
                         </tr>
                         
                         <tr class="altColor">
@@ -283,7 +283,7 @@ extends java.lang.Object</pre>
                         <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>void</code></td>
-                            <td class="colLast"><code><strong><a href="#property(java.lang.String, java.lang.String)">property</a></strong>(java.lang.String key, java.lang.String value)</code><br>DSL helper to add a single vendor-specific property entry.</td>
+                            <td class="colLast"><code><strong><a href="#property(java.lang.String, java.lang.String)">property</a></strong>(<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a> key, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a> value)</code><br>DSL helper to add a single vendor-specific property entry.</td>
                         </tr>
                         
                     </table>
@@ -301,8 +301,8 @@ extends java.lang.Object</pre>
                         </tr>
                         
                         <tr class="altColor">
-                            <td class="colFirst"><code>class java.lang.Object</code></td>
-                            <td class="colLast"><code>java.lang.Object#equals(java.lang.Object), java.lang.Object#getClass(), java.lang.Object#hashCode(), java.lang.Object#notify(), java.lang.Object#notifyAll(), java.lang.Object#toString(), java.lang.Object#wait(), java.lang.Object#wait(long), java.lang.Object#wait(long, int)</code></td>
+                            <td class="colFirst"><code>class <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html' title='Object'>Object</a></code></td>
+                            <td class="colLast"><code><a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)' title='equals'>equals</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#getClass()' title='getClass'>getClass</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#hashCode()' title='hashCode'>hashCode</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#notify()' title='notify'>notify</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#notifyAll()' title='notifyAll'>notifyAll</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#toString()' title='toString'>toString</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait()' title='wait'>wait</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait(long)' title='wait'>wait</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait(long, int)' title='wait'>wait</a></code></td>
                         </tr>
                     </table>
                    </ul>
@@ -336,7 +336,7 @@ extends java.lang.Object</pre>
                         <a name="PersistenceUnitExtension(java.lang.String)"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>@javax.inject.Inject<br><strong>PersistenceUnitExtension</strong>(java.lang.String name)</h4>
+                                <h4>@<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/javax/inject/Inject.html' title='Inject'>Inject</a><br><strong>PersistenceUnitExtension</strong>(<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a> name)</h4>
                                 <p> Creates a new persistence-unit configuration with the given name. <DL><DT><B>Parameters:</B></DT><DD><code>name</code> -  The persistence-unit name used as the container key and the
              <CODE>name</CODE> attribute in the generated XML.</DD></DL></p>
                             </li>
@@ -358,7 +358,7 @@ extends java.lang.Object</pre>
                         <a name="getDataSource()"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>@org.gradle.api.tasks.Input<br>@org.gradle.api.tasks.Optional<br>abstract&nbsp;org.gradle.api.provider.Property&lt;java.lang.String&gt; <strong>getDataSource</strong>()</h4>
+                                <h4>@<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/tasks/Input.html' title='Input'>Input</a><br>@<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/tasks/Optional.html' title='Optional'>Optional</a><br>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Property.html' title='Property'>Property</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt; <strong>getDataSource</strong>()</h4>
                                 <p> The JNDI name of the data source for this persistence unit.
  <p>
  Whether the data source is written as <CODE>&lt;jta-data-source&gt;</CODE> or
@@ -370,7 +370,7 @@ extends java.lang.Object</pre>
                         <a name="getDescription()"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>@org.gradle.api.tasks.Input<br>@org.gradle.api.tasks.Optional<br>abstract&nbsp;org.gradle.api.provider.Property&lt;java.lang.String&gt; <strong>getDescription</strong>()</h4>
+                                <h4>@<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/tasks/Input.html' title='Input'>Input</a><br>@<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/tasks/Optional.html' title='Optional'>Optional</a><br>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Property.html' title='Property'>Property</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt; <strong>getDescription</strong>()</h4>
                                 <p> An optional human-readable description for the persistence unit. <DL><DT><B>Returns:</B></DT><DD>The lazy property tracking the description.</DD></DL></p>
                             </li>
                         </ul>
@@ -378,7 +378,7 @@ extends java.lang.Object</pre>
                         <a name="getEnabled()"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>@org.gradle.api.tasks.Input<br>abstract&nbsp;org.gradle.api.provider.Property&lt;java.lang.Boolean&gt; <strong>getEnabled</strong>()</h4>
+                                <h4>@<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/tasks/Input.html' title='Input'>Input</a><br>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Property.html' title='Property'>Property</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html' title='Boolean'>Boolean</a>&gt; <strong>getEnabled</strong>()</h4>
                                 <p> Controls whether this persistence unit is included during descriptor
  generation.
  <p>
@@ -396,7 +396,7 @@ extends java.lang.Object</pre>
                         <a name="getExcludedUnlistedClasses()"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>@org.gradle.api.tasks.Input<br>abstract&nbsp;org.gradle.api.provider.Property&lt;java.lang.Boolean&gt; <strong>getExcludedUnlistedClasses</strong>()</h4>
+                                <h4>@<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/tasks/Input.html' title='Input'>Input</a><br>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Property.html' title='Property'>Property</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html' title='Boolean'>Boolean</a>&gt; <strong>getExcludedUnlistedClasses</strong>()</h4>
                                 <p> Whether unlisted entity classes should be excluded from the persistence unit.
  <p>
  Defaults to <CODE>false</CODE>.
@@ -407,7 +407,7 @@ extends java.lang.Object</pre>
                         <a name="getIncludeAllClasses()"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>@org.gradle.api.tasks.Input<br>abstract&nbsp;org.gradle.api.provider.Property&lt;java.lang.Boolean&gt; <strong>getIncludeAllClasses</strong>()</h4>
+                                <h4>@<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/tasks/Input.html' title='Input'>Input</a><br>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Property.html' title='Property'>Property</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html' title='Boolean'>Boolean</a>&gt; <strong>getIncludeAllClasses</strong>()</h4>
                                 <p> Whether all discovered entity classes should be included.
  <p>
  Defaults to <CODE>true</CODE>.
@@ -418,7 +418,7 @@ extends java.lang.Object</pre>
                         <a name="getJarFileMappings()"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>@org.gradle.api.tasks.Input<br>abstract&nbsp;org.gradle.api.provider.MapProperty&lt;java.lang.String, java.lang.String&gt; <strong>getJarFileMappings</strong>()</h4>
+                                <h4>@<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/tasks/Input.html' title='Input'>Input</a><br>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/MapProperty.html' title='MapProperty'>MapProperty</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt; <strong>getJarFileMappings</strong>()</h4>
                                 <p> Map tracking custom jar-file element layout translations.
  <p>
  Key: Project path (e.g. <CODE>":ejb-module"</CODE>) or group:artifact coordinates (e.g. <CODE>"com.example:core"</CODE>).
@@ -430,7 +430,7 @@ extends java.lang.Object</pre>
                         <a name="getJta()"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>@org.gradle.api.tasks.Input<br>@org.gradle.api.tasks.Optional<br>abstract&nbsp;org.gradle.api.provider.Property&lt;java.lang.Boolean&gt; <strong>getJta</strong>()</h4>
+                                <h4>@<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/tasks/Input.html' title='Input'>Input</a><br>@<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/tasks/Optional.html' title='Optional'>Optional</a><br>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Property.html' title='Property'>Property</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html' title='Boolean'>Boolean</a>&gt; <strong>getJta</strong>()</h4>
                                 <p> Whether the <a href='#getDataSource()'>data source</a> is JTA-managed.
  <p>
  When <CODE>true</CODE>, the data source is emitted as
@@ -443,7 +443,7 @@ extends java.lang.Object</pre>
                         <a name="getMappingFiles()"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>@org.gradle.api.tasks.Input<br>@org.gradle.api.tasks.Optional<br>abstract&nbsp;org.gradle.api.provider.ListProperty&lt;java.lang.String&gt; <strong>getMappingFiles</strong>()</h4>
+                                <h4>@<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/tasks/Input.html' title='Input'>Input</a><br>@<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/tasks/Optional.html' title='Optional'>Optional</a><br>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/ListProperty.html' title='ListProperty'>ListProperty</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt; <strong>getMappingFiles</strong>()</h4>
                                 <p> A list of ORM mapping file paths to include in the persistence unit. <DL><DT><B>Returns:</B></DT><DD>The lazy list property tracking the mapping file paths.</DD></DL></p>
                             </li>
                         </ul>
@@ -451,11 +451,11 @@ extends java.lang.Object</pre>
                         <a name="getName()"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>@org.gradle.api.tasks.Input<br>java.lang.String <strong>getName</strong>()</h4>
+                                <h4>@<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/tasks/Input.html' title='Input'>Input</a><br><a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a> <strong>getName</strong>()</h4>
                                 <p> Returns the persistence-unit name.
  <p>
  Read-only because it serves as the key for the
- org.gradle.api.NamedDomainObjectContainer.
+ <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/NamedDomainObjectContainer.html' title='NamedDomainObjectContainer'>NamedDomainObjectContainer</a>.
  </p> <DL><DT><B>Returns:</B></DT><DD>The unit name.</DD></DL></p>
                             </li>
                         </ul>
@@ -463,7 +463,7 @@ extends java.lang.Object</pre>
                         <a name="getProperties()"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>@org.gradle.api.tasks.Input<br>abstract&nbsp;org.gradle.api.provider.MapProperty&lt;java.lang.String, java.lang.String&gt; <strong>getProperties</strong>()</h4>
+                                <h4>@<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/tasks/Input.html' title='Input'>Input</a><br>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/MapProperty.html' title='MapProperty'>MapProperty</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt; <strong>getProperties</strong>()</h4>
                                 <p> Vendor-specific JPA properties to include in the
  <CODE>&lt;properties&gt;</CODE> block of the persistence unit. <DL><DT><B>Returns:</B></DT><DD>The lazy map property tracking the JPA properties.</DD></DL></p>
                             </li>
@@ -472,7 +472,7 @@ extends java.lang.Object</pre>
                         <a name="getProvider()"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>@org.gradle.api.tasks.Input<br>@org.gradle.api.tasks.Optional<br>abstract&nbsp;org.gradle.api.provider.Property&lt;java.lang.String&gt; <strong>getProvider</strong>()</h4>
+                                <h4>@<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/tasks/Input.html' title='Input'>Input</a><br>@<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/tasks/Optional.html' title='Optional'>Optional</a><br>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Property.html' title='Property'>Property</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt; <strong>getProvider</strong>()</h4>
                                 <p> The fully qualified class name of the JPA persistence provider. <DL><DT><B>Returns:</B></DT><DD>The lazy property tracking the provider class name.</DD></DL></p>
                             </li>
                         </ul>
@@ -480,7 +480,7 @@ extends java.lang.Object</pre>
                         <a name="getSharedCacheMode()"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>@org.gradle.api.tasks.Input<br>@org.gradle.api.tasks.Optional<br>abstract&nbsp;org.gradle.api.provider.Property&lt;java.lang.String&gt; <strong>getSharedCacheMode</strong>()</h4>
+                                <h4>@<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/tasks/Input.html' title='Input'>Input</a><br>@<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/tasks/Optional.html' title='Optional'>Optional</a><br>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Property.html' title='Property'>Property</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt; <strong>getSharedCacheMode</strong>()</h4>
                                 <p> Whether the shared (second-level) cache is enabled.
  <p>
  When present, the value is emitted as a <CODE>&lt;shared-cache-mode&gt;</CODE>
@@ -494,7 +494,7 @@ extends java.lang.Object</pre>
                         <a name="getTransactionType()"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>@org.gradle.api.tasks.Input<br>abstract&nbsp;org.gradle.api.provider.Property&lt;java.lang.String&gt; <strong>getTransactionType</strong>()</h4>
+                                <h4>@<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/tasks/Input.html' title='Input'>Input</a><br>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Property.html' title='Property'>Property</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt; <strong>getTransactionType</strong>()</h4>
                                 <p> The JPA transaction type (<CODE>RESOURCE_LOCAL</CODE> or <CODE>JTA</CODE>).
  <p>
  Defaults to <CODE>"RESOURCE_LOCAL"</CODE>.
@@ -505,7 +505,7 @@ extends java.lang.Object</pre>
                         <a name="getValidationMode()"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>@org.gradle.api.tasks.Input<br>@org.gradle.api.tasks.Optional<br>abstract&nbsp;org.gradle.api.provider.Property&lt;java.lang.String&gt; <strong>getValidationMode</strong>()</h4>
+                                <h4>@<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/tasks/Input.html' title='Input'>Input</a><br>@<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/tasks/Optional.html' title='Optional'>Optional</a><br>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Property.html' title='Property'>Property</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt; <strong>getValidationMode</strong>()</h4>
                                 <p> The Bean Validation mode (<CODE>AUTO</CODE>, <CODE>CALLBACK</CODE>, or <CODE>NONE</CODE>).
  <p>
  When present, the value is emitted as a <CODE>&lt;validation-mode&gt;</CODE>
@@ -519,7 +519,7 @@ extends java.lang.Object</pre>
                         <a name="jarFile(org.gradle.api.Project, Closure)"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>void <strong>jarFile</strong>(org.gradle.api.Project project, groovy.lang.Closure&lt;java.lang.String&gt; pathConfiguration)</h4>
+                                <h4>void <strong>jarFile</strong>(<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/Project.html' title='Project'>Project</a> project, groovy.lang.Closure&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt; pathConfiguration)</h4>
                                 <p> Declaratively configures a local project dependency layout mapping inside the descriptor.
  <p>
  Automatically hooks into the target module's standard Java Jar task lifecycle properties
@@ -535,7 +535,7 @@ extends java.lang.Object</pre>
                         <a name="jarFile(java.lang.String, java.lang.String)"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>void <strong>jarFile</strong>(java.lang.String dependencyNotation, java.lang.String structuredPath)</h4>
+                                <h4>void <strong>jarFile</strong>(<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a> dependencyNotation, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a> structuredPath)</h4>
                                 <p> Declaratively configures a fixed external dependency coordinate path string mapping inside the descriptor.
  <p>Example usage:</p>
  <pre>
@@ -564,7 +564,7 @@ extends java.lang.Object</pre>
                         <a name="property(java.lang.String, java.lang.String)"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>void <strong>property</strong>(java.lang.String key, java.lang.String value)</h4>
+                                <h4>void <strong>property</strong>(<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a> key, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a> value)</h4>
                                 <p> DSL helper to add a single vendor-specific property entry.
  <p>
  Example usage:

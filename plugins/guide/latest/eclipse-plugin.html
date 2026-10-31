@@ -601,30 +601,30 @@ $(addBlockSwitches);
 </script>
 
 </head>
-<body class="article toc2 toc-left">
+<body id="eclipselink-plugin" class="article toc2 toc-left">
 <div id="header">
 <h1>EclipseLink Plugin</h1>
 <div class="details">
-<span id="revnumber">version 1.7.0</span>
+<span id="revnumber">version 1.8.0</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#_applying_the_plugin">1. Applying the Plugin</a></li>
-<li><a href="#_sub_plugins">2. Sub-Plugins</a></li>
-<li><a href="#_jpa_static_metamodel_generation">3. JPA Static Metamodel Generation</a></li>
-<li><a href="#_dsl_extension_eclipselink">4. DSL Extension: <code>eclipselink</code></a>
+<li><a href="#applying-the-plugin-3">1. Applying the Plugin</a></li>
+<li><a href="#sub-plugins-3">2. Sub-Plugins</a></li>
+<li><a href="#jpa-static-metamodel-generation-3">3. JPA Static Metamodel Generation</a></li>
+<li><a href="#dsl-extension-eclipselink">4. DSL Extension: <code>eclipselink</code></a>
 <ul class="sectlevel2">
-<li><a href="#_eclipselinkextension_properties">4.1. <code>EclipselinkExtension</code> Properties</a></li>
-<li><a href="#_jpamodelgenextension_properties">4.2. <code>JpaModelgenExtension</code> Properties</a></li>
+<li><a href="#eclipselinkextension-properties">4.1. <code>EclipselinkExtension</code> Properties</a></li>
+<li><a href="#jpamodelgenextension-properties-3">4.2. <code>JpaModelgenExtension</code> Properties</a></li>
 </ul>
 </li>
-<li><a href="#_tasks">5. Tasks</a>
+<li><a href="#tasks-3">5. Tasks</a>
 <ul class="sectlevel2">
-<li><a href="#_eclipseweaveclasses">5.1. <code>eclipseWeaveClasses</code></a></li>
+<li><a href="#eclipseweaveclasses">5.1. <code>eclipseWeaveClasses</code></a></li>
 </ul>
 </li>
-<li><a href="#_the_weave_configuration">6. The <code>weave</code> Configuration</a></li>
+<li><a href="#the-weave-configuration">6. The <code>weave</code> Configuration</a></li>
 </ul>
 </div>
 </div>
@@ -637,18 +637,18 @@ $(addBlockSwitches);
 <div class="paragraph">
 <p>The <code>io.github.jpersist.eclipse-persistence</code> plugin provides a complete EclipseLink persistence pipeline out-of-the-box.
 It is the core implementation of the JPersist plugin suite for EclipseLink and facilitates the integration of provider platform capabilities such as JPA static metamodel generation and compile-time static bytecode weaving.
-It automatically applies the core <code>io.github.jpersist.jpa</code> plugin (see <a href="jakarta-plugin.html">Jakarta Persistence Plugin</a>), the EclipseLink canonical metamodel generator, and compile-time static weaving for EclipseLink-based projects.</p>
+It automatically applies the core <code>io.github.jpersist.jpa</code> plugin (see <a href="jakarta-plugin.html#jakarta-persistence-plugin">Jakarta Persistence Plugin</a>), the EclipseLink canonical metamodel generator, and compile-time static weaving for EclipseLink-based projects.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_applying_the_plugin">1. Applying the Plugin</h2>
+<h2 id="applying-the-plugin-3">1. Applying the Plugin</h2>
 <div class="sectionbody">
 <div class="listingblock primary">
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">plugins {
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.eclipse-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.7.0</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.eclipse-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.8.0</span><span class="delimiter">'</span></span>
 }
 
 dependencies {
@@ -663,7 +663,7 @@ dependencies {
 <div class="title">Kotlin</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
-    id(&quot;io.github.jpersist.eclipse-persistence&quot;) version &quot;1.7.0&quot;
+    id(&quot;io.github.jpersist.eclipse-persistence&quot;) version &quot;1.8.0&quot;
 }
 
 dependencies {
@@ -690,7 +690,7 @@ Use it to declare an EclipseLink platform BOM so that all EclipseLink module ver
 </div>
 </div>
 <div class="sect1">
-<h2 id="_sub_plugins">2. Sub-Plugins</h2>
+<h2 id="sub-plugins-3">2. Sub-Plugins</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The aggregate <code>io.github.jpersist.eclipse-persistence</code> plugin is a convenience macro that applies the following three plugins:</p>
@@ -709,7 +709,7 @@ Use it to declare an EclipseLink platform BOM so that all EclipseLink module ver
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>io.github.jpersist.jpa</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The core Jakarta Persistence plugin — registers the <code>persistence</code> DSL extension, generates or merges <code>persistence.xml</code> descriptors, validates persistence schema, and generates GraalVM native image metadata. See <a href="jakarta-plugin.html">Jakarta Persistence Plugin</a>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The core Jakarta Persistence plugin — registers the <code>persistence</code> DSL extension, generates or merges <code>persistence.xml</code> descriptors, validates persistence schema, and generates GraalVM native image metadata. See <a href="jakarta-plugin.html#jakarta-persistence-plugin">Jakarta Persistence Plugin</a>.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>io.github.jpersist.eclipse-jpa-modelgen</code></p></td>
@@ -728,7 +728,7 @@ Use it to declare an EclipseLink platform BOM so that all EclipseLink module ver
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">plugins {
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.eclipse-static-weave</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.7.0</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.eclipse-static-weave</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.8.0</span><span class="delimiter">'</span></span>
 }</code></pre>
 </div>
 </div>
@@ -736,14 +736,14 @@ Use it to declare an EclipseLink platform BOM so that all EclipseLink module ver
 <div class="title">Kotlin</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
-    id(&quot;io.github.jpersist.eclipse-static-weave&quot;) version &quot;1.7.0&quot;
+    id(&quot;io.github.jpersist.eclipse-static-weave&quot;) version &quot;1.8.0&quot;
 }</code></pre>
 </div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_jpa_static_metamodel_generation">3. JPA Static Metamodel Generation</h2>
+<h2 id="jpa-static-metamodel-generation-3">3. JPA Static Metamodel Generation</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The <code>io.github.jpersist.eclipse-jpa-modelgen</code> sub-plugin automatically:</p>
@@ -754,7 +754,7 @@ Use it to declare an EclipseLink platform BOM so that all EclipseLink module ver
 <p>Applies the <code>java</code> plugin.</p>
 </li>
 <li>
-<p>Creates the <code>eclipselink</code> DSL extension — a <code>NamedDomainObjectContainer</code> scoped per source set (see <a href="#_dsl_extension_eclipselink">DSL Extension: <code>eclipselink</code></a>).</p>
+<p>Creates the <code>eclipselink</code> DSL extension — a <code>NamedDomainObjectContainer</code> scoped per source set (see <a href="#dsl-extension-eclipselink">DSL Extension: <code>eclipselink</code></a>).</p>
 </li>
 <li>
 <p>Adds <code>org.eclipse.persistence:org.eclipse.persistence.jpa.modelgen.processor</code> to the unified global <code>modelgenProcessor</code> configuration container (registered by the <code>io.github.jpersist.jpa</code> plugin), but only if the user has not declared any custom dependencies in the <code>modelgenProcessor</code> configuration. This allows user overrides inside <code>modelgenProcessor</code> to propagate cleanly and safely skip the built-in default. <em>(Since 1.7.0, previously targeted <code>annotationProcessor</code> directly since 1.5.2)</em></p>
@@ -806,7 +806,7 @@ For this reason, the user <strong>must</strong> provide a <code>persistence.xml<
 </div>
 </div>
 <div class="sect1">
-<h2 id="_dsl_extension_eclipselink">4. DSL Extension: <code>eclipselink</code></h2>
+<h2 id="dsl-extension-eclipselink">4. DSL Extension: <code>eclipselink</code></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The <code>io.github.jpersist.eclipse-jpa-modelgen</code> sub-plugin registers an <code>eclipselink</code> DSL extension block at the project level.
@@ -838,7 +838,7 @@ Each entry exposes a nested <code>jpaModelgen</code> sub-block to control the ca
 </div>
 </div>
 <div class="sect2">
-<h3 id="_eclipselinkextension_properties">4.1. <code>EclipselinkExtension</code> Properties</h3>
+<h3 id="eclipselinkextension-properties">4.1. <code>EclipselinkExtension</code> Properties</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 20%;">
@@ -871,7 +871,7 @@ Each entry exposes a nested <code>jpaModelgen</code> sub-block to control the ca
 </table>
 </div>
 <div class="sect2">
-<h3 id="_jpamodelgenextension_properties">4.2. <code>JpaModelgenExtension</code> Properties</h3>
+<h3 id="jpamodelgenextension-properties-3">4.2. <code>JpaModelgenExtension</code> Properties</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 20%;">
@@ -927,7 +927,7 @@ Each entry exposes a nested <code>jpaModelgen</code> sub-block to control the ca
 </div>
 </div>
 <div class="sect1">
-<h2 id="_tasks">5. Tasks</h2>
+<h2 id="tasks-3">5. Tasks</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The plugin registers the following task per Java source set.</p>
@@ -945,10 +945,10 @@ Each entry exposes a nested <code>jpaModelgen</code> sub-block to control the ca
 </table>
 </div>
 <div class="paragraph">
-<p>In addition, all tasks inherited from the core <code>io.github.jpersist.jpa</code> plugin (<code>processPersistenceDescriptor</code>, <code>validatePersistenceSchema</code>, <code>generateJPAGraalVMMetadata</code>, <code>lintNamedQueries</code>) are also available. See <a href="jakarta-plugin.html">Jakarta Persistence Plugin</a> for their documentation.</p>
+<p>In addition, all tasks inherited from the core <code>io.github.jpersist.jpa</code> plugin (<code>processPersistenceDescriptor</code>, <code>validatePersistenceSchema</code>, <code>generateJPAGraalVMMetadata</code>, <code>lintNamedQueries</code>) are also available. See <a href="jakarta-plugin.html#jakarta-persistence-plugin">Jakarta Persistence Plugin</a> for their documentation.</p>
 </div>
 <div class="sect2">
-<h3 id="_eclipseweaveclasses">5.1. <code>eclipseWeaveClasses</code></h3>
+<h3 id="eclipseweaveclasses">5.1. <code>eclipseWeaveClasses</code></h3>
 <div class="paragraph">
 <p><strong>Group:</strong> <code>build</code><br>
 <strong>Type:</strong> <code>EclipseWeaveTask</code></p>
@@ -1058,7 +1058,7 @@ The task is wired into the build lifecycle automatically — it runs after <code
 </div>
 </div>
 <div class="sect1">
-<h2 id="_the_weave_configuration">6. The <code>weave</code> Configuration</h2>
+<h2 id="the-weave-configuration">6. The <code>weave</code> Configuration</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The <code>io.github.jpersist.eclipse-static-weave</code> sub-plugin creates a <code>weave</code> dependency configuration that carries the EclipseLink runtime libraries needed by the <code>StaticWeave</code> processor.</p>
@@ -1099,8 +1099,8 @@ The task is wired into the build lifecycle automatically — it runs after <code
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.7.0<br>
-Last updated 2026-10-23 10:34:50 UTC
+Version 1.8.0<br>
+Last updated 2026-10-31 21:13:58 UTC
 </div>
 </div>
 </body>

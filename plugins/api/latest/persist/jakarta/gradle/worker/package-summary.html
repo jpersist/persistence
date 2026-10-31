@@ -77,22 +77,22 @@ function windowTitle()
  <p>
  This package contains the worker actions and their parameter interfaces used to
  perform isolated build-time analysis of JPA entity mappings inside classloaders
- managed by Gradle's org.gradle.workers.WorkerExecutor.
+ managed by Gradle's <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/workers/WorkerExecutor.html' title='WorkerExecutor'>WorkerExecutor</a>.
  </p>
  <ul>
-     <li><a href='../../../../persist/jakarta/gradle/worker/SchemaValidationParameters.html' title='SchemaValidationParameters'>SchemaValidationParameters</a> &mdash;
+     <li>persist.jakarta.gradle.worker.SchemaValidationParameters &mdash;
          Parameter interface carrying the persistence unit names and JDBC
          connection properties into the isolated worker process.</li>
-     <li><a href='../../../../persist/jakarta/gradle/worker/SchemaValidationWorker.html' title='SchemaValidationWorker'>SchemaValidationWorker</a> &mdash;
-         org.gradle.workers.WorkAction that boots a standard JPA
-         jakarta.persistence.EntityManagerFactory per persistence unit
+     <li>persist.jakarta.gradle.worker.SchemaValidationWorker &mdash;
+         <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/workers/WorkAction.html' title='WorkAction'>WorkAction</a> that boots a standard JPA
+         <a href='https://jakarta.ee/specifications/platform/10/apidocs/jakarta/persistence/EntityManagerFactory.html' title='EntityManagerFactory'>EntityManagerFactory</a> per persistence unit
          with the <TT>validate</TT> schema generation action, failing the build
          if entity metadata does not match the database schema.</li>
      <li>persist.jakarta.gradle.worker.LintNamedQueriesParameters &mdash;
          Parameter interface carrying the compiled classes directory, JPA
          version, and linter options into the isolated worker process.</li>
      <li>persist.jakarta.gradle.worker.LintNamedQueriesWorker &mdash;
-         org.gradle.workers.WorkAction that performs ASM bytecode
+         <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/workers/WorkAction.html' title='WorkAction'>WorkAction</a> that performs ASM bytecode
          scanning to discover <TT>@NamedQuery</TT> and
          <TT>@NamedStoredProcedureQuery</TT> annotations, then validates their
          JPQL/HQL syntax and parameter naming conventions using an ANTLR4-based
@@ -182,7 +182,7 @@ function windowTitle()
                                     SchemaValidationWorker
                                 </a></strong>
                             </td>
-                            <td>Gradle org.gradle.workers.WorkAction that validates JPA entity mappings against a
+                            <td>Gradle <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/workers/WorkAction.html' title='WorkAction'>WorkAction</a> that validates JPA entity mappings against a
  database schema inside an isolated classloader.</td>
                         </tr>
 

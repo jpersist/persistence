@@ -601,27 +601,27 @@ $(addBlockSwitches);
 </script>
 
 </head>
-<body class="article toc2 toc-left">
+<body id="hibernate-plugin" class="article toc2 toc-left">
 <div id="header">
 <h1>Hibernate Plugin</h1>
 <div class="details">
-<span id="revnumber">version 1.7.0</span>
+<span id="revnumber">version 1.8.0</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#_applying_the_plugin">1. Applying the Plugin</a></li>
-<li><a href="#_sub_plugins">2. Sub-Plugins</a></li>
-<li><a href="#_jpa_static_metamodel_generation">3. JPA Static Metamodel Generation</a></li>
-<li><a href="#_dsl_extension_hibernate">4. DSL Extension: <code>hibernate</code></a>
+<li><a href="#applying-the-plugin-2">1. Applying the Plugin</a></li>
+<li><a href="#sub-plugins-2">2. Sub-Plugins</a></li>
+<li><a href="#jpa-static-metamodel-generation-2">3. JPA Static Metamodel Generation</a></li>
+<li><a href="#dsl-extension-hibernate">4. DSL Extension: <code>hibernate</code></a>
 <ul class="sectlevel2">
-<li><a href="#_hibernateextension_properties">4.1. <code>HibernateExtension</code> Properties</a></li>
-<li><a href="#_enhancementextension_properties">4.2. <code>EnhancementExtension</code> Properties</a></li>
+<li><a href="#hibernateextension-properties">4.1. <code>HibernateExtension</code> Properties</a></li>
+<li><a href="#enhancementextension-properties">4.2. <code>EnhancementExtension</code> Properties</a></li>
 </ul>
 </li>
-<li><a href="#_tasks">5. Tasks</a>
+<li><a href="#tasks-2">5. Tasks</a>
 <ul class="sectlevel2">
-<li><a href="#_hibernateenhanceclasses">5.1. <code>hibernateEnhanceClasses</code></a></li>
+<li><a href="#hibernateenhanceclasses">5.1. <code>hibernateEnhanceClasses</code></a></li>
 </ul>
 </li>
 </ul>
@@ -635,18 +635,18 @@ $(addBlockSwitches);
 </div>
 <div class="paragraph">
 <p>The <code>io.github.jpersist.hibernate-persistence</code> plugin provides a complete Hibernate persistence pipeline out-of-the-box.
-It automatically applies the core <code>io.github.jpersist.jpa</code> plugin (see <a href="jakarta-plugin.html">Jakarta Persistence Plugin</a>), the Hibernate JPA static metamodel generator, and compile-time bytecode enhancement for Hibernate-based projects.</p>
+It automatically applies the core <code>io.github.jpersist.jpa</code> plugin (see <a href="jakarta-plugin.html#jakarta-persistence-plugin">Jakarta Persistence Plugin</a>), the Hibernate JPA static metamodel generator, and compile-time bytecode enhancement for Hibernate-based projects.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_applying_the_plugin">1. Applying the Plugin</h2>
+<h2 id="applying-the-plugin-2">1. Applying the Plugin</h2>
 <div class="sectionbody">
 <div class="listingblock primary">
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">plugins {
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.hibernate-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.7.0</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.hibernate-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.8.0</span><span class="delimiter">'</span></span>
 }
 
 dependencies {
@@ -660,7 +660,7 @@ dependencies {
 <div class="title">Kotlin</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
-    id(&quot;io.github.jpersist.hibernate-persistence&quot;) version &quot;1.7.0&quot;
+    id(&quot;io.github.jpersist.hibernate-persistence&quot;) version &quot;1.8.0&quot;
 }
 
 dependencies {
@@ -686,7 +686,7 @@ Use it to declare a Hibernate platform BOM so that all Hibernate module versions
 </div>
 </div>
 <div class="sect1">
-<h2 id="_sub_plugins">2. Sub-Plugins</h2>
+<h2 id="sub-plugins-2">2. Sub-Plugins</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The aggregate <code>io.github.jpersist.hibernate-persistence</code> plugin is a convenience macro that applies the following three plugins:</p>
@@ -705,7 +705,7 @@ Use it to declare a Hibernate platform BOM so that all Hibernate module versions
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>io.github.jpersist.jpa</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The core Jakarta Persistence plugin — registers the <code>persistence</code> DSL extension, generates or merges <code>persistence.xml</code> descriptors, validates persistence schema, and generates GraalVM native image metadata. See <a href="jakarta-plugin.html">Jakarta Persistence Plugin</a>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The core Jakarta Persistence plugin — registers the <code>persistence</code> DSL extension, generates or merges <code>persistence.xml</code> descriptors, validates persistence schema, and generates GraalVM native image metadata. See <a href="jakarta-plugin.html#jakarta-persistence-plugin">Jakarta Persistence Plugin</a>.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>io.github.jpersist.hibernate-jpamodelgen</code></p></td>
@@ -724,7 +724,7 @@ Use it to declare a Hibernate platform BOM so that all Hibernate module versions
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">plugins {
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.hibernate-enhancement</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.7.0</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.hibernate-enhancement</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.8.0</span><span class="delimiter">'</span></span>
 }</code></pre>
 </div>
 </div>
@@ -732,14 +732,14 @@ Use it to declare a Hibernate platform BOM so that all Hibernate module versions
 <div class="title">Kotlin</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
-    id(&quot;io.github.jpersist.hibernate-enhancement&quot;) version &quot;1.7.0&quot;
+    id(&quot;io.github.jpersist.hibernate-enhancement&quot;) version &quot;1.8.0&quot;
 }</code></pre>
 </div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_jpa_static_metamodel_generation">3. JPA Static Metamodel Generation</h2>
+<h2 id="jpa-static-metamodel-generation-2">3. JPA Static Metamodel Generation</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The <code>io.github.jpersist.hibernate-jpamodelgen</code> sub-plugin automatically:</p>
@@ -766,7 +766,7 @@ Use it to declare a Hibernate platform BOM so that all Hibernate module versions
 </div>
 </div>
 <div class="sect1">
-<h2 id="_dsl_extension_hibernate">4. DSL Extension: <code>hibernate</code></h2>
+<h2 id="dsl-extension-hibernate">4. DSL Extension: <code>hibernate</code></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The <code>io.github.jpersist.hibernate-enhancement</code> sub-plugin registers a <code>hibernate</code> DSL extension block at the project level.
@@ -799,7 +799,7 @@ It exposes a nested <code>enhancement</code> sub-block to control compile-time b
 </div>
 </div>
 <div class="sect2">
-<h3 id="_hibernateextension_properties">4.1. <code>HibernateExtension</code> Properties</h3>
+<h3 id="hibernateextension-properties">4.1. <code>HibernateExtension</code> Properties</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 20%;">
@@ -826,7 +826,7 @@ It exposes a nested <code>enhancement</code> sub-block to control compile-time b
 </table>
 </div>
 <div class="sect2">
-<h3 id="_enhancementextension_properties">4.2. <code>EnhancementExtension</code> Properties</h3>
+<h3 id="enhancementextension-properties">4.2. <code>EnhancementExtension</code> Properties</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 20%;">
@@ -902,7 +902,7 @@ It exposes a nested <code>enhancement</code> sub-block to control compile-time b
 </div>
 </div>
 <div class="sect1">
-<h2 id="_tasks">5. Tasks</h2>
+<h2 id="tasks-2">5. Tasks</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The plugin registers the following task per Java source set.
@@ -921,10 +921,10 @@ For the <code>main</code> source set the task name is <code>hibernateEnhanceClas
 </table>
 </div>
 <div class="paragraph">
-<p>In addition, all tasks inherited from the core <code>io.github.jpersist.jpa</code> plugin (<code>processPersistenceDescriptor</code>, <code>validatePersistenceSchema</code>, <code>generateJPAGraalVMMetadata</code>, <code>lintNamedQueries</code>) are also available. See <a href="jakarta-plugin.html">Jakarta Persistence Plugin</a> for their documentation.</p>
+<p>In addition, all tasks inherited from the core <code>io.github.jpersist.jpa</code> plugin (<code>processPersistenceDescriptor</code>, <code>validatePersistenceSchema</code>, <code>generateJPAGraalVMMetadata</code>, <code>lintNamedQueries</code>) are also available. See <a href="jakarta-plugin.html#jakarta-persistence-plugin">Jakarta Persistence Plugin</a> for their documentation.</p>
 </div>
 <div class="sect2">
-<h3 id="_hibernateenhanceclasses">5.1. <code>hibernateEnhanceClasses</code></h3>
+<h3 id="hibernateenhanceclasses">5.1. <code>hibernateEnhanceClasses</code></h3>
 <div class="paragraph">
 <p><strong>Group:</strong> <code>build</code><br>
 <strong>Type:</strong> <code>HibernateEnhancementTask</code></p>
@@ -1026,8 +1026,8 @@ The task is wired into the build lifecycle automatically — it runs after <code
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.7.0<br>
-Last updated 2026-10-23 10:34:50 UTC
+Version 1.8.0<br>
+Last updated 2026-10-31 21:13:58 UTC
 </div>
 </div>
 </body>

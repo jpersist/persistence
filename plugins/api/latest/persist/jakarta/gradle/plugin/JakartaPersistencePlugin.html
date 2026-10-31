@@ -99,7 +99,7 @@ if (location.href.indexOf('is-external=true') == -1) {
 
             <dl>
                 <dt>All Implemented Interfaces and Traits:</dt>
-                <dd>org.gradle.api.Plugin&lt;org.gradle.api.Project&gt;</dd>
+                <dd><a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/Plugin.html' title='Plugin'>Plugin</a>&lt;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/Project.html' title='Project'>Project</a>&gt;</dd>
             </dl>
     
 
@@ -107,21 +107,20 @@ if (location.href.indexOf('is-external=true') == -1) {
             <hr>
 
 <pre>class JakartaPersistencePlugin
-extends java.lang.Object
-implements org.gradle.api.Plugin&lt;org.gradle.api.Project&gt;</pre>
+extends <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html' title='Object'>Object</a>
+implements <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/Plugin.html' title='Plugin'>Plugin</a>&lt;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/Project.html' title='Project'>Project</a>&gt;</pre>
 
     <p> Gradle plugin that manages Jakarta Persistence (JPA) descriptor generation.
  <p>
  Registered with plugin id <CODE>io.github.jpersist.jpa</CODE>, this plugin:
  </p>
  <ol>
-     <li>Applies the org.gradle.api.plugins.JavaPlugin.</li>
+     <li>Applies the <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/plugins/JavaPlugin.html' title='JavaPlugin'>JavaPlugin</a>.</li>
      <li>Creates a <CODE>jpa</CODE> dependency configuration for propagating
-         platform/BOM version constraints into standard Java configurations
-         (<CODE>implementation</CODE>, <CODE>compileOnly</CODE>, <CODE>annotationProcessor</CODE>,
-         <CODE>runtimeOnly</CODE>). When the org.gradle.api.plugins.JavaLibraryPlugin
-         is applied, the <CODE>api</CODE> and <CODE>compileOnlyApi</CODE> configurations are
-         also extended from <CODE>jpa</CODE>.</li>
+         platform/BOM version constraints into Java compilation and annotation processing
+         configurations (<CODE>compileOnly</CODE> or <CODE>compileOnlyApi</CODE> when
+         <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/plugins/JavaLibraryPlugin.html' title='JavaLibraryPlugin'>JavaLibraryPlugin</a> is applied,
+         <CODE>annotationProcessor</CODE>).</li>
      <li>Registers a global, non-resolvable <CODE>modelgenProcessor</CODE> configuration
          container that centralizes modelgen annotation processor dependencies.
          Each source set's <CODE>annotationProcessor</CODE> configuration lazily extends
@@ -129,7 +128,7 @@ implements org.gradle.api.Plugin&lt;org.gradle.api.Project&gt;</pre>
          plugins (e.g.&nbsp;Hibernate or EclipseLink) only need to target the single
          <CODE>modelgenProcessor</CODE> configuration.</li>
      <li>Registers the <CODE>persistence</CODE>
-         org.gradle.api.NamedDomainObjectContainer of
+         <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/NamedDomainObjectContainer.html' title='NamedDomainObjectContainer'>NamedDomainObjectContainer</a> of
          <a href='../../../../persist/jakarta/gradle/extension/PersistenceExtension.html' title='PersistenceExtension'>PersistenceExtension</a> as the
          top-level DSL extension.</li>
      <li>For each Java source set (e.g.&nbsp;<CODE>main</CODE>, <CODE>test</CODE>)
@@ -139,7 +138,7 @@ implements org.gradle.api.Plugin&lt;org.gradle.api.Project&gt;</pre>
              <li>Creates a <CODE>jarFile</CODE> (or <CODE>&lt;sourceSet&gt;JarFile</CODE>)
                  dependency configuration for declaring module JARs to be
                  injected as <CODE>&lt;jar-file&gt;</CODE> entries. The <CODE>jarFile</CODE>
-                 configuration extends <CODE>implementation</CODE> (and <CODE>api</CODE>
+                 configuration extends <CODE>implementation</CODE> (or <CODE>api</CODE>
                  when the <CODE>java-library</CODE> plugin is present).</li>
              <li>Automatically initializes a
                  <a href='../../../../persist/jakarta/gradle/extension/PersistenceExtension.html' title='PersistenceExtension'>PersistenceExtension</a>
@@ -259,8 +258,10 @@ implements org.gradle.api.Plugin&lt;org.gradle.api.Project&gt;</pre>
                         </tr>
                         
                         <tr class="altColor">
-                            <td class="colFirst"><code><strong>static&nbsp;org.gradle.api.attributes.Attribute&lt;java.lang.String&gt;</strong></code>&nbsp;</td>
-                            <td class="colLast"><code><a href="#JAR_LOCATION_ATTRIBUTE">JAR_LOCATION_ATTRIBUTE</a></code><br></td>
+                            <td class="colFirst"><code><strong>static&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/attributes/Attribute.html' title='Attribute'>Attribute</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt;</strong></code>&nbsp;</td>
+                            <td class="colLast"><code><a href="#JAR_LOCATION_ATTRIBUTE">JAR_LOCATION_ATTRIBUTE</a></code><br>Custom Gradle variant attribute used to override the relative path of a
+ JAR file inside the generated <CODE>persistence.xml</CODE> <CODE>&lt;jar-file&gt;</CODE>
+ entries.</td>
                         </tr>
                         
                     </table>
@@ -314,7 +315,20 @@ implements org.gradle.api.Plugin&lt;org.gradle.api.Project&gt;</pre>
                         <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>void</code></td>
-                            <td class="colLast"><code><strong><a href="#apply(org.gradle.api.Project)">apply</a></strong>(org.gradle.api.Project project)</code><br></td>
+                            <td class="colLast"><code><strong><a href="#apply(org.gradle.api.Project)">apply</a></strong>(<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/Project.html' title='Project'>Project</a> project)</code><br>Applies the Jakarta Persistence plugin configuration to the target project.</td>
+                        </tr>
+                        
+                        <tr class="rowColor">
+                            <td class="colFirst"><code></code></td>
+                            <td class="colLast"><code>static&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Provider.html' title='Provider'>Provider</a>&lt;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/file/ConfigurableFileCollection.html' title='ConfigurableFileCollection'>ConfigurableFileCollection</a>&gt;</code></td>
+                            <td class="colLast"><code><strong><a href="#resolvePersistenceToolsFiles(org.gradle.api.Project, Provider, java.lang.ClassLoader)">resolvePersistenceToolsFiles</a></strong>(<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/Project.html' title='Project'>Project</a> project, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Provider.html' title='Provider'>Provider</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt; jpaVersionProvider, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/ClassLoader.html' title='ClassLoader'>ClassLoader</a> classLoader)</code><br></td>
+                        </tr>
+                        
+                        <tr class="altColor">
+                            <td class="colFirst"><code></code></td>
+                            <td class="colLast"><code>static&nbsp;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a></code></td>
+                            <td class="colLast"><code><strong><a href="#resolvePersistenceToolsVersion()">resolvePersistenceToolsVersion</a></strong>()</code><br>Resolves the version of the <CODE>persistence-tools-api</CODE> library that is
+ currently on the plugin's own classpath.</td>
                         </tr>
                         
                     </table>
@@ -332,8 +346,8 @@ implements org.gradle.api.Plugin&lt;org.gradle.api.Project&gt;</pre>
                         </tr>
                         
                         <tr class="altColor">
-                            <td class="colFirst"><code>class java.lang.Object</code></td>
-                            <td class="colLast"><code>java.lang.Object#equals(java.lang.Object), java.lang.Object#getClass(), java.lang.Object#hashCode(), java.lang.Object#notify(), java.lang.Object#notifyAll(), java.lang.Object#toString(), java.lang.Object#wait(), java.lang.Object#wait(long), java.lang.Object#wait(long, int)</code></td>
+                            <td class="colFirst"><code>class <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html' title='Object'>Object</a></code></td>
+                            <td class="colLast"><code><a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)' title='equals'>equals</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#getClass()' title='getClass'>getClass</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#hashCode()' title='hashCode'>hashCode</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#notify()' title='notify'>notify</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#notifyAll()' title='notifyAll'>notifyAll</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#toString()' title='toString'>toString</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait()' title='wait'>wait</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait(long)' title='wait'>wait</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait(long, int)' title='wait'>wait</a></code></td>
                         </tr>
                     </table>
                    </ul>
@@ -363,8 +377,10 @@ implements org.gradle.api.Plugin&lt;org.gradle.api.Project&gt;</pre>
                         <a name="JAR_LOCATION_ATTRIBUTE"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>static&nbsp;final&nbsp;org.gradle.api.attributes.Attribute&lt;java.lang.String&gt; <strong>JAR_LOCATION_ATTRIBUTE</strong></h4>
-                                <p></p>
+                                <h4>static&nbsp;final&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/attributes/Attribute.html' title='Attribute'>Attribute</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt; <strong>JAR_LOCATION_ATTRIBUTE</strong></h4>
+                                <p> Custom Gradle variant attribute used to override the relative path of a
+ JAR file inside the generated <CODE>persistence.xml</CODE> <CODE>&lt;jar-file&gt;</CODE>
+ entries.</p>
                             </li>
                         </ul>
                     
@@ -406,8 +422,42 @@ implements org.gradle.api.Plugin&lt;org.gradle.api.Project&gt;</pre>
                         <a name="apply(org.gradle.api.Project)"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>@java.lang.Override<br>void <strong>apply</strong>(org.gradle.api.Project project)</h4>
+                                <h4>@<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Override.html' title='Override'>Override</a><br>void <strong>apply</strong>(<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/Project.html' title='Project'>Project</a> project)</h4>
+                                <p> Applies the Jakarta Persistence plugin configuration to the target project.
+ <p>
+ Registers the <CODE>jpa</CODE> and <CODE>modelgenProcessor</CODE> configurations, the
+ <CODE>persistence</CODE> extension container, and per-source-set task registrations
+ for descriptor processing, GraalVM metadata generation, schema validation,
+ and named query linting.
+ </p> <DL><DT><B>Parameters:</B></DT><DD><code>project</code> -  The target Gradle project.</DD></DL></p>
+                            </li>
+                        </ul>
+                    
+                        <a name="resolvePersistenceToolsFiles(org.gradle.api.Project, Provider, java.lang.ClassLoader)"><!-- --></a>
+                        <ul class="blockListLast">
+                            <li class="blockList">
+                                <h4>static&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Provider.html' title='Provider'>Provider</a>&lt;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/file/ConfigurableFileCollection.html' title='ConfigurableFileCollection'>ConfigurableFileCollection</a>&gt; <strong>resolvePersistenceToolsFiles</strong>(<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/Project.html' title='Project'>Project</a> project, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Provider.html' title='Provider'>Provider</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt; jpaVersionProvider, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/ClassLoader.html' title='ClassLoader'>ClassLoader</a> classLoader)</h4>
                                 <p></p>
+                            </li>
+                        </ul>
+                    
+                        <a name="resolvePersistenceToolsVersion()"><!-- --></a>
+                        <ul class="blockListLast">
+                            <li class="blockList">
+                                <h4>static&nbsp;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a> <strong>resolvePersistenceToolsVersion</strong>()</h4>
+                                <p> Resolves the version of the <CODE>persistence-tools-api</CODE> library that is
+ currently on the plugin's own classpath.
+ <p>
+ The version is extracted from the <CODE>Implementation-Version</CODE> attribute
+ of the <CODE>META-INF/MANIFEST.MF</CODE> inside the JAR that contains the
+ persist.api.spi.PersistenceServiceProvider SPI class. This allows downstream
+ plugins (e.g.&nbsp;the Hibernate enhancement plugin) to declare matching
+ provider dependencies at the exact same version without hard-coding
+ version strings.
+ </p><DL><DT><B>throws:</B></DT><DD>org.gradle.api.GradleException if the version lookup encounters
+         an unexpected I/O or security error.</DD></DL> <DL><DT><B>Returns:</B></DT><DD>The resolved version string, or <CODE>null</CODE> when the version
+         cannot be determined (e.g.&nbsp;when running from exploded classes
+         during development).</DD></DL><DL><DT><B>Since:</B></DT><DD>1.8.0</DD></DL></p>
                             </li>
                         </ul>
                     

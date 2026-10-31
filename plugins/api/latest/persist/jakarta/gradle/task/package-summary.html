@@ -91,19 +91,19 @@ function windowTitle()
      <li><a href='../../../../persist/jakarta/gradle/task/ValidatePersistenceSchema.html' title='ValidatePersistenceSchema'>ValidatePersistenceSchema</a> &mdash;
          Boots an isolated JVM worker process to validate that JPA entity
          configurations match the database schema. Uses classloader isolation
-         via Gradle's org.gradle.workers.WorkerExecutor and delegates
+         via Gradle's <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/workers/WorkerExecutor.html' title='WorkerExecutor'>WorkerExecutor</a> and delegates
          the actual validation to
          persist.jakarta.gradle.worker.SchemaValidationWorker.</li>
-     <li><a href='../../../../persist/jakarta/gradle/task/GenerateJPAGraalVMMetadata.html' title='GenerateJPAGraalVMMetadata'>GenerateJPAGraalVMMetadata</a> &mdash;
+     <li>persist.jakarta.gradle.task.GenerateJPAGraalVMMetadata &mdash;
          Generates a GraalVM native image <TT>reflect-config.json</TT> file
          containing all discovered JPA entity metadata classes to support
          ahead-of-time (AOT) reflection registration.</li>
-     <li><a href='../../../../persist/jakarta/gradle/task/LintNamedQueries.html' title='LintNamedQueries'>LintNamedQueries</a> &mdash;
+     <li>persist.jakarta.gradle.task.LintNamedQueries &mdash;
          Executes a static, compile-time AST verification loop over all
          <TT>@NamedQuery</TT> and <TT>@NamedStoredProcedureQuery</TT>
          definitions discovered in the compiled source set output directories.
          Uses classloader isolation via Gradle's
-         org.gradle.workers.WorkerExecutor and delegates the actual
+         <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/workers/WorkerExecutor.html' title='WorkerExecutor'>WorkerExecutor</a> and delegates the actual
          analysis to
          persist.jakarta.gradle.worker.LintNamedQueriesWorker.</li>
  </ul><DL><DT><B>since:</B></DT><DD>1.1.0</DD></DL><DL><DT><B>see:</B></DT><DD>persist.jakarta.gradle.task.delegate</DD></DL><DL><DT><B>see:</B></DT><DD>persist.jakarta.gradle.task.registry</DD></DL>

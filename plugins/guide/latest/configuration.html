@@ -601,25 +601,25 @@ $(addBlockSwitches);
 </script>
 
 </head>
-<body class="article toc2 toc-left">
+<body id="configuration" class="article toc2 toc-left">
 <div id="header">
 <h1>Configuration</h1>
 <div class="details">
-<span id="revnumber">version 1.7.0</span>
+<span id="revnumber">version 1.8.0</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#_multi_module_projects">1. Multi-Module Projects</a>
+<li><a href="#multi-module-projects">1. Multi-Module Projects</a>
 <ul class="sectlevel2">
-<li><a href="#_root_build_gradle">1.1. Root <code>build.gradle</code></a></li>
-<li><a href="#_entity_module_build_gradle">1.2. Entity Module <code>build.gradle</code></a></li>
-<li><a href="#_service_module_build_gradle">1.3. Service Module <code>build.gradle</code></a></li>
+<li><a href="#root-build-gradle">1.1. Root <code>build.gradle</code></a></li>
+<li><a href="#entity-module-build-gradle">1.2. Entity Module <code>build.gradle</code></a></li>
+<li><a href="#service-module-build-gradle">1.3. Service Module <code>build.gradle</code></a></li>
 </ul>
 </li>
-<li><a href="#_jpa_version_selection">2. JPA Version Selection</a></li>
-<li><a href="#_gradle_configuration_cache">3. Gradle Configuration Cache</a></li>
-<li><a href="#_ide_integration">4. IDE Integration</a></li>
+<li><a href="#jpa-version-selection">2. JPA Version Selection</a></li>
+<li><a href="#gradle-configuration-cache">3. Gradle Configuration Cache</a></li>
+<li><a href="#ide-integration">4. IDE Integration</a></li>
 </ul>
 </div>
 </div>
@@ -632,20 +632,20 @@ $(addBlockSwitches);
 </div>
 </div>
 <div class="sect1">
-<h2 id="_multi_module_projects">1. Multi-Module Projects</h2>
+<h2 id="multi-module-projects">1. Multi-Module Projects</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>In multi-module Gradle projects, declare the provider-specific plugin once in the root build file with <code>apply false</code>, then apply it individually in each module that contains JPA entities.
 Use the <code>jarFile</code> dependency configuration together with DSL jar-file mappings to declare cross-module entity dependencies so that <code>&lt;jar-file&gt;</code> entries are correctly generated in <code>persistence.xml</code>.</p>
 </div>
 <div class="sect2">
-<h3 id="_root_build_gradle">1.1. Root <code>build.gradle</code></h3>
+<h3 id="root-build-gradle">1.1. Root <code>build.gradle</code></h3>
 <div class="listingblock primary">
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">plugins {
     id <span class="string"><span class="delimiter">'</span><span class="content">base</span><span class="delimiter">'</span></span>
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.hibernate-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.7.0</span><span class="delimiter">'</span></span> apply <span class="predefined-constant">false</span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.hibernate-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.8.0</span><span class="delimiter">'</span></span> apply <span class="predefined-constant">false</span>
 }
 
 subprojects {
@@ -660,7 +660,7 @@ subprojects {
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
     base
-    id(&quot;io.github.jpersist.hibernate-persistence&quot;) version &quot;1.7.0&quot; apply false
+    id(&quot;io.github.jpersist.hibernate-persistence&quot;) version &quot;1.8.0&quot; apply false
 }
 
 subprojects {
@@ -684,7 +684,7 @@ Declaring the plugin with <code>apply false</code> in the root project makes the
 </div>
 </div>
 <div class="sect2">
-<h3 id="_entity_module_build_gradle">1.2. Entity Module <code>build.gradle</code></h3>
+<h3 id="entity-module-build-gradle">1.2. Entity Module <code>build.gradle</code></h3>
 <div class="paragraph">
 <p>The entity module defines JPA entity classes and applies both <code>java-library</code> and the Hibernate persistence plugin.
 Because the plugin version is already declared in the root <code>build.gradle</code>, the subproject does not need to repeat it.</p>
@@ -719,7 +719,7 @@ dependencies {
 </div>
 </div>
 <div class="sect2">
-<h3 id="_service_module_build_gradle">1.3. Service Module <code>build.gradle</code></h3>
+<h3 id="service-module-build-gradle">1.3. Service Module <code>build.gradle</code></h3>
 <div class="paragraph">
 <p>The service module depends on the entity module.
 It declares a <code>jarFile</code> project dependency and maps the jar-file location directly inside the persistence unit DSL block.</p>
@@ -781,13 +781,13 @@ persistence {
 <div class="paragraph">
 <p>The <code>jarFile</code> dependency ensures that the entity module&#8217;s JAR is resolved at build time.
 The DSL <code>jarFile</code> mapping inside <code>persistenceUnits</code> controls the exact <code>&lt;jar-file&gt;</code> path written to <code>persistence.xml</code>.
-See <a href="jakarta-plugin.html">Jakarta Persistence Plugin</a> for the full documentation on the <code>jarFile</code> dependency routing and DSL jar-file mappings.</p>
+See <a href="jakarta-plugin.html#jakarta-persistence-plugin">Jakarta Persistence Plugin</a> for the full documentation on the <code>jarFile</code> dependency routing and DSL jar-file mappings.</p>
 </div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_jpa_version_selection">2. JPA Version Selection</h2>
+<h2 id="jpa-version-selection">2. JPA Version Selection</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The <code>persistence</code> extension defaults to JPA 3.0. To target a different specification version, set the <code>version</code> property:</p>
@@ -818,7 +818,7 @@ See <a href="jakarta-plugin.html">Jakarta Persistence Plugin</a> for the full do
 </div>
 </div>
 <div class="sect1">
-<h2 id="_gradle_configuration_cache">3. Gradle Configuration Cache</h2>
+<h2 id="gradle-configuration-cache">3. Gradle Configuration Cache</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>All JPersist plugins are fully compatible with Gradle&#8217;s Configuration Cache.
@@ -827,7 +827,7 @@ No special configuration is required — the plugins use lazy <code>Property</co
 </div>
 </div>
 <div class="sect1">
-<h2 id="_ide_integration">4. IDE Integration</h2>
+<h2 id="ide-integration">4. IDE Integration</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>JPersist automatically hooks into Buildship (Eclipse) and IntelliJ IDEA project synchronization.
@@ -838,8 +838,8 @@ Generated source directories for metamodel classes are registered as source root
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.7.0<br>
-Last updated 2026-10-23 10:34:50 UTC
+Version 1.8.0<br>
+Last updated 2026-10-31 21:13:58 UTC
 </div>
 </div>
 </body>

@@ -101,7 +101,7 @@ if (location.href.indexOf('is-external=true') == -1) {
             <hr>
 
 <pre>interface SchemaValidationParameters
-extends org.gradle.workers.WorkParameters</pre>
+extends <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/workers/WorkParameters.html' title='WorkParameters'>WorkParameters</a></pre>
 
     <p> Parameter interface for the <a href='../../../../persist/jakarta/gradle/worker/SchemaValidationWorker.html' title='SchemaValidationWorker'>SchemaValidationWorker</a> work action.
  <p>
@@ -152,7 +152,7 @@ extends org.gradle.workers.WorkParameters</pre>
                         
                         <tr class="altColor">
                             <td class="colFirst"><code></code></td>
-                            <td class="colLast"><code>abstract&nbsp;org.gradle.api.provider.ListProperty&lt;java.lang.String&gt;</code></td>
+                            <td class="colLast"><code>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/ListProperty.html' title='ListProperty'>ListProperty</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt;</code></td>
                             <td class="colLast"><code><strong><a href="#getDiscoveredEntityClasses()">getDiscoveredEntityClasses</a></strong>()</code><br>Fully qualified entity class names discovered by the ASM bytecode
  scanner, used to initialize the SPI-loaded
  persist.lint.api.spi.SchemaValidator.</td>
@@ -160,19 +160,19 @@ extends org.gradle.workers.WorkParameters</pre>
                         
                         <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
-                            <td class="colLast"><code>abstract&nbsp;org.gradle.api.provider.Property&lt;java.lang.String&gt;</code></td>
+                            <td class="colLast"><code>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Property.html' title='Property'>Property</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt;</code></td>
                             <td class="colLast"><code><strong><a href="#getJpaVersion()">getJpaVersion</a></strong>()</code><br>The JPA specification version for annotation namespace resolution.</td>
                         </tr>
                         
                         <tr class="altColor">
                             <td class="colFirst"><code></code></td>
-                            <td class="colLast"><code>abstract&nbsp;org.gradle.api.provider.Property&lt;java.lang.String&gt;</code></td>
+                            <td class="colLast"><code>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Property.html' title='Property'>Property</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt;</code></td>
                             <td class="colLast"><code><strong><a href="#getPersistenceUnitNames()">getPersistenceUnitNames</a></strong>()</code><br>Comma-separated persistence unit names to validate.</td>
                         </tr>
                         
                         <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
-                            <td class="colLast"><code>abstract&nbsp;org.gradle.api.provider.ListProperty&lt;java.lang.String&gt;</code></td>
+                            <td class="colLast"><code>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/ListProperty.html' title='ListProperty'>ListProperty</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt;</code></td>
                             <td class="colLast"><code><strong><a href="#getTenantProfiles()">getTenantProfiles</a></strong>()</code><br>Pipe-delimited tenant profiles (<CODE>Name|URL|Driver|User|Password</CODE>)
  to validate sequentially.</td>
                         </tr>
@@ -212,7 +212,7 @@ extends org.gradle.workers.WorkParameters</pre>
                         <a name="getDiscoveredEntityClasses()"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>abstract&nbsp;org.gradle.api.provider.ListProperty&lt;java.lang.String&gt; <strong>getDiscoveredEntityClasses</strong>()</h4>
+                                <h4>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/ListProperty.html' title='ListProperty'>ListProperty</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt; <strong>getDiscoveredEntityClasses</strong>()</h4>
                                 <p> Fully qualified entity class names discovered by the ASM bytecode
  scanner, used to initialize the SPI-loaded
  persist.lint.api.spi.SchemaValidator. <DL><DT><B>Returns:</B></DT><DD>The list property tracking the entity class names.</DD></DL><DL><DT><B>Since:</B></DT><DD>1.7.0</DD></DL></p>
@@ -222,7 +222,7 @@ extends org.gradle.workers.WorkParameters</pre>
                         <a name="getJpaVersion()"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>abstract&nbsp;org.gradle.api.provider.Property&lt;java.lang.String&gt; <strong>getJpaVersion</strong>()</h4>
+                                <h4>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Property.html' title='Property'>Property</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt; <strong>getJpaVersion</strong>()</h4>
                                 <p>The JPA specification version for annotation namespace resolution.</p>
                             </li>
                         </ul>
@@ -230,7 +230,7 @@ extends org.gradle.workers.WorkParameters</pre>
                         <a name="getPersistenceUnitNames()"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>abstract&nbsp;org.gradle.api.provider.Property&lt;java.lang.String&gt; <strong>getPersistenceUnitNames</strong>()</h4>
+                                <h4>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Property.html' title='Property'>Property</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt; <strong>getPersistenceUnitNames</strong>()</h4>
                                 <p> Comma-separated persistence unit names to validate. <DL><DT><B>Returns:</B></DT><DD>The property tracking the unit names string.</DD></DL></p>
                             </li>
                         </ul>
@@ -238,7 +238,7 @@ extends org.gradle.workers.WorkParameters</pre>
                         <a name="getTenantProfiles()"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>abstract&nbsp;org.gradle.api.provider.ListProperty&lt;java.lang.String&gt; <strong>getTenantProfiles</strong>()</h4>
+                                <h4>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/ListProperty.html' title='ListProperty'>ListProperty</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt; <strong>getTenantProfiles</strong>()</h4>
                                 <p> Pipe-delimited tenant profiles (<CODE>Name|URL|Driver|User|Password</CODE>)
  to validate sequentially. <DL><DT><B>Returns:</B></DT><DD>The list property tracking the serialized tenant profiles.</DD></DL><DL><DT><B>Since:</B></DT><DD>1.7.0</DD></DL></p>
                             </li>

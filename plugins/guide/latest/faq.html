@@ -601,27 +601,27 @@ $(addBlockSwitches);
 </script>
 
 </head>
-<body class="article toc2 toc-left">
+<body id="faq" class="article toc2 toc-left">
 <div id="header">
 <h1>FAQ</h1>
 <div class="details">
-<span id="revnumber">version 1.7.0</span>
+<span id="revnumber">version 1.8.0</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#faq-persistence-xml">1. 1. Do I need to write a <code>persistence.xml</code> manually?</a></li>
-<li><a href="#faq-hibernate-eclipselink">2. 2. Can I use both Hibernate and EclipseLink in the same project?</a></li>
-<li><a href="#faq-jpa-versions">3. 3. Which JPA specification versions are supported?</a></li>
-<li><a href="#faq-configuration-cache">4. 4. Is the Gradle Configuration Cache supported?</a></li>
-<li><a href="#faq-bytecode-enhancement">5. 5. Do I need a runtime <code>-javaagent</code> for bytecode enhancement?</a></li>
-<li><a href="#faq-api-docs">6. 6. Where can I find the API documentation?</a></li>
+<li><a href="#faq-persistence-xml">1. Do I need to write a <code>persistence.xml</code> manually?</a></li>
+<li><a href="#faq-hibernate-eclipselink">2. Can I use both Hibernate and EclipseLink in the same project?</a></li>
+<li><a href="#faq-jpa-versions">3. Which JPA specification versions are supported?</a></li>
+<li><a href="#faq-configuration-cache">4. Is the Gradle Configuration Cache supported?</a></li>
+<li><a href="#faq-bytecode-enhancement">5. Do I need a runtime <code>-javaagent</code> for bytecode enhancement?</a></li>
+<li><a href="#faq-api-docs">6. Where can I find the API documentation?</a></li>
 </ul>
 </div>
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="faq-persistence-xml">1. 1. Do I need to write a <code>persistence.xml</code> manually?</h2>
+<h2 id="faq-persistence-xml">1. Do I need to write a <code>persistence.xml</code> manually?</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>No. The plugin automatically scans your compiled classes for JPA entity annotations and generates a complete <code>persistence.xml</code>.
@@ -636,7 +636,7 @@ If you provide a template <code>persistence.xml</code> in <code>src/main/resourc
 <td class="content">
 When applying the <code>io.github.jpersist.eclipse-jpa-modelgen</code> sub-plugin, you <strong>must</strong> provide a <code>persistence.xml</code> template with at least the persistence unit name and the full list of entity classes.
 Without it, metamodel generation may not work correctly because the <code>persistence.xml</code> is generated <em>after</em> the <code>compileJava</code> task.
-See <a href="eclipse-plugin.html">EclipseLink Plugin — JPA Static Metamodel Generation</a> for details and a minimal template example.
+See <a href="eclipse-plugin.html#jpa-static-metamodel-generation-3">EclipseLink Plugin — JPA Static Metamodel Generation</a> for details and a minimal template example.
 </td>
 </tr>
 </table>
@@ -644,7 +644,7 @@ See <a href="eclipse-plugin.html">EclipseLink Plugin — JPA Static Metamodel Ge
 </div>
 </div>
 <div class="sect1">
-<h2 id="faq-hibernate-eclipselink">2. 2. Can I use both Hibernate and EclipseLink in the same project?</h2>
+<h2 id="faq-hibernate-eclipselink">2. Can I use both Hibernate and EclipseLink in the same project?</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Each module should use only one provider plugin.
@@ -658,9 +658,9 @@ For example, instead of applying one of the aggregator plugins (<code>io.github.
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">plugins {
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.jpa</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.7.0</span><span class="delimiter">'</span></span>
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.hibernate-jpamodelgen</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.7.0</span><span class="delimiter">'</span></span>
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.eclipse-static-weave</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.7.0</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.jpa</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.8.0</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.hibernate-jpamodelgen</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.8.0</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.eclipse-static-weave</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.8.0</span><span class="delimiter">'</span></span>
 }</code></pre>
 </div>
 </div>
@@ -668,9 +668,9 @@ For example, instead of applying one of the aggregator plugins (<code>io.github.
 <div class="title">Kotlin</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
-    id(&quot;io.github.jpersist.jpa&quot;) version &quot;1.7.0&quot;
-    id(&quot;io.github.jpersist.hibernate-jpamodelgen&quot;) version &quot;1.7.0&quot;
-    id(&quot;io.github.jpersist.eclipse-static-weave&quot;) version &quot;1.7.0&quot;
+    id(&quot;io.github.jpersist.jpa&quot;) version &quot;1.8.0&quot;
+    id(&quot;io.github.jpersist.hibernate-jpamodelgen&quot;) version &quot;1.8.0&quot;
+    id(&quot;io.github.jpersist.eclipse-static-weave&quot;) version &quot;1.8.0&quot;
 }</code></pre>
 </div>
 </div>
@@ -681,19 +681,19 @@ Note that in this scenario, the target JPA platform is <strong>EclipseLink</stro
 </div>
 </div>
 <div class="sect1">
-<h2 id="faq-jpa-versions">3. 3. Which JPA specification versions are supported?</h2>
+<h2 id="faq-jpa-versions">3. Which JPA specification versions are supported?</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The plugin supports JPA <code>2.0</code>, <code>2.1</code>, <code>2.2</code>, <code>3.0</code>, <code>3.1</code>, and <code>3.2</code>.
 The default version is <code>3.0</code> (Jakarta Persistence 3.0).</p>
 </div>
 <div class="paragraph">
-<p>See <a href="configuration.html">Configuration — JPA Version Selection</a> for how to change the target version.</p>
+<p>See <a href="configuration.html#jpa-version-selection">Configuration — JPA Version Selection</a> for how to change the target version.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="faq-configuration-cache">4. 4. Is the Gradle Configuration Cache supported?</h2>
+<h2 id="faq-configuration-cache">4. Is the Gradle Configuration Cache supported?</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Yes. All JPersist plugins are fully compatible with Gradle&#8217;s Configuration Cache and Isolated Projects features.</p>
@@ -701,31 +701,31 @@ The default version is <code>3.0</code> (Jakarta Persistence 3.0).</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="faq-bytecode-enhancement">5. 5. Do I need a runtime <code>-javaagent</code> for bytecode enhancement?</h2>
+<h2 id="faq-bytecode-enhancement">5. Do I need a runtime <code>-javaagent</code> for bytecode enhancement?</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>No. Both the Hibernate enhancement and EclipseLink static weaving plugins perform bytecode modification at compile time.
 No runtime agent is required.</p>
 </div>
 <div class="paragraph">
-<p>See <a href="hibernate-plugin.html">Hibernate Plugin — <code>hibernateEnhanceClasses</code></a> and <a href="eclipse-plugin.html">EclipseLink Plugin — <code>eclipseWeaveClasses</code></a> for details.</p>
+<p>See <a href="hibernate-plugin.html#hibernateenhanceclasses">Hibernate Plugin — <code>hibernateEnhanceClasses</code></a> and <a href="eclipse-plugin.html#eclipseweaveclasses">EclipseLink Plugin — <code>eclipseWeaveClasses</code></a> for details.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="faq-api-docs">6. 6. Where can I find the API documentation?</h2>
+<h2 id="faq-api-docs">6. Where can I find the API documentation?</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The full Groovydoc API reference is published at <a href="https://jpersist.github.io/persistence/api/latest/">jpersist.github.io/persistence/api/latest</a>.
-The User Guide is available at <a href="https://jpersist.github.io/persistence/guide/latest/">jpersist.github.io/persistence/guide/latest</a>.</p>
+<p>The full Groovydoc API reference is published at <a href="https://jpersist.github.io/persistence/plugins/api/latest/">jpersist.github.io/persistence/plugins/api/latest</a>.
+The User Guide is available at <a href="https://jpersist.github.io/persistence/plugins/guide/latest/">jpersist.github.io/persistence/plugins/guide/latest</a>.</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.7.0<br>
-Last updated 2026-10-23 10:34:50 UTC
+Version 1.8.0<br>
+Last updated 2026-10-31 21:13:58 UTC
 </div>
 </div>
 </body>

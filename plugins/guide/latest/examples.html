@@ -601,20 +601,21 @@ $(addBlockSwitches);
 </script>
 
 </head>
-<body class="article toc2 toc-left">
+<body id="examples" class="article toc2 toc-left">
 <div id="header">
 <h1>Examples</h1>
 <div class="details">
-<span id="revnumber">version 1.7.0</span>
+<span id="revnumber">version 1.8.0</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#_hibernate_example">1. Hibernate Example</a></li>
-<li><a href="#_eclipselink_example">2. EclipseLink Example</a></li>
-<li><a href="#_jakarta_persistence_example">3. Jakarta Persistence Example</a></li>
-<li><a href="#_entity_class">4. Entity Class</a></li>
-<li><a href="#_persistence_descriptor_template">5. Persistence Descriptor Template</a></li>
+<li><a href="#hibernate-example">1. Hibernate Example</a></li>
+<li><a href="#eclipselink-example">2. EclipseLink Example</a></li>
+<li><a href="#openjpa-example">3. OpenJPA Example</a></li>
+<li><a href="#jakarta-persistence-example">4. Jakarta Persistence Example</a></li>
+<li><a href="#entity-class">5. Entity Class</a></li>
+<li><a href="#persistence-descriptor-template">6. Persistence Descriptor Template</a></li>
 </ul>
 </div>
 </div>
@@ -628,7 +629,7 @@ Each example demonstrates a minimal JPA project using one of the supported plugi
 </div>
 </div>
 <div class="sect1">
-<h2 id="_hibernate_example">1. Hibernate Example</h2>
+<h2 id="hibernate-example">1. Hibernate Example</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>This example applies the <code>io.github.jpersist.hibernate-persistence</code> aggregator plugin to generate <code>persistence.xml</code> descriptors and perform compile-time bytecode enhancement via Hibernate.</p>
@@ -638,7 +639,7 @@ Each example demonstrates a minimal JPA project using one of the supported plugi
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">plugins {
     id <span class="string"><span class="delimiter">'</span><span class="content">java-library</span><span class="delimiter">'</span></span>
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.hibernate-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.7.0</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.hibernate-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.8.0</span><span class="delimiter">'</span></span>
 }
 
 dependencies {
@@ -657,7 +658,7 @@ repositories {
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
     `java-library`
-    id(&quot;io.github.jpersist.hibernate-persistence&quot;) version &quot;1.7.0&quot;
+    id(&quot;io.github.jpersist.hibernate-persistence&quot;) version &quot;1.8.0&quot;
 }
 
 dependencies {
@@ -672,12 +673,12 @@ repositories {
 </div>
 </div>
 <div class="paragraph">
-<p>See <a href="hibernate-plugin.html">Hibernate Plugin</a> for the full list of extension properties and tasks.</p>
+<p>See <a href="hibernate-plugin.html#hibernate-plugin">Hibernate Plugin</a> for the full list of extension properties and tasks.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_eclipselink_example">2. EclipseLink Example</h2>
+<h2 id="eclipselink-example">2. EclipseLink Example</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>This example applies the <code>io.github.jpersist.eclipse-persistence</code> aggregator plugin to generate <code>persistence.xml</code> descriptors and perform compile-time static weaving via EclipseLink.</p>
@@ -687,7 +688,7 @@ repositories {
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">plugins {
     id <span class="string"><span class="delimiter">'</span><span class="content">java-library</span><span class="delimiter">'</span></span>
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.eclipse-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.7.0</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.eclipse-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.8.0</span><span class="delimiter">'</span></span>
 }
 
 dependencies {
@@ -708,7 +709,7 @@ repositories {
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
     `java-library`
-    id(&quot;io.github.jpersist.eclipse-persistence&quot;) version &quot;1.7.0&quot;
+    id(&quot;io.github.jpersist.eclipse-persistence&quot;) version &quot;1.8.0&quot;
 }
 
 dependencies {
@@ -725,12 +726,101 @@ repositories {
 </div>
 </div>
 <div class="paragraph">
-<p>See <a href="eclipse-plugin.html">EclipseLink Plugin</a> for the full list of extension properties and tasks.</p>
+<p>See <a href="eclipse-plugin.html#eclipselink-plugin">EclipseLink Plugin</a> for the full list of extension properties and tasks.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_jakarta_persistence_example">3. Jakarta Persistence Example</h2>
+<h2 id="openjpa-example">3. OpenJPA Example</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This example applies the <code>io.github.jpersist.openjpa-persistence</code> aggregator plugin to generate <code>persistence.xml</code> descriptors and perform compile-time PCEnhancer bytecode enhancement via OpenJPA.</p>
+</div>
+<div class="listingblock primary">
+<div class="title">Groovy</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">plugins {
+    id <span class="string"><span class="delimiter">'</span><span class="content">java-library</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.openjpa-persistence</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">com.netflix.nebula.dependency-recommender</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">14.2.1</span><span class="delimiter">'</span></span>
+}
+
+dependencies {
+    jpa <span class="string"><span class="delimiter">'</span><span class="content">org.apache.openjpa:openjpa</span><span class="delimiter">'</span></span>
+
+    compileOnly <span class="string"><span class="delimiter">'</span><span class="content">jakarta.persistence:jakarta.persistence-api</span><span class="delimiter">'</span></span>
+}
+
+dependencyRecommendations {
+    map <span class="key">recommendations</span>: [
+        <span class="string"><span class="delimiter">'</span><span class="content">jakarta.persistence:jakarta.persistence-api</span><span class="delimiter">'</span></span> : <span class="string"><span class="delimiter">'</span><span class="content">3.1.0</span><span class="delimiter">'</span></span>,
+        <span class="string"><span class="delimiter">'</span><span class="content">org.apache.openjpa:openjpa</span><span class="delimiter">'</span></span>                  : <span class="string"><span class="delimiter">'</span><span class="content">4.0.0</span><span class="delimiter">'</span></span>
+    ]
+}
+
+openjpa {
+    main {
+        metamodel {
+            logLevel = <span class="string"><span class="delimiter">'</span><span class="content">TRACE</span><span class="delimiter">'</span></span>
+        }
+        enhancement {
+            addDefaultConstructor = <span class="predefined-constant">true</span>
+            enforcePropertyRestrictions = <span class="predefined-constant">false</span>
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+}</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">Kotlin</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
+    `java-library`
+    id(&quot;io.github.jpersist.openjpa-persistence&quot;)
+    id(&quot;com.netflix.nebula.dependency-recommender&quot;) version &quot;14.2.1&quot;
+}
+
+dependencies {
+    jpa(&quot;org.apache.openjpa:openjpa&quot;)
+
+    compileOnly(&quot;jakarta.persistence:jakarta.persistence-api&quot;)
+}
+
+dependencyRecommendations {
+    map(mapOf(&quot;recommendations&quot; to mapOf(
+        &quot;jakarta.persistence:jakarta.persistence-api&quot; to &quot;3.1.0&quot;,
+        &quot;org.apache.openjpa:openjpa&quot;                  to &quot;4.0.0&quot;
+    )))
+}
+
+openjpa {
+    main {
+        metamodel {
+            logLevel.set(MetaModelExtension.LogLevel.TRACE)
+        }
+        enhancement {
+            addDefaultConstructor.set(true)
+            enforcePropertyRestrictions.set(false)
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>See <a href="openjpa-plugin.html#openjpa-plugin">OpenJPA Plugin</a> for the full list of extension properties and tasks.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="jakarta-persistence-example">4. Jakarta Persistence Example</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>This example demonstrates standalone descriptor generation using the core <code>io.github.jpersist.jpa</code> plugin without a specific JPA provider aggregator.
@@ -741,7 +831,7 @@ It explicitly configures a persistence unit with a provider class and custom pro
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">plugins {
     id <span class="string"><span class="delimiter">'</span><span class="content">java-library</span><span class="delimiter">'</span></span>
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.jpa</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.7.0</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.jpa</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.8.0</span><span class="delimiter">'</span></span>
 }
 
 dependencies {
@@ -772,7 +862,7 @@ repositories {
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
     `java-library`
-    id(&quot;io.github.jpersist.jpa&quot;) version &quot;1.7.0&quot;
+    id(&quot;io.github.jpersist.jpa&quot;) version &quot;1.8.0&quot;
 }
 
 dependencies {
@@ -799,12 +889,12 @@ repositories {
 </div>
 </div>
 <div class="paragraph">
-<p>See <a href="jakarta-plugin.html">Jakarta Persistence Plugin</a> for the full documentation on the <code>persistence</code> DSL extension.</p>
+<p>See <a href="jakarta-plugin.html#jakarta-persistence-plugin">Jakarta Persistence Plugin</a> for the full documentation on the <code>persistence</code> DSL extension.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_entity_class">4. Entity Class</h2>
+<h2 id="entity-class">5. Entity Class</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Each example uses a simple <code>Person</code> entity annotated with standard Jakarta Persistence annotations:</p>
@@ -916,7 +1006,7 @@ repositories {
 </div>
 </div>
 <div class="sect1">
-<h2 id="_persistence_descriptor_template">5. Persistence Descriptor Template</h2>
+<h2 id="persistence-descriptor-template">6. Persistence Descriptor Template</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Each example includes a <code>persistence.xml</code> template in <code>src/main/resources/META-INF/</code>.
@@ -946,7 +1036,7 @@ The plugin merges auto-detected entity classes with the entries defined in this 
 <td class="content">
 Providing a <code>persistence.xml</code> template is optional when using the Hibernate or core JPA plugin.
 However, it is <strong>required</strong> when applying the <code>io.github.jpersist.eclipse-jpa-modelgen</code> sub-plugin.
-See <a href="eclipse-plugin.html">EclipseLink Plugin</a> for details.
+See <a href="eclipse-plugin.html#eclipselink-plugin">EclipseLink Plugin</a> for details.
 </td>
 </tr>
 </table>
@@ -956,8 +1046,8 @@ See <a href="eclipse-plugin.html">EclipseLink Plugin</a> for details.
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.7.0<br>
-Last updated 2026-10-23 10:34:50 UTC
+Version 1.8.0<br>
+Last updated 2026-10-31 21:13:58 UTC
 </div>
 </div>
 </body>

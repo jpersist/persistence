@@ -102,7 +102,7 @@ if (location.href.indexOf('is-external=true') == -1) {
             <hr>
 
 <pre>abstract class JpaModelgenExtension
-extends java.lang.Object</pre>
+extends <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html' title='Object'>Object</a></pre>
 
     <p> Holds specific configuration attributes for the EclipseLink Canonical Model Generator.
  <p>
@@ -140,7 +140,7 @@ extends java.lang.Object</pre>
                         </tr>
                         
                         <tr class="altColor">
-                            <td class="colFirst"><code><strong>org.gradle.api.file.RegularFileProperty</strong></code>&nbsp;</td>
+                            <td class="colFirst"><code><strong><a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/file/RegularFileProperty.html' title='RegularFileProperty'>RegularFileProperty</a></strong></code>&nbsp;</td>
                             <td class="colLast"><code><a href="#persistenceXml">persistenceXml</a></code><br>Configures the lazy file property location mapping to the target <CODE>persistence.xml</CODE>.</td>
                         </tr>
                         
@@ -168,7 +168,7 @@ extends java.lang.Object</pre>
                         
                         <tr class="altColor">
                             <td class="colFirst">
-                                <code><strong><a href="#JpaModelgenExtension(org.gradle.api.model.ObjectFactory, org.gradle.api.file.ProjectLayout)">JpaModelgenExtension</a></strong>(org.gradle.api.model.ObjectFactory objects, org.gradle.api.file.ProjectLayout layout)</code><br>Constructs a new <CODE>JpaModelgenExtension</CODE> instance.</td>
+                                <code><strong><a href="#JpaModelgenExtension(org.gradle.api.model.ObjectFactory, org.gradle.api.file.ProjectLayout)">JpaModelgenExtension</a></strong>(<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/model/ObjectFactory.html' title='ObjectFactory'>ObjectFactory</a> objects, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/file/ProjectLayout.html' title='ProjectLayout'>ProjectLayout</a> layout)</code><br>Constructs a new <CODE>JpaModelgenExtension</CODE> instance.</td>
                         </tr>
                         
                     </table>
@@ -195,7 +195,7 @@ extends java.lang.Object</pre>
                         <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>void</code></td>
-                            <td class="colLast"><code><strong><a href="#setPersistenceXml(java.lang.String)">setPersistenceXml</a></strong>(java.lang.String path)</code><br>Operator overload shortcut allowing developers to assign the <CODE>persistence.xml</CODE> location
+                            <td class="colLast"><code><strong><a href="#setPersistenceXml(java.lang.String)">setPersistenceXml</a></strong>(<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a> path)</code><br>Operator overload shortcut allowing developers to assign the <CODE>persistence.xml</CODE> location
  using a simple Groovy String path syntax.</td>
                         </tr>
                         
@@ -214,8 +214,8 @@ extends java.lang.Object</pre>
                         </tr>
                         
                         <tr class="altColor">
-                            <td class="colFirst"><code>class java.lang.Object</code></td>
-                            <td class="colLast"><code>java.lang.Object#equals(java.lang.Object), java.lang.Object#getClass(), java.lang.Object#hashCode(), java.lang.Object#notify(), java.lang.Object#notifyAll(), java.lang.Object#toString(), java.lang.Object#wait(), java.lang.Object#wait(long), java.lang.Object#wait(long, int)</code></td>
+                            <td class="colFirst"><code>class <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html' title='Object'>Object</a></code></td>
+                            <td class="colLast"><code><a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)' title='equals'>equals</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#getClass()' title='getClass'>getClass</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#hashCode()' title='hashCode'>hashCode</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#notify()' title='notify'>notify</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#notifyAll()' title='notifyAll'>notifyAll</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#toString()' title='toString'>toString</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait()' title='wait'>wait</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait(long)' title='wait'>wait</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait(long, int)' title='wait'>wait</a></code></td>
                         </tr>
                     </table>
                    </ul>
@@ -245,10 +245,10 @@ extends java.lang.Object</pre>
                         <a name="persistenceXml"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>final&nbsp;org.gradle.api.file.RegularFileProperty <strong>persistenceXml</strong></h4>
+                                <h4>final&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/file/RegularFileProperty.html' title='RegularFileProperty'>RegularFileProperty</a> <strong>persistenceXml</strong></h4>
                                 <p> Configures the lazy file property location mapping to the target <CODE>persistence.xml</CODE>.
  <p>
- Managed as a org.gradle.api.file.RegularFileProperty to delay actual file handle resolution until
+ Managed as a <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/file/RegularFileProperty.html' title='RegularFileProperty'>RegularFileProperty</a> to delay actual file handle resolution until
  execution phase, keeping build operations safe for the Gradle Configuration Cache.
  </p> <DL><DT><B>Returns:</B></DT><DD>The lazy file property tracking the persistence configuration.</DD></DL></p>
                             </li>
@@ -271,7 +271,7 @@ extends java.lang.Object</pre>
                         <a name="JpaModelgenExtension(org.gradle.api.model.ObjectFactory, org.gradle.api.file.ProjectLayout)"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>@javax.inject.Inject<br><strong>JpaModelgenExtension</strong>(org.gradle.api.model.ObjectFactory objects, org.gradle.api.file.ProjectLayout layout)</h4>
+                                <h4>@<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/javax/inject/Inject.html' title='Inject'>Inject</a><br><strong>JpaModelgenExtension</strong>(<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/model/ObjectFactory.html' title='ObjectFactory'>ObjectFactory</a> objects, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/file/ProjectLayout.html' title='ProjectLayout'>ProjectLayout</a> layout)</h4>
                                 <p> Constructs a new <CODE>JpaModelgenExtension</CODE> instance.
  <p>
  Uses dependency injection to provision critical Gradle infrastructure services safely
@@ -296,7 +296,7 @@ extends java.lang.Object</pre>
                         <a name="setPersistenceXml(java.lang.String)"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>void <strong>setPersistenceXml</strong>(java.lang.String path)</h4>
+                                <h4>void <strong>setPersistenceXml</strong>(<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a> path)</h4>
                                 <p> Operator overload shortcut allowing developers to assign the <CODE>persistence.xml</CODE> location
  using a simple Groovy String path syntax.
  <p>

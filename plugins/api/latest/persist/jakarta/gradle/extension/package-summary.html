@@ -78,7 +78,7 @@ function windowTitle()
  This package contains the configuration model exposed to build scripts via the
  <TT>persistence</TT> extension block. It allows declarative definition of one or
  more JPA persistence units through a
- org.gradle.api.NamedDomainObjectContainer, enabling the plugin to
+ <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/NamedDomainObjectContainer.html' title='NamedDomainObjectContainer'>NamedDomainObjectContainer</a>, enabling the plugin to
  generate or merge a <TT>persistence.xml</TT> descriptor at build time.
  </p>
  <p>
@@ -89,7 +89,7 @@ function windowTitle()
          Top-level extension providing the JPA specification version, XML
          transformer output properties for formatting the generated descriptor,
          and a container of named persistence-unit configurations.</li>
-     <li><a href='../../../../persist/jakarta/gradle/extension/PersistenceUnitExtension.html' title='PersistenceUnitExtension'>PersistenceUnitExtension</a> &mdash;
+     <li>persist.jakarta.gradle.extension.PersistenceUnitExtension &mdash;
          Per-unit configuration attributes such as provider, transaction type,
          data source, mapping files, JPA properties, and an <TT>enabled</TT>
          flag to skip generation of individual persistence units.</li>
@@ -97,12 +97,12 @@ function windowTitle()
          Optional JDBC connection properties (URL, driver, user, password)
          used by the schema validation task. Defaults to an in-memory H2
          database when not configured.</li>
-     <li><a href='../../../../persist/jakarta/gradle/extension/TenantValidationExtension.html' title='TenantValidationExtension'>TenantValidationExtension</a> &mdash;
+     <li>persist.jakarta.gradle.extension.TenantValidationExtension &mdash;
          Named DSL extension representing a single database tenant profile
          for multi-tenant schema validation, carrying its own JDBC
          connection properties inside the <TT>validation.tenants</TT>
          container.</li>
-     <li><a href='../../../../persist/jakarta/gradle/extension/LinterExtension.html' title='LinterExtension'>LinterExtension</a> &mdash;
+     <li>persist.jakarta.gradle.extension.LinterExtension &mdash;
          Configuration options for the static compile-time
          <TT>@NamedQuery</TT> analysis linter, including toggles for enabling
          the linter, failing the build on errors, and suppressing warnings.</li>

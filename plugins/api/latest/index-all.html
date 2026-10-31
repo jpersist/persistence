@@ -131,19 +131,30 @@ if (location.href.indexOf('is-external=true') == -1) {
 <dt><span class="strong"><a href="persist/jakarta/gradle/task/delegate/AbstractDescriptorProcessorDelegate.html#AbstractDescriptorProcessorDelegate()" title="Constructor in AbstractDescriptorProcessorDelegate">AbstractDescriptorProcessorDelegate()</a></span> - Constructor in <a href="persist/jakarta/gradle/task/delegate/AbstractDescriptorProcessorDelegate.html">AbstractDescriptorProcessorDelegate</a>
 </dt><dd> <div class="block"></div></dd>
 <dt><span class="strong"><a href="persist/eclipse/gradle/plugin/EclipseJpaModelgenPlugin.html#apply(org.gradle.api.Project)" title="Method in EclipseJpaModelgenPlugin">apply(org.gradle.api.Project)</a></span> - Method in <a href="persist/eclipse/gradle/plugin/EclipseJpaModelgenPlugin.html">EclipseJpaModelgenPlugin</a>
-</dt><dd> <div class="block"></div></dd>
+</dt><dd> <div class="block">Applies the EclipseLink JPA Modelgen annotation processor configuration to the target project.</div></dd>
 <dt><span class="strong"><a href="persist/eclipse/gradle/plugin/EclipsePersistencePlugin.html#apply(org.gradle.api.Project)" title="Method in EclipsePersistencePlugin">apply(org.gradle.api.Project)</a></span> - Method in <a href="persist/eclipse/gradle/plugin/EclipsePersistencePlugin.html">EclipsePersistencePlugin</a>
-</dt><dd> <div class="block"></div></dd>
+</dt><dd> <div class="block">Applies the Jakarta Persistence, EclipseLink Modelgen, and EclipseLink Static Weave
+ plugins to the target project.</div></dd>
 <dt><span class="strong"><a href="persist/eclipse/gradle/plugin/EclipseStaticWeavePlugin.html#apply(org.gradle.api.Project)" title="Method in EclipseStaticWeavePlugin">apply(org.gradle.api.Project)</a></span> - Method in <a href="persist/eclipse/gradle/plugin/EclipseStaticWeavePlugin.html">EclipseStaticWeavePlugin</a>
-</dt><dd> <div class="block"></div></dd>
+</dt><dd> <div class="block">Applies the EclipseLink static weaving configuration to the target project.</div></dd>
 <dt><span class="strong"><a href="persist/hibernate/gradle/plugin/HibernateEnhancementPlugin.html#apply(org.gradle.api.Project)" title="Method in HibernateEnhancementPlugin">apply(org.gradle.api.Project)</a></span> - Method in <a href="persist/hibernate/gradle/plugin/HibernateEnhancementPlugin.html">HibernateEnhancementPlugin</a>
-</dt><dd> <div class="block"></div></dd>
+</dt><dd> <div class="block">Applies the Hibernate bytecode enhancement configuration to the target project.</div></dd>
 <dt><span class="strong"><a href="persist/hibernate/gradle/plugin/HibernateJpamodelgenPlugin.html#apply(org.gradle.api.Project)" title="Method in HibernateJpamodelgenPlugin">apply(org.gradle.api.Project)</a></span> - Method in <a href="persist/hibernate/gradle/plugin/HibernateJpamodelgenPlugin.html">HibernateJpamodelgenPlugin</a>
-</dt><dd> <div class="block"></div></dd>
+</dt><dd> <div class="block">Applies the Hibernate JPA Modelgen annotation processor configuration to the target project.</div></dd>
 <dt><span class="strong"><a href="persist/hibernate/gradle/plugin/HibernatePersistencePlugin.html#apply(org.gradle.api.Project)" title="Method in HibernatePersistencePlugin">apply(org.gradle.api.Project)</a></span> - Method in <a href="persist/hibernate/gradle/plugin/HibernatePersistencePlugin.html">HibernatePersistencePlugin</a>
-</dt><dd> <div class="block"></div></dd>
+</dt><dd> <div class="block">Applies the Jakarta Persistence, Hibernate Jpamodelgen, and Hibernate Enhancement
+ plugins to the target project.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/plugin/JakartaPersistencePlugin.html#apply(org.gradle.api.Project)" title="Method in JakartaPersistencePlugin">apply(org.gradle.api.Project)</a></span> - Method in <a href="persist/jakarta/gradle/plugin/JakartaPersistencePlugin.html">JakartaPersistencePlugin</a>
+</dt><dd> <div class="block">Applies the Jakarta Persistence plugin configuration to the target project.</div></dd>
+<dt><span class="strong"><a href="persist/openjpa/gradle/plugin/OpenJPABasePlugin.html#apply(org.gradle.api.Project)" title="Method in OpenJPABasePlugin">apply(org.gradle.api.Project)</a></span> - Method in <a href="persist/openjpa/gradle/plugin/OpenJPABasePlugin.html">OpenJPABasePlugin</a>
 </dt><dd> <div class="block"></div></dd>
+<dt><span class="strong"><a href="persist/openjpa/gradle/plugin/OpenJPAEnhancementPlugin.html#apply(org.gradle.api.Project)" title="Method in OpenJPAEnhancementPlugin">apply(org.gradle.api.Project)</a></span> - Method in <a href="persist/openjpa/gradle/plugin/OpenJPAEnhancementPlugin.html">OpenJPAEnhancementPlugin</a>
+</dt><dd> <div class="block">Applies the OpenJPA bytecode enhancement configuration to the target project.</div></dd>
+<dt><span class="strong"><a href="persist/openjpa/gradle/plugin/OpenJPAMetaModelGenerationPlugin.html#apply(org.gradle.api.Project)" title="Method in OpenJPAMetaModelGenerationPlugin">apply(org.gradle.api.Project)</a></span> - Method in <a href="persist/openjpa/gradle/plugin/OpenJPAMetaModelGenerationPlugin.html">OpenJPAMetaModelGenerationPlugin</a>
+</dt><dd> <div class="block">Applies the OpenJPA metamodel annotation processor configuration to the target project.</div></dd>
+<dt><span class="strong"><a href="persist/openjpa/gradle/plugin/OpenJPAPersistencePlugin.html#apply(org.gradle.api.Project)" title="Method in OpenJPAPersistencePlugin">apply(org.gradle.api.Project)</a></span> - Method in <a href="persist/openjpa/gradle/plugin/OpenJPAPersistencePlugin.html">OpenJPAPersistencePlugin</a>
+</dt><dd> <div class="block">Applies the Jakarta Persistence, OpenJPA Enhancement, and OpenJPA MetaModel Generation
+ plugins to the target project.</div></dd>
 </dl>
 
     
@@ -170,12 +181,6 @@ if (location.href.indexOf('is-external=true') == -1) {
 <dt><span class="strong"><a href="persist/jakarta/gradle/task/delegate/DescriptorProcessorDelegate.html" title="Interface in persist.jakarta.gradle.task.delegate">DescriptorProcessorDelegate</a></span> - Interface in <a href="./persist/jakarta/gradle/task/delegate/package-summary.html">persist.jakarta.gradle.task.delegate</a>
 </dt><dd><div class="block">Strategy interface governing the descriptor generation and merge phases
  for individual JPA specification versions.</div></dd>
-<dt><span class="strong"><a href="persist/hibernate/gradle/task/HibernateEnhancementTask.1.html#doBiDirectionalAssociationManagement(org.hibernate.bytecode.enhance.spi.UnloadedField)" title="Method in HibernateEnhancementTask.1">doBiDirectionalAssociationManagement(org.hibernate.bytecode.enhance.spi.UnloadedField)</a></span> - Method in <a href="persist/hibernate/gradle/task/HibernateEnhancementTask.1.html">HibernateEnhancementTask.1</a>
-</dt><dd> <div class="block"></div></dd>
-<dt><span class="strong"><a href="persist/hibernate/gradle/task/HibernateEnhancementTask.1.html#doDirtyCheckingInline(org.hibernate.bytecode.enhance.spi.UnloadedClass)" title="Method in HibernateEnhancementTask.1">doDirtyCheckingInline(org.hibernate.bytecode.enhance.spi.UnloadedClass)</a></span> - Method in <a href="persist/hibernate/gradle/task/HibernateEnhancementTask.1.html">HibernateEnhancementTask.1</a>
-</dt><dd> <div class="block"></div></dd>
-<dt><span class="strong"><a href="persist/hibernate/gradle/task/HibernateEnhancementTask.1.html#doExtendedEnhancement(org.hibernate.bytecode.enhance.spi.UnloadedClass)" title="Method in HibernateEnhancementTask.1">doExtendedEnhancement(org.hibernate.bytecode.enhance.spi.UnloadedClass)</a></span> - Method in <a href="persist/hibernate/gradle/task/HibernateEnhancementTask.1.html">HibernateEnhancementTask.1</a>
-</dt><dd> <div class="block"></div></dd>
 </dl>
 
     
@@ -204,15 +209,31 @@ if (location.href.indexOf('is-external=true') == -1) {
 <dt><span class="strong"><a href="persist/eclipse/gradle/task/EclipseWeaveTask.html#EclipseWeaveTask(org.gradle.process.ExecOperations)" title="Constructor in EclipseWeaveTask">EclipseWeaveTask(org.gradle.process.ExecOperations)</a></span> - Constructor in <a href="persist/eclipse/gradle/task/EclipseWeaveTask.html">EclipseWeaveTask</a>
 </dt><dd> <div class="block">Constructs a new <CODE>EclipseWeaveTask</CODE> instance.</div></dd>
 <dt><span class="strong"><a href="persist/hibernate/gradle/task/HibernateEnhancementTask.html#enhance()" title="Method in HibernateEnhancementTask">enhance()</a></span> - Method in <a href="persist/hibernate/gradle/task/HibernateEnhancementTask.html">HibernateEnhancementTask</a>
-</dt><dd> <div class="block">The main execution block for the task.</div></dd>
+</dt><dd> <div class="block">Executes bytecode enhancement by submitting an <a href='../../../../persist/hibernate/gradle/worker/EnhancementWorker.html' title='EnhancementWorker'>EnhancementWorker</a> to a
+ classloader-isolated worker process.</div></dd>
+<dt><span class="strong"><a href="persist/openjpa/gradle/task/OpenJPAEnhanceTask.html#enhance()" title="Method in OpenJPAEnhanceTask">enhance()</a></span> - Method in <a href="persist/openjpa/gradle/task/OpenJPAEnhanceTask.html">OpenJPAEnhanceTask</a>
+</dt><dd> <div class="block">Executes the OpenJPA bytecode enhancement process.</div></dd>
 <dt><span class="strong"><a href="persist/hibernate/gradle/extension/HibernateExtension.html#enhancement" title="Property in HibernateExtension">enhancement</a></span> - Property in <a href="persist/hibernate/gradle/extension/HibernateExtension.html">HibernateExtension</a>
 </dt><dd> <div class="block">The underlying enhancement configuration extension instance.</div></dd>
-<dt><span class="strong"><a href="persist/hibernate/gradle/extension/EnhancementExtension.html" title="Interface in persist.hibernate.gradle.extension">EnhancementExtension</a></span> - Interface in <a href="./persist/hibernate/gradle/extension/package-summary.html">persist.hibernate.gradle.extension</a>
-</dt><dd><div class="block">Configuration options for Hibernate's programmatic compile-time bytecode enhancement engine.</div></dd>
+<dt><span class="strong"><a href="persist/openjpa/gradle/extension/OpenJPAExtension.html#enhancement" title="Property in OpenJPAExtension">enhancement</a></span> - Property in <a href="persist/openjpa/gradle/extension/OpenJPAExtension.html">OpenJPAExtension</a>
+</dt><dd> <div class="block">The bytecode enhancement configuration sub-block parameters allocated to this source set layer.</div></dd>
+<dt><span class="strong"><a href="persist/openjpa/gradle/extension/EnhancementExtension.html" title="Interface in persist.openjpa.gradle.extension">EnhancementExtension</a></span> - Interface in <a href="./persist/openjpa/gradle/extension/package-summary.html">persist.openjpa.gradle.extension</a>
+</dt><dd><div class="block">Configuration options for OpenJPA's compile-time bytecode enhancement engine.</div></dd>
+<dt><span class="strong"><a href="persist/hibernate/gradle/worker/EnhancementWorker.html" title="Class in persist.hibernate.gradle.worker">EnhancementWorker</a></span> - Class in <a href="./persist/hibernate/gradle/worker/package-summary.html">persist.hibernate.gradle.worker</a>
+</dt><dd><div class="block">Gradle <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/workers/WorkAction.html' title='WorkAction'>WorkAction</a> that performs Hibernate compile-time bytecode enhancement
+ inside a classloader-isolated worker process.</div></dd>
+<dt><span class="strong"><a href="persist/hibernate/gradle/worker/EnhancementWorker.Parameters.html" title="Interface in persist.hibernate.gradle.worker.EnhancementWorker">EnhancementWorker.Parameters</a></span> - Interface in <a href="./persist/hibernate/gradle/worker/package-summary.html">persist.hibernate.gradle.worker</a>
+</dt><dd><div class="block">Parameter interface for the <a href='../../../../persist/hibernate/gradle/worker/EnhancementWorker.html' title='EnhancementWorker'>EnhancementWorker</a> work action.</div></dd>
+<dt><span class="strong"><a href="persist/hibernate/gradle/worker/EnhancementWorker.html#EnhancementWorker()" title="Constructor in EnhancementWorker">EnhancementWorker()</a></span> - Constructor in <a href="persist/hibernate/gradle/worker/EnhancementWorker.html">EnhancementWorker</a>
+</dt><dd> <div class="block"></div></dd>
+<dt><span class="strong"><a href="persist/openjpa/gradle/extension/MetaModelExtension.LogLevel.html#ERROR" title="Enum Constant in MetaModelExtension.LogLevel">ERROR</a></span> - Enum Constant in <a href="persist/openjpa/gradle/extension/MetaModelExtension.LogLevel.html">MetaModelExtension.LogLevel</a>
+</dt><dd> <div class="block">Error messages indicating processing failures.</div></dd>
+<dt><span class="strong"><a href="persist/hibernate/gradle/worker/EnhancementWorker.html#execute()" title="Method in EnhancementWorker">execute()</a></span> - Method in <a href="persist/hibernate/gradle/worker/EnhancementWorker.html">EnhancementWorker</a>
+</dt><dd> <div class="block">Executes the two-pass bytecode enhancement cycle.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/worker/LintNamedQueriesWorker.html#execute()" title="Method in LintNamedQueriesWorker">execute()</a></span> - Method in <a href="persist/jakarta/gradle/worker/LintNamedQueriesWorker.html">LintNamedQueriesWorker</a>
-</dt><dd> <div class="block"></div></dd>
+</dt><dd> <div class="block">Executes the named query lint analysis inside the isolated worker process.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/worker/SchemaValidationWorker.html#execute()" title="Method in SchemaValidationWorker">execute()</a></span> - Method in <a href="persist/jakarta/gradle/worker/SchemaValidationWorker.html">SchemaValidationWorker</a>
-</dt><dd> <div class="block"></div></dd>
+</dt><dd> <div class="block">Executes the multi-tenant schema validation pipeline.</div></dd>
 </dl>
 
     
@@ -227,16 +248,27 @@ if (location.href.indexOf('is-external=true') == -1) {
 <h2 class="title">G</h2>
 <dl>
 
-<dt><span class="strong"><a href="persist/jakarta/gradle/task/GenerateJPAGraalVMMetadata.html#generate()" title="Method in GenerateJPAGraalVMMetadata">generate()</a></span> - Method in <a href="persist/jakarta/gradle/task/GenerateJPAGraalVMMetadata.html">GenerateJPAGraalVMMetadata</a>
+<dt><span class="strong"><a href="persist/jakarta/gradle/task/GenerateJPAGraalVMMetadata.html#generate(org.gradle.work.InputChanges)" title="Method in GenerateJPAGraalVMMetadata">generate(org.gradle.work.InputChanges)</a></span> - Method in <a href="persist/jakarta/gradle/task/GenerateJPAGraalVMMetadata.html">GenerateJPAGraalVMMetadata</a>
 </dt><dd> <div class="block">Generates the <CODE>reflect-config.json</CODE> file from the discovered JPA entity classes.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/task/GenerateJPAGraalVMMetadata.html" title="Class in persist.jakarta.gradle.task">GenerateJPAGraalVMMetadata</a></span> - Class in <a href="./persist/jakarta/gradle/task/package-summary.html">persist.jakarta.gradle.task</a>
 </dt><dd><div class="block">Generates a GraalVM native image <CODE>reflect-config.json</CODE> file
  containing all discovered JPA entity metadata classes to support AOT reflection.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/task/GenerateJPAGraalVMMetadata.html#GenerateJPAGraalVMMetadata()" title="Constructor in GenerateJPAGraalVMMetadata">GenerateJPAGraalVMMetadata()</a></span> - Constructor in <a href="persist/jakarta/gradle/task/GenerateJPAGraalVMMetadata.html">GenerateJPAGraalVMMetadata</a>
 </dt><dd> <div class="block"></div></dd>
+<dt><span class="strong"><a href="persist/openjpa/gradle/extension/EnhancementExtension.html#getAddDefaultConstructor()" title="Method in EnhancementExtension">getAddDefaultConstructor()</a></span> - Method in <a href="persist/openjpa/gradle/extension/EnhancementExtension.html">EnhancementExtension</a>
+</dt><dd> <div class="block">Toggles whether the OpenJPA enhancer should add a default no-argument constructor
+ to entity classes that lack one.</div></dd>
+<dt><span class="strong"><a href="persist/openjpa/gradle/task/OpenJPAEnhanceTask.html#getAddDefaultConstructor()" title="Method in OpenJPAEnhanceTask">getAddDefaultConstructor()</a></span> - Method in <a href="persist/openjpa/gradle/task/OpenJPAEnhanceTask.html">OpenJPAEnhanceTask</a>
+</dt><dd> <div class="block">Toggles whether the enhancer should add a default no-argument constructor
+ to entity classes that lack one.</div></dd>
+<dt><span class="strong"><a href="persist/openjpa/gradle/extension/MetaModelExtension.html#getAddGeneratedAnnotation()" title="Method in MetaModelExtension">getAddGeneratedAnnotation()</a></span> - Method in <a href="persist/openjpa/gradle/extension/MetaModelExtension.html">MetaModelExtension</a>
+</dt><dd> <div class="block">Configures whether the <CODE>@Generated</CODE> annotation should be added to
+ the generated metamodel classes.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/worker/LintNamedQueriesParameters.html#getAffectedClassFiles()" title="Method in LintNamedQueriesParameters">getAffectedClassFiles()</a></span> - Method in <a href="persist/jakarta/gradle/worker/LintNamedQueriesParameters.html">LintNamedQueriesParameters</a>
 </dt><dd> <div class="block">Absolute paths of compiled class files affected by source changes
  during an incremental build pass.</div></dd>
+<dt><span class="strong"><a href="persist/hibernate/gradle/worker/EnhancementWorker.Parameters.html#getAssociationManagementEnabled()" title="Method in EnhancementWorker.Parameters">getAssociationManagementEnabled()</a></span> - Method in <a href="persist/hibernate/gradle/worker/EnhancementWorker.Parameters.html">EnhancementWorker.Parameters</a>
+</dt><dd> <div class="block">Whether bidirectional association management enhancement is enabled.</div></dd>
 <dt><span class="strong"><a href="persist/hibernate/gradle/task/HibernateEnhancementTask.html#getAssociationManagementEnabled()" title="Method in HibernateEnhancementTask">getAssociationManagementEnabled()</a></span> - Method in <a href="persist/hibernate/gradle/task/HibernateEnhancementTask.html">HibernateEnhancementTask</a>
 </dt><dd> <div class="block">Toggles whether to automatically manage bidirectional associations across mapped relationship bounds.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/task/LintNamedQueries.html#getClasspath()" title="Method in LintNamedQueries">getClasspath()</a></span> - Method in <a href="persist/jakarta/gradle/task/LintNamedQueries.html">LintNamedQueries</a>
@@ -248,10 +280,17 @@ if (location.href.indexOf('is-external=true') == -1) {
 <dt><span class="strong"><a href="persist/eclipse/gradle/task/EclipseWeaveTask.html#getCompileClasspath()" title="Method in EclipseWeaveTask">getCompileClasspath()</a></span> - Method in <a href="persist/eclipse/gradle/task/EclipseWeaveTask.html">EclipseWeaveTask</a>
 </dt><dd> <div class="block">The full compilation dependencies classpath necessary for EclipseLink to inspect, map,
  and validate structural relationship models while modifying entity classes.</div></dd>
+<dt><span class="strong"><a href="persist/hibernate/gradle/worker/EnhancementWorker.Parameters.html#getCompileClasspath()" title="Method in EnhancementWorker.Parameters">getCompileClasspath()</a></span> - Method in <a href="persist/hibernate/gradle/worker/EnhancementWorker.Parameters.html">EnhancementWorker.Parameters</a>
+</dt><dd> <div class="block">The project's compilation classpath, merged into the worker's
+ <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/net/URLClassLoader.html' title='URLClassLoader'>URLClassLoader</a> so Hibernate can resolve entity relationships,
+ embedded types, and enums.</div></dd>
 <dt><span class="strong"><a href="persist/hibernate/gradle/task/HibernateEnhancementTask.html#getCompileClasspath()" title="Method in HibernateEnhancementTask">getCompileClasspath()</a></span> - Method in <a href="persist/hibernate/gradle/task/HibernateEnhancementTask.html">HibernateEnhancementTask</a>
 </dt><dd> <div class="block">The full compilation dependencies classpath necessary for Hibernate to inspect, resolve,
- and validate complex relationships, types, or embedded enums (e.g., <CODE>Person$Gender</CODE>)
- during the bytecode analysis phase.</div></dd>
+ and validate complex relationships or fields during the bytecode analysis phase.</div></dd>
+<dt><span class="strong"><a href="persist/openjpa/gradle/task/OpenJPAEnhanceTask.html#getCompileClasspath()" title="Method in OpenJPAEnhanceTask">getCompileClasspath()</a></span> - Method in <a href="persist/openjpa/gradle/task/OpenJPAEnhanceTask.html">OpenJPAEnhanceTask</a>
+</dt><dd> <div class="block">The complete compile dependencies of the module, required by OpenJPA to inspect relationship types.</div></dd>
+<dt><span class="strong"><a href="persist/hibernate/gradle/worker/EnhancementWorker.Parameters.html#getCompiledClassesDir()" title="Method in EnhancementWorker.Parameters">getCompiledClassesDir()</a></span> - Method in <a href="persist/hibernate/gradle/worker/EnhancementWorker.Parameters.html">EnhancementWorker.Parameters</a>
+</dt><dd> <div class="block">The input directory containing the raw, un-enhanced compiled class files.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/task/LintNamedQueries.html#getCompiledClassesDir()" title="Method in LintNamedQueries">getCompiledClassesDir()</a></span> - Method in <a href="persist/jakarta/gradle/task/LintNamedQueries.html">LintNamedQueries</a>
 </dt><dd> <div class="block">The input source directory holding the compiled Java class files to be scanned via ASM.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/worker/LintNamedQueriesParameters.html#getCompiledClassesDir()" title="Method in LintNamedQueriesParameters">getCompiledClassesDir()</a></span> - Method in <a href="persist/jakarta/gradle/worker/LintNamedQueriesParameters.html">LintNamedQueriesParameters</a>
@@ -263,6 +302,8 @@ if (location.href.indexOf('is-external=true') == -1) {
 <dt><span class="strong"><a href="persist/jakarta/gradle/task/ProcessPersistenceDescriptor.html#getDestinationFile()" title="Method in ProcessPersistenceDescriptor">getDestinationFile()</a></span> - Method in <a href="persist/jakarta/gradle/task/ProcessPersistenceDescriptor.html">ProcessPersistenceDescriptor</a>
 </dt><dd> <div class="block">The output file where the generated or merged <CODE>persistence.xml</CODE>
  is written.</div></dd>
+<dt><span class="strong"><a href="persist/hibernate/gradle/worker/EnhancementWorker.Parameters.html#getDirtyTrackingEnabled()" title="Method in EnhancementWorker.Parameters">getDirtyTrackingEnabled()</a></span> - Method in <a href="persist/hibernate/gradle/worker/EnhancementWorker.Parameters.html">EnhancementWorker.Parameters</a>
+</dt><dd> <div class="block">Whether inline dirty tracking enhancement is enabled.</div></dd>
 <dt><span class="strong"><a href="persist/hibernate/gradle/task/HibernateEnhancementTask.html#getDirtyTrackingEnabled()" title="Method in HibernateEnhancementTask">getDirtyTrackingEnabled()</a></span> - Method in <a href="persist/hibernate/gradle/task/HibernateEnhancementTask.html">HibernateEnhancementTask</a>
 </dt><dd> <div class="block">Toggles whether to inject inline dirty tracking code directly into entity fields,
  allowing Hibernate to manage changes without relying on heavy reflections during transaction flush phases.</div></dd>
@@ -281,6 +322,8 @@ if (location.href.indexOf('is-external=true') == -1) {
 </dt><dd> <div class="block">Toggles whether to enhance entity bytecode to automatically manage bidirectional associations.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/extension/LinterExtension.html#getEnabled()" title="Method in LinterExtension">getEnabled()</a></span> - Method in <a href="persist/jakarta/gradle/extension/LinterExtension.html">LinterExtension</a>
 </dt><dd> <div class="block">Toggles whether the static<DL><DT><B>NamedQuery:</B></DT><DD>analysis task should execute.</DD></DL> </div></dd>
+<dt><span class="strong"><a href="persist/openjpa/gradle/extension/MetaModelExtension.html#getEnabled()" title="Method in MetaModelExtension">getEnabled()</a></span> - Method in <a href="persist/openjpa/gradle/extension/MetaModelExtension.html">MetaModelExtension</a>
+</dt><dd> <div class="block">Toggles whether the OpenJPA metamodel annotation processor is active.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/extension/PersistenceUnitExtension.html#getEnabled()" title="Method in PersistenceUnitExtension">getEnabled()</a></span> - Method in <a href="persist/jakarta/gradle/extension/PersistenceUnitExtension.html">PersistenceUnitExtension</a>
 </dt><dd> <div class="block">Controls whether this persistence unit is included during descriptor
  generation.</div></dd>
@@ -290,8 +333,23 @@ if (location.href.indexOf('is-external=true') == -1) {
 </dt><dd> <div class="block">Toggles whether to enable advanced extended bytecode enhancements.</div></dd>
 <dt><span class="strong"><a href="persist/hibernate/gradle/extension/EnhancementExtension.html#getEnableLazyInitialization()" title="Method in EnhancementExtension">getEnableLazyInitialization()</a></span> - Method in <a href="persist/hibernate/gradle/extension/EnhancementExtension.html">EnhancementExtension</a>
 </dt><dd> <div class="block">Toggles whether to enhance entity bytecode to support field-level lazy initialization.</div></dd>
+<dt><span class="strong"><a href="persist/openjpa/gradle/extension/EnhancementExtension.html#getEnforcePropertyRestrictions()" title="Method in EnhancementExtension">getEnforcePropertyRestrictions()</a></span> - Method in <a href="persist/openjpa/gradle/extension/EnhancementExtension.html">EnhancementExtension</a>
+</dt><dd> <div class="block">Toggles whether the OpenJPA enhancer should enforce property access restrictions
+ on persistent entity fields.</div></dd>
+<dt><span class="strong"><a href="persist/openjpa/gradle/task/OpenJPAEnhanceTask.html#getEnforcePropertyRestrictions()" title="Method in OpenJPAEnhanceTask">getEnforcePropertyRestrictions()</a></span> - Method in <a href="persist/openjpa/gradle/task/OpenJPAEnhanceTask.html">OpenJPAEnhanceTask</a>
+</dt><dd> <div class="block">Toggles whether the enhancer should enforce property access restrictions
+ on persistent entity fields.</div></dd>
+<dt><span class="strong"><a href="persist/hibernate/gradle/task/HibernateEnhancementTask.html#getEnhanceClasspath()" title="Method in HibernateEnhancementTask">getEnhanceClasspath()</a></span> - Method in <a href="persist/hibernate/gradle/task/HibernateEnhancementTask.html">HibernateEnhancementTask</a>
+</dt><dd> <div class="block">The isolated toolset dependencies classpath carrying the JPersist persistence-tools binaries
+ alongside Hibernate core binaries. </div></dd>
+<dt><span class="strong"><a href="persist/hibernate/gradle/worker/EnhancementWorker.Parameters.html#getEnhancedClassesDir()" title="Method in EnhancementWorker.Parameters">getEnhancedClassesDir()</a></span> - Method in <a href="persist/hibernate/gradle/worker/EnhancementWorker.Parameters.html">EnhancementWorker.Parameters</a>
+</dt><dd> <div class="block">The output directory where enhanced class files are written.</div></dd>
+<dt><span class="strong"><a href="persist/openjpa/gradle/task/OpenJPAEnhanceTask.html#getEnhancerClasspath()" title="Method in OpenJPAEnhanceTask">getEnhancerClasspath()</a></span> - Method in <a href="persist/openjpa/gradle/task/OpenJPAEnhanceTask.html">OpenJPAEnhanceTask</a>
+</dt><dd> <div class="block">The isolated runtime classpath carrying OpenJPA core toolset binaries.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/extension/PersistenceUnitExtension.html#getExcludedUnlistedClasses()" title="Method in PersistenceUnitExtension">getExcludedUnlistedClasses()</a></span> - Method in <a href="persist/jakarta/gradle/extension/PersistenceUnitExtension.html">PersistenceUnitExtension</a>
 </dt><dd> <div class="block">Whether unlisted entity classes should be excluded from the persistence unit.</div></dd>
+<dt><span class="strong"><a href="persist/hibernate/gradle/worker/EnhancementWorker.Parameters.html#getExtendedEnhancementEnabled()" title="Method in EnhancementWorker.Parameters">getExtendedEnhancementEnabled()</a></span> - Method in <a href="persist/hibernate/gradle/worker/EnhancementWorker.Parameters.html">EnhancementWorker.Parameters</a>
+</dt><dd> <div class="block">Whether extended bytecode enhancement strategies are enabled.</div></dd>
 <dt><span class="strong"><a href="persist/hibernate/gradle/task/HibernateEnhancementTask.html#getExtendedEnhancementEnabled()" title="Method in HibernateEnhancementTask">getExtendedEnhancementEnabled()</a></span> - Method in <a href="persist/hibernate/gradle/task/HibernateEnhancementTask.html">HibernateEnhancementTask</a>
 </dt><dd> <div class="block">Toggles whether to enable advanced extended bytecode enhancement strategies.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/extension/LinterExtension.html#getFailOnError()" title="Method in LinterExtension">getFailOnError()</a></span> - Method in <a href="persist/jakarta/gradle/extension/LinterExtension.html">LinterExtension</a>
@@ -302,6 +360,8 @@ if (location.href.indexOf('is-external=true') == -1) {
  immediately fail the Gradle build.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/worker/LintNamedQueriesParameters.html#getFailOnError()" title="Method in LintNamedQueriesParameters">getFailOnError()</a></span> - Method in <a href="persist/jakarta/gradle/worker/LintNamedQueriesParameters.html">LintNamedQueriesParameters</a>
 </dt><dd> <div class="block">Whether errors should fail the build (<CODE>true</CODE>) or be logged as warnings.</div></dd>
+<dt><span class="strong"><a href="persist/openjpa/gradle/extension/MetaModelExtension.html#getHeader()" title="Method in MetaModelExtension">getHeader()</a></span> - Method in <a href="persist/openjpa/gradle/extension/MetaModelExtension.html">MetaModelExtension</a>
+</dt><dd> <div class="block">Configures a custom header comment to prepend to the generated metamodel source files.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/extension/LinterExtension.html#getIgnoreWarnings()" title="Method in LinterExtension">getIgnoreWarnings()</a></span> - Method in <a href="persist/jakarta/gradle/extension/LinterExtension.html">LinterExtension</a>
 </dt><dd> <div class="block">Toggles whether sub-critical semantic validation warnings should be muted.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/task/LintNamedQueries.html#getIgnoreWarnings()" title="Method in LintNamedQueries">getIgnoreWarnings()</a></span> - Method in <a href="persist/jakarta/gradle/task/LintNamedQueries.html">LintNamedQueries</a>
@@ -326,6 +386,11 @@ if (location.href.indexOf('is-external=true') == -1) {
 <dt><span class="strong"><a href="persist/jakarta/gradle/task/ProcessPersistenceDescriptor.html#getJarFileNames()" title="Method in ProcessPersistenceDescriptor">getJarFileNames()</a></span> - Method in <a href="persist/jakarta/gradle/task/ProcessPersistenceDescriptor.html">ProcessPersistenceDescriptor</a>
 </dt><dd> <div class="block">Resolved JAR file names from the <CODE>jarFile</CODE> configuration to inject
  as <CODE>&lt;jar-file&gt;</CODE> elements.</div></dd>
+<dt><span class="strong"><a href="persist/hibernate/gradle/worker/EnhancementWorker.Parameters.html#getJpaVersion()" title="Method in EnhancementWorker.Parameters">getJpaVersion()</a></span> - Method in <a href="persist/hibernate/gradle/worker/EnhancementWorker.Parameters.html">EnhancementWorker.Parameters</a>
+</dt><dd> <div class="block">The JPA specification version for selecting the correct SPI provider.</div></dd>
+<dt><span class="strong"><a href="persist/hibernate/gradle/task/HibernateEnhancementTask.html#getJpaVersion()" title="Method in HibernateEnhancementTask">getJpaVersion()</a></span> - Method in <a href="persist/hibernate/gradle/task/HibernateEnhancementTask.html">HibernateEnhancementTask</a>
+</dt><dd> <div class="block">The JPA specification version used to determine the annotation namespace
+ (<CODE>jakarta.persistence</CODE> vs <CODE>javax.persistence</CODE>) during bytecode scanning.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/task/LintNamedQueries.html#getJpaVersion()" title="Method in LintNamedQueries">getJpaVersion()</a></span> - Method in <a href="persist/jakarta/gradle/task/LintNamedQueries.html">LintNamedQueries</a>
 </dt><dd> <div class="block">The JPA specification version used to determine the annotation namespace
  (<CODE>jakarta.persistence</CODE> vs <CODE>javax.persistence</CODE>) during bytecode scanning.</div></dd>
@@ -338,14 +403,16 @@ if (location.href.indexOf('is-external=true') == -1) {
  (<CODE>jakarta.persistence</CODE> vs <CODE>javax.persistence</CODE>) during bytecode scanning.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/extension/PersistenceUnitExtension.html#getJta()" title="Method in PersistenceUnitExtension">getJta()</a></span> - Method in <a href="persist/jakarta/gradle/extension/PersistenceUnitExtension.html">PersistenceUnitExtension</a>
 </dt><dd> <div class="block">Whether the <a href='#getDataSource()'>data source</a> is JTA-managed.</div></dd>
+<dt><span class="strong"><a href="persist/hibernate/gradle/worker/EnhancementWorker.Parameters.html#getLazyInitializationEnabled()" title="Method in EnhancementWorker.Parameters">getLazyInitializationEnabled()</a></span> - Method in <a href="persist/hibernate/gradle/worker/EnhancementWorker.Parameters.html">EnhancementWorker.Parameters</a>
+</dt><dd> <div class="block">Whether field-level lazy initialization enhancement is enabled.</div></dd>
 <dt><span class="strong"><a href="persist/hibernate/gradle/task/HibernateEnhancementTask.html#getLazyInitializationEnabled()" title="Method in HibernateEnhancementTask">getLazyInitializationEnabled()</a></span> - Method in <a href="persist/hibernate/gradle/task/HibernateEnhancementTask.html">HibernateEnhancementTask</a>
 </dt><dd> <div class="block">Toggles whether to enhance entities to support field-level lazy initialization.
  </div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/task/LintNamedQueries.html#getLintReportFile()" title="Method in LintNamedQueries">getLintReportFile()</a></span> - Method in <a href="persist/jakarta/gradle/task/LintNamedQueries.html">LintNamedQueries</a>
 </dt><dd> <div class="block">The generated JSON compilation report containing metrics regarding processed and skipped files.
  </div></dd>
-<dt><span class="strong"><a href="persist/hibernate/gradle/task/HibernateEnhancementTask.1.html#getLoadingClassLoader()" title="Method in HibernateEnhancementTask.1">getLoadingClassLoader()</a></span> - Method in <a href="persist/hibernate/gradle/task/HibernateEnhancementTask.1.html">HibernateEnhancementTask.1</a>
-</dt><dd> <div class="block"></div></dd>
+<dt><span class="strong"><a href="persist/openjpa/gradle/extension/MetaModelExtension.html#getLogLevel()" title="Method in MetaModelExtension">getLogLevel()</a></span> - Method in <a href="persist/openjpa/gradle/extension/MetaModelExtension.html">MetaModelExtension</a>
+</dt><dd> <div class="block">Configures the logging verbosity level used by the OpenJPA annotation processor.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/extension/PersistenceUnitExtension.html#getMappingFiles()" title="Method in PersistenceUnitExtension">getMappingFiles()</a></span> - Method in <a href="persist/jakarta/gradle/extension/PersistenceUnitExtension.html">PersistenceUnitExtension</a>
 </dt><dd> <div class="block">A list of ORM mapping file paths to include in the persistence unit.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/extension/PersistenceExtension.html#getName()" title="Method in PersistenceExtension">getName()</a></span> - Method in <a href="persist/jakarta/gradle/extension/PersistenceExtension.html">PersistenceExtension</a>
@@ -354,10 +421,12 @@ if (location.href.indexOf('is-external=true') == -1) {
 </dt><dd> <div class="block">Returns the persistence-unit name.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/extension/TenantValidationExtension.html#getName()" title="Method in TenantValidationExtension">getName()</a></span> - Method in <a href="persist/jakarta/gradle/extension/TenantValidationExtension.html">TenantValidationExtension</a>
 </dt><dd> <div class="block">The unique identifier for this tenant profile.</div></dd>
+<dt><span class="strong"><a href="persist/openjpa/gradle/extension/MetaModelExtension.html#getNaming()" title="Method in MetaModelExtension">getNaming()</a></span> - Method in <a href="persist/openjpa/gradle/extension/MetaModelExtension.html">MetaModelExtension</a>
+</dt><dd> <div class="block">Configures a custom naming policy for the generated metamodel class identifiers.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/task/GenerateJPAGraalVMMetadata.html#getOutputFile()" title="Method in GenerateJPAGraalVMMetadata">getOutputFile()</a></span> - Method in <a href="persist/jakarta/gradle/task/GenerateJPAGraalVMMetadata.html">GenerateJPAGraalVMMetadata</a>
-</dt><dd> <div class="block">The location where the final reflect-config.json will be written.</div></dd>
+</dt><dd> <div class="block">The location where the final <CODE>reflect-config.json</CODE> will be written.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/extension/PersistenceExtension.html#getOutputProperties()" title="Method in PersistenceExtension">getOutputProperties()</a></span> - Method in <a href="persist/jakarta/gradle/extension/PersistenceExtension.html">PersistenceExtension</a>
-</dt><dd> <div class="block">Key-value pairs passed to the XML javax.xml.transform.Transformer
+</dt><dd> <div class="block">Key-value pairs passed to the XML <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/javax/xml/transform/Transformer.html' title='Transformer'>Transformer</a>
  that formats the generated <CODE>persistence.xml</CODE>.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/extension/TenantValidationExtension.html#getPassword()" title="Method in TenantValidationExtension">getPassword()</a></span> - Method in <a href="persist/jakarta/gradle/extension/TenantValidationExtension.html">TenantValidationExtension</a>
 </dt><dd> <div class="block">The database password for this tenant.</div></dd>
@@ -374,40 +443,56 @@ if (location.href.indexOf('is-external=true') == -1) {
  <CODE>&lt;properties&gt;</CODE> block of the persistence unit.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/extension/PersistenceUnitExtension.html#getProvider()" title="Method in PersistenceUnitExtension">getProvider()</a></span> - Method in <a href="persist/jakarta/gradle/extension/PersistenceUnitExtension.html">PersistenceUnitExtension</a>
 </dt><dd> <div class="block">The fully qualified class name of the JPA persistence provider.</div></dd>
+<dt><span class="strong"><a href="persist/jakarta/gradle/task/GenerateJPAGraalVMMetadata.html#getReflectConfigFile()" title="Method in GenerateJPAGraalVMMetadata">getReflectConfigFile()</a></span> - Method in <a href="persist/jakarta/gradle/task/GenerateJPAGraalVMMetadata.html">GenerateJPAGraalVMMetadata</a>
+</dt><dd> <div class="block">The location where the final <CODE>reflect-config.json</CODE> will be written.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/worker/LintNamedQueriesParameters.html#getRemovedClassFiles()" title="Method in LintNamedQueriesParameters">getRemovedClassFiles()</a></span> - Method in <a href="persist/jakarta/gradle/worker/LintNamedQueriesParameters.html">LintNamedQueriesParameters</a>
 </dt><dd> <div class="block">Relative paths of compiled class files that were removed since the
  last build pass.</div></dd>
 <dt><span class="strong"><a href="persist/eclipse/gradle/task/EclipseWeaveTask.html#getResourcesDir()" title="Method in EclipseWeaveTask">getResourcesDir()</a></span> - Method in <a href="persist/eclipse/gradle/task/EclipseWeaveTask.html">EclipseWeaveTask</a>
 </dt><dd> <div class="block">The input directory housing configuration infrastructure metadata files, such as your
  target <CODE>persistence.xml</CODE> or ORM mapping descriptors.</div></dd>
+<dt><span class="strong"><a href="persist/openjpa/gradle/task/OpenJPAEnhanceTask.html#getResourcesDir()" title="Method in OpenJPAEnhanceTask">getResourcesDir()</a></span> - Method in <a href="persist/openjpa/gradle/task/OpenJPAEnhanceTask.html">OpenJPAEnhanceTask</a>
+</dt><dd> <div class="block">The directory containing the processed resources (specifically META-INF/persistence.xml).</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/task/ValidatePersistenceSchema.html#getResourcesDir()" title="Method in ValidatePersistenceSchema">getResourcesDir()</a></span> - Method in <a href="persist/jakarta/gradle/task/ValidatePersistenceSchema.html">ValidatePersistenceSchema</a>
 </dt><dd> <div class="block">The built-in resource destination directory containing the META-INF/persistence.xml structure.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/extension/PersistenceUnitExtension.html#getSharedCacheMode()" title="Method in PersistenceUnitExtension">getSharedCacheMode()</a></span> - Method in <a href="persist/jakarta/gradle/extension/PersistenceUnitExtension.html">PersistenceUnitExtension</a>
 </dt><dd> <div class="block">Whether the shared (second-level) cache is enabled.</div></dd>
+<dt><span class="strong"><a href="persist/openjpa/gradle/extension/MetaModelExtension.html#getSource()" title="Method in MetaModelExtension">getSource()</a></span> - Method in <a href="persist/openjpa/gradle/extension/MetaModelExtension.html">MetaModelExtension</a>
+</dt><dd> <div class="block">Configures the Java source compatibility version for the generated metamodel classes.</div></dd>
 <dt><span class="strong"><a href="persist/eclipse/gradle/task/EclipseWeaveTask.html#getSourceClassesDir()" title="Method in EclipseWeaveTask">getSourceClassesDir()</a></span> - Method in <a href="persist/eclipse/gradle/task/EclipseWeaveTask.html">EclipseWeaveTask</a>
 </dt><dd> <div class="block">The immutable input source directory holding clean, raw compiled Java class files before weaving.</div></dd>
 <dt><span class="strong"><a href="persist/hibernate/gradle/task/HibernateEnhancementTask.html#getSourceClassesDir()" title="Method in HibernateEnhancementTask">getSourceClassesDir()</a></span> - Method in <a href="persist/hibernate/gradle/task/HibernateEnhancementTask.html">HibernateEnhancementTask</a>
 </dt><dd> <div class="block">The read-only input source directory containing the clean, raw compiled Java class files before enhancement.</div></dd>
+<dt><span class="strong"><a href="persist/openjpa/gradle/task/OpenJPAEnhanceTask.html#getSourceClassesDir()" title="Method in OpenJPAEnhanceTask">getSourceClassesDir()</a></span> - Method in <a href="persist/openjpa/gradle/task/OpenJPAEnhanceTask.html">OpenJPAEnhanceTask</a>
+</dt><dd> <div class="block">The directory containing the clean compiled .class files to be enhanced in place.</div></dd>
+<dt><span class="strong"><a href="persist/jakarta/gradle/task/GenerateJPAGraalVMMetadata.html#getSourceFiles()" title="Method in GenerateJPAGraalVMMetadata">getSourceFiles()</a></span> - Method in <a href="persist/jakarta/gradle/task/GenerateJPAGraalVMMetadata.html">GenerateJPAGraalVMMetadata</a>
+</dt><dd> <div class="block">The input source files collection tracking active Java source code files (<CODE>.java</CODE>).
+ </div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/task/LintNamedQueries.html#getSourceFiles()" title="Method in LintNamedQueries">getSourceFiles()</a></span> - Method in <a href="persist/jakarta/gradle/task/LintNamedQueries.html">LintNamedQueries</a>
 </dt><dd> <div class="block">The input source directories tracking active Java source code files (.java).
  </div></dd>
+<dt><span class="strong"><a href="persist/jakarta/gradle/task/ValidatePersistenceSchema.html#getSourceFiles()" title="Method in ValidatePersistenceSchema">getSourceFiles()</a></span> - Method in <a href="persist/jakarta/gradle/task/ValidatePersistenceSchema.html">ValidatePersistenceSchema</a>
+</dt><dd> <div class="block">The input source files collection used to calculate incremental deltas
+ immune to compiler erasures.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/task/delegate/DescriptorProcessorDelegate.html#getSupportedVersions()" title="Method in DescriptorProcessorDelegate">getSupportedVersions()</a></span> - Method in <a href="persist/jakarta/gradle/task/delegate/DescriptorProcessorDelegate.html">DescriptorProcessorDelegate</a>
 </dt><dd> <div class="block">Returns the list of JPA specification versions supported by this delegate.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/task/delegate/JPA20DescriptorProcessorDelegate.html#getSupportedVersions()" title="Method in JPA20DescriptorProcessorDelegate">getSupportedVersions()</a></span> - Method in <a href="persist/jakarta/gradle/task/delegate/JPA20DescriptorProcessorDelegate.html">JPA20DescriptorProcessorDelegate</a>
-</dt><dd> <div class="block"></div></dd>
+</dt><dd> <div class="block">{@inheritDoc}</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/task/delegate/JPA21DescriptorProcessorDelegate.html#getSupportedVersions()" title="Method in JPA21DescriptorProcessorDelegate">getSupportedVersions()</a></span> - Method in <a href="persist/jakarta/gradle/task/delegate/JPA21DescriptorProcessorDelegate.html">JPA21DescriptorProcessorDelegate</a>
-</dt><dd> <div class="block"></div></dd>
+</dt><dd> <div class="block">{@inheritDoc}</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/task/delegate/JPA22DescriptorProcessorDelegate.html#getSupportedVersions()" title="Method in JPA22DescriptorProcessorDelegate">getSupportedVersions()</a></span> - Method in <a href="persist/jakarta/gradle/task/delegate/JPA22DescriptorProcessorDelegate.html">JPA22DescriptorProcessorDelegate</a>
-</dt><dd> <div class="block"></div></dd>
+</dt><dd> <div class="block">{@inheritDoc}</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/task/delegate/JPA30DescriptorProcessorDelegate.html#getSupportedVersions()" title="Method in JPA30DescriptorProcessorDelegate">getSupportedVersions()</a></span> - Method in <a href="persist/jakarta/gradle/task/delegate/JPA30DescriptorProcessorDelegate.html">JPA30DescriptorProcessorDelegate</a>
 </dt><dd> <div class="block">Broad-casts that this single execution engine strategy completely handles
  both the 3.0 and 3.1 schema specification rules.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/task/delegate/JPA32DescriptorProcessorDelegate.html#getSupportedVersions()" title="Method in JPA32DescriptorProcessorDelegate">getSupportedVersions()</a></span> - Method in <a href="persist/jakarta/gradle/task/delegate/JPA32DescriptorProcessorDelegate.html">JPA32DescriptorProcessorDelegate</a>
-</dt><dd> <div class="block"></div></dd>
+</dt><dd> <div class="block">{@inheritDoc}</div></dd>
 <dt><span class="strong"><a href="persist/eclipse/gradle/task/EclipseWeaveTask.html#getTargetClassesDir()" title="Method in EclipseWeaveTask">getTargetClassesDir()</a></span> - Method in <a href="persist/eclipse/gradle/task/EclipseWeaveTask.html">EclipseWeaveTask</a>
 </dt><dd> <div class="block">The target output directory where the newly generated, woven bytecode outputs will be deposited.</div></dd>
 <dt><span class="strong"><a href="persist/hibernate/gradle/task/HibernateEnhancementTask.html#getTargetClassesDir()" title="Method in HibernateEnhancementTask">getTargetClassesDir()</a></span> - Method in <a href="persist/hibernate/gradle/task/HibernateEnhancementTask.html">HibernateEnhancementTask</a>
 </dt><dd> <div class="block">The target output directory where the modified and enhanced class files will be generated.</div></dd>
+<dt><span class="strong"><a href="persist/openjpa/gradle/task/OpenJPAEnhanceTask.html#getTargetClassesDir()" title="Method in OpenJPAEnhanceTask">getTargetClassesDir()</a></span> - Method in <a href="persist/openjpa/gradle/task/OpenJPAEnhanceTask.html">OpenJPAEnhanceTask</a>
+</dt><dd> <div class="block">The isolated output directory where the enhanced class files are written.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/worker/SchemaValidationParameters.html#getTenantProfiles()" title="Method in SchemaValidationParameters">getTenantProfiles()</a></span> - Method in <a href="persist/jakarta/gradle/worker/SchemaValidationParameters.html">SchemaValidationParameters</a>
 </dt><dd> <div class="block">Pipe-delimited tenant profiles (<CODE>Name|URL|Driver|User|Password</CODE>)
  to validate sequentially.</div></dd>
@@ -417,7 +502,7 @@ if (location.href.indexOf('is-external=true') == -1) {
 <dt><span class="strong"><a href="persist/jakarta/gradle/extension/PersistenceUnitExtension.html#getTransactionType()" title="Method in PersistenceUnitExtension">getTransactionType()</a></span> - Method in <a href="persist/jakarta/gradle/extension/PersistenceUnitExtension.html">PersistenceUnitExtension</a>
 </dt><dd> <div class="block">The JPA transaction type (<CODE>RESOURCE_LOCAL</CODE> or <CODE>JTA</CODE>).</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/task/ProcessPersistenceDescriptor.html#getTransformerSettings()" title="Method in ProcessPersistenceDescriptor">getTransformerSettings()</a></span> - Method in <a href="persist/jakarta/gradle/task/ProcessPersistenceDescriptor.html">ProcessPersistenceDescriptor</a>
-</dt><dd> <div class="block">Custom output properties applied to the XML javax.xml.transform.Transformer
+</dt><dd> <div class="block">Custom output properties applied to the XML <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/javax/xml/transform/Transformer.html' title='Transformer'>Transformer</a>
  that formats the final <CODE>persistence.xml</CODE>.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/task/ProcessPersistenceDescriptor.html#getUnits()" title="Method in ProcessPersistenceDescriptor">getUnits()</a></span> - Method in <a href="persist/jakarta/gradle/task/ProcessPersistenceDescriptor.html">ProcessPersistenceDescriptor</a>
 </dt><dd> <div class="block">The list of persistence-unit extension configurations to process.</div></dd>
@@ -433,6 +518,9 @@ if (location.href.indexOf('is-external=true') == -1) {
 </dt><dd> <div class="block">Nested database connection configuration used during schema validation.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/extension/PersistenceUnitExtension.html#getValidationMode()" title="Method in PersistenceUnitExtension">getValidationMode()</a></span> - Method in <a href="persist/jakarta/gradle/extension/PersistenceUnitExtension.html">PersistenceUnitExtension</a>
 </dt><dd> <div class="block">The Bean Validation mode (<CODE>AUTO</CODE>, <CODE>CALLBACK</CODE>, or <CODE>NONE</CODE>).</div></dd>
+<dt><span class="strong"><a href="persist/jakarta/gradle/task/ValidatePersistenceSchema.html#getValidationReportFile()" title="Method in ValidatePersistenceSchema">getValidationReportFile()</a></span> - Method in <a href="persist/jakarta/gradle/task/ValidatePersistenceSchema.html">ValidatePersistenceSchema</a>
+</dt><dd> <div class="block">The generated JSON schema validation audit metrics report.
+ </div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/extension/PersistenceExtension.html#getVersion()" title="Method in PersistenceExtension">getVersion()</a></span> - Method in <a href="persist/jakarta/gradle/extension/PersistenceExtension.html">PersistenceExtension</a>
 </dt><dd> <div class="block">The JPA specification version written into the generated <CODE>persistence.xml</CODE>.</div></dd>
 <dt><span class="strong"><a href="persist/eclipse/gradle/task/EclipseWeaveTask.html#getWeaveClasspath()" title="Method in EclipseWeaveTask">getWeaveClasspath()</a></span> - Method in <a href="persist/eclipse/gradle/task/EclipseWeaveTask.html">EclipseWeaveTask</a>
@@ -448,20 +536,15 @@ if (location.href.indexOf('is-external=true') == -1) {
 <h2 class="title">H</h2>
 <dl>
 
-<dt><span class="strong"><a href="persist/hibernate/gradle/task/HibernateEnhancementTask.1.html#hasLazyLoadableAttributes(org.hibernate.bytecode.enhance.spi.UnloadedClass)" title="Method in HibernateEnhancementTask.1">hasLazyLoadableAttributes(org.hibernate.bytecode.enhance.spi.UnloadedClass)</a></span> - Method in <a href="persist/hibernate/gradle/task/HibernateEnhancementTask.1.html">HibernateEnhancementTask.1</a>
-</dt><dd> <div class="block"></div></dd>
 <dt><span class="strong"><a href="persist/hibernate/gradle/plugin/HibernateEnhancementPlugin.html" title="Class in persist.hibernate.gradle.plugin">HibernateEnhancementPlugin</a></span> - Class in <a href="./persist/hibernate/gradle/plugin/package-summary.html">persist.hibernate.gradle.plugin</a>
 </dt><dd><div class="block">Main entry point for the Hibernate Bytecode Enhancement Plugin.</div></dd>
 <dt><span class="strong"><a href="persist/hibernate/gradle/plugin/HibernateEnhancementPlugin.html#HibernateEnhancementPlugin()" title="Constructor in HibernateEnhancementPlugin">HibernateEnhancementPlugin()</a></span> - Constructor in <a href="persist/hibernate/gradle/plugin/HibernateEnhancementPlugin.html">HibernateEnhancementPlugin</a>
 </dt><dd> <div class="block"></div></dd>
 <dt><span class="strong"><a href="persist/hibernate/gradle/task/HibernateEnhancementTask.html" title="Class in persist.hibernate.gradle.task">HibernateEnhancementTask</a></span> - Class in <a href="./persist/hibernate/gradle/task/package-summary.html">persist.hibernate.gradle.task</a>
-</dt><dd><div class="block">A custom Gradle task that programmatically performs compile-time bytecode enhancement on Hibernate entities.</div></dd>
-<dt><span class="strong"><a href="persist/hibernate/gradle/task/HibernateEnhancementTask.1.html" title="Class in persist.hibernate.gradle.task.HibernateEnhancementTask">HibernateEnhancementTask.1</a></span> - Class in <a href="./persist/hibernate/gradle/task/package-summary.html">persist.hibernate.gradle.task</a>
-</dt><dd><div class="block"></div></dd>
-<dt><span class="strong"><a href="persist/hibernate/gradle/task/HibernateEnhancementTask.1.html#HibernateEnhancementTask.1()" title="Constructor in HibernateEnhancementTask.1">HibernateEnhancementTask.1()</a></span> - Constructor in <a href="persist/hibernate/gradle/task/HibernateEnhancementTask.1.html">HibernateEnhancementTask.1</a>
-</dt><dd> <div class="block"></div></dd>
-<dt><span class="strong"><a href="persist/hibernate/gradle/task/HibernateEnhancementTask.html#HibernateEnhancementTask()" title="Constructor in HibernateEnhancementTask">HibernateEnhancementTask()</a></span> - Constructor in <a href="persist/hibernate/gradle/task/HibernateEnhancementTask.html">HibernateEnhancementTask</a>
-</dt><dd> <div class="block"></div></dd>
+</dt><dd><div class="block">A custom Gradle task that performs compile-time bytecode enhancement on Hibernate entities
+ using a classloader-isolated worker process.</div></dd>
+<dt><span class="strong"><a href="persist/hibernate/gradle/task/HibernateEnhancementTask.html#HibernateEnhancementTask(org.gradle.workers.WorkerExecutor)" title="Constructor in HibernateEnhancementTask">HibernateEnhancementTask(org.gradle.workers.WorkerExecutor)</a></span> - Constructor in <a href="persist/hibernate/gradle/task/HibernateEnhancementTask.html">HibernateEnhancementTask</a>
+</dt><dd> <div class="block">Creates a new task instance.</div></dd>
 <dt><span class="strong"><a href="persist/hibernate/gradle/extension/HibernateExtension.html" title="Class in persist.hibernate.gradle.extension">HibernateExtension</a></span> - Class in <a href="./persist/hibernate/gradle/extension/package-summary.html">persist.hibernate.gradle.extension</a>
 </dt><dd><div class="block">Root extension configuration block for Hibernate Persistence Utilities.</div></dd>
 <dt><span class="strong"><a href="persist/hibernate/gradle/extension/HibernateExtension.html#HibernateExtension(org.gradle.api.model.ObjectFactory)" title="Constructor in HibernateExtension">HibernateExtension(org.gradle.api.model.ObjectFactory)</a></span> - Constructor in <a href="persist/hibernate/gradle/extension/HibernateExtension.html">HibernateExtension</a>
@@ -482,8 +565,8 @@ if (location.href.indexOf('is-external=true') == -1) {
 <h2 class="title">I</h2>
 <dl>
 
-<dt><span class="strong"><a href="persist/hibernate/gradle/task/HibernateEnhancementTask.1.html#isLazyLoadable(org.hibernate.bytecode.enhance.spi.UnloadedField)" title="Method in HibernateEnhancementTask.1">isLazyLoadable(org.hibernate.bytecode.enhance.spi.UnloadedField)</a></span> - Method in <a href="persist/hibernate/gradle/task/HibernateEnhancementTask.1.html">HibernateEnhancementTask.1</a>
-</dt><dd> <div class="block"></div></dd>
+<dt><span class="strong"><a href="persist/openjpa/gradle/extension/MetaModelExtension.LogLevel.html#INFO" title="Enum Constant in MetaModelExtension.LogLevel">INFO</a></span> - Enum Constant in <a href="persist/openjpa/gradle/extension/MetaModelExtension.LogLevel.html">MetaModelExtension.LogLevel</a>
+</dt><dd> <div class="block">Standard informational messages.</div></dd>
 </dl>
 
     
@@ -500,7 +583,9 @@ if (location.href.indexOf('is-external=true') == -1) {
 <dt><span class="strong"><a href="persist/jakarta/gradle/plugin/JakartaPersistencePlugin.html#JakartaPersistencePlugin()" title="Constructor in JakartaPersistencePlugin">JakartaPersistencePlugin()</a></span> - Constructor in <a href="persist/jakarta/gradle/plugin/JakartaPersistencePlugin.html">JakartaPersistencePlugin</a>
 </dt><dd> <div class="block"></div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/plugin/JakartaPersistencePlugin.html#JAR_LOCATION_ATTRIBUTE" title="Property in JakartaPersistencePlugin">JAR_LOCATION_ATTRIBUTE</a></span> - Property in <a href="persist/jakarta/gradle/plugin/JakartaPersistencePlugin.html">JakartaPersistencePlugin</a>
-</dt><dd> <div class="block"></div></dd>
+</dt><dd> <div class="block">Custom Gradle variant attribute used to override the relative path of a
+ JAR file inside the generated <CODE>persistence.xml</CODE> <CODE>&lt;jar-file&gt;</CODE>
+ entries.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/extension/PersistenceUnitExtension.html#jarFile(java.lang.String, java.lang.String)" title="Method in PersistenceUnitExtension">jarFile(java.lang.String, java.lang.String)</a></span> - Method in <a href="persist/jakarta/gradle/extension/PersistenceUnitExtension.html">PersistenceUnitExtension</a>
 </dt><dd> <div class="block">Declaratively configures a fixed external dependency coordinate path string mapping inside the descriptor.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/task/delegate/JPA20DescriptorProcessorDelegate.html" title="Class in persist.jakarta.gradle.task.delegate">JPA20DescriptorProcessorDelegate</a></span> - Class in <a href="./persist/jakarta/gradle/task/delegate/package-summary.html">persist.jakarta.gradle.task.delegate</a>
@@ -581,6 +666,16 @@ if (location.href.indexOf('is-external=true') == -1) {
 <h2 class="title">M</h2>
 <dl>
 
+<dt><span class="strong"><a href="persist/openjpa/gradle/extension/MetaModelExtension.LogLevel.html#MAX_VALUE" title="Field in MetaModelExtension.LogLevel">MAX_VALUE</a></span> - Field in <a href="persist/openjpa/gradle/extension/MetaModelExtension.LogLevel.html">MetaModelExtension.LogLevel</a>
+</dt><dd> <div class="block"></div></dd>
+<dt><span class="strong"><a href="persist/openjpa/gradle/extension/OpenJPAExtension.html#metaModel" title="Property in OpenJPAExtension">metaModel</a></span> - Property in <a href="persist/openjpa/gradle/extension/OpenJPAExtension.html">OpenJPAExtension</a>
+</dt><dd> <div class="block">The metamodel generation configuration sub-block parameters allocated to this source set layer.</div></dd>
+<dt><span class="strong"><a href="persist/openjpa/gradle/extension/MetaModelExtension.html" title="Interface in persist.openjpa.gradle.extension">MetaModelExtension</a></span> - Interface in <a href="./persist/openjpa/gradle/extension/package-summary.html">persist.openjpa.gradle.extension</a>
+</dt><dd><div class="block">Configuration options for the OpenJPA static canonical metamodel generation processor.</div></dd>
+<dt><span class="strong"><a href="persist/openjpa/gradle/extension/MetaModelExtension.LogLevel.html" title="Enum in persist.openjpa.gradle.extension.MetaModelExtension">MetaModelExtension.LogLevel</a></span> - Enum in <a href="./persist/openjpa/gradle/extension/package-summary.html">persist.openjpa.gradle.extension</a>
+</dt><dd><div class="block">Enumeration of supported logging verbosity levels for the OpenJPA annotation processor.</div></dd>
+<dt><span class="strong"><a href="persist/openjpa/gradle/extension/MetaModelExtension.LogLevel.html#MIN_VALUE" title="Field in MetaModelExtension.LogLevel">MIN_VALUE</a></span> - Field in <a href="persist/openjpa/gradle/extension/MetaModelExtension.LogLevel.html">MetaModelExtension.LogLevel</a>
+</dt><dd> <div class="block"></div></dd>
 </dl>
 
     
@@ -590,6 +685,8 @@ if (location.href.indexOf('is-external=true') == -1) {
 
 <dt><span class="strong"><a href="persist/eclipse/gradle/extension/EclipselinkExtension.html#name" title="Property in EclipselinkExtension">name</a></span> - Property in <a href="persist/eclipse/gradle/extension/EclipselinkExtension.html">EclipselinkExtension</a>
 </dt><dd> <div class="block">The name of the tracking source set associated with this specific domain configuration block.</div></dd>
+<dt><span class="strong"><a href="persist/openjpa/gradle/extension/OpenJPAExtension.html#name" title="Property in OpenJPAExtension">name</a></span> - Property in <a href="persist/openjpa/gradle/extension/OpenJPAExtension.html">OpenJPAExtension</a>
+</dt><dd> <div class="block">The name of the source set associated with this specific domain configuration block.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/task/registry/JPAVersionStrategyRegistry.html#namespace" title="Property in JPAVersionStrategyRegistry">namespace</a></span> - Property in <a href="persist/jakarta/gradle/task/registry/JPAVersionStrategyRegistry.html">JPAVersionStrategyRegistry</a>
 </dt><dd> <div class="block">The XML namespace URI for the <CODE>&lt;persistence&gt;</CODE> root element.</div></dd>
 </dl>
@@ -599,6 +696,31 @@ if (location.href.indexOf('is-external=true') == -1) {
 <h2 class="title">O</h2>
 <dl>
 
+<dt><span class="strong"><a href="persist/openjpa/gradle/plugin/OpenJPABasePlugin.html" title="Class in persist.openjpa.gradle.plugin">OpenJPABasePlugin</a></span> - Class in <a href="./persist/openjpa/gradle/plugin/package-summary.html">persist.openjpa.gradle.plugin</a>
+</dt><dd><div class="block"></div></dd>
+<dt><span class="strong"><a href="persist/openjpa/gradle/plugin/OpenJPABasePlugin.html#OpenJPABasePlugin()" title="Constructor in OpenJPABasePlugin">OpenJPABasePlugin()</a></span> - Constructor in <a href="persist/openjpa/gradle/plugin/OpenJPABasePlugin.html">OpenJPABasePlugin</a>
+</dt><dd> <div class="block"></div></dd>
+<dt><span class="strong"><a href="persist/openjpa/gradle/plugin/OpenJPAEnhancementPlugin.html" title="Class in persist.openjpa.gradle.plugin">OpenJPAEnhancementPlugin</a></span> - Class in <a href="./persist/openjpa/gradle/plugin/package-summary.html">persist.openjpa.gradle.plugin</a>
+</dt><dd><div class="block">Gradle plugin that performs compile-time bytecode enhancement for OpenJPA entity classes.</div></dd>
+<dt><span class="strong"><a href="persist/openjpa/gradle/plugin/OpenJPAEnhancementPlugin.html#OpenJPAEnhancementPlugin()" title="Constructor in OpenJPAEnhancementPlugin">OpenJPAEnhancementPlugin()</a></span> - Constructor in <a href="persist/openjpa/gradle/plugin/OpenJPAEnhancementPlugin.html">OpenJPAEnhancementPlugin</a>
+</dt><dd> <div class="block"></div></dd>
+<dt><span class="strong"><a href="persist/openjpa/gradle/task/OpenJPAEnhanceTask.html" title="Class in persist.openjpa.gradle.task">OpenJPAEnhanceTask</a></span> - Class in <a href="./persist/openjpa/gradle/task/package-summary.html">persist.openjpa.gradle.task</a>
+</dt><dd><div class="block">A custom Gradle task that handles compile-time bytecode enhancement for Apache OpenJPA entities.</div></dd>
+<dt><span class="strong"><a href="persist/openjpa/gradle/task/OpenJPAEnhanceTask.html#OpenJPAEnhanceTask(org.gradle.process.ExecOperations)" title="Constructor in OpenJPAEnhanceTask">OpenJPAEnhanceTask(org.gradle.process.ExecOperations)</a></span> - Constructor in <a href="persist/openjpa/gradle/task/OpenJPAEnhanceTask.html">OpenJPAEnhanceTask</a>
+</dt><dd> <div class="block">Constructs a new <CODE>OpenJPAEnhanceTask</CODE> instance.</div></dd>
+<dt><span class="strong"><a href="persist/openjpa/gradle/extension/OpenJPAExtension.html" title="Class in persist.openjpa.gradle.extension">OpenJPAExtension</a></span> - Class in <a href="./persist/openjpa/gradle/extension/package-summary.html">persist.openjpa.gradle.extension</a>
+</dt><dd><div class="block">Source-set-scoped configuration container for OpenJPA tools.</div></dd>
+<dt><span class="strong"><a href="persist/openjpa/gradle/extension/OpenJPAExtension.html#OpenJPAExtension(java.lang.String, org.gradle.api.model.ObjectFactory)" title="Constructor in OpenJPAExtension">OpenJPAExtension(java.lang.String, org.gradle.api.model.ObjectFactory)</a></span> - Constructor in <a href="persist/openjpa/gradle/extension/OpenJPAExtension.html">OpenJPAExtension</a>
+</dt><dd> <div class="block">Constructs a new <CODE>OpenJPAExtension</CODE> instance.</div></dd>
+<dt><span class="strong"><a href="persist/openjpa/gradle/plugin/OpenJPAMetaModelGenerationPlugin.html" title="Class in persist.openjpa.gradle.plugin">OpenJPAMetaModelGenerationPlugin</a></span> - Class in <a href="./persist/openjpa/gradle/plugin/package-summary.html">persist.openjpa.gradle.plugin</a>
+</dt><dd><div class="block">Gradle plugin that configures the OpenJPA annotation processor for static canonical
+ metamodel class generation.</div></dd>
+<dt><span class="strong"><a href="persist/openjpa/gradle/plugin/OpenJPAMetaModelGenerationPlugin.html#OpenJPAMetaModelGenerationPlugin()" title="Constructor in OpenJPAMetaModelGenerationPlugin">OpenJPAMetaModelGenerationPlugin()</a></span> - Constructor in <a href="persist/openjpa/gradle/plugin/OpenJPAMetaModelGenerationPlugin.html">OpenJPAMetaModelGenerationPlugin</a>
+</dt><dd> <div class="block"></div></dd>
+<dt><span class="strong"><a href="persist/openjpa/gradle/plugin/OpenJPAPersistencePlugin.html" title="Class in persist.openjpa.gradle.plugin">OpenJPAPersistencePlugin</a></span> - Class in <a href="./persist/openjpa/gradle/plugin/package-summary.html">persist.openjpa.gradle.plugin</a>
+</dt><dd><div class="block">An aggregate utility plugin that configures a comprehensive OpenJPA toolbelt out-of-the-box.</div></dd>
+<dt><span class="strong"><a href="persist/openjpa/gradle/plugin/OpenJPAPersistencePlugin.html#OpenJPAPersistencePlugin()" title="Constructor in OpenJPAPersistencePlugin">OpenJPAPersistencePlugin()</a></span> - Constructor in <a href="persist/openjpa/gradle/plugin/OpenJPAPersistencePlugin.html">OpenJPAPersistencePlugin</a>
+</dt><dd> <div class="block"></div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/extension/PersistenceExtension.html#outputProperty(java.lang.String, java.lang.String)" title="Method in PersistenceExtension">outputProperty(java.lang.String, java.lang.String)</a></span> - Method in <a href="persist/jakarta/gradle/extension/PersistenceExtension.html">PersistenceExtension</a>
 </dt><dd> <div class="block">Sets a single XML transformer output property.</div></dd>
 </dl>
@@ -621,7 +743,7 @@ if (location.href.indexOf('is-external=true') == -1) {
 <dt><span class="strong"><a href="persist/eclipse/gradle/extension/JpaModelgenExtension.html#persistenceXml" title="Property in JpaModelgenExtension">persistenceXml</a></span> - Property in <a href="persist/eclipse/gradle/extension/JpaModelgenExtension.html">JpaModelgenExtension</a>
 </dt><dd> <div class="block">Configures the lazy file property location mapping to the target <CODE>persistence.xml</CODE>.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/task/delegate/AbstractDescriptorProcessorDelegate.html#process(java.io.File, java.io.File, List<String>, List<String>, List<PersistenceUnitExtension>, Map<String, String>, java.lang.String)" title="Method in AbstractDescriptorProcessorDelegate">process(java.io.File, java.io.File, List&lt;String&gt;, List&lt;String&gt;, List&lt;PersistenceUnitExtension&gt;, Map&lt;String, String&gt;, java.lang.String)</a></span> - Method in <a href="persist/jakarta/gradle/task/delegate/AbstractDescriptorProcessorDelegate.html">AbstractDescriptorProcessorDelegate</a>
-</dt><dd> <div class="block"></div></dd>
+</dt><dd> <div class="block">{@inheritDoc}</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/task/delegate/DescriptorProcessorDelegate.html#process(java.io.File, java.io.File, List<String>, List<String>, List<PersistenceUnitExtension>, Map<String, String>, java.lang.String)" title="Method in DescriptorProcessorDelegate">process(java.io.File, java.io.File, List&lt;String&gt;, List&lt;String&gt;, List&lt;PersistenceUnitExtension&gt;, Map&lt;String, String&gt;, java.lang.String)</a></span> - Method in <a href="persist/jakarta/gradle/task/delegate/DescriptorProcessorDelegate.html">DescriptorProcessorDelegate</a>
 </dt><dd> <div class="block">Processes the persistence descriptor by either merging an existing
  source file or generating a new one from scratch.</div></dd>
@@ -652,6 +774,11 @@ if (location.href.indexOf('is-external=true') == -1) {
 <dt><span class="strong"><a href="persist/jakarta/gradle/task/registry/JPAVersionStrategyRegistry.html#resolve(java.lang.String)" title="Method in JPAVersionStrategyRegistry">resolve(java.lang.String)</a></span> - Method in <a href="persist/jakarta/gradle/task/registry/JPAVersionStrategyRegistry.html">JPAVersionStrategyRegistry</a>
 </dt><dd> <div class="block">Resolves the complete strategy metadata for the requested JPA
  specification version.</div></dd>
+<dt><span class="strong"><a href="persist/jakarta/gradle/plugin/JakartaPersistencePlugin.html#resolvePersistenceToolsFiles(org.gradle.api.Project, Provider<String>, java.lang.ClassLoader)" title="Method in JakartaPersistencePlugin">resolvePersistenceToolsFiles(org.gradle.api.Project, Provider&lt;String&gt;, java.lang.ClassLoader)</a></span> - Method in <a href="persist/jakarta/gradle/plugin/JakartaPersistencePlugin.html">JakartaPersistencePlugin</a>
+</dt><dd> <div class="block"></div></dd>
+<dt><span class="strong"><a href="persist/jakarta/gradle/plugin/JakartaPersistencePlugin.html#resolvePersistenceToolsVersion()" title="Method in JakartaPersistencePlugin">resolvePersistenceToolsVersion()</a></span> - Method in <a href="persist/jakarta/gradle/plugin/JakartaPersistencePlugin.html">JakartaPersistencePlugin</a>
+</dt><dd> <div class="block">Resolves the version of the <CODE>persistence-tools-api</CODE> library that is
+ currently on the plugin's own classpath.</div></dd>
 </dl>
 
     
@@ -664,7 +791,7 @@ if (location.href.indexOf('is-external=true') == -1) {
 <dt><span class="strong"><a href="persist/jakarta/gradle/worker/SchemaValidationParameters.html" title="Interface in persist.jakarta.gradle.worker">SchemaValidationParameters</a></span> - Interface in <a href="./persist/jakarta/gradle/worker/package-summary.html">persist.jakarta.gradle.worker</a>
 </dt><dd><div class="block">Parameter interface for the <a href='../../../../persist/jakarta/gradle/worker/SchemaValidationWorker.html' title='SchemaValidationWorker'>SchemaValidationWorker</a> work action.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/worker/SchemaValidationWorker.html" title="Class in persist.jakarta.gradle.worker">SchemaValidationWorker</a></span> - Class in <a href="./persist/jakarta/gradle/worker/package-summary.html">persist.jakarta.gradle.worker</a>
-</dt><dd><div class="block">Gradle org.gradle.workers.WorkAction that validates JPA entity mappings against a
+</dt><dd><div class="block">Gradle <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/workers/WorkAction.html' title='WorkAction'>WorkAction</a> that validates JPA entity mappings against a
  database schema inside an isolated classloader.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/worker/SchemaValidationWorker.html#SchemaValidationWorker()" title="Constructor in SchemaValidationWorker">SchemaValidationWorker()</a></span> - Constructor in <a href="persist/jakarta/gradle/worker/SchemaValidationWorker.html">SchemaValidationWorker</a>
 </dt><dd> <div class="block"></div></dd>
@@ -686,6 +813,8 @@ if (location.href.indexOf('is-external=true') == -1) {
 <dt><span class="strong"><a href="persist/jakarta/gradle/extension/TenantValidationExtension.html#TenantValidationExtension(java.lang.String)" title="Constructor in TenantValidationExtension">TenantValidationExtension(java.lang.String)</a></span> - Constructor in <a href="persist/jakarta/gradle/extension/TenantValidationExtension.html">TenantValidationExtension</a>
 </dt><dd> <div class="block">Creates a new tenant profile with sensible H2 defaults derived from the
  given tenant name.</div></dd>
+<dt><span class="strong"><a href="persist/openjpa/gradle/extension/MetaModelExtension.LogLevel.html#TRACE" title="Enum Constant in MetaModelExtension.LogLevel">TRACE</a></span> - Enum Constant in <a href="persist/openjpa/gradle/extension/MetaModelExtension.LogLevel.html">MetaModelExtension.LogLevel</a>
+</dt><dd> <div class="block">Finest-grained diagnostic tracing output.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/extension/PersistenceExtension.html#transformer(Closure<?>)" title="Method in PersistenceExtension">transformer(Closure&lt;?&gt;)</a></span> - Method in <a href="persist/jakarta/gradle/extension/PersistenceExtension.html">PersistenceExtension</a>
 </dt><dd> <div class="block">Configures the XML transformer output properties using a closure.</div></dd>
 </dl>
@@ -702,7 +831,7 @@ if (location.href.indexOf('is-external=true') == -1) {
 <h2 class="title">V</h2>
 <dl>
 
-<dt><span class="strong"><a href="persist/jakarta/gradle/task/ValidatePersistenceSchema.html#validate()" title="Method in ValidatePersistenceSchema">validate()</a></span> - Method in <a href="persist/jakarta/gradle/task/ValidatePersistenceSchema.html">ValidatePersistenceSchema</a>
+<dt><span class="strong"><a href="persist/jakarta/gradle/task/ValidatePersistenceSchema.html#validate(org.gradle.work.InputChanges)" title="Method in ValidatePersistenceSchema">validate(org.gradle.work.InputChanges)</a></span> - Method in <a href="persist/jakarta/gradle/task/ValidatePersistenceSchema.html">ValidatePersistenceSchema</a>
 </dt><dd> <div class="block">Executes schema validation by submitting a
  <a href='../../../../persist/jakarta/gradle/worker/SchemaValidationWorker.html' title='SchemaValidationWorker'>SchemaValidationWorker</a> to an isolated classloader worker process.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/task/ValidatePersistenceSchema.html" title="Class in persist.jakarta.gradle.task">ValidatePersistenceSchema</a></span> - Class in <a href="./persist/jakarta/gradle/task/package-summary.html">persist.jakarta.gradle.task</a>
@@ -734,6 +863,8 @@ if (location.href.indexOf('is-external=true') == -1) {
 <h2 class="title">W</h2>
 <dl>
 
+<dt><span class="strong"><a href="persist/openjpa/gradle/extension/MetaModelExtension.LogLevel.html#WARN" title="Enum Constant in MetaModelExtension.LogLevel">WARN</a></span> - Enum Constant in <a href="persist/openjpa/gradle/extension/MetaModelExtension.LogLevel.html">MetaModelExtension.LogLevel</a>
+</dt><dd> <div class="block">Warning messages indicating potential issues.</div></dd>
 <dt><span class="strong"><a href="persist/eclipse/gradle/task/EclipseWeaveTask.html#weave()" title="Method in EclipseWeaveTask">weave()</a></span> - Method in <a href="persist/eclipse/gradle/task/EclipseWeaveTask.html">EclipseWeaveTask</a>
 </dt><dd> <div class="block">The core action block for the task execution.</div></dd>
 </dl>

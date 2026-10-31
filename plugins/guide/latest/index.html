@@ -608,131 +608,155 @@ $(addBlockSwitches);
 <h1>JPersist User Guide</h1>
 <div class="details">
 <span id="author" class="author">Yannick Ebongue</span><br>
-<span id="revnumber">version 1.7.0,</span>
-<span id="revdate">2026-10-23</span>
+<span id="revnumber">version 1.8.0,</span>
+<span id="revdate">2026-10-31</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#_getting_started">1. Getting Started</a>
+<li><a href="#getting-started">1. Getting Started</a>
 <ul class="sectlevel2">
-<li><a href="#_requirements">1.1. Requirements</a></li>
-<li><a href="#_choosing_a_plugin">1.2. Choosing a Plugin</a></li>
-<li><a href="#_applying_the_plugin">1.3. Applying the Plugin</a>
+<li><a href="#requirements">1.1. Requirements</a></li>
+<li><a href="#choosing-a-plugin">1.2. Choosing a Plugin</a></li>
+<li><a href="#applying-the-plugin">1.3. Applying the Plugin</a>
 <ul class="sectlevel3">
-<li><a href="#_hibernate_example">1.3.1. Hibernate example</a></li>
-<li><a href="#_eclipselink_example">1.3.2. EclipseLink example</a></li>
+<li><a href="#hibernate-example-1">1.3.1. Hibernate example</a></li>
+<li><a href="#eclipselink-example-1">1.3.2. EclipseLink example</a></li>
+<li><a href="#openjpa-example-1">1.3.3. OpenJPA example</a></li>
 </ul>
 </li>
-<li><a href="#_adding_dependencies">1.4. Adding Dependencies</a>
+<li><a href="#adding-dependencies">1.4. Adding Dependencies</a>
 <ul class="sectlevel3">
-<li><a href="#_hibernate_example_2">1.4.1. Hibernate example</a></li>
-<li><a href="#_eclipselink_example_2">1.4.2. EclipseLink example</a></li>
+<li><a href="#hibernate-example-2">1.4.1. Hibernate example</a></li>
+<li><a href="#eclipselink-example-2">1.4.2. EclipseLink example</a></li>
+<li><a href="#openjpa-example-2">1.4.3. OpenJPA example</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a href="#_jakarta_persistence_plugin">2. Jakarta Persistence Plugin</a>
+<li><a href="#jakarta-persistence-plugin">2. Jakarta Persistence Plugin</a>
 <ul class="sectlevel2">
-<li><a href="#_applying_the_plugin_2">2.1. Applying the Plugin</a></li>
-<li><a href="#_the_jpa_configuration">2.2. The <code>jpa</code> Configuration</a>
+<li><a href="#applying-the-plugin-1">2.1. Applying the Plugin</a></li>
+<li><a href="#the-jpa-configuration">2.2. The <code>jpa</code> Configuration</a>
 <ul class="sectlevel3">
-<li><a href="#_the_modelgenprocessor_configuration">2.2.1. The <code>modelgenProcessor</code> Configuration</a></li>
+<li><a href="#the-modelgenprocessor-configuration">2.2.1. The <code>modelgenProcessor</code> Configuration</a></li>
 </ul>
 </li>
-<li><a href="#_dsl_extension_persistence">2.3. DSL Extension: <code>persistence</code></a>
+<li><a href="#dsl-extension-persistence">2.3. DSL Extension: <code>persistence</code></a>
 <ul class="sectlevel3">
-<li><a href="#_persistenceextension_properties">2.3.1. <code>PersistenceExtension</code> Properties</a></li>
-<li><a href="#_persistenceunitextension_properties">2.3.2. <code>PersistenceUnitExtension</code> Properties</a></li>
-<li><a href="#_validationextension_properties">2.3.3. <code>ValidationExtension</code> Properties</a></li>
-<li><a href="#_linterextension_properties">2.3.4. <code>LinterExtension</code> Properties</a></li>
+<li><a href="#persistenceextension-properties">2.3.1. <code>PersistenceExtension</code> Properties</a></li>
+<li><a href="#persistenceunitextension-properties">2.3.2. <code>PersistenceUnitExtension</code> Properties</a></li>
+<li><a href="#validationextension-properties">2.3.3. <code>ValidationExtension</code> Properties</a></li>
+<li><a href="#linterextension-properties">2.3.4. <code>LinterExtension</code> Properties</a></li>
 </ul>
 </li>
-<li><a href="#_legacy_jpa_namespace_support">2.4. Legacy JPA Namespace Support</a></li>
-<li><a href="#_dependency_routing_with_jarfile">2.5. Dependency Routing with <code>jarFile</code></a>
+<li><a href="#legacy-jpa-namespace-support">2.4. Legacy JPA Namespace Support</a></li>
+<li><a href="#dependency-routing-with-jarfile">2.5. Dependency Routing with <code>jarFile</code></a>
 <ul class="sectlevel3">
-<li><a href="#_using_the_location_attribute">2.5.1. Using the Location Attribute</a></li>
-<li><a href="#_using_dsl_jar_file_mappings">2.5.2. Using DSL Jar File Mappings</a></li>
+<li><a href="#using-the-location-attribute">2.5.1. Using the Location Attribute</a></li>
+<li><a href="#using-dsl-jar-file-mappings">2.5.2. Using DSL Jar File Mappings</a></li>
 </ul>
 </li>
-<li><a href="#_tasks">2.6. Tasks</a>
+<li><a href="#tasks-1">2.6. Tasks</a>
 <ul class="sectlevel3">
-<li><a href="#_processpersistencedescriptor">2.6.1. <code>processPersistenceDescriptor</code></a></li>
-<li><a href="#_validatepersistenceschema">2.6.2. <code>validatePersistenceSchema</code></a></li>
-<li><a href="#_generatejpagraalvmmetadata">2.6.3. <code>generateJPAGraalVMMetadata</code></a></li>
-<li><a href="#_lintnamedqueries">2.6.4. <code>lintNamedQueries</code></a></li>
+<li><a href="#processpersistencedescriptor">2.6.1. <code>processPersistenceDescriptor</code></a></li>
+<li><a href="#validatepersistenceschema">2.6.2. <code>validatePersistenceSchema</code></a></li>
+<li><a href="#generatejpagraalvmmetadata">2.6.3. <code>generateJPAGraalVMMetadata</code></a></li>
+<li><a href="#lintnamedqueries">2.6.4. <code>lintNamedQueries</code></a></li>
 </ul>
 </li>
+<li><a href="#consolidated-reporting-architecture">2.7. Consolidated Reporting Architecture</a></li>
 </ul>
 </li>
-<li><a href="#_hibernate_plugin">3. Hibernate Plugin</a>
+<li><a href="#hibernate-plugin">3. Hibernate Plugin</a>
 <ul class="sectlevel2">
-<li><a href="#_applying_the_plugin_3">3.1. Applying the Plugin</a></li>
-<li><a href="#_sub_plugins">3.2. Sub-Plugins</a></li>
-<li><a href="#_jpa_static_metamodel_generation">3.3. JPA Static Metamodel Generation</a></li>
-<li><a href="#_dsl_extension_hibernate">3.4. DSL Extension: <code>hibernate</code></a>
+<li><a href="#applying-the-plugin-2">3.1. Applying the Plugin</a></li>
+<li><a href="#sub-plugins-2">3.2. Sub-Plugins</a></li>
+<li><a href="#jpa-static-metamodel-generation-2">3.3. JPA Static Metamodel Generation</a></li>
+<li><a href="#dsl-extension-hibernate">3.4. DSL Extension: <code>hibernate</code></a>
 <ul class="sectlevel3">
-<li><a href="#_hibernateextension_properties">3.4.1. <code>HibernateExtension</code> Properties</a></li>
-<li><a href="#_enhancementextension_properties">3.4.2. <code>EnhancementExtension</code> Properties</a></li>
+<li><a href="#hibernateextension-properties">3.4.1. <code>HibernateExtension</code> Properties</a></li>
+<li><a href="#enhancementextension-properties">3.4.2. <code>EnhancementExtension</code> Properties</a></li>
 </ul>
 </li>
-<li><a href="#_tasks_2">3.5. Tasks</a>
+<li><a href="#tasks-2">3.5. Tasks</a>
 <ul class="sectlevel3">
-<li><a href="#_hibernateenhanceclasses">3.5.1. <code>hibernateEnhanceClasses</code></a></li>
+<li><a href="#hibernateenhanceclasses">3.5.1. <code>hibernateEnhanceClasses</code></a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a href="#_eclipselink_plugin">4. EclipseLink Plugin</a>
+<li><a href="#eclipselink-plugin">4. EclipseLink Plugin</a>
 <ul class="sectlevel2">
-<li><a href="#_applying_the_plugin_4">4.1. Applying the Plugin</a></li>
-<li><a href="#_sub_plugins_2">4.2. Sub-Plugins</a></li>
-<li><a href="#_jpa_static_metamodel_generation_2">4.3. JPA Static Metamodel Generation</a></li>
-<li><a href="#_dsl_extension_eclipselink">4.4. DSL Extension: <code>eclipselink</code></a>
+<li><a href="#applying-the-plugin-3">4.1. Applying the Plugin</a></li>
+<li><a href="#sub-plugins-3">4.2. Sub-Plugins</a></li>
+<li><a href="#jpa-static-metamodel-generation-3">4.3. JPA Static Metamodel Generation</a></li>
+<li><a href="#dsl-extension-eclipselink">4.4. DSL Extension: <code>eclipselink</code></a>
 <ul class="sectlevel3">
-<li><a href="#_eclipselinkextension_properties">4.4.1. <code>EclipselinkExtension</code> Properties</a></li>
-<li><a href="#_jpamodelgenextension_properties">4.4.2. <code>JpaModelgenExtension</code> Properties</a></li>
+<li><a href="#eclipselinkextension-properties">4.4.1. <code>EclipselinkExtension</code> Properties</a></li>
+<li><a href="#jpamodelgenextension-properties-3">4.4.2. <code>JpaModelgenExtension</code> Properties</a></li>
 </ul>
 </li>
-<li><a href="#_tasks_3">4.5. Tasks</a>
+<li><a href="#tasks-3">4.5. Tasks</a>
 <ul class="sectlevel3">
-<li><a href="#_eclipseweaveclasses">4.5.1. <code>eclipseWeaveClasses</code></a></li>
+<li><a href="#eclipseweaveclasses">4.5.1. <code>eclipseWeaveClasses</code></a></li>
 </ul>
 </li>
-<li><a href="#_the_weave_configuration">4.6. The <code>weave</code> Configuration</a></li>
+<li><a href="#the-weave-configuration">4.6. The <code>weave</code> Configuration</a></li>
 </ul>
 </li>
-<li><a href="#_configuration">5. Configuration</a>
+<li><a href="#openjpa-plugin">5. OpenJPA Plugin</a>
 <ul class="sectlevel2">
-<li><a href="#_multi_module_projects">5.1. Multi-Module Projects</a>
+<li><a href="#applying-the-plugin-4">5.1. Applying the Plugin</a></li>
+<li><a href="#sub-plugins-4">5.2. Sub-Plugins</a></li>
+<li><a href="#jpa-static-metamodel-generation-4">5.3. JPA Static Metamodel Generation</a></li>
+<li><a href="#dsl-extension-openjpa">5.4. DSL Extension: <code>openjpa</code></a>
 <ul class="sectlevel3">
-<li><a href="#_root_build_gradle">5.1.1. Root <code>build.gradle</code></a></li>
-<li><a href="#_entity_module_build_gradle">5.1.2. Entity Module <code>build.gradle</code></a></li>
-<li><a href="#_service_module_build_gradle">5.1.3. Service Module <code>build.gradle</code></a></li>
+<li><a href="#openjpaextension-properties">5.4.1. <code>OpenJPAExtension</code> Properties</a></li>
+<li><a href="#metamodelextension-properties">5.4.2. <code>MetaModelExtension</code> Properties</a></li>
+<li><a href="#enhancementextension-properties-2">5.4.3. <code>EnhancementExtension</code> Properties</a></li>
 </ul>
 </li>
-<li><a href="#_jpa_version_selection">5.2. JPA Version Selection</a></li>
-<li><a href="#_gradle_configuration_cache">5.3. Gradle Configuration Cache</a></li>
-<li><a href="#_ide_integration">5.4. IDE Integration</a></li>
+<li><a href="#tasks-4">5.5. Tasks</a>
+<ul class="sectlevel3">
+<li><a href="#openjpaenhanceclasses">5.5.1. <code>openjpaEnhanceClasses</code></a></li>
 </ul>
 </li>
-<li><a href="#_examples">6. Examples</a>
+<li><a href="#dependencies-configuration-enhancement">5.6. Dependencies Configuration: <code>enhancement</code></a></li>
+</ul>
+</li>
+<li><a href="#configuration">6. Configuration</a>
 <ul class="sectlevel2">
-<li><a href="#_hibernate_example_3">6.1. Hibernate Example</a></li>
-<li><a href="#_eclipselink_example_3">6.2. EclipseLink Example</a></li>
-<li><a href="#_jakarta_persistence_example">6.3. Jakarta Persistence Example</a></li>
-<li><a href="#_entity_class">6.4. Entity Class</a></li>
-<li><a href="#_persistence_descriptor_template">6.5. Persistence Descriptor Template</a></li>
+<li><a href="#multi-module-projects">6.1. Multi-Module Projects</a>
+<ul class="sectlevel3">
+<li><a href="#root-build-gradle">6.1.1. Root <code>build.gradle</code></a></li>
+<li><a href="#entity-module-build-gradle">6.1.2. Entity Module <code>build.gradle</code></a></li>
+<li><a href="#service-module-build-gradle">6.1.3. Service Module <code>build.gradle</code></a></li>
 </ul>
 </li>
-<li><a href="#_faq">7. FAQ</a>
+<li><a href="#jpa-version-selection">6.2. JPA Version Selection</a></li>
+<li><a href="#gradle-configuration-cache">6.3. Gradle Configuration Cache</a></li>
+<li><a href="#ide-integration">6.4. IDE Integration</a></li>
+</ul>
+</li>
+<li><a href="#examples">7. Examples</a>
 <ul class="sectlevel2">
-<li><a href="#faq-persistence-xml">7.1. 1. Do I need to write a <code>persistence.xml</code> manually?</a></li>
-<li><a href="#faq-hibernate-eclipselink">7.2. 2. Can I use both Hibernate and EclipseLink in the same project?</a></li>
-<li><a href="#faq-jpa-versions">7.3. 3. Which JPA specification versions are supported?</a></li>
-<li><a href="#faq-configuration-cache">7.4. 4. Is the Gradle Configuration Cache supported?</a></li>
-<li><a href="#faq-bytecode-enhancement">7.5. 5. Do I need a runtime <code>-javaagent</code> for bytecode enhancement?</a></li>
-<li><a href="#faq-api-docs">7.6. 6. Where can I find the API documentation?</a></li>
+<li><a href="#hibernate-example">7.1. Hibernate Example</a></li>
+<li><a href="#eclipselink-example">7.2. EclipseLink Example</a></li>
+<li><a href="#openjpa-example">7.3. OpenJPA Example</a></li>
+<li><a href="#jakarta-persistence-example">7.4. Jakarta Persistence Example</a></li>
+<li><a href="#entity-class">7.5. Entity Class</a></li>
+<li><a href="#persistence-descriptor-template">7.6. Persistence Descriptor Template</a></li>
+</ul>
+</li>
+<li><a href="#faq">8. FAQ</a>
+<ul class="sectlevel2">
+<li><a href="#faq-persistence-xml">8.1. Do I need to write a <code>persistence.xml</code> manually?</a></li>
+<li><a href="#faq-hibernate-eclipselink">8.2. Can I use both Hibernate and EclipseLink in the same project?</a></li>
+<li><a href="#faq-jpa-versions">8.3. Which JPA specification versions are supported?</a></li>
+<li><a href="#faq-configuration-cache">8.4. Is the Gradle Configuration Cache supported?</a></li>
+<li><a href="#faq-bytecode-enhancement">8.5. Do I need a runtime <code>-javaagent</code> for bytecode enhancement?</a></li>
+<li><a href="#faq-api-docs">8.6. Where can I find the API documentation?</a></li>
 </ul>
 </li>
 </ul>
@@ -743,18 +767,18 @@ $(addBlockSwitches);
 <div class="sectionbody">
 <div class="paragraph">
 <p>JPersist is a suite of modern, high-performance, and Gradle Configuration Cache-compliant plugins that automate the configuration of enterprise Jakarta Persistence API (JPA) environments.
-It provides zero-configuration support for Hibernate and EclipseLink multi-module builds.</p>
+It provides zero-configuration support for Hibernate, EclipseLink, and OpenJPA multi-module builds.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_getting_started">1. Getting Started</h2>
+<h2 id="getting-started">1. Getting Started</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>This section covers the requirements and basic setup to start using JPersist plugins in your Gradle project.</p>
 </div>
 <div class="sect2">
-<h3 id="_requirements">1.1. Requirements</h3>
+<h3 id="requirements">1.1. Requirements</h3>
 <div class="ulist">
 <ul>
 <li>
@@ -767,9 +791,9 @@ It provides zero-configuration support for Hibernate and EclipseLink multi-modul
 </div>
 </div>
 <div class="sect2">
-<h3 id="_choosing_a_plugin">1.2. Choosing a Plugin</h3>
+<h3 id="choosing-a-plugin">1.2. Choosing a Plugin</h3>
 <div class="paragraph">
-<p>JPersist provides three main plugins depending on your JPA provider:</p>
+<p>JPersist provides four main plugins depending on your JPA provider:</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -800,6 +824,11 @@ It provides zero-configuration support for Hibernate and EclipseLink multi-modul
 <td class="tableblock halign-left valign-top"><p class="tableblock">Descriptor generation, metamodel generation, and static weaving</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">EclipseLink</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>io.github.jpersist.openjpa-persistence</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Descriptor generation, metamodel generation, and bytecode enhancement</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OpenJPA</p></td>
+</tr>
 </tbody>
 </table>
 <div class="admonitionblock tip">
@@ -809,21 +838,21 @@ It provides zero-configuration support for Hibernate and EclipseLink multi-modul
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-The provider-specific plugins (<code>hibernate-persistence</code> and <code>eclipse-persistence</code>) automatically apply the <code>io.github.jpersist.jpa</code> plugin, so you only need to apply one.
+The provider-specific plugins (<code>hibernate-persistence</code>, <code>eclipse-persistence</code>, and <code>openjpa-persistence</code>) automatically apply the <code>io.github.jpersist.jpa</code> plugin, so you only need to apply one.
 </td>
 </tr>
 </table>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_applying_the_plugin">1.3. Applying the Plugin</h3>
+<h3 id="applying-the-plugin">1.3. Applying the Plugin</h3>
 <div class="sect3">
-<h4 id="_hibernate_example">1.3.1. Hibernate example</h4>
+<h4 id="hibernate-example-1">1.3.1. Hibernate example</h4>
 <div class="listingblock primary">
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">plugins {
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.hibernate-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.7.0</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.hibernate-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.8.0</span><span class="delimiter">'</span></span>
 }</code></pre>
 </div>
 </div>
@@ -831,18 +860,18 @@ The provider-specific plugins (<code>hibernate-persistence</code> and <code>ecli
 <div class="title">Kotlin</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
-    id(&quot;io.github.jpersist.hibernate-persistence&quot;) version &quot;1.7.0&quot;
+    id(&quot;io.github.jpersist.hibernate-persistence&quot;) version &quot;1.8.0&quot;
 }</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_eclipselink_example">1.3.2. EclipseLink example</h4>
+<h4 id="eclipselink-example-1">1.3.2. EclipseLink example</h4>
 <div class="listingblock primary">
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">plugins {
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.eclipse-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.7.0</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.eclipse-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.8.0</span><span class="delimiter">'</span></span>
 }</code></pre>
 </div>
 </div>
@@ -850,19 +879,38 @@ The provider-specific plugins (<code>hibernate-persistence</code> and <code>ecli
 <div class="title">Kotlin</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
-    id(&quot;io.github.jpersist.eclipse-persistence&quot;) version &quot;1.7.0&quot;
+    id(&quot;io.github.jpersist.eclipse-persistence&quot;) version &quot;1.8.0&quot;
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="openjpa-example-1">1.3.3. OpenJPA example</h4>
+<div class="listingblock primary">
+<div class="title">Groovy</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">plugins {
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.openjpa-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.8.0</span><span class="delimiter">'</span></span>
+}</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">Kotlin</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
+    id(&quot;io.github.jpersist.openjpa-persistence&quot;) version &quot;1.8.0&quot;
 }</code></pre>
 </div>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_adding_dependencies">1.4. Adding Dependencies</h3>
+<h3 id="adding-dependencies">1.4. Adding Dependencies</h3>
 <div class="paragraph">
 <p>Use the <code>jpa</code> configuration to declare your JPA provider platform BOM. This centralizes version management across all compilation scopes.</p>
 </div>
 <div class="sect3">
-<h4 id="_hibernate_example_2">1.4.1. Hibernate example</h4>
+<h4 id="hibernate-example-2">1.4.1. Hibernate example</h4>
 <div class="listingblock primary">
 <div class="title">Groovy</div>
 <div class="content">
@@ -885,7 +933,7 @@ The provider-specific plugins (<code>hibernate-persistence</code> and <code>ecli
 </div>
 </div>
 <div class="sect3">
-<h4 id="_eclipselink_example_2">1.4.2. EclipseLink example</h4>
+<h4 id="eclipselink-example-2">1.4.2. EclipseLink example</h4>
 <div class="listingblock primary">
 <div class="title">Groovy</div>
 <div class="content">
@@ -908,6 +956,29 @@ The provider-specific plugins (<code>hibernate-persistence</code> and <code>ecli
 }</code></pre>
 </div>
 </div>
+</div>
+<div class="sect3">
+<h4 id="openjpa-example-2">1.4.3. OpenJPA example</h4>
+<div class="listingblock primary">
+<div class="title">Groovy</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">dependencies {
+    jpa <span class="string"><span class="delimiter">'</span><span class="content">org.apache.openjpa:openjpa:4.0.0</span><span class="delimiter">'</span></span>
+
+    compileOnly <span class="string"><span class="delimiter">'</span><span class="content">jakarta.persistence:jakarta.persistence-api:3.1.0</span><span class="delimiter">'</span></span>
+}</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">Kotlin</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="kotlin">dependencies {
+    jpa(&quot;org.apache.openjpa:openjpa:4.0.0&quot;)
+
+    compileOnly(&quot;jakarta.persistence:jakarta.persistence-api:3.1.0&quot;)
+}</code></pre>
+</div>
+</div>
 <div class="paragraph">
 <p>That&#8217;s it — no additional XML configuration or annotation processing setup is required.
 The plugin automatically detects your entity classes and generates the appropriate <code>persistence.xml</code> at build time.</p>
@@ -917,22 +988,22 @@ The plugin automatically detects your entity classes and generates the appropria
 </div>
 </div>
 <div class="sect1">
-<h2 id="_jakarta_persistence_plugin">2. Jakarta Persistence Plugin</h2>
+<h2 id="jakarta-persistence-plugin">2. Jakarta Persistence Plugin</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Plugin ID: <code>io.github.jpersist.jpa</code></p>
 </div>
 <div class="paragraph">
-<p>The <code>io.github.jpersist.jpa</code> plugin is the core implementation of the JPersist plugin suite and facilitates the integration of provider platform plugins such as EclipseLink and Hibernate.
+<p>The <code>io.github.jpersist.jpa</code> plugin is the core implementation of the JPersist plugin suite and facilitates the integration of provider platform plugins such as EclipseLink, Hibernate, and OpenJPA.
 It automatically applies the <code>java</code> plugin, registers a <code>persistence</code> DSL extension, and creates per-source-set tasks for descriptor generation, schema validation, GraalVM native image metadata generation, and static compile-time named query linting.</p>
 </div>
 <div class="sect2">
-<h3 id="_applying_the_plugin_2">2.1. Applying the Plugin</h3>
+<h3 id="applying-the-plugin-1">2.1. Applying the Plugin</h3>
 <div class="listingblock primary">
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">plugins {
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.jpa</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.7.0</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.jpa</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.8.0</span><span class="delimiter">'</span></span>
 }</code></pre>
 </div>
 </div>
@@ -940,16 +1011,15 @@ It automatically applies the <code>java</code> plugin, registers a <code>persist
 <div class="title">Kotlin</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
-    id(&quot;io.github.jpersist.jpa&quot;) version &quot;1.7.0&quot;
+    id(&quot;io.github.jpersist.jpa&quot;) version &quot;1.8.0&quot;
 }</code></pre>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_the_jpa_configuration">2.2. The <code>jpa</code> Configuration</h3>
+<h3 id="the-jpa-configuration">2.2. The <code>jpa</code> Configuration</h3>
 <div class="paragraph">
-<p>The plugin registers a <code>jpa</code> dependency configuration that propagates platform/BOM version constraints into all standard Java configurations (<code>implementation</code>, <code>compileOnly</code>, <code>annotationProcessor</code>, <code>runtimeOnly</code>).
-When the <code>java-library</code> plugin is also applied, the <code>api</code> and <code>compileOnlyApi</code> configurations are extended as well.</p>
+<p>The plugin registers a <code>jpa</code> dependency configuration that propagates platform/BOM version constraints into Java compilation (<code>compileOnly</code> or <code>compileOnlyApi</code> when the <code>java-library</code> plugin is also applied) and annotation processing (<code>annotationProcessor</code>) configurations.</p>
 </div>
 <div class="listingblock primary">
 <div class="title">Groovy</div>
@@ -972,7 +1042,7 @@ When the <code>java-library</code> plugin is also applied, the <code>api</code> 
 </div>
 </div>
 <div class="sect3">
-<h4 id="_the_modelgenprocessor_configuration">2.2.1. The <code>modelgenProcessor</code> Configuration</h4>
+<h4 id="the-modelgenprocessor-configuration">2.2.1. The <code>modelgenProcessor</code> Configuration</h4>
 <div class="paragraph">
 <p>The plugin also registers a global, non-resolvable <code>modelgenProcessor</code> configuration container that centralizes modelgen annotation processor dependencies. <em>(Since 1.7.0)</em></p>
 </div>
@@ -999,7 +1069,7 @@ User overrides declared inside <code>modelgenProcessor</code> propagate to all s
 </div>
 </div>
 <div class="sect2">
-<h3 id="_dsl_extension_persistence">2.3. DSL Extension: <code>persistence</code></h3>
+<h3 id="dsl-extension-persistence">2.3. DSL Extension: <code>persistence</code></h3>
 <div class="paragraph">
 <p>The <code>persistence</code> block is a <code>NamedDomainObjectContainer</code> scoped per Java source set.
 The plugin automatically creates one entry per source set (e.g. <code>main</code>, <code>test</code>).</p>
@@ -1061,7 +1131,7 @@ The plugin automatically creates one entry per source set (e.g. <code>main</code
 </div>
 </div>
 <div class="sect3">
-<h4 id="_persistenceextension_properties">2.3.1. <code>PersistenceExtension</code> Properties</h4>
+<h4 id="persistenceextension-properties">2.3.1. <code>PersistenceExtension</code> Properties</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 20%;">
@@ -1111,7 +1181,7 @@ The plugin automatically creates one entry per source set (e.g. <code>main</code
 </tbody>
 </table>
 <div class="sect4">
-<h5 id="_default_output_properties">Default Output Properties</h5>
+<h5 id="default-output-properties">Default Output Properties</h5>
 <div class="ulist">
 <ul>
 <li>
@@ -1158,7 +1228,7 @@ The plugin automatically creates one entry per source set (e.g. <code>main</code
 </div>
 </div>
 <div class="sect3">
-<h4 id="_persistenceunitextension_properties">2.3.2. <code>PersistenceUnitExtension</code> Properties</h4>
+<h4 id="persistenceunitextension-properties">2.3.2. <code>PersistenceUnitExtension</code> Properties</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 20%;">
@@ -1308,7 +1378,7 @@ The plugin automatically creates one entry per source set (e.g. <code>main</code
 </div>
 </div>
 <div class="sect3">
-<h4 id="_validationextension_properties">2.3.3. <code>ValidationExtension</code> Properties</h4>
+<h4 id="validationextension-properties">2.3.3. <code>ValidationExtension</code> Properties</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 18.1818%;">
@@ -1388,7 +1458,7 @@ The plugin automatically creates one entry per source set (e.g. <code>main</code
 </div>
 </div>
 <div class="sect4">
-<h5 id="_multi_tenant_validation">Multi-Tenant Validation</h5>
+<h5 id="multi-tenant-validation">Multi-Tenant Validation</h5>
 <div class="paragraph">
 <p><em>Since 1.7.0</em></p>
 </div>
@@ -1446,7 +1516,7 @@ Failures are collected across the entire tenant × unit matrix and reported in a
 </div>
 </div>
 <div class="sect4">
-<h5 id="_tenantvalidationextension_properties"><code>TenantValidationExtension</code> Properties</h5>
+<h5 id="tenantvalidationextension-properties"><code>TenantValidationExtension</code> Properties</h5>
 <div class="paragraph">
 <p><em>Since 1.7.0</em></p>
 </div>
@@ -1505,7 +1575,7 @@ All properties default to an in-memory H2 database whose name is derived from th
 </div>
 </div>
 <div class="sect3">
-<h4 id="_linterextension_properties">2.3.4. <code>LinterExtension</code> Properties</h4>
+<h4 id="linterextension-properties">2.3.4. <code>LinterExtension</code> Properties</h4>
 <div class="paragraph">
 <p><em>Since 1.6.0</em></p>
 </div>
@@ -1576,7 +1646,7 @@ All properties default to an in-memory H2 database whose name is derived from th
 </div>
 </div>
 <div class="sect2">
-<h3 id="_legacy_jpa_namespace_support">2.4. Legacy JPA Namespace Support</h3>
+<h3 id="legacy-jpa-namespace-support">2.4. Legacy JPA Namespace Support</h3>
 <div class="paragraph">
 <p><em>Since 1.5.4</em></p>
 </div>
@@ -1655,15 +1725,15 @@ No additional configuration is needed — the plugin detects the legacy version 
 </div>
 </div>
 <div class="sect2">
-<h3 id="_dependency_routing_with_jarfile">2.5. Dependency Routing with <code>jarFile</code></h3>
+<h3 id="dependency-routing-with-jarfile">2.5. Dependency Routing with <code>jarFile</code></h3>
 <div class="paragraph">
 <p>For multi-module projects, the plugin registers a <code>jarFile</code> dependency configuration per source set that allows you to declare module dependencies injected as <code>&lt;jar-file&gt;</code> entries in the generated <code>persistence.xml</code>.</p>
 </div>
 <div class="paragraph">
-<p>The <code>jarFile</code> configuration extends <code>implementation</code> (and <code>api</code> when the <code>java-library</code> plugin is present).</p>
+<p>The <code>jarFile</code> configuration extends <code>implementation</code> (or <code>api</code> when the <code>java-library</code> plugin is present).</p>
 </div>
 <div class="sect3">
-<h4 id="_using_the_location_attribute">2.5.1. Using the Location Attribute</h4>
+<h4 id="using-the-location-attribute">2.5.1. Using the Location Attribute</h4>
 <div class="listingblock primary">
 <div class="title">Groovy</div>
 <div class="content">
@@ -1690,7 +1760,7 @@ No additional configuration is needed — the plugin detects the legacy version 
 </div>
 </div>
 <div class="sect3">
-<h4 id="_using_dsl_jar_file_mappings">2.5.2. Using DSL Jar File Mappings</h4>
+<h4 id="using-dsl-jar-file-mappings">2.5.2. Using DSL Jar File Mappings</h4>
 <div class="paragraph">
 <p>You can also declare custom jar-file path mappings directly inside a persistence unit:</p>
 </div>
@@ -1717,9 +1787,11 @@ No additional configuration is needed — the plugin detects the legacy version 
 <pre class="CodeRay highlight"><code data-lang="kotlin">persistence {
     create(&quot;main&quot;) {
         persistenceUnits {
-            create(&quot;my-unit&quot;) {
-                jarFileMappings.put(&quot;:ejb-module&quot;, &quot;ejb-module.jar&quot;)
-                jarFileMappings.put(&quot;com.example:external-persistence&quot;, &quot;lib/external-persistence-custom.jar&quot;)
+            register(&quot;my-unit&quot;) {
+                jarFile(project(&quot;:ejb-module&quot;)) { jarTask -&gt;
+                    &quot;${jarTask.archiveBaseName.get()}.jar&quot;
+                }
+                jarFile(&quot;com.example:external-persistence&quot;, &quot;lib/external-persistence-custom.jar&quot;)
             }
         }
     }
@@ -1729,7 +1801,7 @@ No additional configuration is needed — the plugin detects the legacy version 
 </div>
 </div>
 <div class="sect2">
-<h3 id="_tasks">2.6. Tasks</h3>
+<h3 id="tasks-1">2.6. Tasks</h3>
 <div class="paragraph">
 <p>The plugin registers the following tasks per Java source set. For the <code>main</code> source set the task names are as shown below; for other source sets (e.g. <code>test</code>) the source set name is capitalized and inserted (e.g. <code>processTestPersistenceDescriptor</code>).</p>
 </div>
@@ -1746,7 +1818,7 @@ No additional configuration is needed — the plugin detects the legacy version 
 </table>
 </div>
 <div class="sect3">
-<h4 id="_processpersistencedescriptor">2.6.1. <code>processPersistenceDescriptor</code></h4>
+<h4 id="processpersistencedescriptor">2.6.1. <code>processPersistenceDescriptor</code></h4>
 <div class="paragraph">
 <p><strong>Group:</strong> <code>build</code><br>
 <strong>Type:</strong> <code>ProcessPersistenceDescriptor</code></p>
@@ -1841,7 +1913,7 @@ The task is automatically skipped when no persistence units are enabled.
 </div>
 </div>
 <div class="sect3">
-<h4 id="_validatepersistenceschema">2.6.2. <code>validatePersistenceSchema</code></h4>
+<h4 id="validatepersistenceschema">2.6.2. <code>validatePersistenceSchema</code></h4>
 <div class="paragraph">
 <p><strong>Group:</strong> <code>verification</code><br>
 <strong>Type:</strong> <code>ValidatePersistenceSchema</code></p>
@@ -1884,7 +1956,7 @@ Failures are collected across the entire tenant × unit matrix and reported in a
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>validation</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Property&lt;ValidationExtension&gt;</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><em>from extension</em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Nested database connection configuration (URL, driver, user, password) and optional multi-tenant <code>tenants</code> container.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Nested database connection configuration (URL, driver, user, password,) and optional multi-tenant <code>tenants</code> container.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>tenantProfiles</code></p></td>
@@ -1899,10 +1971,22 @@ Failures are collected across the entire tenant × unit matrix and reported in a
 <td class="tableblock halign-left valign-top"><p class="tableblock">Fully qualified entity class names discovered by the ASM bytecode scanner, forwarded to the SPI-loaded <code>SchemaValidator</code> for precise mapping resolution. <em>(Since 1.7.0)</em></p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>sourceFiles</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ConfigurableFileCollection</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>from source set</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The Java source files tracked for incremental change detection. Modified sources are mapped to their compiled class counterparts for delta analysis.</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>resourcesDir</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>DirectoryProperty</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><em>from `processResources`</em></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">The resources directory containing <code>META-INF/persistence.xml</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>validationReportFile</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>RegularFileProperty</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>build/reports/persistence/validatePersistenceSchema-report.json</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The output JSON file containing execution metrics (incremental flag, processed entities, skipped entities) from the validation pass. The report is written under the consolidated <code>reports/persistence/</code> directory.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>classpath</code></p></td>
@@ -1938,7 +2022,7 @@ The task is automatically skipped when no active persistence unit names are pres
 </div>
 </div>
 <div class="sect3">
-<h4 id="_generatejpagraalvmmetadata">2.6.3. <code>generateJPAGraalVMMetadata</code></h4>
+<h4 id="generatejpagraalvmmetadata">2.6.3. <code>generateJPAGraalVMMetadata</code></h4>
 <div class="paragraph">
 <p><strong>Group:</strong> <code>build</code><br>
 <strong>Type:</strong> <code>GenerateJPAGraalVMMetadata</code></p>
@@ -1966,16 +2050,28 @@ The task is automatically skipped when no active persistence unit names are pres
 </thead>
 <tbody>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>sourceFiles</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ConfigurableFileCollection</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>from source set</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The Java source files tracked for incremental change detection. Monitored incrementally to detect additions, modifications, and removals without relying on compiler output timestamps.</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>includedClasses</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>ListProperty&lt;String&gt;</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><em>auto-discovered</em></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Fully qualified class names of discovered JPA entity classes.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>outputFile</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>reflectConfigFile</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>RegularFileProperty</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>build/generated/graalvm-resources/main/META-INF/native-image/&lt;group&gt;/&lt;name&gt;/reflect-config.json</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The location where the <code>reflect-config.json</code> is written. The path follows GraalVM standard conventions using the project group and name.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>(Since 1.8.0)</em> The primary output location where the <code>reflect-config.json</code> is written. The path follows GraalVM standard conventions using the project group and name.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>outputFile</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>RegularFileProperty</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>convention from `reflectConfigFile`</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>(Deprecated since 1.8.0)</em> Legacy alias for <code>reflectConfigFile</code>. Retained for backward compatibility; delegates to <code>reflectConfigFile</code> via Gradle conventions. Use <code>reflectConfigFile</code> instead — this property will be removed in a future release.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1984,7 +2080,7 @@ The task is automatically skipped when no active persistence unit names are pres
 </div>
 </div>
 <div class="sect3">
-<h4 id="_lintnamedqueries">2.6.4. <code>lintNamedQueries</code></h4>
+<h4 id="lintnamedqueries">2.6.4. <code>lintNamedQueries</code></h4>
 <div class="paragraph">
 <p><em>Since 1.6.0</em></p>
 </div>
@@ -2052,8 +2148,8 @@ Processing runs inside an isolated Gradle Worker classloader.</p>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>lintReportFile</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>RegularFileProperty</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>build/reports/lint-named-queries/&lt;sourceSet&gt;.json</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The output JSON file containing execution metrics (processed files, skipped files, error counts) from the lint analysis pass.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>build/reports/persistence/lintNamedQueries-report.json</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The output JSON file containing execution metrics (processed files, skipped files, error counts) from the lint analysis pass. The report is written under the consolidated <code>reports/persistence/</code> directory.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2071,25 +2167,60 @@ The task is automatically skipped when the linter is disabled via <code>persiste
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="consolidated-reporting-architecture">2.7. Consolidated Reporting Architecture</h3>
+<div class="paragraph">
+<p><em>Since 1.8.0</em></p>
+</div>
+<div class="paragraph">
+<p>All verification and analysis tasks write their output reports under a single <code>${buildDir}/reports/persistence/</code> directory tree.
+This consolidated layout replaces the previous scattered report locations and makes it easier to locate, aggregate, and publish build reports.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 66.6667%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Task</th>
+<th class="tableblock halign-left valign-top">Report Path</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>validatePersistenceSchema</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>build/reports/persistence/validatePersistenceSchema-report.json</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>lintNamedQueries</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>build/reports/persistence/lintNamedQueries-report.json</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Provider-specific tasks (EclipseLink, Hibernate, OpenJPA) that produce build artifacts continue to write to their own conventional output directories, while the core JPA verification reports are unified here.</p>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_hibernate_plugin">3. Hibernate Plugin</h2>
+<h2 id="hibernate-plugin">3. Hibernate Plugin</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Plugin ID: <code>io.github.jpersist.hibernate-persistence</code></p>
 </div>
 <div class="paragraph">
 <p>The <code>io.github.jpersist.hibernate-persistence</code> plugin provides a complete Hibernate persistence pipeline out-of-the-box.
-It automatically applies the core <code>io.github.jpersist.jpa</code> plugin (see <a href="#">Jakarta Persistence Plugin</a>), the Hibernate JPA static metamodel generator, and compile-time bytecode enhancement for Hibernate-based projects.</p>
+It automatically applies the core <code>io.github.jpersist.jpa</code> plugin (see <a href="#jakarta-persistence-plugin">Jakarta Persistence Plugin</a>), the Hibernate JPA static metamodel generator, and compile-time bytecode enhancement for Hibernate-based projects.</p>
 </div>
 <div class="sect2">
-<h3 id="_applying_the_plugin_3">3.1. Applying the Plugin</h3>
+<h3 id="applying-the-plugin-2">3.1. Applying the Plugin</h3>
 <div class="listingblock primary">
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">plugins {
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.hibernate-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.7.0</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.hibernate-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.8.0</span><span class="delimiter">'</span></span>
 }
 
 dependencies {
@@ -2103,7 +2234,7 @@ dependencies {
 <div class="title">Kotlin</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
-    id(&quot;io.github.jpersist.hibernate-persistence&quot;) version &quot;1.7.0&quot;
+    id(&quot;io.github.jpersist.hibernate-persistence&quot;) version &quot;1.8.0&quot;
 }
 
 dependencies {
@@ -2128,7 +2259,7 @@ Use it to declare a Hibernate platform BOM so that all Hibernate module versions
 </div>
 </div>
 <div class="sect2">
-<h3 id="_sub_plugins">3.2. Sub-Plugins</h3>
+<h3 id="sub-plugins-2">3.2. Sub-Plugins</h3>
 <div class="paragraph">
 <p>The aggregate <code>io.github.jpersist.hibernate-persistence</code> plugin is a convenience macro that applies the following three plugins:</p>
 </div>
@@ -2146,7 +2277,7 @@ Use it to declare a Hibernate platform BOM so that all Hibernate module versions
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>io.github.jpersist.jpa</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The core Jakarta Persistence plugin — registers the <code>persistence</code> DSL extension, generates or merges <code>persistence.xml</code> descriptors, validates persistence schema, and generates GraalVM native image metadata. See <a href="#">Jakarta Persistence Plugin</a>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The core Jakarta Persistence plugin — registers the <code>persistence</code> DSL extension, generates or merges <code>persistence.xml</code> descriptors, validates persistence schema, and generates GraalVM native image metadata. See <a href="#jakarta-persistence-plugin">Jakarta Persistence Plugin</a>.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>io.github.jpersist.hibernate-jpamodelgen</code></p></td>
@@ -2165,7 +2296,7 @@ Use it to declare a Hibernate platform BOM so that all Hibernate module versions
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">plugins {
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.hibernate-enhancement</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.7.0</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.hibernate-enhancement</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.8.0</span><span class="delimiter">'</span></span>
 }</code></pre>
 </div>
 </div>
@@ -2173,13 +2304,13 @@ Use it to declare a Hibernate platform BOM so that all Hibernate module versions
 <div class="title">Kotlin</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
-    id(&quot;io.github.jpersist.hibernate-enhancement&quot;) version &quot;1.7.0&quot;
+    id(&quot;io.github.jpersist.hibernate-enhancement&quot;) version &quot;1.8.0&quot;
 }</code></pre>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_jpa_static_metamodel_generation">3.3. JPA Static Metamodel Generation</h3>
+<h3 id="jpa-static-metamodel-generation-2">3.3. JPA Static Metamodel Generation</h3>
 <div class="paragraph">
 <p>The <code>io.github.jpersist.hibernate-jpamodelgen</code> sub-plugin automatically:</p>
 </div>
@@ -2204,7 +2335,7 @@ Use it to declare a Hibernate platform BOM so that all Hibernate module versions
 </div>
 </div>
 <div class="sect2">
-<h3 id="_dsl_extension_hibernate">3.4. DSL Extension: <code>hibernate</code></h3>
+<h3 id="dsl-extension-hibernate">3.4. DSL Extension: <code>hibernate</code></h3>
 <div class="paragraph">
 <p>The <code>io.github.jpersist.hibernate-enhancement</code> sub-plugin registers a <code>hibernate</code> DSL extension block at the project level.
 It exposes a nested <code>enhancement</code> sub-block to control compile-time bytecode transformation behavior.</p>
@@ -2236,7 +2367,7 @@ It exposes a nested <code>enhancement</code> sub-block to control compile-time b
 </div>
 </div>
 <div class="sect3">
-<h4 id="_hibernateextension_properties">3.4.1. <code>HibernateExtension</code> Properties</h4>
+<h4 id="hibernateextension-properties">3.4.1. <code>HibernateExtension</code> Properties</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 20%;">
@@ -2263,7 +2394,7 @@ It exposes a nested <code>enhancement</code> sub-block to control compile-time b
 </table>
 </div>
 <div class="sect3">
-<h4 id="_enhancementextension_properties">3.4.2. <code>EnhancementExtension</code> Properties</h4>
+<h4 id="enhancementextension-properties">3.4.2. <code>EnhancementExtension</code> Properties</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 20%;">
@@ -2338,7 +2469,7 @@ It exposes a nested <code>enhancement</code> sub-block to control compile-time b
 </div>
 </div>
 <div class="sect2">
-<h3 id="_tasks_2">3.5. Tasks</h3>
+<h3 id="tasks-2">3.5. Tasks</h3>
 <div class="paragraph">
 <p>The plugin registers the following task per Java source set.
 For the <code>main</code> source set the task name is <code>hibernateEnhanceClasses</code>; for other source sets (e.g. <code>test</code>) the source set name is used (e.g. <code>hibernateEnhanceTestClasses</code>).</p>
@@ -2356,10 +2487,10 @@ For the <code>main</code> source set the task name is <code>hibernateEnhanceClas
 </table>
 </div>
 <div class="paragraph">
-<p>In addition, all tasks inherited from the core <code>io.github.jpersist.jpa</code> plugin (<code>processPersistenceDescriptor</code>, <code>validatePersistenceSchema</code>, <code>generateJPAGraalVMMetadata</code>, <code>lintNamedQueries</code>) are also available. See <a href="#">Jakarta Persistence Plugin</a> for their documentation.</p>
+<p>In addition, all tasks inherited from the core <code>io.github.jpersist.jpa</code> plugin (<code>processPersistenceDescriptor</code>, <code>validatePersistenceSchema</code>, <code>generateJPAGraalVMMetadata</code>, <code>lintNamedQueries</code>) are also available. See <a href="#jakarta-persistence-plugin">Jakarta Persistence Plugin</a> for their documentation.</p>
 </div>
 <div class="sect3">
-<h4 id="_hibernateenhanceclasses">3.5.1. <code>hibernateEnhanceClasses</code></h4>
+<h4 id="hibernateenhanceclasses">3.5.1. <code>hibernateEnhanceClasses</code></h4>
 <div class="paragraph">
 <p><strong>Group:</strong> <code>build</code><br>
 <strong>Type:</strong> <code>HibernateEnhancementTask</code></p>
@@ -2460,7 +2591,7 @@ The task is wired into the build lifecycle automatically — it runs after <code
 </div>
 </div>
 <div class="sect1">
-<h2 id="_eclipselink_plugin">4. EclipseLink Plugin</h2>
+<h2 id="eclipselink-plugin">4. EclipseLink Plugin</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Plugin ID: <code>io.github.jpersist.eclipse-persistence</code></p>
@@ -2468,15 +2599,15 @@ The task is wired into the build lifecycle automatically — it runs after <code
 <div class="paragraph">
 <p>The <code>io.github.jpersist.eclipse-persistence</code> plugin provides a complete EclipseLink persistence pipeline out-of-the-box.
 It is the core implementation of the JPersist plugin suite for EclipseLink and facilitates the integration of provider platform capabilities such as JPA static metamodel generation and compile-time static bytecode weaving.
-It automatically applies the core <code>io.github.jpersist.jpa</code> plugin (see <a href="#">Jakarta Persistence Plugin</a>), the EclipseLink canonical metamodel generator, and compile-time static weaving for EclipseLink-based projects.</p>
+It automatically applies the core <code>io.github.jpersist.jpa</code> plugin (see <a href="#jakarta-persistence-plugin">Jakarta Persistence Plugin</a>), the EclipseLink canonical metamodel generator, and compile-time static weaving for EclipseLink-based projects.</p>
 </div>
 <div class="sect2">
-<h3 id="_applying_the_plugin_4">4.1. Applying the Plugin</h3>
+<h3 id="applying-the-plugin-3">4.1. Applying the Plugin</h3>
 <div class="listingblock primary">
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">plugins {
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.eclipse-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.7.0</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.eclipse-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.8.0</span><span class="delimiter">'</span></span>
 }
 
 dependencies {
@@ -2491,7 +2622,7 @@ dependencies {
 <div class="title">Kotlin</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
-    id(&quot;io.github.jpersist.eclipse-persistence&quot;) version &quot;1.7.0&quot;
+    id(&quot;io.github.jpersist.eclipse-persistence&quot;) version &quot;1.8.0&quot;
 }
 
 dependencies {
@@ -2517,7 +2648,7 @@ Use it to declare an EclipseLink platform BOM so that all EclipseLink module ver
 </div>
 </div>
 <div class="sect2">
-<h3 id="_sub_plugins_2">4.2. Sub-Plugins</h3>
+<h3 id="sub-plugins-3">4.2. Sub-Plugins</h3>
 <div class="paragraph">
 <p>The aggregate <code>io.github.jpersist.eclipse-persistence</code> plugin is a convenience macro that applies the following three plugins:</p>
 </div>
@@ -2535,7 +2666,7 @@ Use it to declare an EclipseLink platform BOM so that all EclipseLink module ver
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>io.github.jpersist.jpa</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The core Jakarta Persistence plugin — registers the <code>persistence</code> DSL extension, generates or merges <code>persistence.xml</code> descriptors, validates persistence schema, and generates GraalVM native image metadata. See <a href="#">Jakarta Persistence Plugin</a>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The core Jakarta Persistence plugin — registers the <code>persistence</code> DSL extension, generates or merges <code>persistence.xml</code> descriptors, validates persistence schema, and generates GraalVM native image metadata. See <a href="#jakarta-persistence-plugin">Jakarta Persistence Plugin</a>.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>io.github.jpersist.eclipse-jpa-modelgen</code></p></td>
@@ -2554,7 +2685,7 @@ Use it to declare an EclipseLink platform BOM so that all EclipseLink module ver
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">plugins {
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.eclipse-static-weave</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.7.0</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.eclipse-static-weave</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.8.0</span><span class="delimiter">'</span></span>
 }</code></pre>
 </div>
 </div>
@@ -2562,13 +2693,13 @@ Use it to declare an EclipseLink platform BOM so that all EclipseLink module ver
 <div class="title">Kotlin</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
-    id(&quot;io.github.jpersist.eclipse-static-weave&quot;) version &quot;1.7.0&quot;
+    id(&quot;io.github.jpersist.eclipse-static-weave&quot;) version &quot;1.8.0&quot;
 }</code></pre>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_jpa_static_metamodel_generation_2">4.3. JPA Static Metamodel Generation</h3>
+<h3 id="jpa-static-metamodel-generation-3">4.3. JPA Static Metamodel Generation</h3>
 <div class="paragraph">
 <p>The <code>io.github.jpersist.eclipse-jpa-modelgen</code> sub-plugin automatically:</p>
 </div>
@@ -2578,7 +2709,7 @@ Use it to declare an EclipseLink platform BOM so that all EclipseLink module ver
 <p>Applies the <code>java</code> plugin.</p>
 </li>
 <li>
-<p>Creates the <code>eclipselink</code> DSL extension — a <code>NamedDomainObjectContainer</code> scoped per source set (see <a href="#_dsl_extension_eclipselink">DSL Extension: <code>eclipselink</code></a>).</p>
+<p>Creates the <code>eclipselink</code> DSL extension — a <code>NamedDomainObjectContainer</code> scoped per source set (see <a href="#dsl-extension-eclipselink">DSL Extension: <code>eclipselink</code></a>).</p>
 </li>
 <li>
 <p>Adds <code>org.eclipse.persistence:org.eclipse.persistence.jpa.modelgen.processor</code> to the unified global <code>modelgenProcessor</code> configuration container (registered by the <code>io.github.jpersist.jpa</code> plugin), but only if the user has not declared any custom dependencies in the <code>modelgenProcessor</code> configuration. This allows user overrides inside <code>modelgenProcessor</code> to propagate cleanly and safely skip the built-in default. <em>(Since 1.7.0, previously targeted <code>annotationProcessor</code> directly since 1.5.2)</em></p>
@@ -2629,7 +2760,7 @@ For this reason, the user <strong>must</strong> provide a <code>persistence.xml<
 </div>
 </div>
 <div class="sect2">
-<h3 id="_dsl_extension_eclipselink">4.4. DSL Extension: <code>eclipselink</code></h3>
+<h3 id="dsl-extension-eclipselink">4.4. DSL Extension: <code>eclipselink</code></h3>
 <div class="paragraph">
 <p>The <code>io.github.jpersist.eclipse-jpa-modelgen</code> sub-plugin registers an <code>eclipselink</code> DSL extension block at the project level.
 It is a <code>NamedDomainObjectContainer&lt;EclipselinkExtension&gt;</code>, meaning an entry is automatically created for each source set (e.g. <code>main</code>, <code>test</code>).
@@ -2660,7 +2791,7 @@ Each entry exposes a nested <code>jpaModelgen</code> sub-block to control the ca
 </div>
 </div>
 <div class="sect3">
-<h4 id="_eclipselinkextension_properties">4.4.1. <code>EclipselinkExtension</code> Properties</h4>
+<h4 id="eclipselinkextension-properties">4.4.1. <code>EclipselinkExtension</code> Properties</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 20%;">
@@ -2693,7 +2824,7 @@ Each entry exposes a nested <code>jpaModelgen</code> sub-block to control the ca
 </table>
 </div>
 <div class="sect3">
-<h4 id="_jpamodelgenextension_properties">4.4.2. <code>JpaModelgenExtension</code> Properties</h4>
+<h4 id="jpamodelgenextension-properties-3">4.4.2. <code>JpaModelgenExtension</code> Properties</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 20%;">
@@ -2748,7 +2879,7 @@ Each entry exposes a nested <code>jpaModelgen</code> sub-block to control the ca
 </div>
 </div>
 <div class="sect2">
-<h3 id="_tasks_3">4.5. Tasks</h3>
+<h3 id="tasks-3">4.5. Tasks</h3>
 <div class="paragraph">
 <p>The plugin registers the following task per Java source set.</p>
 </div>
@@ -2765,10 +2896,10 @@ Each entry exposes a nested <code>jpaModelgen</code> sub-block to control the ca
 </table>
 </div>
 <div class="paragraph">
-<p>In addition, all tasks inherited from the core <code>io.github.jpersist.jpa</code> plugin (<code>processPersistenceDescriptor</code>, <code>validatePersistenceSchema</code>, <code>generateJPAGraalVMMetadata</code>, <code>lintNamedQueries</code>) are also available. See <a href="#">Jakarta Persistence Plugin</a> for their documentation.</p>
+<p>In addition, all tasks inherited from the core <code>io.github.jpersist.jpa</code> plugin (<code>processPersistenceDescriptor</code>, <code>validatePersistenceSchema</code>, <code>generateJPAGraalVMMetadata</code>, <code>lintNamedQueries</code>) are also available. See <a href="#jakarta-persistence-plugin">Jakarta Persistence Plugin</a> for their documentation.</p>
 </div>
 <div class="sect3">
-<h4 id="_eclipseweaveclasses">4.5.1. <code>eclipseWeaveClasses</code></h4>
+<h4 id="eclipseweaveclasses">4.5.1. <code>eclipseWeaveClasses</code></h4>
 <div class="paragraph">
 <p><strong>Group:</strong> <code>build</code><br>
 <strong>Type:</strong> <code>EclipseWeaveTask</code></p>
@@ -2877,7 +3008,7 @@ The task is wired into the build lifecycle automatically — it runs after <code
 </div>
 </div>
 <div class="sect2">
-<h3 id="_the_weave_configuration">4.6. The <code>weave</code> Configuration</h3>
+<h3 id="the-weave-configuration">4.6. The <code>weave</code> Configuration</h3>
 <div class="paragraph">
 <p>The <code>io.github.jpersist.eclipse-static-weave</code> sub-plugin creates a <code>weave</code> dependency configuration that carries the EclipseLink runtime libraries needed by the <code>StaticWeave</code> processor.</p>
 </div>
@@ -2916,25 +3047,516 @@ The task is wired into the build lifecycle automatically — it runs after <code
 </div>
 </div>
 <div class="sect1">
-<h2 id="_configuration">5. Configuration</h2>
+<h2 id="openjpa-plugin">5. OpenJPA Plugin</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Plugin ID: <code>io.github.jpersist.openjpa-persistence</code></p>
+</div>
+<div class="paragraph">
+<p><em>Since 1.8.0</em></p>
+</div>
+<div class="paragraph">
+<p>The <code>io.github.jpersist.openjpa-persistence</code> plugin provides a complete Apache OpenJPA persistence pipeline out-of-the-box.
+It automatically applies the core <code>io.github.jpersist.jpa</code> plugin (see <a href="#jakarta-persistence-plugin">Jakarta Persistence Plugin</a>), the OpenJPA static canonical metamodel generator, and compile-time bytecode enhancement (PCEnhancer) for OpenJPA-based projects.</p>
+</div>
+<div class="sect2">
+<h3 id="applying-the-plugin-4">5.1. Applying the Plugin</h3>
+<div class="listingblock primary">
+<div class="title">Groovy</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">plugins {
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.openjpa-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.8.0</span><span class="delimiter">'</span></span>
+}
+
+dependencies {
+    jpa <span class="string"><span class="delimiter">'</span><span class="content">org.apache.openjpa:openjpa:4.0.0</span><span class="delimiter">'</span></span>
+
+    compileOnly <span class="string"><span class="delimiter">'</span><span class="content">jakarta.persistence:jakarta.persistence-api:3.1.0</span><span class="delimiter">'</span></span>
+}</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">Kotlin</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
+    id(&quot;io.github.jpersist.openjpa-persistence&quot;) version &quot;1.8.0&quot;
+}
+
+dependencies {
+    jpa(&quot;org.apache.openjpa:openjpa:4.0.0&quot;)
+
+    compileOnly(&quot;jakarta.persistence:jakarta.persistence-api:3.1.0&quot;)
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+The <code>jpa</code> configuration is provided by the core Jakarta Persistence plugin (applied transitively).
+Use it to declare an OpenJPA platform BOM so that all OpenJPA module versions are aligned automatically.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="sub-plugins-4">5.2. Sub-Plugins</h3>
+<div class="paragraph">
+<p>The aggregate <code>io.github.jpersist.openjpa-persistence</code> plugin is a convenience macro that applies the following three plugins:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 66.6667%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Plugin ID</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>io.github.jpersist.jpa</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The core Jakarta Persistence plugin — registers the <code>persistence</code> DSL extension, generates or merges <code>persistence.xml</code> descriptors, validates persistence schema, and generates GraalVM native image metadata. See <a href="#jakarta-persistence-plugin">Jakarta Persistence Plugin</a>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>io.github.jpersist.openjpa-metamodelgen</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Configures the OpenJPA annotation processor for static canonical metamodel class generation (e.g., <code>Entity_</code>), enabling type-safe Criteria API queries.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>io.github.jpersist.openjpa-enhancement</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Registers the <code>openjpa</code> DSL extension and creates a bytecode enhancement task for every source set whose Java source directories physically exist on disk, forking the OpenJPA <code>PCEnhancer</code> tool in an isolated JVM process.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>You can apply sub-plugins individually if you only need a subset of the functionality:</p>
+</div>
+<div class="listingblock primary">
+<div class="title">Groovy</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">plugins {
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.openjpa-enhancement</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.8.0</span><span class="delimiter">'</span></span>
+}</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">Kotlin</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
+    id(&quot;io.github.jpersist.openjpa-enhancement&quot;) version &quot;1.8.0&quot;
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="jpa-static-metamodel-generation-4">5.3. JPA Static Metamodel Generation</h3>
+<div class="paragraph">
+<p>The <code>io.github.jpersist.openjpa-metamodelgen</code> sub-plugin automatically:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Applies the <code>java</code> plugin.</p>
+</li>
+<li>
+<p>Adds <code>org.apache.openjpa:openjpa</code> to the unified global <code>modelgenProcessor</code> configuration container (registered by the <code>io.github.jpersist.jpa</code> plugin), but only if the user has not declared any custom dependencies in the <code>modelgenProcessor</code> configuration. This allows user overrides inside <code>modelgenProcessor</code> to propagate cleanly and safely skip the built-in default.</p>
+</li>
+<li>
+<p>Registers the annotation processor generated source directory (<code>build/generated/sources/annotationProcessor/java/&lt;sourceSet&gt;</code>) into the source set&#8217;s Java source directories for seamless IDE indexing.</p>
+</li>
+<li>
+<p>Wires per-source-set compiler arguments derived from the <code>metamodel</code> DSL block (log level, source version, naming conventions, etc.) into each <code>compileJava</code> task.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>No additional configuration is needed — the annotation processor version is resolved from the OpenJPA platform BOM declared through the <code>jpa</code> configuration.</p>
+</div>
+<div class="paragraph">
+<p>For each JPA entity class annotated with <code>@Entity</code>, <code>@Embeddable</code>, or <code>@MappedSuperclass</code>, OpenJPA generates a corresponding static metamodel class (e.g. <code>Person_</code>) that provides compile-time-safe attribute references for Criteria API queries.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="dsl-extension-openjpa">5.4. DSL Extension: <code>openjpa</code></h3>
+<div class="paragraph">
+<p>The <code>io.github.jpersist.openjpa-enhancement</code> sub-plugin registers an <code>openjpa</code> DSL extension block at the project level.
+It is a <code>NamedDomainObjectContainer</code> scoped per Java source set, exposing nested <code>metamodel</code> and <code>enhancement</code> sub-blocks to control metamodel generation and compile-time bytecode transformation behavior.</p>
+</div>
+<div class="listingblock primary">
+<div class="title">Groovy</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">openjpa {
+    main {
+        metamodel {
+            enabled = <span class="predefined-constant">true</span>
+            logLevel = <span class="string"><span class="delimiter">'</span><span class="content">TRACE</span><span class="delimiter">'</span></span>
+        }
+
+        enhancement {
+            addDefaultConstructor = <span class="predefined-constant">true</span>
+            enforcePropertyRestrictions = <span class="predefined-constant">false</span>
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">Kotlin</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="kotlin">openjpa {
+    create(&quot;main&quot;) {
+        metamodel {
+            enabled.set(true)
+            logLevel.set(MetaModelExtension.LogLevel.TRACE)
+        }
+
+        enhancement {
+            addDefaultConstructor.set(true)
+            enforcePropertyRestrictions.set(false)
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="sect3">
+<h4 id="openjpaextension-properties">5.4.1. <code>OpenJPAExtension</code> Properties</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 40%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>metamodel</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>MetaModelExtension</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>see below</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Nested configuration block controlling OpenJPA static canonical metamodel generation options.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>enhancement</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>EnhancementExtension</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>see below</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Nested configuration block controlling OpenJPA compile-time bytecode enhancement options.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="metamodelextension-properties">5.4.2. <code>MetaModelExtension</code> Properties</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 40%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>enabled</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Property&lt;Boolean&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Toggles whether the OpenJPA metamodel annotation processor is active. When set to <code>true</code>, the processor generates static canonical metamodel classes for all discovered JPA entity types during compilation.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>logLevel</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Property&lt;LogLevel&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>none</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Configures the logging verbosity level used by the OpenJPA annotation processor. Accepts one of <code>TRACE</code>, <code>INFO</code>, <code>WARN</code>, or <code>ERROR</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>source</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Property&lt;Integer&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>none</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Configures the Java source compatibility version for the generated metamodel classes. Forwarded as the <code>-Aopenjpa.source</code> compiler argument.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>naming</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Property&lt;String&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>none</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Configures a custom naming policy for the generated metamodel class identifiers. Forwarded as the <code>-Aopenjpa.naming</code> compiler argument.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>header</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Property&lt;String&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>none</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Configures a custom header comment to prepend to the generated metamodel source files. Forwarded as the <code>-Aopenjpa.header</code> compiler argument.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>addGeneratedAnnotation</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Property&lt;String&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>none</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Configures whether the <code>@Generated</code> annotation should be added to the generated metamodel classes. Forwarded as the <code>-Aopenjpa.addGeneratedAnnotation</code> compiler argument.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="enhancementextension-properties-2">5.4.3. <code>EnhancementExtension</code> Properties</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 40%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>addDefaultConstructor</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Property&lt;Boolean&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Toggles whether the OpenJPA enhancer should add a default no-argument constructor to entity classes that lack one. When set to <code>true</code>, the enhancer automatically inserts a protected no-arg constructor, satisfying the JPA specification requirement.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>enforcePropertyRestrictions</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Property&lt;Boolean&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>false</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Toggles whether the OpenJPA enhancer should enforce property access restrictions on persistent entity fields. When set to <code>true</code>, the enhancer validates that persistent properties conform to JavaBean access pattern conventions.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Example enabling only default constructor injection:</p>
+</div>
+<div class="listingblock primary">
+<div class="title">Groovy</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">openjpa {
+    main {
+        enhancement {
+            addDefaultConstructor = <span class="predefined-constant">true</span>
+            enforcePropertyRestrictions = <span class="predefined-constant">false</span>
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">Kotlin</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="kotlin">openjpa {
+    create(&quot;main&quot;) {
+        enhancement {
+            addDefaultConstructor.set(true)
+            enforcePropertyRestrictions.set(false)
+        }
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="tasks-4">5.5. Tasks</h3>
+<div class="paragraph">
+<p>The plugin registers the following task per Java source set.
+For the <code>main</code> source set the task name is <code>openjpaEnhanceClasses</code>; for other source sets (e.g. <code>test</code>) the source set name is used (e.g. <code>openjpaEnhanceTestClasses</code>).</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The enhancement task is only registered for source sets whose <code>java.srcDirs</code> contain at least one directory that physically exists on disk. Source sets with no on-disk Java source directories are silently skipped.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>In addition, all tasks inherited from the core <code>io.github.jpersist.jpa</code> plugin (<code>processPersistenceDescriptor</code>, <code>validatePersistenceSchema</code>, <code>generateJPAGraalVMMetadata</code>, <code>lintNamedQueries</code>) are also available. See <a href="#jakarta-persistence-plugin">Jakarta Persistence Plugin</a> for their documentation.</p>
+</div>
+<div class="sect3">
+<h4 id="openjpaenhanceclasses">5.5.1. <code>openjpaEnhanceClasses</code></h4>
+<div class="paragraph">
+<p><strong>Group:</strong> <code>build</code><br>
+<strong>Type:</strong> <code>OpenJPAEnhanceTask</code></p>
+</div>
+<div class="paragraph">
+<p>Performs compile-time bytecode enhancement on OpenJPA entity classes by forking the OpenJPA <code>PCEnhancer</code> tool in an isolated JVM process.
+The task reads raw compiled <code>.class</code> files from the Java compilation output directory, copies them into an isolated target directory, and runs the PCEnhancer in-place on the copies.</p>
+</div>
+<div class="paragraph">
+<p>The enhanced classes are automatically included in the final JAR with higher priority than the original unenhanced classes (using <code>DuplicatesStrategy.EXCLUDE</code>), so no additional packaging configuration is needed.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 40%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>sourceClassesDir</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>DirectoryProperty</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>from <code>compileJava</code> output</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The input directory containing the raw, unenhanced compiled Java class files. Bound from the Java compilation task&#8217;s destination directory.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>targetClassesDir</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>DirectoryProperty</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>build/enhanced/classes/java/&lt;sourceSet&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The isolated output directory where enhanced class files are written. Keeping this separate from the compile output preserves Gradle&#8217;s incremental build and <code>UP-TO-DATE</code> checking.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>resourcesDir</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>DirectoryProperty</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>from <code>processResources</code> output</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The processed resources directory containing <code>META-INF/persistence.xml</code>. The task depends on <code>processResources</code> to ensure the descriptor is fully generated before enhancement begins.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>enhancerClasspath</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ConfigurableFileCollection</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>from <code>enhancement</code> config</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The isolated runtime classpath carrying OpenJPA core toolset binaries used to run the <code>PCEnhancer</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>compileClasspath</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ConfigurableFileCollection</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>from source set</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The full compilation classpath necessary for OpenJPA to inspect, resolve, and validate complex relationships, types, or embedded enums during the bytecode analysis phase.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>addDefaultConstructor</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Property&lt;Boolean&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Whether to add default no-argument constructors to entities. Bound from <code>openjpa.main.enhancement.addDefaultConstructor</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>enforcePropertyRestrictions</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Property&lt;Boolean&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>false</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Whether to enforce property access restrictions. Bound from <code>openjpa.main.enhancement.enforcePropertyRestrictions</code>.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The task is annotated with <code>@DisableCachingByDefault</code> because enhancement modifies class bytecode in place. It is automatically skipped with a <code>NO-SOURCE</code> outcome when no compiled classes are present in the source directory. The task also requires a <code>META-INF/persistence.xml</code> to be present in the processed resources directory — it is silently skipped otherwise.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+The task is wired into the build lifecycle automatically — it runs after both <code>compileJava</code> and <code>processResources</code>, and before <code>classes</code>, so the enhanced bytecode is ready for both testing and packaging without manual task ordering.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="dependencies-configuration-enhancement">5.6. Dependencies Configuration: <code>enhancement</code></h3>
+<div class="paragraph">
+<p>The plugin registers a global <code>enhancement</code> dependency configuration that resolves the OpenJPA toolset binaries used by the <code>PCEnhancer</code> at enhancement time.
+If the <code>jpa</code> configuration is present (from the core Jakarta Persistence plugin), the <code>enhancement</code> configuration automatically extends from it.</p>
+</div>
+<div class="paragraph">
+<p>When no explicit dependency is declared in the <code>enhancement</code> configuration, the plugin provisions a default <code>org.apache.openjpa:openjpa</code> dependency automatically.</p>
+</div>
+<div class="listingblock primary">
+<div class="title">Groovy</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">dependencies {
+    enhancement <span class="string"><span class="delimiter">'</span><span class="content">org.apache.openjpa:openjpa:4.0.0</span><span class="delimiter">'</span></span>
+}</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">Kotlin</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="kotlin">dependencies {
+    enhancement(&quot;org.apache.openjpa:openjpa:4.0.0&quot;)
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+In most cases you do not need to declare this dependency explicitly — the default is provisioned automatically from the BOM version resolved through the <code>jpa</code> configuration.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="configuration">6. Configuration</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>This section covers advanced configuration topics for JPersist plugins.</p>
 </div>
 <div class="sect2">
-<h3 id="_multi_module_projects">5.1. Multi-Module Projects</h3>
+<h3 id="multi-module-projects">6.1. Multi-Module Projects</h3>
 <div class="paragraph">
 <p>In multi-module Gradle projects, declare the provider-specific plugin once in the root build file with <code>apply false</code>, then apply it individually in each module that contains JPA entities.
 Use the <code>jarFile</code> dependency configuration together with DSL jar-file mappings to declare cross-module entity dependencies so that <code>&lt;jar-file&gt;</code> entries are correctly generated in <code>persistence.xml</code>.</p>
 </div>
 <div class="sect3">
-<h4 id="_root_build_gradle">5.1.1. Root <code>build.gradle</code></h4>
+<h4 id="root-build-gradle">6.1.1. Root <code>build.gradle</code></h4>
 <div class="listingblock primary">
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">plugins {
     id <span class="string"><span class="delimiter">'</span><span class="content">base</span><span class="delimiter">'</span></span>
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.hibernate-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.7.0</span><span class="delimiter">'</span></span> apply <span class="predefined-constant">false</span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.hibernate-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.8.0</span><span class="delimiter">'</span></span> apply <span class="predefined-constant">false</span>
 }
 
 subprojects {
@@ -2949,7 +3571,7 @@ subprojects {
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
     base
-    id(&quot;io.github.jpersist.hibernate-persistence&quot;) version &quot;1.7.0&quot; apply false
+    id(&quot;io.github.jpersist.hibernate-persistence&quot;) version &quot;1.8.0&quot; apply false
 }
 
 subprojects {
@@ -2973,7 +3595,7 @@ Declaring the plugin with <code>apply false</code> in the root project makes the
 </div>
 </div>
 <div class="sect3">
-<h4 id="_entity_module_build_gradle">5.1.2. Entity Module <code>build.gradle</code></h4>
+<h4 id="entity-module-build-gradle">6.1.2. Entity Module <code>build.gradle</code></h4>
 <div class="paragraph">
 <p>The entity module defines JPA entity classes and applies both <code>java-library</code> and the Hibernate persistence plugin.
 Because the plugin version is already declared in the root <code>build.gradle</code>, the subproject does not need to repeat it.</p>
@@ -3008,7 +3630,7 @@ dependencies {
 </div>
 </div>
 <div class="sect3">
-<h4 id="_service_module_build_gradle">5.1.3. Service Module <code>build.gradle</code></h4>
+<h4 id="service-module-build-gradle">6.1.3. Service Module <code>build.gradle</code></h4>
 <div class="paragraph">
 <p>The service module depends on the entity module.
 It declares a <code>jarFile</code> project dependency and maps the jar-file location directly inside the persistence unit DSL block.</p>
@@ -3070,12 +3692,12 @@ persistence {
 <div class="paragraph">
 <p>The <code>jarFile</code> dependency ensures that the entity module&#8217;s JAR is resolved at build time.
 The DSL <code>jarFile</code> mapping inside <code>persistenceUnits</code> controls the exact <code>&lt;jar-file&gt;</code> path written to <code>persistence.xml</code>.
-See <a href="#">Jakarta Persistence Plugin</a> for the full documentation on the <code>jarFile</code> dependency routing and DSL jar-file mappings.</p>
+See <a href="#jakarta-persistence-plugin">Jakarta Persistence Plugin</a> for the full documentation on the <code>jarFile</code> dependency routing and DSL jar-file mappings.</p>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_jpa_version_selection">5.2. JPA Version Selection</h3>
+<h3 id="jpa-version-selection">6.2. JPA Version Selection</h3>
 <div class="paragraph">
 <p>The <code>persistence</code> extension defaults to JPA 3.0. To target a different specification version, set the <code>version</code> property:</p>
 </div>
@@ -3104,14 +3726,14 @@ See <a href="#">Jakarta Persistence Plugin</a> for the full documentation on the
 </div>
 </div>
 <div class="sect2">
-<h3 id="_gradle_configuration_cache">5.3. Gradle Configuration Cache</h3>
+<h3 id="gradle-configuration-cache">6.3. Gradle Configuration Cache</h3>
 <div class="paragraph">
 <p>All JPersist plugins are fully compatible with Gradle&#8217;s Configuration Cache.
 No special configuration is required — the plugins use lazy <code>Property</code> and <code>Provider</code> APIs throughout to ensure safe serialization of the build configuration.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_ide_integration">5.4. IDE Integration</h3>
+<h3 id="ide-integration">6.4. IDE Integration</h3>
 <div class="paragraph">
 <p>JPersist automatically hooks into Buildship (Eclipse) and IntelliJ IDEA project synchronization.
 Generated source directories for metamodel classes are registered as source roots, so IDE indexing works out of the box.</p>
@@ -3120,14 +3742,14 @@ Generated source directories for metamodel classes are registered as source root
 </div>
 </div>
 <div class="sect1">
-<h2 id="_examples">6. Examples</h2>
+<h2 id="examples">7. Examples</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Complete runnable examples are available in the <a href="https://github.com/jpersist/persistence/tree/main/examples"><code>examples/</code></a> directory of the repository.
 Each example demonstrates a minimal JPA project using one of the supported plugins.</p>
 </div>
 <div class="sect2">
-<h3 id="_hibernate_example_3">6.1. Hibernate Example</h3>
+<h3 id="hibernate-example">7.1. Hibernate Example</h3>
 <div class="paragraph">
 <p>This example applies the <code>io.github.jpersist.hibernate-persistence</code> aggregator plugin to generate <code>persistence.xml</code> descriptors and perform compile-time bytecode enhancement via Hibernate.</p>
 </div>
@@ -3136,7 +3758,7 @@ Each example demonstrates a minimal JPA project using one of the supported plugi
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">plugins {
     id <span class="string"><span class="delimiter">'</span><span class="content">java-library</span><span class="delimiter">'</span></span>
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.hibernate-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.7.0</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.hibernate-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.8.0</span><span class="delimiter">'</span></span>
 }
 
 dependencies {
@@ -3155,7 +3777,7 @@ repositories {
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
     `java-library`
-    id(&quot;io.github.jpersist.hibernate-persistence&quot;) version &quot;1.7.0&quot;
+    id(&quot;io.github.jpersist.hibernate-persistence&quot;) version &quot;1.8.0&quot;
 }
 
 dependencies {
@@ -3170,11 +3792,11 @@ repositories {
 </div>
 </div>
 <div class="paragraph">
-<p>See <a href="#">Hibernate Plugin</a> for the full list of extension properties and tasks.</p>
+<p>See <a href="#hibernate-plugin">Hibernate Plugin</a> for the full list of extension properties and tasks.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_eclipselink_example_3">6.2. EclipseLink Example</h3>
+<h3 id="eclipselink-example">7.2. EclipseLink Example</h3>
 <div class="paragraph">
 <p>This example applies the <code>io.github.jpersist.eclipse-persistence</code> aggregator plugin to generate <code>persistence.xml</code> descriptors and perform compile-time static weaving via EclipseLink.</p>
 </div>
@@ -3183,7 +3805,7 @@ repositories {
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">plugins {
     id <span class="string"><span class="delimiter">'</span><span class="content">java-library</span><span class="delimiter">'</span></span>
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.eclipse-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.7.0</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.eclipse-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.8.0</span><span class="delimiter">'</span></span>
 }
 
 dependencies {
@@ -3204,7 +3826,7 @@ repositories {
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
     `java-library`
-    id(&quot;io.github.jpersist.eclipse-persistence&quot;) version &quot;1.7.0&quot;
+    id(&quot;io.github.jpersist.eclipse-persistence&quot;) version &quot;1.8.0&quot;
 }
 
 dependencies {
@@ -3221,11 +3843,98 @@ repositories {
 </div>
 </div>
 <div class="paragraph">
-<p>See <a href="#">EclipseLink Plugin</a> for the full list of extension properties and tasks.</p>
+<p>See <a href="#eclipselink-plugin">EclipseLink Plugin</a> for the full list of extension properties and tasks.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_jakarta_persistence_example">6.3. Jakarta Persistence Example</h3>
+<h3 id="openjpa-example">7.3. OpenJPA Example</h3>
+<div class="paragraph">
+<p>This example applies the <code>io.github.jpersist.openjpa-persistence</code> aggregator plugin to generate <code>persistence.xml</code> descriptors and perform compile-time PCEnhancer bytecode enhancement via OpenJPA.</p>
+</div>
+<div class="listingblock primary">
+<div class="title">Groovy</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">plugins {
+    id <span class="string"><span class="delimiter">'</span><span class="content">java-library</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.openjpa-persistence</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">com.netflix.nebula.dependency-recommender</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">14.2.1</span><span class="delimiter">'</span></span>
+}
+
+dependencies {
+    jpa <span class="string"><span class="delimiter">'</span><span class="content">org.apache.openjpa:openjpa</span><span class="delimiter">'</span></span>
+
+    compileOnly <span class="string"><span class="delimiter">'</span><span class="content">jakarta.persistence:jakarta.persistence-api</span><span class="delimiter">'</span></span>
+}
+
+dependencyRecommendations {
+    map <span class="key">recommendations</span>: [
+        <span class="string"><span class="delimiter">'</span><span class="content">jakarta.persistence:jakarta.persistence-api</span><span class="delimiter">'</span></span> : <span class="string"><span class="delimiter">'</span><span class="content">3.1.0</span><span class="delimiter">'</span></span>,
+        <span class="string"><span class="delimiter">'</span><span class="content">org.apache.openjpa:openjpa</span><span class="delimiter">'</span></span>                  : <span class="string"><span class="delimiter">'</span><span class="content">4.0.0</span><span class="delimiter">'</span></span>
+    ]
+}
+
+openjpa {
+    main {
+        metamodel {
+            logLevel = <span class="string"><span class="delimiter">'</span><span class="content">TRACE</span><span class="delimiter">'</span></span>
+        }
+        enhancement {
+            addDefaultConstructor = <span class="predefined-constant">true</span>
+            enforcePropertyRestrictions = <span class="predefined-constant">false</span>
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+}</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">Kotlin</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
+    `java-library`
+    id(&quot;io.github.jpersist.openjpa-persistence&quot;)
+    id(&quot;com.netflix.nebula.dependency-recommender&quot;) version &quot;14.2.1&quot;
+}
+
+dependencies {
+    jpa(&quot;org.apache.openjpa:openjpa&quot;)
+
+    compileOnly(&quot;jakarta.persistence:jakarta.persistence-api&quot;)
+}
+
+dependencyRecommendations {
+    map(mapOf(&quot;recommendations&quot; to mapOf(
+        &quot;jakarta.persistence:jakarta.persistence-api&quot; to &quot;3.1.0&quot;,
+        &quot;org.apache.openjpa:openjpa&quot;                  to &quot;4.0.0&quot;
+    )))
+}
+
+openjpa {
+    main {
+        metamodel {
+            logLevel.set(MetaModelExtension.LogLevel.TRACE)
+        }
+        enhancement {
+            addDefaultConstructor.set(true)
+            enforcePropertyRestrictions.set(false)
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>See <a href="#openjpa-plugin">OpenJPA Plugin</a> for the full list of extension properties and tasks.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="jakarta-persistence-example">7.4. Jakarta Persistence Example</h3>
 <div class="paragraph">
 <p>This example demonstrates standalone descriptor generation using the core <code>io.github.jpersist.jpa</code> plugin without a specific JPA provider aggregator.
 It explicitly configures a persistence unit with a provider class and custom properties via the <code>persistence</code> DSL extension.</p>
@@ -3235,7 +3944,7 @@ It explicitly configures a persistence unit with a provider class and custom pro
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">plugins {
     id <span class="string"><span class="delimiter">'</span><span class="content">java-library</span><span class="delimiter">'</span></span>
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.jpa</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.7.0</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.jpa</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.8.0</span><span class="delimiter">'</span></span>
 }
 
 dependencies {
@@ -3266,7 +3975,7 @@ repositories {
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
     `java-library`
-    id(&quot;io.github.jpersist.jpa&quot;) version &quot;1.7.0&quot;
+    id(&quot;io.github.jpersist.jpa&quot;) version &quot;1.8.0&quot;
 }
 
 dependencies {
@@ -3293,11 +4002,11 @@ repositories {
 </div>
 </div>
 <div class="paragraph">
-<p>See <a href="#">Jakarta Persistence Plugin</a> for the full documentation on the <code>persistence</code> DSL extension.</p>
+<p>See <a href="#jakarta-persistence-plugin">Jakarta Persistence Plugin</a> for the full documentation on the <code>persistence</code> DSL extension.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_entity_class">6.4. Entity Class</h3>
+<h3 id="entity-class">7.5. Entity Class</h3>
 <div class="paragraph">
 <p>Each example uses a simple <code>Person</code> entity annotated with standard Jakarta Persistence annotations:</p>
 </div>
@@ -3407,7 +4116,7 @@ repositories {
 </div>
 </div>
 <div class="sect2">
-<h3 id="_persistence_descriptor_template">6.5. Persistence Descriptor Template</h3>
+<h3 id="persistence-descriptor-template">7.6. Persistence Descriptor Template</h3>
 <div class="paragraph">
 <p>Each example includes a <code>persistence.xml</code> template in <code>src/main/resources/META-INF/</code>.
 The plugin merges auto-detected entity classes with the entries defined in this template.</p>
@@ -3436,7 +4145,7 @@ The plugin merges auto-detected entity classes with the entries defined in this 
 <td class="content">
 Providing a <code>persistence.xml</code> template is optional when using the Hibernate or core JPA plugin.
 However, it is <strong>required</strong> when applying the <code>io.github.jpersist.eclipse-jpa-modelgen</code> sub-plugin.
-See <a href="#">EclipseLink Plugin</a> for details.
+See <a href="#eclipselink-plugin">EclipseLink Plugin</a> for details.
 </td>
 </tr>
 </table>
@@ -3445,10 +4154,10 @@ See <a href="#">EclipseLink Plugin</a> for details.
 </div>
 </div>
 <div class="sect1">
-<h2 id="_faq">7. FAQ</h2>
+<h2 id="faq">8. FAQ</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="faq-persistence-xml">7.1. 1. Do I need to write a <code>persistence.xml</code> manually?</h3>
+<h3 id="faq-persistence-xml">8.1. Do I need to write a <code>persistence.xml</code> manually?</h3>
 <div class="paragraph">
 <p>No. The plugin automatically scans your compiled classes for JPA entity annotations and generates a complete <code>persistence.xml</code>.
 If you provide a template <code>persistence.xml</code> in <code>src/main/resources/META-INF/</code>, the plugin merges your entries with the auto-detected entities.</p>
@@ -3462,14 +4171,14 @@ If you provide a template <code>persistence.xml</code> in <code>src/main/resourc
 <td class="content">
 When applying the <code>io.github.jpersist.eclipse-jpa-modelgen</code> sub-plugin, you <strong>must</strong> provide a <code>persistence.xml</code> template with at least the persistence unit name and the full list of entity classes.
 Without it, metamodel generation may not work correctly because the <code>persistence.xml</code> is generated <em>after</em> the <code>compileJava</code> task.
-See <a href="#">EclipseLink Plugin — JPA Static Metamodel Generation</a> for details and a minimal template example.
+See <a href="#jpa-static-metamodel-generation-3">EclipseLink Plugin — JPA Static Metamodel Generation</a> for details and a minimal template example.
 </td>
 </tr>
 </table>
 </div>
 </div>
 <div class="sect2">
-<h3 id="faq-hibernate-eclipselink">7.2. 2. Can I use both Hibernate and EclipseLink in the same project?</h3>
+<h3 id="faq-hibernate-eclipselink">8.2. Can I use both Hibernate and EclipseLink in the same project?</h3>
 <div class="paragraph">
 <p>Each module should use only one provider plugin.
 However, different modules within a multi-module project can use different providers.</p>
@@ -3482,9 +4191,9 @@ For example, instead of applying one of the aggregator plugins (<code>io.github.
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">plugins {
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.jpa</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.7.0</span><span class="delimiter">'</span></span>
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.hibernate-jpamodelgen</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.7.0</span><span class="delimiter">'</span></span>
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.eclipse-static-weave</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.7.0</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.jpa</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.8.0</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.hibernate-jpamodelgen</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.8.0</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.eclipse-static-weave</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.8.0</span><span class="delimiter">'</span></span>
 }</code></pre>
 </div>
 </div>
@@ -3492,9 +4201,9 @@ For example, instead of applying one of the aggregator plugins (<code>io.github.
 <div class="title">Kotlin</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
-    id(&quot;io.github.jpersist.jpa&quot;) version &quot;1.7.0&quot;
-    id(&quot;io.github.jpersist.hibernate-jpamodelgen&quot;) version &quot;1.7.0&quot;
-    id(&quot;io.github.jpersist.eclipse-static-weave&quot;) version &quot;1.7.0&quot;
+    id(&quot;io.github.jpersist.jpa&quot;) version &quot;1.8.0&quot;
+    id(&quot;io.github.jpersist.hibernate-jpamodelgen&quot;) version &quot;1.8.0&quot;
+    id(&quot;io.github.jpersist.eclipse-static-weave&quot;) version &quot;1.8.0&quot;
 }</code></pre>
 </div>
 </div>
@@ -3504,36 +4213,36 @@ Note that in this scenario, the target JPA platform is <strong>EclipseLink</stro
 </div>
 </div>
 <div class="sect2">
-<h3 id="faq-jpa-versions">7.3. 3. Which JPA specification versions are supported?</h3>
+<h3 id="faq-jpa-versions">8.3. Which JPA specification versions are supported?</h3>
 <div class="paragraph">
 <p>The plugin supports JPA <code>2.0</code>, <code>2.1</code>, <code>2.2</code>, <code>3.0</code>, <code>3.1</code>, and <code>3.2</code>.
 The default version is <code>3.0</code> (Jakarta Persistence 3.0).</p>
 </div>
 <div class="paragraph">
-<p>See <a href="#">Configuration — JPA Version Selection</a> for how to change the target version.</p>
+<p>See <a href="#jpa-version-selection">Configuration — JPA Version Selection</a> for how to change the target version.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="faq-configuration-cache">7.4. 4. Is the Gradle Configuration Cache supported?</h3>
+<h3 id="faq-configuration-cache">8.4. Is the Gradle Configuration Cache supported?</h3>
 <div class="paragraph">
 <p>Yes. All JPersist plugins are fully compatible with Gradle&#8217;s Configuration Cache and Isolated Projects features.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="faq-bytecode-enhancement">7.5. 5. Do I need a runtime <code>-javaagent</code> for bytecode enhancement?</h3>
+<h3 id="faq-bytecode-enhancement">8.5. Do I need a runtime <code>-javaagent</code> for bytecode enhancement?</h3>
 <div class="paragraph">
 <p>No. Both the Hibernate enhancement and EclipseLink static weaving plugins perform bytecode modification at compile time.
 No runtime agent is required.</p>
 </div>
 <div class="paragraph">
-<p>See <a href="#">Hibernate Plugin — <code>hibernateEnhanceClasses</code></a> and <a href="#">EclipseLink Plugin — <code>eclipseWeaveClasses</code></a> for details.</p>
+<p>See <a href="#hibernateenhanceclasses">Hibernate Plugin — <code>hibernateEnhanceClasses</code></a> and <a href="#eclipseweaveclasses">EclipseLink Plugin — <code>eclipseWeaveClasses</code></a> for details.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="faq-api-docs">7.6. 6. Where can I find the API documentation?</h3>
+<h3 id="faq-api-docs">8.6. Where can I find the API documentation?</h3>
 <div class="paragraph">
-<p>The full Groovydoc API reference is published at <a href="https://jpersist.github.io/persistence/api/latest/">jpersist.github.io/persistence/api/latest</a>.
-The User Guide is available at <a href="https://jpersist.github.io/persistence/guide/latest/">jpersist.github.io/persistence/guide/latest</a>.</p>
+<p>The full Groovydoc API reference is published at <a href="https://jpersist.github.io/persistence/plugins/api/latest/">jpersist.github.io/persistence/plugins/api/latest</a>.
+The User Guide is available at <a href="https://jpersist.github.io/persistence/plugins/guide/latest/">jpersist.github.io/persistence/plugins/guide/latest</a>.</p>
 </div>
 </div>
 </div>
@@ -3541,8 +4250,8 @@ The User Guide is available at <a href="https://jpersist.github.io/persistence/g
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.7.0<br>
-Last updated 2026-10-23 10:34:50 UTC
+Version 1.8.0<br>
+Last updated 2026-10-31 21:13:58 UTC
 </div>
 </div>
 </body>
