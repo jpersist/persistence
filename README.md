@@ -53,7 +53,7 @@ Standard Gradle setups require verbose XML overrides, break incremental compilat
 
 Apply the plugin matching your JPA provider. The `jpa` dependency configuration centralizes version management via a BOM platform across all standard Java compilation scopes.
 
-### 🐻 Hibernate Setup
+### <img src="https://cdn.simpleicons.org/hibernate" alt="Hibernate" height="20"> Hibernate Setup
 
 <details open>
   <summary><b>Groovy DSL</b></summary>
@@ -89,7 +89,7 @@ dependencies {
 ```
 </details>
 
-### 🌀 EclipseLink Setup
+### <img src="https://cdn.simpleicons.org/eclipseide" alt="EclipseLink" height="20"> EclipseLink Setup
 
 <details open>
   <summary><b>Groovy DSL</b></summary>
@@ -127,7 +127,7 @@ dependencies {
 ```
 </details>
 
-### 🦊 OpenJPA Setup
+### <img src="https://cdn.simpleicons.org/apache" alt="OpenJPA" height="20"> OpenJPA Setup
 
 <details open>
   <summary><b>Groovy DSL</b></summary>
