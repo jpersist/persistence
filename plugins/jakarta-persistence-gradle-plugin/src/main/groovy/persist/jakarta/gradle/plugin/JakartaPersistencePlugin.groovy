@@ -46,11 +46,10 @@ import java.util.jar.Manifest
  * <ol>
  *     <li>Applies the {@link org.gradle.api.plugins.JavaPlugin}.</li>
  *     <li>Creates a {@code jpa} dependency configuration for propagating
- *         platform/BOM version constraints into standard Java configurations
- *         ({@code implementation}, {@code compileOnly}, {@code annotationProcessor},
- *         {@code runtimeOnly}). When the {@link org.gradle.api.plugins.JavaLibraryPlugin}
- *         is applied, the {@code api} and {@code compileOnlyApi} configurations are
- *         also extended from {@code jpa}.</li>
+ *         platform/BOM version constraints into Java compilation and annotation processing
+ *         configurations ({@code compileOnly} or {@code compileOnlyApi} when
+ *         {@link org.gradle.api.plugins.JavaLibraryPlugin} is applied,
+ *         {@code annotationProcessor}).</li>
  *     <li>Registers a global, non-resolvable {@code modelgenProcessor} configuration
  *         container that centralizes modelgen annotation processor dependencies.
  *         Each source set's {@code annotationProcessor} configuration lazily extends
@@ -68,7 +67,7 @@ import java.util.jar.Manifest
  *             <li>Creates a {@code jarFile} (or {@code <sourceSet>JarFile})
  *                 dependency configuration for declaring module JARs to be
  *                 injected as {@code <jar-file>} entries. The {@code jarFile}
- *                 configuration extends {@code implementation} (and {@code api}
+ *                 configuration extends {@code implementation} (or {@code api}
  *                 when the {@code java-library} plugin is present).</li>
  *             <li>Automatically initializes a
  *                 {@link persist.jakarta.gradle.extension.PersistenceExtension}
@@ -207,23 +206,21 @@ class JakartaPersistencePlugin implements Plugin<Project> {
             // Auto-register persistence units already declared in the user's persistence.xml file
             autoRegisterExistingUnits(project, sourceSet, extension)
 
-            // Propagate platform version constraints into all standard Java configurations
-            extendProjectConfigurations(project, jpaProvider,
-                sourceSet.implementationConfigurationName,
-                sourceSet.compileOnlyConfigurationName,
-                sourceSet.annotationProcessorConfigurationName,
-                sourceSet.runtimeOnlyConfigurationName
-            )
-
-            extendProjectConfigurations(project, jarFileConfigProvider, sourceSet.implementationConfigurationName)
-
-            project.plugins.withType(JavaLibraryPlugin).configureEach {
+            // Propagate platform version constraints into all Java compile and annotation processor configurations
+            if (project.plugins.hasPlugin(JavaLibraryPlugin)) {
                 extendProjectConfigurations(project, jpaProvider,
-                    sourceSet.apiConfigurationName,
-                    sourceSet.compileOnlyApiConfigurationName
+                    sourceSet.compileOnlyApiConfigurationName,
+                    sourceSet.annotationProcessorConfigurationName
                 )
 
                 extendProjectConfigurations(project, jarFileConfigProvider, sourceSet.apiConfigurationName)
+            } else {
+                extendProjectConfigurations(project, jpaProvider,
+                    sourceSet.compileOnlyConfigurationName,
+                    sourceSet.annotationProcessorConfigurationName
+                )
+
+                extendProjectConfigurations(project, jarFileConfigProvider, sourceSet.implementationConfigurationName)
             }
 
             if (hasSources) {

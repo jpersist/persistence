@@ -28,8 +28,7 @@ plugins {
 [#the-jpa-configuration]
 == The `jpa` Configuration
 
-The plugin registers a `jpa` dependency configuration that propagates platform/BOM version constraints into all standard Java configurations (`implementation`, `compileOnly`, `annotationProcessor`, `runtimeOnly`).
-When the `java-library` plugin is also applied, the `api` and `compileOnlyApi` configurations are extended as well.
+The plugin registers a `jpa` dependency configuration that propagates platform/BOM version constraints into Java compilation (`compileOnly` or `compileOnlyApi` when the `java-library` plugin is also applied) and annotation processing (`annotationProcessor`) configurations.
 
 [source,groovy,indent=0,role="primary"]
 .Groovy
@@ -595,7 +594,7 @@ TIP: No additional configuration is needed — the plugin detects the legacy ver
 
 For multi-module projects, the plugin registers a `jarFile` dependency configuration per source set that allows you to declare module dependencies injected as `<jar-file>` entries in the generated `persistence.xml`.
 
-The `jarFile` configuration extends `implementation` (and `api` when the `java-library` plugin is present).
+The `jarFile` configuration extends `implementation` (or `api` when the `java-library` plugin is present).
 
 [#using-the-location-attribute]
 === Using the Location Attribute
@@ -652,9 +651,11 @@ persistence {
 persistence {
     create("main") {
         persistenceUnits {
-            create("my-unit") {
-                jarFileMappings.put(":ejb-module", "ejb-module.jar")
-                jarFileMappings.put("com.example:external-persistence", "lib/external-persistence-custom.jar")
+            register("my-unit") {
+                jarFile(project(":ejb-module")) { jarTask ->
+                    "${jarTask.archiveBaseName.get()}.jar"
+                }
+                jarFile("com.example:external-persistence", "lib/external-persistence-custom.jar")
             }
         }
     }
