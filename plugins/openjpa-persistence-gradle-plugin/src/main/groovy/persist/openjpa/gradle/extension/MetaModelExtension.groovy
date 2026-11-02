@@ -47,15 +47,16 @@ interface MetaModelExtension {
     /**
      * Configures the logging verbosity level used by the OpenJPA annotation processor.
      * <p>
-     * Accepts one of the {@link LogLevel} enumeration constants to control the amount
-     * of diagnostic output emitted during metamodel generation.
+     * Accepts a string value corresponding to one of the supported log levels
+     * ({@code "TRACE"}, {@code "INFO"}, {@code "WARN"}, {@code "ERROR"}) to control
+     * the amount of diagnostic output emitted during metamodel generation.
      * </p>
      *
      * @return A lazy property controlling the annotation processor log level.
      */
     @Optional
     @Input
-    Property<LogLevel> getLogLevel()
+    Property<String> getLogLevel()
 
     /**
      * Configures the Java source compatibility version for the generated metamodel classes.

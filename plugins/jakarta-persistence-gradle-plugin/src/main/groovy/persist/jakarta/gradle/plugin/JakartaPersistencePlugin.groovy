@@ -2,7 +2,6 @@ package persist.jakarta.gradle.plugin
 
 import groovy.io.FileType
 import groovy.xml.XmlParser
-import org.gradle.api.GradleException
 import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.component.ModuleComponentSelector
@@ -14,7 +13,6 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.CopySpec
 import org.gradle.api.file.FileTree
 import org.gradle.api.plugins.JavaLibraryPlugin
-import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.language.base.plugins.LifecycleBasePlugin
@@ -29,14 +27,11 @@ import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.language.jvm.tasks.ProcessResources
-import persist.api.spi.PersistenceServiceProvider
 import persist.jakarta.gradle.extension.PersistenceExtension
 import persist.jakarta.gradle.task.GenerateJPAGraalVMMetadata
 import persist.jakarta.gradle.task.LintNamedQueries
 import persist.jakarta.gradle.task.ProcessPersistenceDescriptor
 import persist.jakarta.gradle.task.ValidatePersistenceSchema
-
-import java.util.jar.Manifest
 
 /**
  * Gradle plugin that manages Jakarta Persistence (JPA) descriptor generation.
@@ -438,9 +433,12 @@ class JakartaPersistencePlugin implements Plugin<Project> {
 
             // FIX: Enforce an explicit dependency rule on the processResources task instance.
             // This guarantees the directory is physically present before validation triggers!
-            def processResourcesTask = project.tasks.named(sourceSet.processResourcesTaskName, ProcessResources)
-            task.getResourcesDir().set(processResourcesTask.flatMap { it.destinationDirectory })
-            task.dependsOn(processResourcesTask)
+            def processResourcesProvider = project.tasks.named(sourceSet.processResourcesTaskName, ProcessResources)
+            def processResourcesDestinationDir = processResourcesProvider.flatMap {processResources ->
+                project.layout.dir(project.provider { processResources.destinationDir })
+            }
+            task.getResourcesDir().set(processResourcesDestinationDir)
+            task.dependsOn(processResourcesProvider)
 
             // 1. Add pure compiled java entity classes directories ONLY (No resources included)
             task.getClasspath().from(sourceSet.output.classesDirs)
@@ -450,7 +448,7 @@ class JakartaPersistencePlugin implements Plugin<Project> {
             task.getClasspath().from(project.configurations.named(sourceSet.compileClasspathConfigurationName))
 
             // 3. 🌟 OPTIMIZED TOOLSET EXTRACTION: Direct extraction from active Plugin ClassLoader
-            task.getClasspath().from(resolvePersistenceToolsFiles(project, extension.version, JakartaPersistencePlugin.classLoader))
+            task.getClasspath().from(resolvePersistenceToolsFiles(project, extension.version))
 
             // 4. Transparently inject the H2 driver file on-the-fly for the user
             task.getClasspath().from(project.files(project.buildscript.configurations.detachedConfiguration(
@@ -510,7 +508,7 @@ class JakartaPersistencePlugin implements Plugin<Project> {
             task.classpath.from(project.configurations.named(sourceSet.compileClasspathConfigurationName))
 
             // Ensure the plugin's own compiled files directory is attached to locate the worker classes
-            task.classpath.from(resolvePersistenceToolsFiles(project, extension.version, JakartaPersistencePlugin.classLoader))
+            task.classpath.from(resolvePersistenceToolsFiles(project, extension.version))
 
             // Transparently inject the H2 driver dependency directly from a localized detached setup on-the-fly!
             // This provides 'org.h2.Driver' directly into the worker's classloader isolation sandbox.
@@ -528,88 +526,55 @@ class JakartaPersistencePlugin implements Plugin<Project> {
         }
     }
 
-    static Provider<ConfigurableFileCollection> resolvePersistenceToolsFiles(Project project,
-                                                                             Provider<String> jpaVersionProvider,
-                                                                             ClassLoader classLoader) {
-        return project.provider {
-            def version = jpaVersionProvider.get()
-            boolean isLegacy = isLegacyJpaVersion(version)
-            String markerClassName = isLegacy
-                ? "persist.legacy.spi.LegacyPersistenceServiceProvider"
-                : "persist.jakarta.spi.JakartaPersistenceServiceProvider"
-
-            try {
-                // Attempt to locate the classes on the active plugin/buildscript classpath wrapper context
-                Class<?> providerClass = Class.forName(markerClassName, false, classLoader)
-                def codeSourceLocation = providerClass.protectionDomain.codeSource?.location
-
-                if (codeSourceLocation != null) {
-                    def toolsApiLocation = PersistenceServiceProvider.class.protectionDomain.codeSource?.location
-                    // Return the array of physical file locations discovered inside the environment
-                    return project.files(codeSourceLocation, toolsApiLocation)
-                }
-            } catch (Exception ignored) {
-                // Fallback strategy if executing inside a standard standalone build outside the mono-repo context
-                // Note: Since we cannot return a GAV string provider here inside project.files(),
-                // we resolve it as a detached dependency placeholder inside the fallback block.
-                def toolsVersion = resolvePersistenceToolsVersion()
-                String providerArtifact = isLegacy ? "persistence-tools-legacy" : "persistence-tools-jakarta"
-
-                // Return the resolved files of a detached configuration context to bypass the file constraints safely
-                def detachedConfig = project.configurations.detachedConfiguration(
-                    project.dependencies.create("io.github.jpersist.tools:${providerArtifact}:${toolsVersion}")
-                )
-                return project.files(detachedConfig)
-            }
-
-            return project.files()
-        }
-    }
-
     /**
-     * Resolves the version of the {@code persistence-tools-api} library that is
-     * currently on the plugin's own classpath.
+     * Resolves the required persistence tools implementation JARs for the given JPA
+     * specification version by reading the tools version from the embedded
+     * {@code persistence-plugin-info.properties} resource and constructing a
+     * detached dependency configuration against Maven coordinates.
      * <p>
-     * The version is extracted from the {@code Implementation-Version} attribute
-     * of the {@code META-INF/MANIFEST.MF} inside the JAR that contains the
-     * {@link PersistenceServiceProvider} SPI class. This allows downstream
-     * plugins (e.g.&nbsp;the Hibernate enhancement plugin) to declare matching
-     * provider dependencies at the exact same version without hard-coding
-     * version strings.
+     * The JPA version drives artefact selection: versions prior to 3.0 resolve
+     * {@code persistence-tools-legacy}, while 3.0 and later resolve
+     * {@code persistence-tools-jakarta}.  The tools version itself is read from
+     * the {@code persistence-tools.version} property baked into the plugin JAR at
+     * build time; if the property file is absent or empty a safe fallback version
+     * ({@code 3.0.0}) is used.
      * </p>
      *
-     * @return The resolved version string, or {@code null} when the version
-     *         cannot be determined (e.g.&nbsp;when running from exploded classes
-     *         during development).
-     * @throws org.gradle.api.GradleException if the version lookup encounters
-     *         an unexpected I/O or security error.
+     * @param project            The Gradle project used to create the detached configuration.
+     * @param jpaVersionProvider A provider supplying the active JPA specification version
+     *                           string (e.g.&nbsp;{@code "2.2"} or {@code "3.1"}).
+     * @return A {@link ConfigurableFileCollection} containing the resolved persistence
+     *         tools provider JAR and its transitive dependencies.
      *
      * @since 1.8.0
      */
-    static String resolvePersistenceToolsVersion() {
-        String version = null
-        try {
-            // Locate the physical protection domain URL of our core SPI class template
-            def classCodeSourceLocation = PersistenceServiceProvider.class.protectionDomain.codeSource?.location
-            if (classCodeSourceLocation != null) {
-                def classPathString = classCodeSourceLocation.toString()
+    static ConfigurableFileCollection resolvePersistenceToolsFiles(Project project,
+                                                                   Provider<String> jpaVersionProvider) {
+        def version = jpaVersionProvider.get()
+        boolean isLegacy = isLegacyJpaVersion(version)
+        String providerArtifact = isLegacy ? "persistence-tools-legacy" : "persistence-tools-jakarta"
 
-                // If running from an active packaged distribution archive (.jar)
-                if (classPathString.endsWith('.jar')) {
-                    def manifestUrl = new URL("jar:${classPathString}!/META-INF/MANIFEST.MF")
-                    manifestUrl.openStream().withCloseable { stream ->
-                        def manifest = new Manifest(stream)
-                        def implementationVersion = manifest.mainAttributes.getValue("Implementation-Version")
-                        if (implementationVersion != null && !implementationVersion.trim().isEmpty()) {
-                            version = implementationVersion.trim()
-                        }
-                    }
-                }
+        // 🌟 STEP 1: Read the embedded tools version from the plugin's own resources context
+        String toolsVersion = "3.0.0" // Safe fallback standard
+
+        def props = new Properties()
+        def resourceStream = JakartaPersistencePlugin.class.classLoader.getResourceAsStream("persistence-plugin-info.properties")
+        if (resourceStream != null) {
+            resourceStream.withCloseable { props.load(it) }
+            def resolvedVersion = props.getProperty("persistence-tools.version")
+            if (resolvedVersion && !resolvedVersion.trim().isEmpty()) {
+                toolsVersion = resolvedVersion.trim()
             }
-        } catch (Exception e) {
-            throw new GradleException("Unable to resolve persistence tools version: ${e.message}", e)
         }
-        return version
+
+        // 🌟 STEP 2: Resolve the full coordinates cleanly from Maven Central/Local via a detached container
+        // This prevents classloader contamination and works flawlessly on Gradle 7.6.6+
+        def detachedConfig = project.configurations.detachedConfiguration(
+            project.dependencies.create("io.github.jpersist.tools:${providerArtifact}:${toolsVersion}")
+        )
+
+        // Return the deterministic fully resolved files collection
+        return project.files(detachedConfig)
     }
 
     /**

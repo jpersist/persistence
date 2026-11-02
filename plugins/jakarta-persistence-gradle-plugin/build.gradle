@@ -5,7 +5,7 @@ plugins {
 
 dependencies {
     implementation platform(libs.persistence.tools.bom.get())
-    implementation libs.bundles.persistence.tools
+    implementation libs.persistence.tools.api
     implementation libs.asm
 }
 
@@ -20,3 +20,35 @@ gradlePlugin {
         }
     }
 }
+
+// Register the properties generator task with caching capabilities
+def generatePluginInfo = tasks.register("generatePluginInfo", WriteProperties) {
+    // Define the mandatory task output destination path
+    def targetReportFile = layout.buildDirectory.file("resources/main/persistence-plugin-info.properties")
+    destinationFile = targetReportFile
+
+    // 🌟 INCREMENTAL TRACKING SECURED: Track the root catalog file as a task input.
+    // If the libs.versions.toml file remains unchanged, this task transitions to UP-TO-DATE.
+    def catalogSourceFile = rootProject.file("../gradle/libs.versions.toml")
+    inputs.file(catalogSourceFile)
+        .withPropertyName("versionCatalogSource")
+        .withPathSensitivity(PathSensitivity.RELATIVE)
+
+    // Wire property evaluation lazily inside a Provider block to satisfy Configuration Cache rules
+    property("persistence-tools.version", providers.provider {
+        String toolsVersionTarget = "3.0.0" // Ultimate safe fallback coordinate string
+        def catalogs = project.extensions.findByType(VersionCatalogsExtension)
+
+        if (catalogs != null) {
+            def libsCatalog = catalogs.named("libs")
+            def versionRef = libsCatalog.findVersion("persistence-tools")
+            if (versionRef.isPresent()) {
+                toolsVersionTarget = versionRef.get().requiredVersion
+            }
+        }
+        return toolsVersionTarget
+    })
+}
+
+// Bind the properties generation step right into the native resource packaging lifecycle
+processResources.dependsOn(generatePluginInfo)

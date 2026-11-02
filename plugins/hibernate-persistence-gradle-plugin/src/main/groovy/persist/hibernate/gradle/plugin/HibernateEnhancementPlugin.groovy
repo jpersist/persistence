@@ -110,17 +110,7 @@ class HibernateEnhancementPlugin implements Plugin<Project> {
                     config.canBeResolved = true
 
                     // Wire version constraints and coordinates dynamically at configuration time
-                    config.extendsFrom(project.configurations.named(sourceSet.compileClasspathConfigurationName))
-                }
-
-                // 🌟 TECHNICAL BREAKTHROUGH: ClassLoader Extraction Loop
-                // Instead of calling project.dependencies.add with remote text coordinates,
-                // harvest the physical jar files that are already part of the plugin's active buildscript classpath context.
-                project.configurations.named(enhanceConfigName).configure { config ->
-                    // We add a lazy FileCollection wrapper which Gradle handles perfectly at execution time
-                    config.dependencies.add(project.dependencies.create(project.files(
-                        JakartaPersistencePlugin.resolvePersistenceToolsFiles(project, activeVersionProvider, HibernateEnhancementPlugin.classLoader)
-                    )))
+                    config.extendsFrom(project.configurations.named(sourceSet.compileClasspathConfigurationName).get())
                 }
 
                 // Register the task completely outside the compile task configuration execution context
@@ -133,6 +123,14 @@ class HibernateEnhancementPlugin implements Plugin<Project> {
 
                     // Inject the isolated toolset libraries containing our API SPI and provider factories
                     enhanceTask.enhanceClasspath.from(enhanceConfigProvider)
+
+                    // 🌟 THE FIX FOR GRADLE 7.x: Target the configuration directly and map the file provider natively
+                    // We pass the lazy provider directly to project.dependencies.add() as a file collection
+                    // without nesting it inside an outer project.files() block, keeping it safe for Gradle 7.6.6
+                    enhanceTask.enhanceClasspath.from(JakartaPersistencePlugin.resolvePersistenceToolsFiles(
+                        project,
+                        activeVersionProvider
+                    ))
 
                     // Pass third-party structures and module dependencies separately via compilation boundaries
                     enhanceTask.compileClasspath.from(sourceSet.compileClasspath)
