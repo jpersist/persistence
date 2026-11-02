@@ -320,15 +320,11 @@ implements <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/Plugin.
                         
                         <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
-                            <td class="colLast"><code>static&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Provider.html' title='Provider'>Provider</a>&lt;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/file/ConfigurableFileCollection.html' title='ConfigurableFileCollection'>ConfigurableFileCollection</a>&gt;</code></td>
-                            <td class="colLast"><code><strong><a href="#resolvePersistenceToolsFiles(org.gradle.api.Project, Provider, java.lang.ClassLoader)">resolvePersistenceToolsFiles</a></strong>(<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/Project.html' title='Project'>Project</a> project, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Provider.html' title='Provider'>Provider</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt; jpaVersionProvider, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/ClassLoader.html' title='ClassLoader'>ClassLoader</a> classLoader)</code><br></td>
-                        </tr>
-                        
-                        <tr class="altColor">
-                            <td class="colFirst"><code></code></td>
-                            <td class="colLast"><code>static&nbsp;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a></code></td>
-                            <td class="colLast"><code><strong><a href="#resolvePersistenceToolsVersion()">resolvePersistenceToolsVersion</a></strong>()</code><br>Resolves the version of the <CODE>persistence-tools-api</CODE> library that is
- currently on the plugin's own classpath.</td>
+                            <td class="colLast"><code>static&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/file/ConfigurableFileCollection.html' title='ConfigurableFileCollection'>ConfigurableFileCollection</a></code></td>
+                            <td class="colLast"><code><strong><a href="#resolvePersistenceToolsFiles(org.gradle.api.Project, Provider)">resolvePersistenceToolsFiles</a></strong>(<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/Project.html' title='Project'>Project</a> project, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Provider.html' title='Provider'>Provider</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt; jpaVersionProvider)</code><br>Resolves the required persistence tools implementation JARs for the given JPA
+ specification version by reading the tools version from the embedded
+ <CODE>persistence-plugin-info.properties</CODE> resource and constructing a
+ detached dependency configuration against Maven coordinates.</td>
                         </tr>
                         
                     </table>
@@ -433,31 +429,24 @@ implements <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/Plugin.
                             </li>
                         </ul>
                     
-                        <a name="resolvePersistenceToolsFiles(org.gradle.api.Project, Provider, java.lang.ClassLoader)"><!-- --></a>
+                        <a name="resolvePersistenceToolsFiles(org.gradle.api.Project, Provider)"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>static&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Provider.html' title='Provider'>Provider</a>&lt;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/file/ConfigurableFileCollection.html' title='ConfigurableFileCollection'>ConfigurableFileCollection</a>&gt; <strong>resolvePersistenceToolsFiles</strong>(<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/Project.html' title='Project'>Project</a> project, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Provider.html' title='Provider'>Provider</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt; jpaVersionProvider, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/ClassLoader.html' title='ClassLoader'>ClassLoader</a> classLoader)</h4>
-                                <p></p>
-                            </li>
-                        </ul>
-                    
-                        <a name="resolvePersistenceToolsVersion()"><!-- --></a>
-                        <ul class="blockListLast">
-                            <li class="blockList">
-                                <h4>static&nbsp;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a> <strong>resolvePersistenceToolsVersion</strong>()</h4>
-                                <p> Resolves the version of the <CODE>persistence-tools-api</CODE> library that is
- currently on the plugin's own classpath.
+                                <h4>static&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/file/ConfigurableFileCollection.html' title='ConfigurableFileCollection'>ConfigurableFileCollection</a> <strong>resolvePersistenceToolsFiles</strong>(<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/Project.html' title='Project'>Project</a> project, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Provider.html' title='Provider'>Provider</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt; jpaVersionProvider)</h4>
+                                <p> Resolves the required persistence tools implementation JARs for the given JPA
+ specification version by reading the tools version from the embedded
+ <CODE>persistence-plugin-info.properties</CODE> resource and constructing a
+ detached dependency configuration against Maven coordinates.
  <p>
- The version is extracted from the <CODE>Implementation-Version</CODE> attribute
- of the <CODE>META-INF/MANIFEST.MF</CODE> inside the JAR that contains the
- persist.api.spi.PersistenceServiceProvider SPI class. This allows downstream
- plugins (e.g.&nbsp;the Hibernate enhancement plugin) to declare matching
- provider dependencies at the exact same version without hard-coding
- version strings.
- </p><DL><DT><B>throws:</B></DT><DD>org.gradle.api.GradleException if the version lookup encounters
-         an unexpected I/O or security error.</DD></DL> <DL><DT><B>Returns:</B></DT><DD>The resolved version string, or <CODE>null</CODE> when the version
-         cannot be determined (e.g.&nbsp;when running from exploded classes
-         during development).</DD></DL><DL><DT><B>Since:</B></DT><DD>1.8.0</DD></DL></p>
+ The JPA version drives artefact selection: versions prior to 3.0 resolve
+ <CODE>persistence-tools-legacy</CODE>, while 3.0 and later resolve
+ <CODE>persistence-tools-jakarta</CODE>.  The tools version itself is read from
+ the <CODE>persistence-tools.version</CODE> property baked into the plugin JAR at
+ build time; if the property file is absent or empty a safe fallback version
+ (<CODE>3.0.0</CODE>) is used.
+ </p> <DL><DT><B>Parameters:</B></DT><DD><code>project</code> -             The Gradle project used to create the detached configuration.</DD><DD><code>jpaVersionProvider</code> -  A provider supplying the active JPA specification version
+                           string (e.g.&nbsp;<CODE>"2.2"</CODE> or <CODE>"3.1"</CODE>).</DD></DL><DL><DT><B>Returns:</B></DT><DD>A <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/file/ConfigurableFileCollection.html' title='ConfigurableFileCollection'>ConfigurableFileCollection</a> containing the resolved persistence
+         tools provider JAR and its transitive dependencies.</DD></DL><DL><DT><B>Since:</B></DT><DD>1.8.0</DD></DL></p>
                             </li>
                         </ul>
                     

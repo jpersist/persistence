@@ -146,8 +146,6 @@ if (location.href.indexOf('is-external=true') == -1) {
  plugins to the target project.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/plugin/JakartaPersistencePlugin.html#apply(org.gradle.api.Project)" title="Method in JakartaPersistencePlugin">apply(org.gradle.api.Project)</a></span> - Method in <a href="persist/jakarta/gradle/plugin/JakartaPersistencePlugin.html">JakartaPersistencePlugin</a>
 </dt><dd> <div class="block">Applies the Jakarta Persistence plugin configuration to the target project.</div></dd>
-<dt><span class="strong"><a href="persist/openjpa/gradle/plugin/OpenJPABasePlugin.html#apply(org.gradle.api.Project)" title="Method in OpenJPABasePlugin">apply(org.gradle.api.Project)</a></span> - Method in <a href="persist/openjpa/gradle/plugin/OpenJPABasePlugin.html">OpenJPABasePlugin</a>
-</dt><dd> <div class="block"></div></dd>
 <dt><span class="strong"><a href="persist/openjpa/gradle/plugin/OpenJPAEnhancementPlugin.html#apply(org.gradle.api.Project)" title="Method in OpenJPAEnhancementPlugin">apply(org.gradle.api.Project)</a></span> - Method in <a href="persist/openjpa/gradle/plugin/OpenJPAEnhancementPlugin.html">OpenJPAEnhancementPlugin</a>
 </dt><dd> <div class="block">Applies the OpenJPA bytecode enhancement configuration to the target project.</div></dd>
 <dt><span class="strong"><a href="persist/openjpa/gradle/plugin/OpenJPAMetaModelGenerationPlugin.html#apply(org.gradle.api.Project)" title="Method in OpenJPAMetaModelGenerationPlugin">apply(org.gradle.api.Project)</a></span> - Method in <a href="persist/openjpa/gradle/plugin/OpenJPAMetaModelGenerationPlugin.html">OpenJPAMetaModelGenerationPlugin</a>
@@ -696,10 +694,6 @@ if (location.href.indexOf('is-external=true') == -1) {
 <h2 class="title">O</h2>
 <dl>
 
-<dt><span class="strong"><a href="persist/openjpa/gradle/plugin/OpenJPABasePlugin.html" title="Class in persist.openjpa.gradle.plugin">OpenJPABasePlugin</a></span> - Class in <a href="./persist/openjpa/gradle/plugin/package-summary.html">persist.openjpa.gradle.plugin</a>
-</dt><dd><div class="block"></div></dd>
-<dt><span class="strong"><a href="persist/openjpa/gradle/plugin/OpenJPABasePlugin.html#OpenJPABasePlugin()" title="Constructor in OpenJPABasePlugin">OpenJPABasePlugin()</a></span> - Constructor in <a href="persist/openjpa/gradle/plugin/OpenJPABasePlugin.html">OpenJPABasePlugin</a>
-</dt><dd> <div class="block"></div></dd>
 <dt><span class="strong"><a href="persist/openjpa/gradle/plugin/OpenJPAEnhancementPlugin.html" title="Class in persist.openjpa.gradle.plugin">OpenJPAEnhancementPlugin</a></span> - Class in <a href="./persist/openjpa/gradle/plugin/package-summary.html">persist.openjpa.gradle.plugin</a>
 </dt><dd><div class="block">Gradle plugin that performs compile-time bytecode enhancement for OpenJPA entity classes.</div></dd>
 <dt><span class="strong"><a href="persist/openjpa/gradle/plugin/OpenJPAEnhancementPlugin.html#OpenJPAEnhancementPlugin()" title="Constructor in OpenJPAEnhancementPlugin">OpenJPAEnhancementPlugin()</a></span> - Constructor in <a href="persist/openjpa/gradle/plugin/OpenJPAEnhancementPlugin.html">OpenJPAEnhancementPlugin</a>
@@ -774,11 +768,11 @@ if (location.href.indexOf('is-external=true') == -1) {
 <dt><span class="strong"><a href="persist/jakarta/gradle/task/registry/JPAVersionStrategyRegistry.html#resolve(java.lang.String)" title="Method in JPAVersionStrategyRegistry">resolve(java.lang.String)</a></span> - Method in <a href="persist/jakarta/gradle/task/registry/JPAVersionStrategyRegistry.html">JPAVersionStrategyRegistry</a>
 </dt><dd> <div class="block">Resolves the complete strategy metadata for the requested JPA
  specification version.</div></dd>
-<dt><span class="strong"><a href="persist/jakarta/gradle/plugin/JakartaPersistencePlugin.html#resolvePersistenceToolsFiles(org.gradle.api.Project, Provider<String>, java.lang.ClassLoader)" title="Method in JakartaPersistencePlugin">resolvePersistenceToolsFiles(org.gradle.api.Project, Provider&lt;String&gt;, java.lang.ClassLoader)</a></span> - Method in <a href="persist/jakarta/gradle/plugin/JakartaPersistencePlugin.html">JakartaPersistencePlugin</a>
-</dt><dd> <div class="block"></div></dd>
-<dt><span class="strong"><a href="persist/jakarta/gradle/plugin/JakartaPersistencePlugin.html#resolvePersistenceToolsVersion()" title="Method in JakartaPersistencePlugin">resolvePersistenceToolsVersion()</a></span> - Method in <a href="persist/jakarta/gradle/plugin/JakartaPersistencePlugin.html">JakartaPersistencePlugin</a>
-</dt><dd> <div class="block">Resolves the version of the <CODE>persistence-tools-api</CODE> library that is
- currently on the plugin's own classpath.</div></dd>
+<dt><span class="strong"><a href="persist/jakarta/gradle/plugin/JakartaPersistencePlugin.html#resolvePersistenceToolsFiles(org.gradle.api.Project, Provider<String>)" title="Method in JakartaPersistencePlugin">resolvePersistenceToolsFiles(org.gradle.api.Project, Provider&lt;String&gt;)</a></span> - Method in <a href="persist/jakarta/gradle/plugin/JakartaPersistencePlugin.html">JakartaPersistencePlugin</a>
+</dt><dd> <div class="block">Resolves the required persistence tools implementation JARs for the given JPA
+ specification version by reading the tools version from the embedded
+ <CODE>persistence-plugin-info.properties</CODE> resource and constructing a
+ detached dependency configuration against Maven coordinates.</div></dd>
 </dl>
 
     
