@@ -30,7 +30,7 @@ import persist.openjpa.gradle.task.OpenJPAEnhanceTask
  *
  * @since 1.8.0
  */
-class OpenJPAEnhancementPlugin extends OpenJPABasePlugin {
+class OpenJPAEnhancementPlugin implements Plugin<Project> {
 
     /**
      * Applies the OpenJPA bytecode enhancement configuration to the target project.
@@ -46,9 +46,13 @@ class OpenJPAEnhancementPlugin extends OpenJPABasePlugin {
      */
     @Override
     void apply(Project project) {
-        super.apply(project)
+        project.plugins.apply(JavaPlugin)
 
         NamedDomainObjectContainer<OpenJPAExtension> container = project.extensions.findByName('openjpa') as NamedDomainObjectContainer<OpenJPAExtension>
+        if (container == null) {
+            container = project.objects.domainObjectContainer(OpenJPAExtension)
+            project.extensions.add('openjpa', container)
+        }
 
         def enhancementConfig = project.configurations.maybeCreate('enhancement')
         project.configurations.matching { it.name == 'jpa'}.configureEach { jpaConfig ->
