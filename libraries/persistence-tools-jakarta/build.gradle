@@ -5,7 +5,8 @@ plugins {
 
 dependencies {
     api project(':persistence-tools-api')
-    api libs.hibernate.orm.core
+
+    implementation libs.hibernate.orm.core
 
     testRuntimeOnly 'com.h2database:h2:2.2.224'
 }

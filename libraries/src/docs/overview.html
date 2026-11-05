@@ -73,6 +73,53 @@
 
 <h2>What's New</h2>
 
+<h3>Version 3.1.0</h3>
+<p>
+    Version 3.1.0 introduces native support for the
+    <strong>Java Platform Module System (JPMS)</strong>. All library modules
+    now ship with explicit {@code module-info.java} descriptors, enabling
+    strong encapsulation and reliable compile-time dependency resolution
+    on the module path.
+</p>
+<ul>
+    <li>
+        <strong>Module descriptors</strong> — each library artifact declares
+        an explicit JPMS module:
+        {@code io.github.jpersist.tools.api} (core SPIs and model types),
+        {@code io.github.jpersist.tools.jakarta} (Jakarta Persistence /
+        Hibernate&nbsp;6 provider), and
+        {@code io.github.jpersist.tools.legacy} (legacy
+        {@code javax.persistence} / Hibernate&nbsp;5 provider).
+    </li>
+    <li>
+        <strong>Service declarations</strong> — the API module declares
+        {@code uses} directives for all SPI interfaces
+        ({@link persist.api.spi.PersistenceServiceProvider},
+        {@link persist.lint.api.spi.PersistenceLinterFactory},
+        {@link persist.lint.api.spi.NamedObjectParserFactory},
+        {@link persist.lint.api.spi.SchemaValidatorFactory}, and
+        {@link persist.hibernate.enhance.spi.HibernateEnhancerProvider}),
+        while the provider modules register their implementations via
+        {@code provides…with} directives, allowing
+        {@link java.util.ServiceLoader} discovery on the module path.
+    </li>
+    <li>
+        <strong>Strong encapsulation</strong> — provider modules
+        ({@code io.github.jpersist.tools.jakarta} and
+        {@code io.github.jpersist.tools.legacy}) export no packages;
+        interaction occurs exclusively through the SPI interfaces in the
+        API module.
+    </li>
+    <li>
+        <strong>Deep reflection boundaries</strong> — modularized
+        applications that use {@code HibernateEnhancer} for build-time
+        bytecode enhancement must open their entity packages to the
+        relevant provider module (e.g.&nbsp;{@code opens com.example.domain
+        to io.github.jpersist.tools.jakarta}) to allow Hibernate's
+        reflective metadata access.
+    </li>
+</ul>
+
 <h3>Version 3.0.0</h3>
 <p>
     Version 3.0.0 relocates all published artifacts to the
