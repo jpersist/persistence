@@ -63,7 +63,7 @@ sonar {
 
 tasks.register('aggregateJavadoc', Javadoc) {
     group = 'documentation'
-    description = 'Generates aggregated Javadoc for all library modules with full JPMS support.'
+    description = 'Generates aggregated Javadoc for all library modules with flat classpath fallback.'
     title = "Persistence Tools Libraries API"
 
     def javaSubprojects = subprojects.findAll { it.plugins.hasPlugin('java-library') }
@@ -98,6 +98,76 @@ tasks.register('aggregateJavadoc', Javadoc) {
 
         // Enable modern HTML5 rendering with the "Modules" search bar
         addBooleanOption('html5', true)
+
+        // Link to external JDK 17 docs
+        links('https://docs.oracle.com/en/java/javase/17/docs/api/')
+    }
+}
+
+tasks.register('aggregateJavadocJakarta', Javadoc) {
+    group = 'documentation'
+    description = 'Generates aggregated modular Javadoc for the Jakarta/Hibernate 6 ecosystem.'
+    title = "Persistence Tools Libraries API (Jakarta Suite)"
+
+    def targetProjects = [project(':persistence-tools-api'), project(':persistence-tools-jakarta')]
+    dependsOn targetProjects.collect { it.tasks.named('classes') }
+
+    source = files(targetProjects.collect { it.sourceSets.main.allJava })
+    classpath = files(targetProjects.collect { it.sourceSets.main.compileClasspath })
+
+    destinationDir = file("${buildDir}/docs/javadoc/jakarta")
+
+    options {
+        overview = file("${rootDir}/src/docs/overview.html")
+        encoding = 'UTF-8'
+        docTitle = 'JPersist Persistence Tools Libraries API Reference (Jakarta Suite)'
+        windowTitle = 'JPersist Persistence Tools API - Jakarta'
+        docEncoding = 'UTF-8'
+        charSet = 'UTF-8'
+
+        // Enable modern HTML5 rendering with the "Modules" search bar
+        addBooleanOption('html5', true)
+
+        // Module source path mappings for multi-module JPMS Javadoc
+        addMultilineStringsOption('-module-source-path').value = [
+            "io.github.jpersist.tools.api=${project(':persistence-tools-api').file('src/main/java')}".toString(),
+            "io.github.jpersist.tools.jakarta=${project(':persistence-tools-jakarta').file('src/main/java')}".toString()
+        ]
+
+        // Link to external JDK 17 docs
+        links('https://docs.oracle.com/en/java/javase/17/docs/api/')
+    }
+}
+
+tasks.register('aggregateJavadocLegacy', Javadoc) {
+    group = 'documentation'
+    description = 'Generates aggregated modular Javadoc for the Legacy/Hibernate 5 ecosystem.'
+    title = "Persistence Tools Libraries API (Legacy Suite)"
+
+    def targetProjects = [project(':persistence-tools-api'), project(':persistence-tools-legacy')]
+    dependsOn targetProjects.collect { it.tasks.named('classes') }
+
+    source = files(targetProjects.collect { it.sourceSets.main.allJava })
+    classpath = files(targetProjects.collect { it.sourceSets.main.compileClasspath })
+
+    destinationDir = file("${buildDir}/docs/javadoc/legacy")
+
+    options {
+        overview = file("${rootDir}/src/docs/overview.html")
+        encoding = 'UTF-8'
+        docTitle = 'JPersist Persistence Tools Libraries API Reference (Legacy Suite)'
+        windowTitle = 'JPersist Persistence Tools API - Legacy'
+        docEncoding = 'UTF-8'
+        charSet = 'UTF-8'
+
+        // Enable modern HTML5 rendering with the "Modules" search bar
+        addBooleanOption('html5', true)
+
+        // Module source path mappings for multi-module JPMS Javadoc
+        addMultilineStringsOption('-module-source-path').value = [
+            "io.github.jpersist.tools.api=${project(':persistence-tools-api').file('src/main/java')}".toString(),
+            "io.github.jpersist.tools.legacy=${project(':persistence-tools-legacy').file('src/main/java')}".toString()
+        ]
 
         // Link to external JDK 17 docs
         links('https://docs.oracle.com/en/java/javase/17/docs/api/')
