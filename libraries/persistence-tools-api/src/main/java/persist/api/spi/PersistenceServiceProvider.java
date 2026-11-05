@@ -34,7 +34,8 @@ public interface PersistenceServiceProvider {
     /**
      * Discovers and returns the {@code PersistenceServiceProvider} of the
      * requested type whose {@linkplain #getSupportedNamespace() namespace}
-     * matches the given JPA specification version.
+     * matches the given JPA specification version using the thread context
+     * class loader.
      *
      * <p>The version string is mapped to a namespace as follows:</p>
      * <ul>
@@ -51,6 +52,48 @@ public interface PersistenceServiceProvider {
      *                                  resolved namespace
      */
     static <T extends PersistenceServiceProvider> T getServiceProvider(String jpaVersion, Class<T> providerClass) {
+        return getServiceProvider(jpaVersion, providerClass, Thread.currentThread().getContextClassLoader());
+    }
+
+    /**
+     * Discovers and returns the {@code PersistenceServiceProvider} of the
+     * requested type whose {@linkplain #getSupportedNamespace() namespace}
+     * matches the given JPA specification version using the specified
+     * {@link ClassLoader}.
+     *
+     * @param jpaVersion    the JPA specification version (e.g.&nbsp;{@code "3.1"})
+     * @param providerClass the provider subtype to look up
+     * @param classLoader   the class loader to use for service loading
+     * @param <T>           the provider type
+     * @return the matching provider instance
+     * @throws IllegalArgumentException if {@code jpaVersion} is not recognised
+     * @throws IllegalStateException    if no registered provider matches the
+     *                                  resolved namespace
+     */
+    static <T extends PersistenceServiceProvider> T getServiceProvider(String jpaVersion, Class<T> providerClass, ClassLoader classLoader) {
+        return findProvider(jpaVersion, providerClass, ServiceLoader.load(providerClass, classLoader));
+    }
+
+    /**
+     * Discovers and returns the {@code PersistenceServiceProvider} of the
+     * requested type whose {@linkplain #getSupportedNamespace() namespace}
+     * matches the given JPA specification version using the specified
+     * {@link ModuleLayer}.
+     *
+     * @param jpaVersion    the JPA specification version (e.g.&nbsp;{@code "3.1"})
+     * @param providerClass the provider subtype to look up
+     * @param layer         the module layer to use for service loading
+     * @param <T>           the provider type
+     * @return the matching provider instance
+     * @throws IllegalArgumentException if {@code jpaVersion} is not recognised
+     * @throws IllegalStateException    if no registered provider matches the
+     *                                  resolved namespace
+     */
+    static <T extends PersistenceServiceProvider> T getServiceProvider(String jpaVersion, Class<T> providerClass, ModuleLayer layer) {
+        return findProvider(jpaVersion, providerClass, ServiceLoader.load(layer, providerClass));
+    }
+
+    private static <T extends PersistenceServiceProvider> T findProvider(String jpaVersion, Class<T> providerClass, ServiceLoader<T> loader) {
         // Resolve target namespace based on the semantic spec version map token
         final String targetNamespace = switch (jpaVersion) {
             case "2.0", "2.1", "2.2" -> "javax";
@@ -60,9 +103,6 @@ public interface PersistenceServiceProvider {
 
         // Get the simple name of the provider class
         final String providerClassSimpleName = providerClass.getSimpleName();
-
-        // Drive JVM ServiceLoader API to dynamically discover strategies loaded into the isolated classloader
-        ServiceLoader<T> loader = ServiceLoader.load(providerClass);
 
         return loader.stream()
             .map(ServiceLoader.Provider::get)

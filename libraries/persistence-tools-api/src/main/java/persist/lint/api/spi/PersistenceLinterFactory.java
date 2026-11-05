@@ -15,8 +15,14 @@ import java.util.ServiceLoader;
  * the target JPA specification version.</p>
  *
  * <p>Concrete factory implementations are discovered at runtime through
- * the {@link java.util.ServiceLoader} mechanism via the generic
- * {@link #newPersistenceLinterFactory(String, Class)} method.</p>
+ * the {@link java.util.ServiceLoader} mechanism via generic discovery
+ * methods accepting thread context classloader, custom {@link ClassLoader},
+ * or {@link ModuleLayer} instances.</p>
+ *
+ * <p>In JPMS environments, provider modules declare implementations for
+ * specific factory subtypes (e.g.&nbsp;{@code provides persist.lint.api.spi.NamedObjectParserFactory}
+ * and {@code provides persist.lint.api.spi.SchemaValidatorFactory}) in
+ * their {@code module-info.java}.</p>
  *
  * @since 2.1.0
  * @see PersistenceLinter
@@ -35,7 +41,8 @@ public interface PersistenceLinterFactory extends PersistenceServiceProvider {
 
     /**
      * Convenience method that discovers and returns the
-     * {@link NamedObjectParserFactory} for the given JPA version.
+     * {@link NamedObjectParserFactory} for the given JPA version using
+     * the thread context class loader.
      *
      * @param jpaVersion the JPA specification version (e.g.&nbsp;{@code "3.1"})
      * @return the matching {@link NamedObjectParserFactory}
@@ -50,7 +57,42 @@ public interface PersistenceLinterFactory extends PersistenceServiceProvider {
 
     /**
      * Convenience method that discovers and returns the
-     * {@link SchemaValidatorFactory} for the given JPA version.
+     * {@link NamedObjectParserFactory} for the given JPA version using
+     * the specified {@link ClassLoader}.
+     *
+     * @param jpaVersion  the JPA specification version (e.g.&nbsp;{@code "3.1"})
+     * @param classLoader the class loader used to discover the factory
+     * @return the matching {@link NamedObjectParserFactory}
+     * @throws IllegalArgumentException if the version is not recognized
+     * @throws IllegalStateException    if no provider is registered for
+     *                                  the resolved namespace
+     * @since 3.1.0
+     */
+    static NamedObjectParserFactory newNamedObjectParserFactory(String jpaVersion, ClassLoader classLoader) {
+        return newPersistenceLinterFactory(jpaVersion, NamedObjectParserFactory.class, classLoader);
+    }
+
+    /**
+     * Convenience method that discovers and returns the
+     * {@link NamedObjectParserFactory} for the given JPA version within
+     * the specified {@link ModuleLayer}.
+     *
+     * @param jpaVersion the JPA specification version (e.g.&nbsp;{@code "3.1"})
+     * @param layer      the module layer used to discover the factory
+     * @return the matching {@link NamedObjectParserFactory}
+     * @throws IllegalArgumentException if the version is not recognized
+     * @throws IllegalStateException    if no provider is registered for
+     *                                  the resolved namespace
+     * @since 3.1.0
+     */
+    static NamedObjectParserFactory newNamedObjectParserFactory(String jpaVersion, ModuleLayer layer) {
+        return newPersistenceLinterFactory(jpaVersion, NamedObjectParserFactory.class, layer);
+    }
+
+    /**
+     * Convenience method that discovers and returns the
+     * {@link SchemaValidatorFactory} for the given JPA version using
+     * the thread context class loader.
      *
      * @param jpaVersion the JPA specification version (e.g.&nbsp;{@code "3.1"})
      * @return the matching {@link SchemaValidatorFactory}
@@ -64,8 +106,43 @@ public interface PersistenceLinterFactory extends PersistenceServiceProvider {
     }
 
     /**
+     * Convenience method that discovers and returns the
+     * {@link SchemaValidatorFactory} for the given JPA version using
+     * the specified {@link ClassLoader}.
+     *
+     * @param jpaVersion  the JPA specification version (e.g.&nbsp;{@code "3.1"})
+     * @param classLoader the class loader used to discover the factory
+     * @return the matching {@link SchemaValidatorFactory}
+     * @throws IllegalArgumentException if the version is not recognized
+     * @throws IllegalStateException    if no provider is registered for
+     *                                  the resolved namespace
+     * @since 3.1.0
+     */
+    static SchemaValidatorFactory newSchemaValidatorFactory(String jpaVersion, ClassLoader classLoader) {
+        return newPersistenceLinterFactory(jpaVersion, SchemaValidatorFactory.class, classLoader);
+    }
+
+    /**
+     * Convenience method that discovers and returns the
+     * {@link SchemaValidatorFactory} for the given JPA version within
+     * the specified {@link ModuleLayer}.
+     *
+     * @param jpaVersion the JPA specification version (e.g.&nbsp;{@code "3.1"})
+     * @param layer      the module layer used to discover the factory
+     * @return the matching {@link SchemaValidatorFactory}
+     * @throws IllegalArgumentException if the version is not recognized
+     * @throws IllegalStateException    if no provider is registered for
+     *                                  the resolved namespace
+     * @since 3.1.0
+     */
+    static SchemaValidatorFactory newSchemaValidatorFactory(String jpaVersion, ModuleLayer layer) {
+        return newPersistenceLinterFactory(jpaVersion, SchemaValidatorFactory.class, layer);
+    }
+
+    /**
      * Generic factory-discovery method that resolves a
-     * {@link PersistenceLinterFactory} subtype for the given JPA version.
+     * {@link PersistenceLinterFactory} subtype for the given JPA version using
+     * the thread context class loader.
      *
      * <p>The version string is mapped to a persistence namespace
      * ({@code "javax"} for versions 2.0–2.2, {@code "jakarta"} for
@@ -84,6 +161,46 @@ public interface PersistenceLinterFactory extends PersistenceServiceProvider {
      */
     static <T extends PersistenceLinterFactory> T newPersistenceLinterFactory(String jpaVersion, Class<T> factoryClass) {
         return PersistenceServiceProvider.getServiceProvider(jpaVersion, factoryClass);
+    }
+
+    /**
+     * Generic factory-discovery method that resolves a
+     * {@link PersistenceLinterFactory} subtype for the given JPA version using
+     * the specified {@link ClassLoader}.
+     *
+     * @param <T>          the factory subtype to resolve
+     * @param jpaVersion   the JPA specification version
+     *                     (e.g.&nbsp;{@code "2.2"} or {@code "3.1"})
+     * @param factoryClass the {@link Class} object of the desired factory type
+     * @param classLoader  the class loader used to discover the factory
+     * @return the factory implementation for the requested version
+     * @throws IllegalArgumentException if the version is not recognized
+     * @throws IllegalStateException    if no provider is registered for
+     *                                  the resolved namespace
+     * @since 3.1.0
+     */
+    static <T extends PersistenceLinterFactory> T newPersistenceLinterFactory(String jpaVersion, Class<T> factoryClass, ClassLoader classLoader) {
+        return PersistenceServiceProvider.getServiceProvider(jpaVersion, factoryClass, classLoader);
+    }
+
+    /**
+     * Generic factory-discovery method that resolves a
+     * {@link PersistenceLinterFactory} subtype for the given JPA version within
+     * the specified {@link ModuleLayer}.
+     *
+     * @param <T>          the factory subtype to resolve
+     * @param jpaVersion   the JPA specification version
+     *                     (e.g.&nbsp;{@code "2.2"} or {@code "3.1"})
+     * @param factoryClass the {@link Class} object of the desired factory type
+     * @param layer        the module layer used to discover the factory
+     * @return the factory implementation for the requested version
+     * @throws IllegalArgumentException if the version is not recognized
+     * @throws IllegalStateException    if no provider is registered for
+     *                                  the resolved namespace
+     * @since 3.1.0
+     */
+    static <T extends PersistenceLinterFactory> T newPersistenceLinterFactory(String jpaVersion, Class<T> factoryClass, ModuleLayer layer) {
+        return PersistenceServiceProvider.getServiceProvider(jpaVersion, factoryClass, layer);
     }
 
 }
