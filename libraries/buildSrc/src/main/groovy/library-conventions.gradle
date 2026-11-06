@@ -11,6 +11,8 @@ dependencies {
 }
 
 java {
+    modularity.inferModulePath = true
+
     withSourcesJar()
     withJavadocJar()
 
@@ -37,6 +39,32 @@ tasks.withType(Test).configureEach {
     useJUnitPlatform()
     finalizedBy tasks.named('jacocoTestReport')
     systemProperty 'file.encoding', 'UTF-8'
+
+    // 🌟 INJECT JPMS RUNTIME OPTIONS
+    // Since unit test classes reside in the 'test' source set rather than the main module,
+    // we must patch the test classes into the main module and open the packages to JUnit 5
+    // for seamless reflection and assertion lookup.
+    def projectName = project.name
+    def inferPathEnabled = java.modularity.inferModulePath.get()
+
+    if (inferPathEnabled) {
+        // Dynamically discover the current project's module name from its descriptor
+        def moduleName = "io.github.jpersist.tools.api"
+        if (projectName.contains("jakarta")) moduleName = "io.github.jpersist.tools.jakarta"
+        if (projectName.contains("legacy")) moduleName = "io.github.jpersist.tools.legacy"
+
+        jvmArgs = [
+            // Allows JUnit Jupiter to deeply reflect on your test methods and suites
+            '--add-opens', "${moduleName}/persist.api.spi=org.junit.platform.commons",
+            '--add-opens', "${moduleName}/persist.lint.api.spi=org.junit.platform.commons",
+            '--add-opens', "${moduleName}/persist.hibernate.enhance.spi=org.junit.platform.commons",
+
+            // Allows AssertJ to inspect fields/methods cleanly when executing tests
+            '--add-opens', "${moduleName}/persist.api.spi=org.assertj.core",
+            '--add-opens', "${moduleName}/persist.lint.api.spi=org.assertj.core",
+            '--add-opens', "${moduleName}/persist.hibernate.enhance.spi=org.assertj.core"
+        ]
+    }
 }
 
 tasks.withType(JacocoReport).configureEach {
