@@ -3,6 +3,9 @@ package persist.lint.api.spi;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import persist.test.mock.MockJakartaSchemaValidatorFactory;
+import persist.test.mock.MockJavaxSchemaValidatorFactory;
+import persist.test.mock.TestModuleLayers;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -124,6 +127,82 @@ class SchemaValidatorFactoryTest {
     }
 
     @Test
+    void newSchemaValidatorFactory_withModuleLayer_discoversCustomFactory() {
+        ModuleLayer layer = TestModuleLayers.createModularLayer(
+            getClass().getClassLoader(),
+            SchemaValidatorFactory.class,
+            MockJakartaSchemaValidatorFactory.class
+        );
+
+        Object factory = TestModuleLayers.invokeStatic(
+            layer,
+            SchemaValidatorFactory.class,
+            "newSchemaValidatorFactory",
+            new Class<?>[]{String.class, ModuleLayer.class},
+            "3.1",
+            layer
+        );
+
+        assertThat(factory).isNotNull();
+        assertThat(factory.getClass().getName()).isEqualTo(MockJakartaSchemaValidatorFactory.class.getName());
+    }
+
+    @Test
+    void newSchemaValidatorFactory_withModuleLayer_discoversCustomLegacyFactory() {
+        ModuleLayer layer = TestModuleLayers.createModularLayer(
+            getClass().getClassLoader(),
+            SchemaValidatorFactory.class,
+            MockJavaxSchemaValidatorFactory.class
+        );
+
+        Object factory = TestModuleLayers.invokeStatic(
+            layer,
+            SchemaValidatorFactory.class,
+            "newSchemaValidatorFactory",
+            new Class<?>[]{String.class, ModuleLayer.class},
+            "2.2",
+            layer
+        );
+
+        assertThat(factory).isNotNull();
+        assertThat(factory.getClass().getName()).isEqualTo(MockJavaxSchemaValidatorFactory.class.getName());
+    }
+
+    @Test
+    void newSchemaValidatorFactory_withModuleLayer_withNullVersion_throwsNullPointerException() {
+        ModuleLayer bootLayer = ModuleLayer.boot();
+        assertThatThrownBy(() -> SchemaValidatorFactory.newSchemaValidatorFactory(null, bootLayer))
+            .isInstanceOf(NullPointerException.class);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"4.0", "0.0", "99", "abc", ""})
+    void newSchemaValidatorFactory_withModuleLayer_withVariousInvalidVersions_throwsIllegalArgumentException(String version) {
+        ModuleLayer bootLayer = ModuleLayer.boot();
+        assertThatThrownBy(() -> SchemaValidatorFactory.newSchemaValidatorFactory(version, bootLayer))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("Unsupported JPA version: " + version);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"2.0", "2.1", "2.2"})
+    void newSchemaValidatorFactory_withModuleLayer_withLegacyVersions_resolvesJavaxNamespace(String version) {
+        ModuleLayer bootLayer = ModuleLayer.boot();
+        assertThatThrownBy(() -> SchemaValidatorFactory.newSchemaValidatorFactory(version, bootLayer))
+            .isInstanceOf(IllegalStateException.class)
+            .hasMessageContaining("javax");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"3.0", "3.1", "3.2"})
+    void newSchemaValidatorFactory_withModuleLayer_withJakartaVersions_resolvesJakartaNamespace(String version) {
+        ModuleLayer bootLayer = ModuleLayer.boot();
+        assertThatThrownBy(() -> SchemaValidatorFactory.newSchemaValidatorFactory(version, bootLayer))
+            .isInstanceOf(IllegalStateException.class)
+            .hasMessageContaining("jakarta");
+    }
+
+    @Test
     void newSchemaValidatorFactory_withModuleLayer_withUnsupportedVersion_throwsIllegalArgumentException() {
         ModuleLayer bootLayer = ModuleLayer.boot();
         assertThatThrownBy(() -> SchemaValidatorFactory.newSchemaValidatorFactory("1.0", bootLayer))
@@ -135,6 +214,14 @@ class SchemaValidatorFactoryTest {
     void newSchemaValidatorFactory_withModuleLayer_whenNoProviderFound_throwsIllegalStateException() {
         ModuleLayer bootLayer = ModuleLayer.boot();
         assertThatThrownBy(() -> SchemaValidatorFactory.newSchemaValidatorFactory("3.1", bootLayer))
+            .isInstanceOf(IllegalStateException.class)
+            .hasMessageContaining("SchemaValidatorFactory");
+    }
+
+    @Test
+    void newSchemaValidatorFactory_withEmptyModuleLayer_whenNoProviderFound_throwsIllegalStateException() {
+        ModuleLayer emptyLayer = ModuleLayer.empty();
+        assertThatThrownBy(() -> SchemaValidatorFactory.newSchemaValidatorFactory("3.1", emptyLayer))
             .isInstanceOf(IllegalStateException.class)
             .hasMessageContaining("SchemaValidatorFactory");
     }
