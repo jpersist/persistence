@@ -11,9 +11,16 @@ import java.util.Set;
  * {@link HibernateEnhancer}.
  *
  * <p>Implementations are discovered at runtime via
- * {@link java.util.ServiceLoader}. The convenience method
- * {@link #getHibernateEnhancerProvider(String)} maps a JPA specification
- * version to the correct provider.</p>
+ * {@link java.util.ServiceLoader}. The convenience methods
+ * {@link #getHibernateEnhancerProvider(String)},
+ * {@link #getHibernateEnhancerProvider(String, ClassLoader)}, and
+ * {@link #getHibernateEnhancerProvider(String, ModuleLayer)} map a JPA
+ * specification version to the correct provider across standard, custom
+ * classloader, or modular {@link ModuleLayer} runtime environments.</p>
+ *
+ * <p>In JPMS environments, provider modules register their implementation
+ * with {@code provides persist.hibernate.enhance.spi.HibernateEnhancerProvider}
+ * in {@code module-info.java}.</p>
  *
  * @since 1.0.0
  * @see HibernateEnhancer
@@ -37,7 +44,7 @@ public interface HibernateEnhancerProvider extends PersistenceServiceProvider {
 
     /**
      * Discovers and returns the {@code HibernateEnhancerProvider} for the
-     * given JPA specification version.
+     * given JPA specification version using the thread context class loader.
      *
      * @param jpaVersion the JPA specification version (e.g.&nbsp;{@code "3.1"})
      * @return the matching provider
@@ -48,6 +55,38 @@ public interface HibernateEnhancerProvider extends PersistenceServiceProvider {
      */
     static HibernateEnhancerProvider getHibernateEnhancerProvider(String jpaVersion) {
         return PersistenceServiceProvider.getServiceProvider(jpaVersion, HibernateEnhancerProvider.class);
+    }
+
+    /**
+     * Discovers and returns the {@code HibernateEnhancerProvider} for the
+     * given JPA specification version using the specified {@link ClassLoader}.
+     *
+     * @param jpaVersion  the JPA specification version (e.g.&nbsp;{@code "3.1"})
+     * @param classLoader the class loader used to discover the provider
+     * @return the matching provider
+     * @throws IllegalArgumentException if {@code jpaVersion} is not recognised
+     * @throws IllegalStateException    if no provider is registered for the
+     *                                  resolved namespace
+     * @see PersistenceServiceProvider#getServiceProvider(String, Class, ClassLoader)
+     */
+    static HibernateEnhancerProvider getHibernateEnhancerProvider(String jpaVersion, ClassLoader classLoader) {
+        return PersistenceServiceProvider.getServiceProvider(jpaVersion, HibernateEnhancerProvider.class, classLoader);
+    }
+
+    /**
+     * Discovers and returns the {@code HibernateEnhancerProvider} for the
+     * given JPA specification version using the specified {@link ModuleLayer}.
+     *
+     * @param jpaVersion the JPA specification version (e.g.&nbsp;{@code "3.1"})
+     * @param layer      the module layer used to discover the provider
+     * @return the matching provider
+     * @throws IllegalArgumentException if {@code jpaVersion} is not recognised
+     * @throws IllegalStateException    if no provider is registered for the
+     *                                  resolved namespace
+     * @see PersistenceServiceProvider#getServiceProvider(String, Class, ModuleLayer)
+     */
+    static HibernateEnhancerProvider getHibernateEnhancerProvider(String jpaVersion, ModuleLayer layer) {
+        return PersistenceServiceProvider.getServiceProvider(jpaVersion, HibernateEnhancerProvider.class, layer);
     }
 
 }

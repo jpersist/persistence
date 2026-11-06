@@ -4,9 +4,67 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLStreamHandler;
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class HibernateEnhancerProviderTest {
+
+    public static class CustomEnhancerProvider implements HibernateEnhancerProvider {
+        @Override
+        public HibernateEnhancer getEnhancer(File classesDir, Set<File> classpathFiles, Map<HibernateEnhancer.Option, Boolean> options) {
+            return null;
+        }
+
+        @Override
+        public String getSupportedNamespace() {
+            return "jakarta";
+        }
+    }
+
+    static class InMemoryClassLoader extends ClassLoader {
+        private final Class<?> providerClass;
+
+        InMemoryClassLoader(ClassLoader parent, Class<?> providerClass) {
+            super(parent);
+            this.providerClass = providerClass;
+        }
+
+        @Override
+        public Enumeration<URL> getResources(String name) throws IOException {
+            if (("META-INF/services/" + HibernateEnhancerProvider.class.getName()).equals(name)) {
+                URL url = new URL("test", null, -1, "/", new URLStreamHandler() {
+                    @Override
+                    protected URLConnection openConnection(URL u) {
+                        return new URLConnection(u) {
+                            @Override
+                            public void connect() {}
+
+                            @Override
+                            public InputStream getInputStream() {
+                                return new ByteArrayInputStream((providerClass.getName() + "\n").getBytes(StandardCharsets.UTF_8));
+                            }
+                        };
+                    }
+                });
+                return Collections.enumeration(List.of(url));
+            }
+            return super.getResources(name);
+        }
+    }
 
     @Test
     void getHibernateEnhancerProvider_withUnsupportedVersion_throwsIllegalArgumentException() {
@@ -57,6 +115,46 @@ class HibernateEnhancerProviderTest {
     @ValueSource(strings = {"3.0", "3.1", "3.2"})
     void getHibernateEnhancerProvider_withJakartaVersions_includesProviderClassName(String version) {
         assertThatThrownBy(() -> HibernateEnhancerProvider.getHibernateEnhancerProvider(version))
+            .isInstanceOf(IllegalStateException.class)
+            .hasMessageContaining("HibernateEnhancerProvider");
+    }
+
+    @Test
+    void getHibernateEnhancerProvider_withClassLoader_discoversCustomProvider() {
+        ClassLoader classLoader = new InMemoryClassLoader(getClass().getClassLoader(), CustomEnhancerProvider.class);
+        HibernateEnhancerProvider provider = HibernateEnhancerProvider.getHibernateEnhancerProvider("3.1", classLoader);
+        assertThat(provider).isNotNull().isInstanceOf(CustomEnhancerProvider.class);
+        assertThat(provider.getSupportedNamespace()).isEqualTo("jakarta");
+    }
+
+    @Test
+    void getHibernateEnhancerProvider_withClassLoader_withUnsupportedVersion_throwsIllegalArgumentException() {
+        ClassLoader classLoader = getClass().getClassLoader();
+        assertThatThrownBy(() -> HibernateEnhancerProvider.getHibernateEnhancerProvider("1.0", classLoader))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("Unsupported JPA version: 1.0");
+    }
+
+    @Test
+    void getHibernateEnhancerProvider_withClassLoader_whenNoProviderFound_throwsIllegalStateException() {
+        ClassLoader classLoader = ClassLoader.getPlatformClassLoader();
+        assertThatThrownBy(() -> HibernateEnhancerProvider.getHibernateEnhancerProvider("3.1", classLoader))
+            .isInstanceOf(IllegalStateException.class)
+            .hasMessageContaining("HibernateEnhancerProvider");
+    }
+
+    @Test
+    void getHibernateEnhancerProvider_withModuleLayer_withUnsupportedVersion_throwsIllegalArgumentException() {
+        ModuleLayer bootLayer = ModuleLayer.boot();
+        assertThatThrownBy(() -> HibernateEnhancerProvider.getHibernateEnhancerProvider("1.0", bootLayer))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("Unsupported JPA version: 1.0");
+    }
+
+    @Test
+    void getHibernateEnhancerProvider_withModuleLayer_whenNoProviderFound_throwsIllegalStateException() {
+        ModuleLayer bootLayer = ModuleLayer.boot();
+        assertThatThrownBy(() -> HibernateEnhancerProvider.getHibernateEnhancerProvider("3.1", bootLayer))
             .isInstanceOf(IllegalStateException.class)
             .hasMessageContaining("HibernateEnhancerProvider");
     }

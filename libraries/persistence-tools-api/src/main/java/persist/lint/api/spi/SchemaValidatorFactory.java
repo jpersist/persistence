@@ -11,6 +11,10 @@ import java.util.List;
  * {@code "jakarta"}) so that the correct validation strategy can be
  * resolved for the target JPA specification version.</p>
  *
+ * <p>In JPMS environments, provider modules register their implementation
+ * with {@code provides persist.lint.api.spi.SchemaValidatorFactory} in
+ * {@code module-info.java}.</p>
+ *
  * @since 2.1.0
  * @see SchemaValidator
  * @see PersistenceLinterFactory
@@ -29,7 +33,8 @@ public interface SchemaValidatorFactory extends PersistenceLinterFactory {
 
     /**
      * Discovers and returns the {@link SchemaValidatorFactory}
-     * implementation that matches the given JPA specification version.
+     * implementation that matches the given JPA specification version using
+     * the thread context class loader.
      *
      * <p>The version string is mapped to a persistence namespace
      * ({@code "javax"} for versions 2.0–2.2, {@code "jakarta"} for
@@ -45,6 +50,42 @@ public interface SchemaValidatorFactory extends PersistenceLinterFactory {
      */
     static SchemaValidatorFactory newSchemaValidatorFactory(String jpaVersion) {
         return PersistenceLinterFactory.newPersistenceLinterFactory(jpaVersion, SchemaValidatorFactory.class);
+    }
+
+    /**
+     * Discovers and returns the {@link SchemaValidatorFactory}
+     * implementation that matches the given JPA specification version using
+     * the specified {@link ClassLoader}.
+     *
+     * @param jpaVersion  the JPA specification version (e.g.&nbsp;{@code "2.2"}
+     *                    or {@code "3.1"})
+     * @param classLoader the class loader used to discover the factory
+     * @return the factory implementation for the requested version
+     * @throws IllegalArgumentException if the version is not recognized
+     * @throws IllegalStateException    if no provider is registered for
+     *                                  the resolved namespace
+     * @since 3.1.0
+     */
+    static SchemaValidatorFactory newSchemaValidatorFactory(String jpaVersion, ClassLoader classLoader) {
+        return PersistenceLinterFactory.newPersistenceLinterFactory(jpaVersion, SchemaValidatorFactory.class, classLoader);
+    }
+
+    /**
+     * Discovers and returns the {@link SchemaValidatorFactory}
+     * implementation that matches the given JPA specification version within
+     * the specified {@link ModuleLayer}.
+     *
+     * @param jpaVersion the JPA specification version (e.g.&nbsp;{@code "2.2"}
+     *                   or {@code "3.1"})
+     * @param layer      the module layer used to discover the factory
+     * @return the factory implementation for the requested version
+     * @throws IllegalArgumentException if the version is not recognized
+     * @throws IllegalStateException    if no provider is registered for
+     *                                  the resolved namespace
+     * @since 3.1.0
+     */
+    static SchemaValidatorFactory newSchemaValidatorFactory(String jpaVersion, ModuleLayer layer) {
+        return PersistenceLinterFactory.newPersistenceLinterFactory(jpaVersion, SchemaValidatorFactory.class, layer);
     }
 
 }
