@@ -106,6 +106,51 @@ Both factory methods accept JPA version strings (`"2.0"` – `"2.2"` for `javax`
 
 ---
 
+## 🧩 Java Platform Module System (JPMS) Integration
+
+Starting with version `3.1.0`, all **Persistence Tools Libraries** provide native support for the Java Platform Module System (JPMS). The libraries ship with explicit module descriptors, ensuring strong encapsulation and compile-time safety.
+
+### 1. Module Identifiers
+If your application or Gradle plugin is modularized, add the core API module to your `module-info.java`:
+
+```java
+module com.example.myapp {
+    requires io.github.jpersist.tools.api;
+}
+```
+
+*Note: You only need to require the `api` module. Concrete providers (`jakarta` or `legacy`) are decoupled and automatically discovered at runtime via the native JVM `ServiceLoader` path.*
+
+### 2. Deep Reflection Boundaries (`opens` Directives)
+Because `HibernateEnhancer` transforms bytecode at build time and Hibernate routinely utilizes deep reflection to inspect entity fields and properties, you **must** open your entity packages to the concrete provider modules.
+
+Failure to do so will cause the JVM to throw `InaccessibleObjectException` or `IllegalAccessError` during verification tasks.
+
+#### For Jakarta Persistence (JPA 3.x / Hibernate 6)
+Open your application's domain or entity packages to the `persistence-tools-jakarta` provider:
+
+```java
+module com.example.myapp {
+    requires io.github.jpersist.tools.api;
+
+    // Open entity packages to allow Hibernate 6 reflective metadata access
+    opens com.example.myapp.domain to io.github.jpersist.tools.jakarta;
+}
+```
+
+#### For Legacy Persistence (JPA 2.x / Hibernate 5)
+Open your application's domain or entity packages to the `persistence-tools-legacy` provider:
+
+```java
+module com.example.myapp {
+    requires io.github.jpersist.tools.api;
+
+    // Open entity packages to allow Hibernate 5 reflective metadata access
+    opens com.example.myapp.domain to io.github.jpersist.tools.legacy;
+}
+```
+---
+
 ## 🏗️ Architecture
 
 ```
