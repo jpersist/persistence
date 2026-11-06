@@ -55,7 +55,7 @@ jobs:
 
       - name: Generate Documentation
         working-directory: libraries
-        run: ../gradlew aggregateJavadoc
+        run: ../gradlew aggregateAllJavadocs
 
       - name: Prepare Versioned Site
         run: |

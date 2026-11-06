@@ -13,21 +13,6 @@ dependencies {
 
 configurations.jacocoAggregation.extendsFrom(configurations.testReportAggregation)
 
-// 1. Define a dedicated configuration for module aggregation at the very top of your root file
-configurations {
-    javadocAggregation {
-        canBeConsumed = false
-        canBeResolved = true
-    }
-}
-
-// 2. Add your subprojects as non-transitive dependencies
-dependencies {
-    javadocAggregation(project(':persistence-tools-api')) { transitive = false }
-    javadocAggregation(project(':persistence-tools-jakarta')) { transitive = false }
-    javadocAggregation(project(':persistence-tools-legacy')) { transitive = false }
-}
-
 allprojects {
     repositories {
         mavenCentral()
@@ -61,53 +46,94 @@ sonar {
     }
 }
 
+// 🌟 REUSABLE JAVADOC CONFIGURATION HELPER
+// Extracts shared configurations, HTML5 options, custom vector SVG favicon injections,
+// and post-build copy actions into a single maintainable routine.
+void configureSharedJavadoc(Javadoc task, String docTitle, String windowTitle, String relativeDestPath) {
+    task.group = 'documentation'
+
+    // Wire up common doclet output locations
+    task.destinationDir = file("${buildDir}/docs/javadoc/${relativeDestPath}")
+
+    task.options {
+        overview = file("${rootDir}/src/docs/overview.html")
+        encoding = 'UTF-8'
+        docEncoding = 'UTF-8'
+        charSet = 'UTF-8'
+
+        task.options.docTitle = docTitle
+        task.options.windowTitle = windowTitle
+
+        // Force native HTML5 compilation structure
+        addBooleanOption('html5', true)
+
+        // 🌟 CRITICAL SECURITY FIX FOR JAVA 13+
+        // Explicitly allows the use of JavaScript within Javadoc comments and options (like -bottom)
+        // to bypass the "error: option -bottom contains JavaScript" compilation failure.
+        addBooleanOption('-allow-script-in-comments', true)
+
+        // Bind core JDK documentation reference maps
+        links('https://docs.oracle.com/en/java/javase/17/docs/api/')
+
+        // INJECT CUSTOM SVG FAVICON via -bottom EXECUTION HOOK
+        // Injects a lightweight responsive inline observer script to bind the high-integrity
+        // vector graphic directly inside the active HTML <head> node across compiled views.
+        bottom = """
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                var links = document.getElementsByTagName('link');
+                var hasFavicon = false;
+                for (var i = 0; i < links.length; i++) {
+                    if (links[i].rel === 'icon' || links[i].rel === 'shortcut icon') {
+                        hasFavicon = true;
+                        break;
+                    }
+                }
+                if (!hasFavicon) {
+                    var link = document.createElement('link');
+                    link.rel = 'icon';
+                    link.type = 'image/svg+xml';
+                    link.href = 'resources/favicon.svg';
+                    document.getElementsByTagName('head')[0].appendChild(link);
+                }
+            });
+        </script>
+        """
+    }
+
+    // DISCOVERY HOOK: Automate static asset copies into target distribution directories
+    task.doLast {
+        copy {
+            from "${rootDir}/src/docs/resources/favicon.svg"
+            into "${task.destinationDir}/resources"
+        }
+    }
+}
+
+// ------------------------------------------------------------------------------------------------
+// JAVADOC AGGREGATION TASKS DEFINITIONS
+// ------------------------------------------------------------------------------------------------
+
 tasks.register('aggregateJavadoc', Javadoc) {
-    group = 'documentation'
     description = 'Generates aggregated Javadoc for all library modules with flat classpath fallback.'
-    title = "Persistence Tools Libraries API"
 
     def javaSubprojects = subprojects.findAll { it.plugins.hasPlugin('java-library') }
     dependsOn javaSubprojects.collect { it.tasks.named('classes') }
 
-    // 1. CLASSPATH WORKAROUND - SOURCE FILTERING:
-    // Explicitly target all source sets but exclude 'module-info.java' descriptors.
-    // This forces the Javadoc compiler to build in a clean, non-modular environment.
-    def allSources = javaSubprojects.collect { it.sourceSets.main.allJava }
-    source = files(allSources).asFileTree.matching {
+    // Strip module-info.java descriptors to avoid compilation path pollution on a flat model
+    source = files(javaSubprojects.collect { it.sourceSets.main.allJava }).asFileTree.matching {
         exclude 'module-info.java'
     }
 
-    // 2. CLASSPATH WORKAROUND - DEPENDENCY FLATTENING:
-    // Gather all module classpaths and place them on the standard flat classpath.
-    // Explicitly disable Gradle's native JPMS path inference to completely eliminate
-    // the automatic module naming collision between Hibernate 5 and Hibernate 6.
     classpath = files(javaSubprojects.collect { it.sourceSets.main.compileClasspath })
-
     modularity.inferModulePath = false
 
-    // Set the output directory
-    destinationDir = file("${buildDir}/docs/javadoc")
-
-    options {
-        overview = file("${rootDir}/src/docs/overview.html")
-        encoding = 'UTF-8'
-        docTitle = 'JPersist Persistence Tools Libraries API Reference'
-        windowTitle = 'JPersist Persistence Tools API'
-        docEncoding = 'UTF-8'
-        charSet = 'UTF-8'
-
-        // Enable modern HTML5 rendering with the "Modules" search bar
-        addBooleanOption('html5', true)
-
-        // Link to external JDK 17 docs
-        links('https://docs.oracle.com/en/java/javase/17/docs/api/')
-    }
+    // Apply corporate styling conventions through our shared helper logic
+    configureSharedJavadoc(it, 'JPersist Persistence Tools Libraries API Reference', 'JPersist Persistence Tools API', '')
 }
 
 tasks.register('aggregateJavadocJakarta', Javadoc) {
-    group = 'documentation'
     description = 'Generates aggregated modular Javadoc for the Jakarta/Hibernate 6 ecosystem.'
-    title = "Persistence Tools Libraries API (Jakarta Suite)"
 
     def targetProjects = [project(':persistence-tools-api'), project(':persistence-tools-jakarta')]
     dependsOn targetProjects.collect { it.tasks.named('classes') }
@@ -115,34 +141,19 @@ tasks.register('aggregateJavadocJakarta', Javadoc) {
     source = files(targetProjects.collect { it.sourceSets.main.allJava })
     classpath = files(targetProjects.collect { it.sourceSets.main.compileClasspath })
 
-    destinationDir = file("${buildDir}/docs/javadoc/jakarta")
-
     options {
-        overview = file("${rootDir}/src/docs/overview.html")
-        encoding = 'UTF-8'
-        docTitle = 'JPersist Persistence Tools Libraries API Reference (Jakarta Suite)'
-        windowTitle = 'JPersist Persistence Tools API - Jakarta'
-        docEncoding = 'UTF-8'
-        charSet = 'UTF-8'
-
-        // Enable modern HTML5 rendering with the "Modules" search bar
-        addBooleanOption('html5', true)
-
-        // Module source path mappings for multi-module JPMS Javadoc
+        // Enforce exact module source mappings for strict multi-module isolation
         addMultilineStringsOption('-module-source-path').value = [
             "io.github.jpersist.tools.api=${project(':persistence-tools-api').file('src/main/java')}".toString(),
             "io.github.jpersist.tools.jakarta=${project(':persistence-tools-jakarta').file('src/main/java')}".toString()
         ]
-
-        // Link to external JDK 17 docs
-        links('https://docs.oracle.com/en/java/javase/17/docs/api/')
     }
+
+    configureSharedJavadoc(it, 'JPersist Persistence Tools Libraries API Reference (Jakarta Suite)', 'JPersist Persistence Tools API - Jakarta', 'jakarta')
 }
 
 tasks.register('aggregateJavadocLegacy', Javadoc) {
-    group = 'documentation'
     description = 'Generates aggregated modular Javadoc for the Legacy/Hibernate 5 ecosystem.'
-    title = "Persistence Tools Libraries API (Legacy Suite)"
 
     def targetProjects = [project(':persistence-tools-api'), project(':persistence-tools-legacy')]
     dependsOn targetProjects.collect { it.tasks.named('classes') }
@@ -150,26 +161,37 @@ tasks.register('aggregateJavadocLegacy', Javadoc) {
     source = files(targetProjects.collect { it.sourceSets.main.allJava })
     classpath = files(targetProjects.collect { it.sourceSets.main.compileClasspath })
 
-    destinationDir = file("${buildDir}/docs/javadoc/legacy")
-
     options {
-        overview = file("${rootDir}/src/docs/overview.html")
-        encoding = 'UTF-8'
-        docTitle = 'JPersist Persistence Tools Libraries API Reference (Legacy Suite)'
-        windowTitle = 'JPersist Persistence Tools API - Legacy'
-        docEncoding = 'UTF-8'
-        charSet = 'UTF-8'
-
-        // Enable modern HTML5 rendering with the "Modules" search bar
-        addBooleanOption('html5', true)
-
-        // Module source path mappings for multi-module JPMS Javadoc
+        // Enforce exact module source mappings for strict multi-module isolation
         addMultilineStringsOption('-module-source-path').value = [
             "io.github.jpersist.tools.api=${project(':persistence-tools-api').file('src/main/java')}".toString(),
             "io.github.jpersist.tools.legacy=${project(':persistence-tools-legacy').file('src/main/java')}".toString()
         ]
-
-        // Link to external JDK 17 docs
-        links('https://docs.oracle.com/en/java/javase/17/docs/api/')
     }
+
+    configureSharedJavadoc(it, 'JPersist Persistence Tools Libraries API Reference (Legacy Suite)', 'JPersist Persistence Tools API - Legacy', 'legacy')
+}
+
+// 🌟 LIFECYCLE AGGREGATION TASK
+// Groups all documentation pipelines (Global Flat, Modular Jakarta, and Modular Legacy)
+// under a single execution shortcut task: ./gradlew aggregateAllJavadocs
+tasks.register('aggregateAllJavadocs') {
+    group = 'documentation'
+    description = 'Executes all three Javadoc generation pipelines sequentially (Flat first, then Modular versions).'
+
+    // Bind dependencies to trigger execution of all three variant targets automatically
+    dependsOn tasks.named('aggregateJavadoc')
+    dependsOn tasks.named('aggregateJavadocJakarta')
+    dependsOn tasks.named('aggregateJavadocLegacy')
+}
+
+// 🌟 SEQUENTIAL EXECUTION ENFORCEMENT
+// Ensures that modular Javadoc builds strictly execute AFTER the global flat classpath Javadoc
+// has finished its compilation and asset lifecycle steps.
+tasks.named('aggregateJavadocJakarta') {
+    mustRunAfter tasks.named('aggregateJavadoc')
+}
+
+tasks.named('aggregateJavadocLegacy') {
+    mustRunAfter tasks.named('aggregateJavadoc')
 }

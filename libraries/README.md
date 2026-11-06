@@ -199,12 +199,19 @@ Browse the full API documentation online:
 - ☕ **[Jakarta Persistence Suite (Modular Javadoc)](https://jpersist.github.io/persistence/libraries/api/latest/jakarta/)** — Native JPMS modular documentation for Jakarta Persistence (JPA 3.x) & Hibernate 6 (`io.github.jpersist.tools.api` + `io.github.jpersist.tools.jakarta`).
 - 🏛️ **[Legacy Persistence Suite (Modular Javadoc)](https://jpersist.github.io/persistence/libraries/api/latest/legacy/)** — Native JPMS modular documentation for Legacy Persistence (JPA 2.x) & Hibernate 5 (`io.github.jpersist.tools.api` + `io.github.jpersist.tools.legacy`).
 
-To generate the documentation locally:
+To generate the documentation locally, navigate to the `libraries` directory. You can compile all documentation variants at once using the unified lifecycle task:
 
 ```bash
 cd libraries
 
-# Generate unified aggregate Javadoc across all modules (flat classpath)
+# Generate all documentation variants sequentially (Flat first, then Modular suites)
+../gradlew aggregateAllJavadocs
+```
+
+Alternatively, you can trigger individual documentation pipelines independently:
+
+```bash
+# Generate unified aggregate Javadoc across all modules (flat classpath fallback)
 ../gradlew aggregateJavadoc
 
 # Generate modular JPMS Javadoc for the Jakarta ecosystem (Hibernate 6)
@@ -214,10 +221,12 @@ cd libraries
 ../gradlew aggregateJavadocLegacy
 ```
 
-The generated HTML documentation is written to:
-- `build/docs/javadoc/` (Unified Javadoc)
-- `build/docs/javadoc/jakarta/` (Jakarta Suite Modular Javadoc)
-- `build/docs/javadoc/legacy/` (Legacy Suite Modular Javadoc)
+The compiled responsive HTML5 documentation sites are written to:
+- `build/docs/javadoc/` — Unified flat aggregate documentation
+- `build/docs/javadoc/jakarta/` — Jakarta Suite native modular graphs
+- `build/docs/javadoc/legacy/` — Legacy Suite native modular graphs
+
+*Note: The modular Javadoc pipelines are configured to execute sequentially after the flat aggregate documentation task completes to guarantee clean workspace isolation and prevent build cache layout pollution.*
 
 ---
 
