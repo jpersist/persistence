@@ -28,7 +28,7 @@ The **Persistence Tools Libraries** (group `io.github.jpersist.tools`) provide b
 
 ```groovy
 dependencies {
-    implementation platform('io.github.jpersist.tools:persistence-tools-bom:3.0.0')
+    implementation platform('io.github.jpersist.tools:persistence-tools-bom:3.1.0')
     implementation 'io.github.jpersist.tools:persistence-tools-jakarta'
 }
 ```
@@ -37,7 +37,7 @@ dependencies {
 
 ```groovy
 dependencies {
-    implementation platform('io.github.jpersist.tools:persistence-tools-bom:3.0.0')
+    implementation platform('io.github.jpersist.tools:persistence-tools-bom:3.1.0')
     implementation 'io.github.jpersist.tools:persistence-tools-legacy'
 }
 ```
@@ -100,7 +100,7 @@ validator.validateSchema(Map.of(
 ));
 ```
 
-Both factory methods accept JPA version strings (`"2.0"` – `"2.2"` for `javax`, `"3.0"` – `"3.2"` for `jakarta`) and resolve the correct provider via the `ServiceLoader` API.
+Both factory methods accept JPA version strings (`"2.0"` – `"2.2"` for `javax`, `"3.0"` – `"3.2"` for `jakarta`) and resolve the correct provider via the `ServiceLoader` API. Overloaded methods accepting explicit `ClassLoader` and `ModuleLayer` instances are also supported across all provider factory interfaces for custom runtime topologies.
 
 > **Tip:** You can also use the generic entry point `PersistenceLinterFactory.newPersistenceLinterFactory(jpaVersion, factoryClass)` to discover any `PersistenceLinterFactory` subtype by version.
 
@@ -193,16 +193,31 @@ persistence-tools-bom  (BOM)
 
 ## 📖 API Reference
 
-Browse the full Javadoc at [jpersist.github.io/persistence/libraries/api/latest](https://jpersist.github.io/persistence/libraries/api/latest/)
+Browse the full API documentation online:
+
+- 🌐 **[Unified API Reference (Global Search)](https://jpersist.github.io/persistence/libraries/api/latest/)** — Flat aggregate documentation indexing all modules with global search.
+- ☕ **[Jakarta Persistence Suite (Modular Javadoc)](https://jpersist.github.io/persistence/libraries/api/latest/jakarta/)** — Native JPMS modular documentation for Jakarta Persistence (JPA 3.x) & Hibernate 6 (`io.github.jpersist.tools.api` + `io.github.jpersist.tools.jakarta`).
+- 🏛️ **[Legacy Persistence Suite (Modular Javadoc)](https://jpersist.github.io/persistence/libraries/api/latest/legacy/)** — Native JPMS modular documentation for Legacy Persistence (JPA 2.x) & Hibernate 5 (`io.github.jpersist.tools.api` + `io.github.jpersist.tools.legacy`).
 
 To generate the documentation locally:
 
 ```bash
 cd libraries
+
+# Generate unified aggregate Javadoc across all modules (flat classpath)
 ../gradlew aggregateJavadoc
+
+# Generate modular JPMS Javadoc for the Jakarta ecosystem (Hibernate 6)
+../gradlew aggregateJavadocJakarta
+
+# Generate modular JPMS Javadoc for the Legacy ecosystem (Hibernate 5)
+../gradlew aggregateJavadocLegacy
 ```
 
-The output is written to `build/docs/javadoc/`.
+The generated HTML documentation is written to:
+- `build/docs/javadoc/` (Unified Javadoc)
+- `build/docs/javadoc/jakarta/` (Jakarta Suite Modular Javadoc)
+- `build/docs/javadoc/legacy/` (Legacy Suite Modular Javadoc)
 
 ---
 
