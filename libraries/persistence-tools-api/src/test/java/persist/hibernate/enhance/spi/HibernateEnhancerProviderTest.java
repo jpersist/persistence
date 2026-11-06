@@ -3,6 +3,9 @@ package persist.hibernate.enhance.spi;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import persist.test.mock.MockJakartaHibernateEnhancerProvider;
+import persist.test.mock.MockJavaxHibernateEnhancerProvider;
+import persist.test.mock.TestModuleLayers;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -144,6 +147,82 @@ class HibernateEnhancerProviderTest {
     }
 
     @Test
+    void getHibernateEnhancerProvider_withModuleLayer_discoversCustomProvider() {
+        ModuleLayer layer = TestModuleLayers.createModularLayer(
+            getClass().getClassLoader(),
+            HibernateEnhancerProvider.class,
+            MockJakartaHibernateEnhancerProvider.class
+        );
+
+        Object provider = TestModuleLayers.invokeStatic(
+            layer,
+            HibernateEnhancerProvider.class,
+            "getHibernateEnhancerProvider",
+            new Class<?>[]{String.class, ModuleLayer.class},
+            "3.1",
+            layer
+        );
+
+        assertThat(provider).isNotNull();
+        assertThat(provider.getClass().getName()).isEqualTo(MockJakartaHibernateEnhancerProvider.class.getName());
+    }
+
+    @Test
+    void getHibernateEnhancerProvider_withModuleLayer_discoversCustomLegacyProvider() {
+        ModuleLayer layer = TestModuleLayers.createModularLayer(
+            getClass().getClassLoader(),
+            HibernateEnhancerProvider.class,
+            MockJavaxHibernateEnhancerProvider.class
+        );
+
+        Object provider = TestModuleLayers.invokeStatic(
+            layer,
+            HibernateEnhancerProvider.class,
+            "getHibernateEnhancerProvider",
+            new Class<?>[]{String.class, ModuleLayer.class},
+            "2.2",
+            layer
+        );
+
+        assertThat(provider).isNotNull();
+        assertThat(provider.getClass().getName()).isEqualTo(MockJavaxHibernateEnhancerProvider.class.getName());
+    }
+
+    @Test
+    void getHibernateEnhancerProvider_withModuleLayer_withNullVersion_throwsNullPointerException() {
+        ModuleLayer bootLayer = ModuleLayer.boot();
+        assertThatThrownBy(() -> HibernateEnhancerProvider.getHibernateEnhancerProvider(null, bootLayer))
+            .isInstanceOf(NullPointerException.class);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"4.0", "0.0", "99", "abc", ""})
+    void getHibernateEnhancerProvider_withModuleLayer_withVariousInvalidVersions_throwsIllegalArgumentException(String version) {
+        ModuleLayer bootLayer = ModuleLayer.boot();
+        assertThatThrownBy(() -> HibernateEnhancerProvider.getHibernateEnhancerProvider(version, bootLayer))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("Unsupported JPA version: " + version);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"2.0", "2.1", "2.2"})
+    void getHibernateEnhancerProvider_withModuleLayer_withLegacyVersions_resolvesJavaxNamespace(String version) {
+        ModuleLayer bootLayer = ModuleLayer.boot();
+        assertThatThrownBy(() -> HibernateEnhancerProvider.getHibernateEnhancerProvider(version, bootLayer))
+            .isInstanceOf(IllegalStateException.class)
+            .hasMessageContaining("javax");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"3.0", "3.1", "3.2"})
+    void getHibernateEnhancerProvider_withModuleLayer_withJakartaVersions_resolvesJakartaNamespace(String version) {
+        ModuleLayer bootLayer = ModuleLayer.boot();
+        assertThatThrownBy(() -> HibernateEnhancerProvider.getHibernateEnhancerProvider(version, bootLayer))
+            .isInstanceOf(IllegalStateException.class)
+            .hasMessageContaining("jakarta");
+    }
+
+    @Test
     void getHibernateEnhancerProvider_withModuleLayer_withUnsupportedVersion_throwsIllegalArgumentException() {
         ModuleLayer bootLayer = ModuleLayer.boot();
         assertThatThrownBy(() -> HibernateEnhancerProvider.getHibernateEnhancerProvider("1.0", bootLayer))
@@ -155,6 +234,14 @@ class HibernateEnhancerProviderTest {
     void getHibernateEnhancerProvider_withModuleLayer_whenNoProviderFound_throwsIllegalStateException() {
         ModuleLayer bootLayer = ModuleLayer.boot();
         assertThatThrownBy(() -> HibernateEnhancerProvider.getHibernateEnhancerProvider("3.1", bootLayer))
+            .isInstanceOf(IllegalStateException.class)
+            .hasMessageContaining("HibernateEnhancerProvider");
+    }
+
+    @Test
+    void getHibernateEnhancerProvider_withEmptyModuleLayer_whenNoProviderFound_throwsIllegalStateException() {
+        ModuleLayer emptyLayer = ModuleLayer.empty();
+        assertThatThrownBy(() -> HibernateEnhancerProvider.getHibernateEnhancerProvider("3.1", emptyLayer))
             .isInstanceOf(IllegalStateException.class)
             .hasMessageContaining("HibernateEnhancerProvider");
     }

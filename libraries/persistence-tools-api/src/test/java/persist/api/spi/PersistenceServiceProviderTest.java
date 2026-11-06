@@ -3,6 +3,9 @@ package persist.api.spi;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import persist.test.mock.MockJakartaPersistenceServiceProvider;
+import persist.test.mock.MockJavaxPersistenceServiceProvider;
+import persist.test.mock.TestModuleLayers;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -171,6 +174,84 @@ class PersistenceServiceProviderTest {
     }
 
     @Test
+    void getServiceProvider_withModuleLayer_discoversCustomProvider() {
+        ModuleLayer layer = TestModuleLayers.createModularLayer(
+            getClass().getClassLoader(),
+            PersistenceServiceProvider.class,
+            MockJakartaPersistenceServiceProvider.class
+        );
+
+        Object provider = TestModuleLayers.invokeStatic(
+            layer,
+            PersistenceServiceProvider.class,
+            "getServiceProvider",
+            new Class<?>[]{String.class, Class.class, ModuleLayer.class},
+            "3.1",
+            PersistenceServiceProvider.class,
+            layer
+        );
+
+        assertThat(provider).isNotNull();
+        assertThat(provider.getClass().getName()).isEqualTo(MockJakartaPersistenceServiceProvider.class.getName());
+    }
+
+    @Test
+    void getServiceProvider_withModuleLayer_discoversCustomLegacyProvider() {
+        ModuleLayer layer = TestModuleLayers.createModularLayer(
+            getClass().getClassLoader(),
+            PersistenceServiceProvider.class,
+            MockJavaxPersistenceServiceProvider.class
+        );
+
+        Object provider = TestModuleLayers.invokeStatic(
+            layer,
+            PersistenceServiceProvider.class,
+            "getServiceProvider",
+            new Class<?>[]{String.class, Class.class, ModuleLayer.class},
+            "2.2",
+            PersistenceServiceProvider.class,
+            layer
+        );
+
+        assertThat(provider).isNotNull();
+        assertThat(provider.getClass().getName()).isEqualTo(MockJavaxPersistenceServiceProvider.class.getName());
+    }
+
+    @Test
+    void getServiceProvider_withModuleLayer_withNullVersion_throwsNullPointerException() {
+        ModuleLayer bootLayer = ModuleLayer.boot();
+        assertThatThrownBy(() -> PersistenceServiceProvider.getServiceProvider(null, PersistenceServiceProvider.class, bootLayer))
+            .isInstanceOf(NullPointerException.class);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"4.0", "0.0", "99", "abc", ""})
+    void getServiceProvider_withModuleLayer_withVariousInvalidVersions_throwsIllegalArgumentException(String version) {
+        ModuleLayer bootLayer = ModuleLayer.boot();
+        assertThatThrownBy(() -> PersistenceServiceProvider.getServiceProvider(version, PersistenceServiceProvider.class, bootLayer))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("Unsupported JPA version: " + version);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"2.0", "2.1", "2.2"})
+    void getServiceProvider_withModuleLayer_withLegacyVersions_resolvesJavaxNamespace(String version) {
+        ModuleLayer bootLayer = ModuleLayer.boot();
+        assertThatThrownBy(() -> PersistenceServiceProvider.getServiceProvider(version, PersistenceServiceProvider.class, bootLayer))
+            .isInstanceOf(IllegalStateException.class)
+            .hasMessageContaining("javax");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"3.0", "3.1", "3.2"})
+    void getServiceProvider_withModuleLayer_withJakartaVersions_resolvesJakartaNamespace(String version) {
+        ModuleLayer bootLayer = ModuleLayer.boot();
+        assertThatThrownBy(() -> PersistenceServiceProvider.getServiceProvider(version, PersistenceServiceProvider.class, bootLayer))
+            .isInstanceOf(IllegalStateException.class)
+            .hasMessageContaining("jakarta");
+    }
+
+    @Test
     void getServiceProvider_withModuleLayer_withUnsupportedVersion_throwsIllegalArgumentException() {
         ModuleLayer bootLayer = ModuleLayer.boot();
         assertThatThrownBy(() -> PersistenceServiceProvider.getServiceProvider("1.0", PersistenceServiceProvider.class, bootLayer))
@@ -182,6 +263,14 @@ class PersistenceServiceProviderTest {
     void getServiceProvider_withModuleLayer_whenNoProviderFound_throwsIllegalStateException() {
         ModuleLayer bootLayer = ModuleLayer.boot();
         assertThatThrownBy(() -> PersistenceServiceProvider.getServiceProvider("3.1", PersistenceServiceProvider.class, bootLayer))
+            .isInstanceOf(IllegalStateException.class)
+            .hasMessageContaining("Failed to discover a registered PersistenceServiceProvider provider for namespace: jakarta");
+    }
+
+    @Test
+    void getServiceProvider_withEmptyModuleLayer_whenNoProviderFound_throwsIllegalStateException() {
+        ModuleLayer emptyLayer = ModuleLayer.empty();
+        assertThatThrownBy(() -> PersistenceServiceProvider.getServiceProvider("3.1", PersistenceServiceProvider.class, emptyLayer))
             .isInstanceOf(IllegalStateException.class)
             .hasMessageContaining("Failed to discover a registered PersistenceServiceProvider provider for namespace: jakarta");
     }

@@ -3,6 +3,9 @@ package persist.lint.api.spi;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import persist.test.mock.MockJakartaNamedObjectParserFactory;
+import persist.test.mock.MockJakartaSchemaValidatorFactory;
+import persist.test.mock.TestModuleLayers;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -182,6 +185,104 @@ class PersistenceLinterFactoryTest {
     }
 
     @Test
+    void newPersistenceLinterFactory_withModuleLayer_discoversCustomFactory() {
+        ModuleLayer layer = TestModuleLayers.createModularLayer(
+            getClass().getClassLoader(),
+            NamedObjectParserFactory.class,
+            MockJakartaNamedObjectParserFactory.class
+        );
+
+        Object factory = TestModuleLayers.invokeStatic(
+            layer,
+            PersistenceLinterFactory.class,
+            "newPersistenceLinterFactory",
+            new Class<?>[]{String.class, Class.class, ModuleLayer.class},
+            "3.1",
+            NamedObjectParserFactory.class,
+            layer
+        );
+
+        assertThat(factory).isNotNull();
+        assertThat(factory.getClass().getName()).isEqualTo(MockJakartaNamedObjectParserFactory.class.getName());
+    }
+
+    @Test
+    void newNamedObjectParserFactory_withModuleLayer_discoversCustomFactory() {
+        ModuleLayer layer = TestModuleLayers.createModularLayer(
+            getClass().getClassLoader(),
+            NamedObjectParserFactory.class,
+            MockJakartaNamedObjectParserFactory.class
+        );
+
+        Object factory = TestModuleLayers.invokeStatic(
+            layer,
+            PersistenceLinterFactory.class,
+            "newNamedObjectParserFactory",
+            new Class<?>[]{String.class, ModuleLayer.class},
+            "3.1",
+            layer
+        );
+
+        assertThat(factory).isNotNull();
+        assertThat(factory.getClass().getName()).isEqualTo(MockJakartaNamedObjectParserFactory.class.getName());
+    }
+
+    @Test
+    void newSchemaValidatorFactory_withModuleLayer_discoversCustomFactory() {
+        ModuleLayer layer = TestModuleLayers.createModularLayer(
+            getClass().getClassLoader(),
+            SchemaValidatorFactory.class,
+            MockJakartaSchemaValidatorFactory.class
+        );
+
+        Object factory = TestModuleLayers.invokeStatic(
+            layer,
+            PersistenceLinterFactory.class,
+            "newSchemaValidatorFactory",
+            new Class<?>[]{String.class, ModuleLayer.class},
+            "3.1",
+            layer
+        );
+
+        assertThat(factory).isNotNull();
+        assertThat(factory.getClass().getName()).isEqualTo(MockJakartaSchemaValidatorFactory.class.getName());
+    }
+
+    @Test
+    void newPersistenceLinterFactory_withModuleLayer_withNullVersion_throwsNullPointerException() {
+        ModuleLayer bootLayer = ModuleLayer.boot();
+        assertThatThrownBy(() -> PersistenceLinterFactory.newPersistenceLinterFactory(null, NamedObjectParserFactory.class, bootLayer))
+            .isInstanceOf(NullPointerException.class);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"4.0", "0.0", "99", "abc", ""})
+    void newPersistenceLinterFactory_withModuleLayer_withVariousInvalidVersions_throwsIllegalArgumentException(String version) {
+        ModuleLayer bootLayer = ModuleLayer.boot();
+        assertThatThrownBy(() -> PersistenceLinterFactory.newPersistenceLinterFactory(version, NamedObjectParserFactory.class, bootLayer))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("Unsupported JPA version: " + version);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"2.0", "2.1", "2.2"})
+    void newPersistenceLinterFactory_withModuleLayer_withLegacyVersions_resolvesJavaxNamespace(String version) {
+        ModuleLayer bootLayer = ModuleLayer.boot();
+        assertThatThrownBy(() -> PersistenceLinterFactory.newPersistenceLinterFactory(version, NamedObjectParserFactory.class, bootLayer))
+            .isInstanceOf(IllegalStateException.class)
+            .hasMessageContaining("javax");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"3.0", "3.1", "3.2"})
+    void newPersistenceLinterFactory_withModuleLayer_withJakartaVersions_resolvesJakartaNamespace(String version) {
+        ModuleLayer bootLayer = ModuleLayer.boot();
+        assertThatThrownBy(() -> PersistenceLinterFactory.newPersistenceLinterFactory(version, NamedObjectParserFactory.class, bootLayer))
+            .isInstanceOf(IllegalStateException.class)
+            .hasMessageContaining("jakarta");
+    }
+
+    @Test
     void newPersistenceLinterFactory_withModuleLayer_whenNoProviderFound_throwsIllegalStateException() {
         ModuleLayer bootLayer = ModuleLayer.boot();
         assertThatThrownBy(() -> PersistenceLinterFactory.newPersistenceLinterFactory("3.1", NamedObjectParserFactory.class, bootLayer))
@@ -203,6 +304,14 @@ class PersistenceLinterFactoryTest {
         assertThatThrownBy(() -> PersistenceLinterFactory.newSchemaValidatorFactory("3.1", bootLayer))
             .isInstanceOf(IllegalStateException.class)
             .hasMessageContaining("SchemaValidatorFactory");
+    }
+
+    @Test
+    void newPersistenceLinterFactory_withEmptyModuleLayer_whenNoProviderFound_throwsIllegalStateException() {
+        ModuleLayer emptyLayer = ModuleLayer.empty();
+        assertThatThrownBy(() -> PersistenceLinterFactory.newPersistenceLinterFactory("3.1", NamedObjectParserFactory.class, emptyLayer))
+            .isInstanceOf(IllegalStateException.class)
+            .hasMessageContaining("NamedObjectParserFactory");
     }
 
 }
