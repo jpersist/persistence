@@ -1,0 +1,9 @@
+module:io.github.jpersist.tools.api
+persist.api.spi
+persist.hibernate.enhance.spi
+persist.lint.api
+persist.lint.api.spi
+module:io.github.jpersist.tools.legacy
+persist.hibernate.enhance.legacy
+persist.legacy.spi
+persist.lint.legacy
