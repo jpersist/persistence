@@ -1,1 +1,1 @@
-persist.lint.legacy.LegacySchemaValidatorFactory
+hibernate.persistence.tools.provider.HibernateSchemaValidatorFactory
