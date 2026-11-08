@@ -7,8 +7,8 @@ plugins {
 
 dependencies {
     testReportAggregation project(':persistence-tools-api')
-    testReportAggregation project(':persistence-tools-jakarta')
-    testReportAggregation project(':persistence-tools-legacy')
+    testReportAggregation project(':hibernate-persistence-tools')
+    testReportAggregation project(':hibernate-orm-persistence-tools')
 }
 
 configurations.jacocoAggregation.extendsFrom(configurations.testReportAggregation)
@@ -135,7 +135,7 @@ tasks.register('aggregateJavadoc', Javadoc) {
 tasks.register('aggregateJavadocJakarta', Javadoc) {
     description = 'Generates aggregated modular Javadoc for the Jakarta/Hibernate 6 ecosystem.'
 
-    def targetProjects = [project(':persistence-tools-api'), project(':persistence-tools-jakarta')]
+    def targetProjects = [project(':persistence-tools-api'), project(':hibernate-orm-persistence-tools')]
     dependsOn targetProjects.collect { it.tasks.named('classes') }
 
     source = files(targetProjects.collect { it.sourceSets.main.allJava })
@@ -145,7 +145,7 @@ tasks.register('aggregateJavadocJakarta', Javadoc) {
         // Enforce exact module source mappings for strict multi-module isolation
         addMultilineStringsOption('-module-source-path').value = [
             "io.github.jpersist.tools.api=${project(':persistence-tools-api').file('src/main/java')}".toString(),
-            "io.github.jpersist.tools.jakarta=${project(':persistence-tools-jakarta').file('src/main/java')}".toString()
+            "io.github.jpersist.tools.jakarta=${project(':hibernate-orm-persistence-tools').file('src/main/java')}".toString()
         ]
     }
 
@@ -155,7 +155,7 @@ tasks.register('aggregateJavadocJakarta', Javadoc) {
 tasks.register('aggregateJavadocLegacy', Javadoc) {
     description = 'Generates aggregated modular Javadoc for the Legacy/Hibernate 5 ecosystem.'
 
-    def targetProjects = [project(':persistence-tools-api'), project(':persistence-tools-legacy')]
+    def targetProjects = [project(':persistence-tools-api'), project(':hibernate-persistence-tools')]
     dependsOn targetProjects.collect { it.tasks.named('classes') }
 
     source = files(targetProjects.collect { it.sourceSets.main.allJava })
@@ -165,7 +165,7 @@ tasks.register('aggregateJavadocLegacy', Javadoc) {
         // Enforce exact module source mappings for strict multi-module isolation
         addMultilineStringsOption('-module-source-path').value = [
             "io.github.jpersist.tools.api=${project(':persistence-tools-api').file('src/main/java')}".toString(),
-            "io.github.jpersist.tools.legacy=${project(':persistence-tools-legacy').file('src/main/java')}".toString()
+            "io.github.jpersist.tools.legacy=${project(':hibernate-persistence-tools').file('src/main/java')}".toString()
         ]
     }
 

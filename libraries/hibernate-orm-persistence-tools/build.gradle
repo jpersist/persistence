@@ -1,0 +1,28 @@
+plugins {
+    id 'library-conventions'
+    id 'publishing-conventions'
+}
+
+group = 'io.github.jpersist.tools'
+version = '2.0.0-SNAPSHOT'
+
+dependencies {
+    api project(':persistence-tools-api')
+
+    implementation libs.hibernate.orm.core
+
+    testRuntimeOnly 'com.h2database:h2:2.2.224'
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            pom {
+                name = 'Hibernate 6 Persistence Tools'
+                description = 'Hibernate Jakarta Persistence (JPA 3.x) provider'
+            }
+        }
+    }
+}

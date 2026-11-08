@@ -1,0 +1,28 @@
+plugins {
+    id 'library-conventions'
+    id 'publishing-conventions'
+}
+
+group = 'io.github.jpersist.tools'
+version = '1.0.0-SNAPSHOT'
+
+dependencies {
+    api project(':persistence-tools-api')
+
+    implementation libs.hibernate.core
+
+    testRuntimeOnly 'com.h2database:h2:1.4.200'
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            pom {
+                name = 'Hibernate 5 Persistence Tools'
+                description = 'Hibernate Legacy `javax.persistence` (JPA 2.x) provider'
+            }
+        }
+    }
+}
