@@ -1,34 +1,4 @@
-import persistence.tools.spi.EnhancerProvider;
-import persistence.tools.spi.NamedObjectParserFactory;
-import persistence.tools.spi.SchemaValidatorFactory;
-
-/**
- * Jakarta Persistence (JPA&nbsp;3.x) provider module for the Persistence Tools Libraries.
- *
- * <p>This module implements the SPIs defined in
- * {@code io.github.jpersist.tools.api} using Hibernate ORM&nbsp;6 and
- * Jakarta Persistence. It provides build-time JPQL query validation via
- * Hibernate's Semantic Query Model (SQM), database schema validation,
- * and entity bytecode enhancement.</p>
- *
- * <h2>Provided services</h2>
- * <ul>
- *   <li>{@link NamedObjectParserFactory} &mdash;
- *       implemented by {@code persist.lint.jakarta.JakartaNamedObjectParserFactory}</li>
- *   <li>{@link SchemaValidatorFactory} &mdash;
- *       implemented by {@code persist.lint.jakarta.JakartaSchemaValidatorFactory}</li>
- *   <li>{@link EnhancerProvider} &mdash;
- *       implemented by {@code persist.hibernate.enhance.jakarta.JakartaHibernateEnhancerProvider}</li>
- * </ul>
- *
- * <h2>Encapsulation</h2>
- * <p>No packages are exported. All interaction with this module occurs
- * through the SPI interfaces declared in the API module and discovered
- * via the {@link java.util.ServiceLoader} mechanism.</p>
- *
- * @since 3.1.0
- */
-module io.github.jpersist.tools.jakarta {
+module io.github.jpersist.tools.hibernate.orm {
     // 1. Depend on the core JPersist validation and enhancer API
     requires io.github.jpersist.tools.api;
 
@@ -41,15 +11,15 @@ module io.github.jpersist.tools.jakarta {
     requires jakarta.persistence;
 
     // 4. Register linter and validator factories into the native ServiceLoader
-    provides NamedObjectParserFactory
-        with persist.lint.jakarta.JakartaNamedObjectParserFactory;
+    provides persistence.tools.spi.NamedObjectParserFactory
+        with hibernate.persistence.tools.provider.HibernateNamedObjectParserFactory;
 
-    provides SchemaValidatorFactory
-        with persist.lint.jakarta.JakartaSchemaValidatorFactory;
+    provides persistence.tools.spi.SchemaValidatorFactory
+        with hibernate.persistence.tools.provider.HibernateSchemaValidatorFactory;
 
     // 5. Register the bytecode enhancement provider into the native ServiceLoader
-    provides EnhancerProvider
-        with persist.hibernate.enhance.jakarta.JakartaHibernateEnhancerProvider;
+    provides persistence.tools.spi.EnhancerProvider
+        with hibernate.persistence.tools.provider.HibernateEnhancerProvider;
 
     // 6. Enforce strong encapsulation by hiding all implementation packages.
     // No 'exports' directive is specified here since the project interacts

@@ -1,1 +1,1 @@
-persist.lint.jakarta.JakartaNamedObjectParserFactory
+hibernate.persistence.tools.provider.HibernateNamedObjectParserFactory

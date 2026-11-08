@@ -1,0 +1,143 @@
+package hibernate.persistence.tools;
+
+import hibernate.persistence.tools.provider.HibernateEnhancerProvider;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
+import persistence.tools.Enhancer;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.util.Collections;
+import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+
+class HibernateEnhancerTest {
+
+    private static final String PRODUCT_CLASS_NAME = "hibernate.persistence.tools.model.Product";
+
+    private static File classesDir;
+
+    private static byte[] loadClassBytes(String className) throws IOException {
+        String resourcePath = className.replace('.', '/') + ".class";
+        try (InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourcePath)) {
+            assertThat(is).as("Class resource for %s", className).isNotNull();
+            return is.readAllBytes();
+        }
+    }
+
+    private static File loadClassesDir() throws URISyntaxException {
+        return new File(HibernateEnhancerTest.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+    }
+
+    @BeforeAll
+    static void setup() throws URISyntaxException {
+        classesDir = loadClassesDir();
+    }
+
+    @Test
+    void from_withClassesDir_returnsNonNullEnhancer() {
+        var enhancer = new HibernateEnhancerProvider().getEnhancer(
+                classesDir, Collections.emptySet(), Collections.emptyMap());
+
+        assertThat(enhancer).isNotNull();
+    }
+
+    @Test
+    void from_withClassesDir_returnsHibernateEnhancer() {
+        var enhancer = new HibernateEnhancerProvider().getEnhancer(
+                classesDir, Collections.emptySet(), Collections.emptyMap());
+
+        assertThat(enhancer).isInstanceOf(Enhancer.class);
+    }
+
+    @Test
+    void from_withClassLoader_returnsNonNullEnhancer() {
+        var enhancer = HibernateEnhancer.from(
+                Thread.currentThread().getContextClassLoader(), Collections.emptyMap());
+
+        assertThat(enhancer).isNotNull();
+    }
+
+    @Test
+    void from_withClassLoader_returnsHibernateEnhancer() {
+        var enhancer = HibernateEnhancer.from(
+                Thread.currentThread().getContextClassLoader(), Collections.emptyMap());
+
+        assertThat(enhancer).isInstanceOf(Enhancer.class);
+    }
+
+    @Test
+    void enhance_withEntityClass_returnsEnhancedBytes() throws IOException {
+        var enhancer = HibernateEnhancer.from(
+                Thread.currentThread().getContextClassLoader(), Collections.emptyMap());
+        byte[] originalBytes = loadClassBytes(PRODUCT_CLASS_NAME);
+
+        byte[] enhancedBytes = enhancer.enhance(PRODUCT_CLASS_NAME, originalBytes);
+
+        assertThat(enhancedBytes).isNotNull();
+    }
+
+    @Test
+    void enhance_withEntityClass_returnsModifiedBytes() throws IOException {
+        var enhancer = HibernateEnhancer.from(
+                Thread.currentThread().getContextClassLoader(), Collections.emptyMap());
+        byte[] originalBytes = loadClassBytes(PRODUCT_CLASS_NAME);
+
+        byte[] enhancedBytes = enhancer.enhance(PRODUCT_CLASS_NAME, originalBytes);
+
+        assertThat(enhancedBytes).isNotEqualTo(originalBytes);
+    }
+
+    @Test
+    void enhance_withAllOptionsEnabled_returnsEnhancedBytes() throws IOException {
+        Map<Enhancer.Option, Boolean> options = Map.of(
+                Enhancer.Option.LAZY_INITIALIZATION, true,
+                Enhancer.Option.DIRTY_TRACKING, true,
+                Enhancer.Option.ASSOCIATION_MANAGEMENT, true,
+                Enhancer.Option.EXTENDED_ENHANCEMENT, true
+        );
+        var enhancer = HibernateEnhancer.from(
+                Thread.currentThread().getContextClassLoader(), options);
+        byte[] originalBytes = loadClassBytes(PRODUCT_CLASS_NAME);
+
+        byte[] enhancedBytes = enhancer.enhance(PRODUCT_CLASS_NAME, originalBytes);
+
+        assertThat(enhancedBytes).isNotNull();
+    }
+
+    @ParameterizedTest
+    @EnumSource(Enhancer.Option.class)
+    void enhance_withSingleOptionEnabled_doesNotThrowException(Enhancer.Option option) throws IOException {
+        Map<Enhancer.Option, Boolean> options = Map.of(option, true);
+        var enhancer = HibernateEnhancer.from(
+                Thread.currentThread().getContextClassLoader(), options);
+        byte[] originalBytes = loadClassBytes(PRODUCT_CLASS_NAME);
+
+        assertThatCode(() -> enhancer.enhance(PRODUCT_CLASS_NAME, originalBytes))
+                .doesNotThrowAnyException();
+    }
+
+    @Test
+    void enhance_withAllOptionsDisabled_returnsEnhancedBytes() throws IOException {
+        Map<Enhancer.Option, Boolean> options = Map.of(
+                Enhancer.Option.LAZY_INITIALIZATION, false,
+                Enhancer.Option.DIRTY_TRACKING, false,
+                Enhancer.Option.ASSOCIATION_MANAGEMENT, false,
+                Enhancer.Option.EXTENDED_ENHANCEMENT, false
+        );
+        var enhancer = HibernateEnhancer.from(
+                Thread.currentThread().getContextClassLoader(), options);
+        byte[] originalBytes = loadClassBytes(PRODUCT_CLASS_NAME);
+
+        byte[] enhancedBytes = enhancer.enhance(PRODUCT_CLASS_NAME, originalBytes);
+
+        assertThat(enhancedBytes).isNotNull();
+    }
+
+}
