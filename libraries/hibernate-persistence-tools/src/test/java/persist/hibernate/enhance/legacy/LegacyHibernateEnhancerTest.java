@@ -4,7 +4,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-import persist.hibernate.enhance.spi.HibernateEnhancer;
+import persistence.tools.Enhancer;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,7 +52,7 @@ class LegacyHibernateEnhancerTest {
         var enhancer = new LegacyHibernateEnhancerProvider().getEnhancer(
                 classesDir, Collections.emptySet(), Collections.emptyMap());
 
-        assertThat(enhancer).isInstanceOf(HibernateEnhancer.class);
+        assertThat(enhancer).isInstanceOf(Enhancer.class);
     }
 
     @Test
@@ -68,7 +68,7 @@ class LegacyHibernateEnhancerTest {
         var enhancer = LegacyHibernateEnhancer.from(
                 Thread.currentThread().getContextClassLoader(), Collections.emptyMap());
 
-        assertThat(enhancer).isInstanceOf(HibernateEnhancer.class);
+        assertThat(enhancer).isInstanceOf(Enhancer.class);
     }
 
     @Test
@@ -95,11 +95,11 @@ class LegacyHibernateEnhancerTest {
 
     @Test
     void enhance_withAllOptionsEnabled_returnsEnhancedBytes() throws IOException {
-        Map<HibernateEnhancer.Option, Boolean> options = Map.of(
-                HibernateEnhancer.Option.LAZY_INITIALIZATION, true,
-                HibernateEnhancer.Option.DIRTY_TRACKING, true,
-                HibernateEnhancer.Option.ASSOCIATION_MANAGEMENT, true,
-                HibernateEnhancer.Option.EXTENDED_ENHANCEMENT, true
+        Map<Enhancer.Option, Boolean> options = Map.of(
+                Enhancer.Option.LAZY_INITIALIZATION, true,
+                Enhancer.Option.DIRTY_TRACKING, true,
+                Enhancer.Option.ASSOCIATION_MANAGEMENT, true,
+                Enhancer.Option.EXTENDED_ENHANCEMENT, true
         );
         var enhancer = LegacyHibernateEnhancer.from(
                 Thread.currentThread().getContextClassLoader(), options);
@@ -111,9 +111,9 @@ class LegacyHibernateEnhancerTest {
     }
 
     @ParameterizedTest
-    @EnumSource(HibernateEnhancer.Option.class)
-    void enhance_withSingleOptionEnabled_doesNotThrowException(HibernateEnhancer.Option option) throws IOException {
-        Map<HibernateEnhancer.Option, Boolean> options = Map.of(option, true);
+    @EnumSource(Enhancer.Option.class)
+    void enhance_withSingleOptionEnabled_doesNotThrowException(Enhancer.Option option) throws IOException {
+        Map<Enhancer.Option, Boolean> options = Map.of(option, true);
         var enhancer = LegacyHibernateEnhancer.from(
                 Thread.currentThread().getContextClassLoader(), options);
         byte[] originalBytes = loadClassBytes(PRODUCT_CLASS_NAME);
@@ -124,11 +124,11 @@ class LegacyHibernateEnhancerTest {
 
     @Test
     void enhance_withAllOptionsDisabled_returnsEnhancedBytes() throws IOException {
-        Map<HibernateEnhancer.Option, Boolean> options = Map.of(
-                HibernateEnhancer.Option.LAZY_INITIALIZATION, false,
-                HibernateEnhancer.Option.DIRTY_TRACKING, false,
-                HibernateEnhancer.Option.ASSOCIATION_MANAGEMENT, false,
-                HibernateEnhancer.Option.EXTENDED_ENHANCEMENT, false
+        Map<Enhancer.Option, Boolean> options = Map.of(
+                Enhancer.Option.LAZY_INITIALIZATION, false,
+                Enhancer.Option.DIRTY_TRACKING, false,
+                Enhancer.Option.ASSOCIATION_MANAGEMENT, false,
+                Enhancer.Option.EXTENDED_ENHANCEMENT, false
         );
         var enhancer = LegacyHibernateEnhancer.from(
                 Thread.currentThread().getContextClassLoader(), options);

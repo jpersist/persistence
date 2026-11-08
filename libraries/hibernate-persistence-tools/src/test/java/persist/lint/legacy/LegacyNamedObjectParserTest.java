@@ -3,8 +3,8 @@ package persist.lint.legacy;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import persist.lint.api.NamedObjectDescriptor;
-import persist.lint.api.NamedObjectType;
+import persistence.tools.NamedObjectDescriptor;
+import persistence.tools.NamedObjectType;
 
 import java.util.List;
 import java.util.Set;

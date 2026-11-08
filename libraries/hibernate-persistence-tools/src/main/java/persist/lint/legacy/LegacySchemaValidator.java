@@ -8,7 +8,7 @@ import org.hibernate.service.ServiceRegistry;
 import org.hibernate.tool.schema.internal.ExceptionHandlerHaltImpl;
 import org.hibernate.tool.schema.spi.SchemaManagementTool;
 import org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator;
-import persist.lint.api.spi.SchemaValidator;
+import persistence.tools.SchemaValidator;
 
 import java.util.Collections;
 import java.util.List;

@@ -9,10 +9,12 @@
  * <ul>
  *   <li>{@link persist.legacy.spi.LegacyPersistenceServiceProvider}
  *       &ndash; abstract base class that returns {@code "javax"} from
- *       {@link persist.api.spi.PersistenceServiceProvider#getSupportedNamespace()}.</li>
+ *       {@link PersistenceServiceProvider#getSupportedNamespace()}.</li>
  * </ul>
  *
  * @since 1.0.0
- * @see persist.api.spi.PersistenceServiceProvider
+ * @see PersistenceServiceProvider
  */
 package persist.legacy.spi;
+
+import persistence.tools.spi.PersistenceServiceProvider;

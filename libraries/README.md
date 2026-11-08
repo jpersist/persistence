@@ -13,7 +13,7 @@ The **Persistence Tools Libraries** (group `io.github.jpersist.tools`) provide b
 
 | Module                         | Description                                                                                                                                                                                                     |
 |:-------------------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **`persistence-tools-api`**     | Defines the Service Provider Interfaces (SPIs): `PersistenceServiceProvider` (shared root), `PersistenceLinter` / `PersistenceLinterFactory` (linting contracts), `NamedObjectParser` / `NamedObjectParserFactory` (query validation), `SchemaValidator` / `SchemaValidatorFactory` (schema validation), and `HibernateEnhancer` / `HibernateEnhancerProvider` (bytecode enhancement). `NamedObjectParser` extends `AutoCloseable`, so instances should be used within a try-with-resources block. Contains no implementation; provider modules are discovered at runtime through the `ServiceLoader` mechanism. |
+| **`persistence-tools-api`**     | Defines the Service Provider Interfaces (SPIs): `PersistenceServiceProvider` (shared root), `PersistenceLinter` / `PersistenceLinterFactory` (linting contracts), `NamedObjectParser` / `NamedObjectParserFactory` (query validation), `SchemaValidator` / `SchemaValidatorFactory` (schema validation), and `Enhancer` / `EnhancerProvider` (bytecode enhancement). `NamedObjectParser` extends `AutoCloseable`, so instances should be used within a try-with-resources block. Contains no implementation; provider modules are discovered at runtime through the `ServiceLoader` mechanism. |
 | **`persistence-tools-jakarta`** | Jakarta Persistence (JPA 3.x) provider. Uses Hibernate ORM 6 to compile JPQL queries into Semantic Query Model (SQM) trees, validate persistence schemas against a live database, and enhance entity bytecode.     |
 | **`persistence-tools-legacy`**  | Legacy `javax.persistence` (JPA 2.x) provider. Uses Hibernate 5 and its AST-based query translator to validate JPQL queries and schemas, and to enhance entity bytecode.                                           |
 | **`persistence-tools-bom`**     | Bill of Materials (BOM) for convenient dependency management of all Persistence Tools modules.                                                                                                                   |
@@ -44,7 +44,7 @@ dependencies {
 
 ### 2. Enhance entity bytecode
 
-Use `HibernateEnhancerProvider.getHibernateEnhancerProvider(String)` to obtain the appropriate provider for a given JPA specification version, then create a `HibernateEnhancer` to transform entity classes at build time:
+Use `EnhancerProvider.getEnhancerProvider(String)` to obtain the appropriate provider for a given JPA specification version, then create a `Enhancer` to transform entity classes at build time:
 
 ```java
 HibernateEnhancerProvider provider =
@@ -122,7 +122,7 @@ module com.example.myapp {
 *Note: You only need to require the `api` module. Concrete providers (`jakarta` or `legacy`) are decoupled and automatically discovered at runtime via the native JVM `ServiceLoader` path.*
 
 ### 2. Deep Reflection Boundaries (`opens` Directives)
-Because `HibernateEnhancer` transforms bytecode at build time and Hibernate routinely utilizes deep reflection to inspect entity fields and properties, you **must** open your entity packages to the concrete provider modules.
+Because `Enhancer` transforms bytecode at build time and Hibernate routinely utilizes deep reflection to inspect entity fields and properties, you **must** open your entity packages to the concrete provider modules.
 
 Failure to do so will cause the JVM to throw `InaccessibleObjectException` or `IllegalAccessError` during verification tasks.
 

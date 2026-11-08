@@ -1,3 +1,7 @@
+import persistence.tools.spi.EnhancerProvider;
+import persistence.tools.spi.NamedObjectParserFactory;
+import persistence.tools.spi.SchemaValidatorFactory;
+
 /**
  * Jakarta Persistence (JPA&nbsp;3.x) provider module for the Persistence Tools Libraries.
  *
@@ -9,11 +13,11 @@
  *
  * <h2>Provided services</h2>
  * <ul>
- *   <li>{@link persist.lint.api.spi.NamedObjectParserFactory} &mdash;
+ *   <li>{@link NamedObjectParserFactory} &mdash;
  *       implemented by {@code persist.lint.jakarta.JakartaNamedObjectParserFactory}</li>
- *   <li>{@link persist.lint.api.spi.SchemaValidatorFactory} &mdash;
+ *   <li>{@link SchemaValidatorFactory} &mdash;
  *       implemented by {@code persist.lint.jakarta.JakartaSchemaValidatorFactory}</li>
- *   <li>{@link persist.hibernate.enhance.spi.HibernateEnhancerProvider} &mdash;
+ *   <li>{@link EnhancerProvider} &mdash;
  *       implemented by {@code persist.hibernate.enhance.jakarta.JakartaHibernateEnhancerProvider}</li>
  * </ul>
  *
@@ -37,14 +41,14 @@ module io.github.jpersist.tools.jakarta {
     requires jakarta.persistence;
 
     // 4. Register linter and validator factories into the native ServiceLoader
-    provides persist.lint.api.spi.NamedObjectParserFactory
+    provides NamedObjectParserFactory
         with persist.lint.jakarta.JakartaNamedObjectParserFactory;
 
-    provides persist.lint.api.spi.SchemaValidatorFactory
+    provides SchemaValidatorFactory
         with persist.lint.jakarta.JakartaSchemaValidatorFactory;
 
     // 5. Register the bytecode enhancement provider into the native ServiceLoader
-    provides persist.hibernate.enhance.spi.HibernateEnhancerProvider
+    provides EnhancerProvider
         with persist.hibernate.enhance.jakarta.JakartaHibernateEnhancerProvider;
 
     // 6. Enforce strong encapsulation by hiding all implementation packages.

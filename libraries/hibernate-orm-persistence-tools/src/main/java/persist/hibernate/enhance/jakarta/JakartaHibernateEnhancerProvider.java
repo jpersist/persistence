@@ -1,7 +1,7 @@
 package persist.hibernate.enhance.jakarta;
 
-import persist.hibernate.enhance.spi.HibernateEnhancer;
-import persist.hibernate.enhance.spi.HibernateEnhancerProvider;
+import persistence.tools.Enhancer;
+import persistence.tools.spi.EnhancerProvider;
 import persist.jakarta.spi.JakartaPersistenceServiceProvider;
 
 import java.io.File;
@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * {@link HibernateEnhancerProvider} implementation for the Jakarta
+ * {@link EnhancerProvider} implementation for the Jakarta
  * Persistence namespace ({@code "jakarta"}).
  *
  * <p>This provider is registered as a {@link java.util.ServiceLoader}
@@ -18,9 +18,9 @@ import java.util.Set;
  *
  * @since 1.0.0
  * @see JakartaHibernateEnhancer
- * @see HibernateEnhancerProvider
+ * @see EnhancerProvider
  */
-public class JakartaHibernateEnhancerProvider extends JakartaPersistenceServiceProvider implements HibernateEnhancerProvider {
+public class JakartaHibernateEnhancerProvider extends JakartaPersistenceServiceProvider implements EnhancerProvider {
 
     /** Creates a new {@code JakartaHibernateEnhancerProvider}. */
     public JakartaHibernateEnhancerProvider() {
@@ -28,8 +28,8 @@ public class JakartaHibernateEnhancerProvider extends JakartaPersistenceServiceP
 
     /** {@inheritDoc} */
     @Override
-    public HibernateEnhancer getEnhancer(File classesDir, Set<File> classpathFiles,
-                                         Map<HibernateEnhancer.Option, Boolean> options) {
+    public Enhancer getEnhancer(File classesDir, Set<File> classpathFiles,
+                                Map<Enhancer.Option, Boolean> options) {
         return JakartaHibernateEnhancer.from(classesDir, classpathFiles, options);
     }
 

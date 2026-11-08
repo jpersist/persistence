@@ -8,8 +8,8 @@ import org.hibernate.hql.internal.ast.ASTQueryTranslatorFactory;
 import org.hibernate.hql.spi.QueryTranslator;
 import org.hibernate.hql.spi.QueryTranslatorFactory;
 import org.hibernate.service.ServiceRegistry;
-import persist.lint.api.NamedObjectDescriptor;
-import persist.lint.api.spi.NamedObjectParser;
+import persistence.tools.NamedObjectDescriptor;
+import persistence.tools.NamedObjectParser;
 
 import java.util.Collections;
 import java.util.List;

@@ -1,22 +1,22 @@
 package persist.hibernate.enhance.jakarta;
 
 import org.hibernate.bytecode.enhance.spi.*;
-import persist.hibernate.enhance.spi.HibernateEnhancer;
+import persistence.tools.Enhancer;
 
 import java.io.File;
 import java.util.Map;
 import java.util.Set;
 
 import static org.hibernate.bytecode.internal.BytecodeProviderInitiator.buildDefaultBytecodeProvider;
-import static persist.hibernate.enhance.spi.HibernateEnhancer.createURLClassLoader;
+import static persistence.tools.Enhancer.createURLClassLoader;
 
 /**
- * {@link HibernateEnhancer} implementation for the Jakarta Persistence
+ * {@link Enhancer} implementation for the Jakarta Persistence
  * namespace ({@code "jakarta"}).
  *
  * <p>Uses the Hibernate ORM&nbsp;6 bytecode enhancement SPI to transform
  * compiled entity classes. The enhancer is configured with a set of
- * {@link HibernateEnhancer.Option} flags that control which
+ * {@link Enhancer.Option} flags that control which
  * transformations — lazy initialisation, dirty tracking, association
  * management, or extended enhancement — are applied.</p>
  *
@@ -26,13 +26,13 @@ import static persist.hibernate.enhance.spi.HibernateEnhancer.createURLClassLoad
  *
  * @since 1.0.0
  * @see JakartaHibernateEnhancerProvider
- * @see HibernateEnhancer
+ * @see Enhancer
  */
-public class JakartaHibernateEnhancer implements HibernateEnhancer {
+public class JakartaHibernateEnhancer implements Enhancer {
 
-    private final Enhancer enhancer;
+    private final org.hibernate.bytecode.enhance.spi.Enhancer enhancer;
 
-    private JakartaHibernateEnhancer(ClassLoader classLoader, Map<HibernateEnhancer.Option, Boolean> options) {
+    private JakartaHibernateEnhancer(ClassLoader classLoader, Map<Enhancer.Option, Boolean> options) {
         EnhancementContext enhancementContext = createEnhancementContext(classLoader, options);
         enhancer = buildDefaultBytecodeProvider().getEnhancer(enhancementContext);
     }
@@ -46,7 +46,7 @@ public class JakartaHibernateEnhancer implements HibernateEnhancer {
      * @return a new enhancer instance
      */
     public static JakartaHibernateEnhancer from(ClassLoader classLoader,
-                                                Map<HibernateEnhancer.Option, Boolean> options) {
+                                                Map<Enhancer.Option, Boolean> options) {
         return new JakartaHibernateEnhancer(classLoader, options);
     }
 
@@ -61,8 +61,8 @@ public class JakartaHibernateEnhancer implements HibernateEnhancer {
      * @return a new enhancer instance
      */
     public static JakartaHibernateEnhancer from(File classesDir, Set<File> classpathFiles,
-                                                Map<HibernateEnhancer.Option, Boolean> options) {
-        ClassLoader classLoader = createURLClassLoader(classesDir, classpathFiles, Enhancer.class.getClassLoader());
+                                                Map<Enhancer.Option, Boolean> options) {
+        ClassLoader classLoader = createURLClassLoader(classesDir, classpathFiles, org.hibernate.bytecode.enhance.spi.Enhancer.class.getClassLoader());
         return new JakartaHibernateEnhancer(classLoader, options);
     }
 
@@ -74,7 +74,7 @@ public class JakartaHibernateEnhancer implements HibernateEnhancer {
     }
 
     private static EnhancementContext createEnhancementContext(ClassLoader classLoader,
-                                                               Map<HibernateEnhancer.Option, Boolean> options) {
+                                                               Map<Enhancer.Option, Boolean> options) {
         return new DefaultEnhancementContext() {
 
             @Override
@@ -84,27 +84,27 @@ public class JakartaHibernateEnhancer implements HibernateEnhancer {
 
             @Override
             public boolean doBiDirectionalAssociationManagement(UnloadedField field) {
-                return options.getOrDefault(HibernateEnhancer.Option.ASSOCIATION_MANAGEMENT, false);
+                return options.getOrDefault(persistence.tools.Enhancer.Option.ASSOCIATION_MANAGEMENT, false);
             }
 
             @Override
             public boolean doDirtyCheckingInline(UnloadedClass classDescriptor) {
-                return options.getOrDefault(HibernateEnhancer.Option.DIRTY_TRACKING, false);
+                return options.getOrDefault(Enhancer.Option.DIRTY_TRACKING, false);
             }
 
             @Override
             public boolean hasLazyLoadableAttributes(UnloadedClass classDescriptor) {
-                return options.getOrDefault(HibernateEnhancer.Option.LAZY_INITIALIZATION, false);
+                return options.getOrDefault(Enhancer.Option.LAZY_INITIALIZATION, false);
             }
 
             @Override
             public boolean isLazyLoadable(UnloadedField field) {
-                return options.getOrDefault(HibernateEnhancer.Option.LAZY_INITIALIZATION, false);
+                return options.getOrDefault(persistence.tools.Enhancer.Option.LAZY_INITIALIZATION, false);
             }
 
             @Override
             public boolean doExtendedEnhancement(UnloadedClass classDescriptor) {
-                return options.getOrDefault(HibernateEnhancer.Option.EXTENDED_ENHANCEMENT, false);
+                return options.getOrDefault(Enhancer.Option.EXTENDED_ENHANCEMENT, false);
             }
 
         };

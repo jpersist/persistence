@@ -1,7 +1,7 @@
 package persist.lint.legacy;
 
 import org.junit.jupiter.api.Test;
-import persist.lint.api.spi.PersistenceLinterFactory;
+import persistence.tools.spi.PersistenceLinterFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

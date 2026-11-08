@@ -1,6 +1,6 @@
 package persist.legacy.spi;
 
-import persist.api.spi.PersistenceServiceProvider;
+import persistence.tools.spi.PersistenceServiceProvider;
 
 /**
  * Base class for legacy {@code javax.persistence} ({@code "javax"} namespace)

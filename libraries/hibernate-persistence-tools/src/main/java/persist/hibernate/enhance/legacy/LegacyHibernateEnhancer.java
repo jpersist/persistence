@@ -2,21 +2,21 @@ package persist.hibernate.enhance.legacy;
 
 import org.hibernate.bytecode.enhance.spi.*;
 import org.hibernate.cfg.Environment;
-import persist.hibernate.enhance.spi.HibernateEnhancer;
+import persistence.tools.Enhancer;
 
 import java.io.File;
 import java.util.Map;
 import java.util.Set;
 
-import static persist.hibernate.enhance.spi.HibernateEnhancer.createURLClassLoader;
+import static persistence.tools.Enhancer.createURLClassLoader;
 
 /**
- * {@link HibernateEnhancer} implementation for the legacy
+ * {@link Enhancer} implementation for the legacy
  * {@code javax.persistence} namespace ({@code "javax"}).
  *
  * <p>Uses the Hibernate&nbsp;5 bytecode enhancement SPI to transform
  * compiled entity classes. The enhancer is configured with a set of
- * {@link HibernateEnhancer.Option} flags that control which
+ * {@link Enhancer.Option} flags that control which
  * transformations — lazy initialisation, dirty tracking, association
  * management, or extended enhancement — are applied.</p>
  *
@@ -26,11 +26,11 @@ import static persist.hibernate.enhance.spi.HibernateEnhancer.createURLClassLoad
  *
  * @since 1.0.0
  * @see LegacyHibernateEnhancerProvider
- * @see HibernateEnhancer
+ * @see persistence.tools.Enhancer
  */
-public class LegacyHibernateEnhancer implements HibernateEnhancer {
+public class LegacyHibernateEnhancer implements Enhancer {
 
-    private final Enhancer enhancer;
+    private final org.hibernate.bytecode.enhance.spi.Enhancer enhancer;
 
     @SuppressWarnings("deprecation")
     private LegacyHibernateEnhancer(ClassLoader classLoader, Map<Option, Boolean> options) {
@@ -62,7 +62,7 @@ public class LegacyHibernateEnhancer implements HibernateEnhancer {
      */
     public static LegacyHibernateEnhancer from(File classesDir, Set<File> classpathFiles,
                                                Map<Option, Boolean> options) {
-        ClassLoader classLoader = createURLClassLoader(classesDir, classpathFiles, Enhancer.class.getClassLoader());
+        ClassLoader classLoader = createURLClassLoader(classesDir, classpathFiles, org.hibernate.bytecode.enhance.spi.Enhancer.class.getClassLoader());
         return new LegacyHibernateEnhancer(classLoader, options);
     }
 
@@ -83,7 +83,7 @@ public class LegacyHibernateEnhancer implements HibernateEnhancer {
 
             @Override
             public boolean doBiDirectionalAssociationManagement(UnloadedField field) {
-                return options.getOrDefault(HibernateEnhancer.Option.ASSOCIATION_MANAGEMENT, false);
+                return options.getOrDefault(Enhancer.Option.ASSOCIATION_MANAGEMENT, false);
             }
 
             @Override

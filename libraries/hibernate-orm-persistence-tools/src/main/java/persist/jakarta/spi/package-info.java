@@ -9,10 +9,12 @@
  * <ul>
  *   <li>{@link persist.jakarta.spi.JakartaPersistenceServiceProvider}
  *       &ndash; abstract base class that returns {@code "jakarta"} from
- *       {@link persist.api.spi.PersistenceServiceProvider#getSupportedNamespace()}.</li>
+ *       {@link PersistenceServiceProvider#getSupportedNamespace()}.</li>
  * </ul>
  *
  * @since 1.0.0
- * @see persist.api.spi.PersistenceServiceProvider
+ * @see PersistenceServiceProvider
  */
 package persist.jakarta.spi;
+
+import persistence.tools.spi.PersistenceServiceProvider;

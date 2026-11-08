@@ -1,7 +1,7 @@
 package persist.lint.jakarta;
 
 import persist.jakarta.spi.JakartaPersistenceServiceProvider;
-import persist.lint.api.spi.PersistenceLinterFactory;
+import persistence.tools.spi.PersistenceLinterFactory;
 
 /**
  * Abstract base class for Jakarta Persistence linter factories.

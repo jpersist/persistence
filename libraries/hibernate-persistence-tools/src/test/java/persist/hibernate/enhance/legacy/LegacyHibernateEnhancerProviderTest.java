@@ -3,8 +3,8 @@ package persist.hibernate.enhance.legacy;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import persist.api.spi.PersistenceServiceProvider;
-import persist.hibernate.enhance.spi.HibernateEnhancerProvider;
+import persistence.tools.spi.EnhancerProvider;
+import persistence.tools.spi.PersistenceServiceProvider;
 import persist.legacy.spi.LegacyPersistenceServiceProvider;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,7 +30,7 @@ class LegacyHibernateEnhancerProviderTest {
     void legacyHibernateEnhancerProvider_isHibernateEnhancerProvider() {
         var provider = new LegacyHibernateEnhancerProvider();
 
-        assertThat(provider).isInstanceOf(HibernateEnhancerProvider.class);
+        assertThat(provider).isInstanceOf(EnhancerProvider.class);
     }
 
     @Test
@@ -48,14 +48,14 @@ class LegacyHibernateEnhancerProviderTest {
 
     @Test
     void legacyHibernateEnhancerProvider_implementsHibernateEnhancerProvider() {
-        assertThat(HibernateEnhancerProvider.class)
+        assertThat(EnhancerProvider.class)
             .isAssignableFrom(LegacyHibernateEnhancerProvider.class);
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"2.0", "2.1", "2.2"})
     void getHibernateEnhancerProvider_withLegacyVersions_returnsNonNullInstance(String version) {
-        var provider = HibernateEnhancerProvider.getHibernateEnhancerProvider(version);
+        var provider = EnhancerProvider.getEnhancerProvider(version);
 
         assertThat(provider).isInstanceOf(LegacyHibernateEnhancerProvider.class);
     }
@@ -63,7 +63,7 @@ class LegacyHibernateEnhancerProviderTest {
     @ParameterizedTest
     @ValueSource(strings = {"3.0", "3.1", "3.2"})
     void getHibernateEnhancerProvider_withJakartaVersions_throwsIllegalStateException(String version) {
-        assertThatThrownBy(() -> HibernateEnhancerProvider.getHibernateEnhancerProvider(version))
+        assertThatThrownBy(() -> EnhancerProvider.getEnhancerProvider(version))
             .isInstanceOf(IllegalStateException.class)
             .hasMessageContaining("jakarta");
     }

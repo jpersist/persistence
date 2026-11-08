@@ -1,7 +1,7 @@
 package persist.legacy.spi;
 
 import org.junit.jupiter.api.Test;
-import persist.api.spi.PersistenceServiceProvider;
+import persistence.tools.spi.PersistenceServiceProvider;
 import persist.lint.legacy.LegacyNamedObjectParserFactory;
 import persist.lint.legacy.LegacyPersistenceLinterFactory;
 import persist.lint.legacy.LegacySchemaValidatorFactory;

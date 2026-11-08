@@ -1,7 +1,7 @@
 package persist.hibernate.enhance.legacy;
 
-import persist.hibernate.enhance.spi.HibernateEnhancer;
-import persist.hibernate.enhance.spi.HibernateEnhancerProvider;
+import persistence.tools.Enhancer;
+import persistence.tools.spi.EnhancerProvider;
 import persist.legacy.spi.LegacyPersistenceServiceProvider;
 
 import java.io.File;
@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * {@link HibernateEnhancerProvider} implementation for the legacy
+ * {@link EnhancerProvider} implementation for the legacy
  * {@code javax.persistence} namespace ({@code "javax"}).
  *
  * <p>This provider is registered as a {@link java.util.ServiceLoader}
@@ -18,9 +18,9 @@ import java.util.Set;
  *
  * @since 1.0.0
  * @see LegacyHibernateEnhancer
- * @see HibernateEnhancerProvider
+ * @see EnhancerProvider
  */
-public class LegacyHibernateEnhancerProvider extends LegacyPersistenceServiceProvider implements HibernateEnhancerProvider {
+public class LegacyHibernateEnhancerProvider extends LegacyPersistenceServiceProvider implements EnhancerProvider {
 
     /** Creates a new {@code LegacyHibernateEnhancerProvider}. */
     public LegacyHibernateEnhancerProvider() {
@@ -28,8 +28,8 @@ public class LegacyHibernateEnhancerProvider extends LegacyPersistenceServicePro
 
     /** {@inheritDoc} */
     @Override
-    public HibernateEnhancer getEnhancer(File classesDir, Set<File> classpathFiles,
-                                         Map<HibernateEnhancer.Option, Boolean> options) {
+    public Enhancer getEnhancer(File classesDir, Set<File> classpathFiles,
+                                Map<Enhancer.Option, Boolean> options) {
         return LegacyHibernateEnhancer.from(classesDir, classpathFiles, options);
     }
 

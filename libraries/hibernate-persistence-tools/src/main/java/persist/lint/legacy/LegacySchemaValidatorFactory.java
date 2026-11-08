@@ -1,7 +1,7 @@
 package persist.lint.legacy;
 
-import persist.lint.api.spi.SchemaValidator;
-import persist.lint.api.spi.SchemaValidatorFactory;
+import persistence.tools.SchemaValidator;
+import persistence.tools.spi.SchemaValidatorFactory;
 
 import java.util.List;
 

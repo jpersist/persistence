@@ -6,8 +6,8 @@ import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.query.hql.HqlTranslator;
 import org.hibernate.query.sqm.tree.SqmStatement;
 import org.hibernate.service.ServiceRegistry;
-import persist.lint.api.NamedObjectDescriptor;
-import persist.lint.api.spi.NamedObjectParser;
+import persistence.tools.NamedObjectDescriptor;
+import persistence.tools.NamedObjectParser;
 
 import java.util.List;
 import java.util.Set;

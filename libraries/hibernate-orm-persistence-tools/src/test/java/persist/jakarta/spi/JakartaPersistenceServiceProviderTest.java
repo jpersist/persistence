@@ -1,7 +1,7 @@
 package persist.jakarta.spi;
 
 import org.junit.jupiter.api.Test;
-import persist.api.spi.PersistenceServiceProvider;
+import persistence.tools.spi.PersistenceServiceProvider;
 import persist.lint.jakarta.JakartaNamedObjectParserFactory;
 import persist.lint.jakarta.JakartaPersistenceLinterFactory;
 import persist.lint.jakarta.JakartaSchemaValidatorFactory;

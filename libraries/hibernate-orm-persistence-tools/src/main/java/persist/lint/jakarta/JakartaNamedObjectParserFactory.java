@@ -1,7 +1,7 @@
 package persist.lint.jakarta;
 
-import persist.lint.api.spi.NamedObjectParser;
-import persist.lint.api.spi.NamedObjectParserFactory;
+import persistence.tools.NamedObjectParser;
+import persistence.tools.spi.NamedObjectParserFactory;
 
 import java.util.List;
 

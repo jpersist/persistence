@@ -1,6 +1,6 @@
 package persist.jakarta.spi;
 
-import persist.api.spi.PersistenceServiceProvider;
+import persistence.tools.spi.PersistenceServiceProvider;
 
 /**
  * Base class for Jakarta Persistence ({@code "jakarta"} namespace)

@@ -1,3 +1,7 @@
+import persistence.tools.spi.EnhancerProvider;
+import persistence.tools.spi.NamedObjectParserFactory;
+import persistence.tools.spi.SchemaValidatorFactory;
+
 /**
  * Legacy {@code javax.persistence} (JPA&nbsp;2.x) provider module for the
  * Persistence Tools Libraries.
@@ -10,11 +14,11 @@
  *
  * <h2>Provided services</h2>
  * <ul>
- *   <li>{@link persist.lint.api.spi.NamedObjectParserFactory} &mdash;
+ *   <li>{@link NamedObjectParserFactory} &mdash;
  *       implemented by {@code persist.lint.legacy.LegacyNamedObjectParserFactory}</li>
- *   <li>{@link persist.lint.api.spi.SchemaValidatorFactory} &mdash;
+ *   <li>{@link SchemaValidatorFactory} &mdash;
  *       implemented by {@code persist.lint.legacy.LegacySchemaValidatorFactory}</li>
- *   <li>{@link persist.hibernate.enhance.spi.HibernateEnhancerProvider} &mdash;
+ *   <li>{@link EnhancerProvider} &mdash;
  *       implemented by {@code persist.hibernate.enhance.legacy.LegacyHibernateEnhancerProvider}</li>
  * </ul>
  *
@@ -38,14 +42,14 @@ module io.github.jpersist.tools.legacy {
     requires java.persistence;
 
     // 4. Register legacy linter and validator factories into the native ServiceLoader
-    provides persist.lint.api.spi.NamedObjectParserFactory
+    provides NamedObjectParserFactory
         with persist.lint.legacy.LegacyNamedObjectParserFactory;
 
-    provides persist.lint.api.spi.SchemaValidatorFactory
+    provides SchemaValidatorFactory
         with persist.lint.legacy.LegacySchemaValidatorFactory;
 
     // 5. Register the legacy bytecode enhancement provider into the native ServiceLoader
-    provides persist.hibernate.enhance.spi.HibernateEnhancerProvider
+    provides EnhancerProvider
         with persist.hibernate.enhance.legacy.LegacyHibernateEnhancerProvider;
 
     // 6. Maintain strict implementation encapsulation

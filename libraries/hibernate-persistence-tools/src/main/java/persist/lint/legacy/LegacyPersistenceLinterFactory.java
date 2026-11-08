@@ -1,6 +1,6 @@
 package persist.lint.legacy;
 
-import persist.lint.api.spi.PersistenceLinterFactory;
+import persistence.tools.spi.PersistenceLinterFactory;
 
 /**
  * Abstract base class for legacy (javax) Persistence linter factories.
