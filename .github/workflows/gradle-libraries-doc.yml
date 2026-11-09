@@ -1,13 +1,13 @@
 name: Publish Libraries Documentation
 
 on:
-  workflow_call:  # Called from gradle-libraries-release.yml after a release
+  workflow_call:
     inputs:
       tag:
-        description: 'The version tag to checkout and publish (e.g., libs-v1.0.0)'
+        description: 'The version tag to checkout and publish'
         required: false
         type: string
-  workflow_dispatch:  # Allow manual triggering from the Actions tab
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -27,19 +27,43 @@ jobs:
         with:
           ref: ${{ inputs.tag || github.ref }}
 
-      - name: Resolve Documentation Version
-        id: version
+      - name: Resolve Project Context and Version
+        id: context
         run: |
-          # Extract version from the Git tag (e.g., libs-v1.0.0 -> 1.0.0)
-          if [[ "${GITHUB_REF}" == refs/tags/libs-v* ]]; then
-            VERSION="${GITHUB_REF#refs/tags/libs-v}"
+          TARGET_REF="${{ inputs.tag || github.ref }}"
+          TAG_NAME="${TARGET_REF#refs/tags/}"
+
+          # Extract meta context according to the specific layout structure matching the tag
+          if [[ "$TAG_NAME" == hib6-v* ]]; then
+            PTYPE="hibernate-orm"
+            PROP_PATH="libraries/hibernate-orm-persistence-tools/gradle.properties"
+            VERSION="${TAG_NAME#hib6-v}"
+            DOC_TASK="aggregateModernHibernateJavadoc"
+            SRC_DOC_DIR="libraries/build/docs/javadoc/hibernate-orm"
+          elif [[ "$TAG_NAME" == hib5-v* ]]; then
+            PTYPE="hibernate"
+            PROP_PATH="libraries/hibernate-persistence-tools/gradle.properties"
+            VERSION="${TAG_NAME#hib5-v}"
+            DOC_TASK="aggregateLegacyHibernateJavadoc"
+            SRC_DOC_DIR="libraries/build/docs/javadoc/hibernate"
           else
-            # Fall back to libraries/gradle.properties for workflow_call triggers
-            VERSION=$(grep '^version=' libraries/gradle.properties | cut -d'=' -f2)
-            VERSION="${VERSION%-SNAPSHOT}"
+            # Default fallback for API / BOM matching spec-v* or manual triggers
+            PTYPE="specifications"
+            PROP_PATH="libraries/gradle.properties"
+            if [[ "$TAG_NAME" == spec-v* ]]; then
+              VERSION="${TAG_NAME#spec-v}"
+            else
+              VERSION=$(grep '^version=' "$PROP_PATH" | cut -d'=' -f2)
+              VERSION="${VERSION%-SNAPSHOT}"
+            fi
+            DOC_TASK="aggregateApiJavadoc"
+            SRC_DOC_DIR="libraries/build/docs/javadoc/specifications"
           fi
+
+          echo "ptype=${PTYPE}" >> "$GITHUB_OUTPUT"
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
-          echo "Documentation version: ${VERSION}"
+          echo "doc_task=${DOC_TASK}" >> "$GITHUB_OUTPUT"
+          echo "src_doc_dir=${SRC_DOC_DIR}" >> "$GITHUB_OUTPUT"
 
       - name: Set up Java Development Kit
         uses: actions/setup-java@v6
@@ -54,19 +78,24 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Generate Documentation
-        working-directory: libraries
-        run: ../gradlew aggregateAllJavadocs
+        run: ./gradlew -p libraries ${{ steps.context.outputs.doc_task }}
 
       - name: Prepare Versioned Site
         run: |
-          VERSION="${{ steps.version.outputs.version }}"
+          PTYPE="${{ steps.context.outputs.ptype }}"
+          VERSION="${{ steps.context.outputs.version }}"
+          SRC_DOC_DIR="${{ steps.context.outputs.src_doc_dir }}"
 
-          mkdir -p site/libraries/api/${VERSION}
-          cp -r libraries/build/docs/javadoc/* site/libraries/api/${VERSION}/
+          # Target directory structure layout: site/tools/<ptype>/api/<version>
+          TARGET_DIR="site/tools/${PTYPE}/api/${VERSION}"
+          LATEST_DIR="site/tools/${PTYPE}/api/latest"
 
-          # Also publish as 'latest' for convenient access
-          mkdir -p site/libraries/api/latest
-          cp -r site/libraries/api/${VERSION}/* site/libraries/api/latest/
+          mkdir -p "$TARGET_DIR"
+          # Standard Gradle location for root-executed aggregate tasks
+          cp -r "$SRC_DOC_DIR"/* "$TARGET_DIR"/
+
+          mkdir -p "$LATEST_DIR"
+          cp -r "$TARGET_DIR"/* "$LATEST_DIR"/
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4

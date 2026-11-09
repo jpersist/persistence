@@ -86,8 +86,8 @@ void configureModularJavadoc(Javadoc task, Project targetProject, Project apiPro
         if (targetProject.name != apiProject.name) {
             try {
                 // Allows implementation Javadoc to safely hyperlink back to core API definitions
-                def apidocLink = "https://jpersist.github.io/persistence/libraries/api/${apiProject.version}/"
-                def url = URI.create(apidocLink).toURL()
+                def specLink = "https://jpersist.github.io/persistence/tools/specifications/api/${apiProject.version}/"
+                def url = URI.create(specLink).toURL()
                 def connection = (HttpURLConnection) url.openConnection()
                 connection.requestMethod = "HEAD"
                 connection.connectTimeout = 3000 // Timeout de 3 secondes
@@ -97,9 +97,9 @@ void configureModularJavadoc(Javadoc task, Project targetProject, Project apiPro
                 if (responseCode != HttpURLConnection.HTTP_OK) {
                     throw new Exception("The remote URL returns: ${responseCode}")
                 }
-                links(apidocLink)
+                links(specLink)
             } catch (Exception ignored) {
-                File localDir = rootProject.layout.buildDirectory.dir("docs/javadoc/api").get().asFile
+                File localDir = rootProject.layout.buildDirectory.dir("docs/javadoc/specifications").get().asFile
                 if (localDir.exists()) {
                     links("${localDir.toURI().toString()}")
                 }
@@ -130,19 +130,19 @@ def apiProject = project(':persistence-tools-api')
 // 1. Core API Module Javadoc (Fully Modular / No external dependencies)
 tasks.register('aggregateApiJavadoc', Javadoc) {
     description = 'Generates native modular JPMS Javadoc for the core vendor-agnostic API module.'
-    configureModularJavadoc(it, project(':persistence-tools-api'), apiProject, 'JPersist Persistence Tools Core API Reference', 'JPersist Tools API', 'api')
+    configureModularJavadoc(it, project(':persistence-tools-api'), apiProject, 'JPersist Persistence Tools Core API Reference', 'JPersist Tools API', 'specifications')
 }
 
 // 2. Hibernate Legacy Module Javadoc (Modular / Bound to Hibernate 5 & javax)
 tasks.register('aggregateLegacyHibernateJavadoc', Javadoc) {
     description = 'Generates native modular JPMS Javadoc for the Hibernate 5 Legacy reference implementation.'
-    configureModularJavadoc(it, project(':hibernate-persistence-tools'), apiProject, 'JPersist Persistence Tools - Hibernate 5 Core Reference', 'JPersist Tools - Hibernate 5', 'hibernate-legacy')
+    configureModularJavadoc(it, project(':hibernate-persistence-tools'), apiProject, 'JPersist Persistence Tools - Hibernate 5 Core Reference', 'JPersist Tools - Hibernate 5', 'hibernate')
 }
 
 // 3. Hibernate Modern Module Javadoc (Modular / Bound to Hibernate 6 & jakarta)
 tasks.register('aggregateModernHibernateJavadoc', Javadoc) {
     description = 'Generates native modular JPMS Javadoc for the Hibernate 6 Modern reference implementation.'
-    configureModularJavadoc(it, project(':hibernate-orm-persistence-tools'), apiProject, 'JPersist Persistence Tools - Hibernate 6 ORM Reference', 'JPersist Tools - Hibernate 6', 'hibernate-modern')
+    configureModularJavadoc(it, project(':hibernate-orm-persistence-tools'), apiProject, 'JPersist Persistence Tools - Hibernate 6 ORM Reference', 'JPersist Tools - Hibernate 6', 'hibernate-orm')
 }
 
 // ------------------------------------------------------------------------------------------------
