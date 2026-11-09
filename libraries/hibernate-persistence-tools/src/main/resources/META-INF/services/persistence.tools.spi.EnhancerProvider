@@ -1,1 +1,1 @@
-hibernate.persistence.tools.provider.HibernateEnhancerProvider
+hibernate.javax.persistence.tools.provider.HibernateEnhancerProvider

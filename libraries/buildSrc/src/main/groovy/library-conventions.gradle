@@ -27,12 +27,10 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 tasks.withType(Jar).configureEach {
-    def moduleName = "io.github.jpersist.tools.${project.name.replace('persistence-tools-', '')}"
     manifest {
         attributes(
             'Implementation-Title': project.name,
-            'Implementation-Version': project.version,
-            'Automatic-Module-Name': moduleName
+            'Implementation-Version': project.version
         )
     }
 }

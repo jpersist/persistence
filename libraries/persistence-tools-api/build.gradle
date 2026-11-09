@@ -3,6 +3,12 @@ plugins {
     id 'publishing-conventions'
 }
 
+tasks.named('jar', Jar) {
+    manifest {
+        attributes('Automatic-Module-Name': 'io.github.jpersist.tools.api')
+    }
+}
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
@@ -10,7 +16,7 @@ publishing {
 
             pom {
                 name = 'Persistence Tools API'
-                description = 'Defines the Service Provider Interface (SPI)'
+                description = 'Defines the public API and Service Provider Interfaces (SPI) for JPersist Persistence Tools.'
             }
         }
     }

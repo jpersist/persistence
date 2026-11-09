@@ -1,0 +1,100 @@
+<html>
+<body>
+<h1>Persistence Tools &mdash; Hibernate 5 Provider</h1>
+<p>
+    The <strong>Hibernate Persistence Tools</strong> module ({@code io.github.jpersist.tools.hibernate})
+    implements the persistence tooling SPIs for legacy <strong>Java Persistence</strong> (JPA&nbsp;2.0, 2.1, and 2.2,
+    {@code "javax"} namespace) using <strong>Hibernate&nbsp;5</strong>.
+</p>
+<p>
+    This module provides build-time bytecode enhancement, AST-based query and stored procedure validation,
+    and JDBC database schema verification for applications running on Java EE / {@code javax.persistence} baselines.
+</p>
+
+<h2>Key Capabilities &amp; Implementations</h2>
+
+<h3>1. Bytecode Enhancement</h3>
+<p>
+    <strong>{@link hibernate.javax.persistence.tools.HibernateEnhancer}</strong> transforms compiled entity
+    classes at build time using Hibernate&nbsp;5's enhancement engine. It instruments classes for:
+</p>
+<ul>
+    <li>Lazy-loading proxies and field interception</li>
+    <li>Inline dirty tracking to avoid expensive state snapshots</li>
+    <li>Bidirectional association management and synchronization</li>
+    <li>Extended enhancement optimizations</li>
+</ul>
+<p>
+    Enhancement settings can be configured using string property keys or the
+    {@link hibernate.javax.persistence.tools.HibernateEnhancer.Option} enum.
+</p>
+
+<h3>2. Named Query &amp; Stored Procedure Validation</h3>
+<p>
+    <strong>{@link hibernate.javax.persistence.tools.HibernateNamedObjectParser}</strong> parses and validates
+    named JPQL queries and stored procedure declarations using Hibernate&nbsp;5's Abstract Syntax Tree (AST)
+    query translator against the JPA entity metamodel.
+</p>
+
+<h3>3. Database Schema Validation</h3>
+<p>
+    <strong>{@link hibernate.javax.persistence.tools.HibernateSchemaValidator}</strong> validates the entity
+    metamodel against a target database schema via JDBC, ensuring tables, columns, data types, and foreign key
+    constraints conform to JPA mappings.
+</p>
+
+<h2>Service Provider Registrations</h2>
+<p>
+    The module implements and registers the following Service Provider Interfaces (SPI) declared in
+    {@code io.github.jpersist.tools.api}:
+</p>
+<ul>
+    <li>
+        {@link persistence.tools.spi.NamedObjectParserFactory} &mdash; implemented by
+        {@link hibernate.javax.persistence.tools.provider.HibernateNamedObjectParserFactory}
+    </li>
+    <li>
+        {@link persistence.tools.spi.SchemaValidatorFactory} &mdash; implemented by
+        {@link hibernate.javax.persistence.tools.provider.HibernateSchemaValidatorFactory}
+    </li>
+    <li>
+        {@link persistence.tools.spi.EnhancerProvider} &mdash; implemented by
+        {@link hibernate.javax.persistence.tools.provider.HibernateEnhancerProvider}
+    </li>
+    <li>
+        {@link persistence.tools.spi.PersistenceLinterFactory} &mdash; base implementation
+        {@link hibernate.javax.persistence.tools.provider.HibernatePersistenceLinterFactory}
+    </li>
+    <li>
+        {@link persistence.tools.spi.PersistenceServiceProvider} &mdash; base implementation
+        {@link hibernate.javax.persistence.tools.provider.HibernatePersistenceServiceProvider}
+    </li>
+</ul>
+
+<h2>JPMS Strong Encapsulation</h2>
+<p>
+    This module enforces strict encapsulation: all implementation packages are hidden and not exported.
+    Consumers interact with this provider exclusively through the API contracts and SPIs provided by
+    {@code io.github.jpersist.tools.api}.
+</p>
+<p>
+    When performing build-time bytecode enhancement on modularized entity projects, entity packages must be
+    opened to this module to permit reflective inspection:
+</p>
+<pre>{@code
+module com.example.domain {
+    requires java.persistence;
+    opens com.example.domain.model to io.github.jpersist.tools.hibernate;
+}
+}</pre>
+
+<h2>Package Summary</h2>
+<dl>
+    <dt>{@link hibernate.javax.persistence.tools}</dt>
+    <dd>Hibernate&nbsp;5 implementations of bytecode enhancement, query parsing, and schema validation.</dd>
+
+    <dt>{@link hibernate.javax.persistence.tools.provider}</dt>
+    <dd>ServiceLoader provider factories for Java Persistence tooling under Hibernate&nbsp;5.</dd>
+</dl>
+</body>
+</html>

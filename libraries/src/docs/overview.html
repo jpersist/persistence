@@ -198,37 +198,35 @@
         mechanism.
         It also hosts the shared model types
         {@link persistence.tools.NamedObjectDescriptor} and
-        {@link persistence.tools.NamedObjectType}, as well as the
-        enhancement option enum
-        {@link persistence.tools.Enhancer.Option}.
+        {@link persistence.tools.NamedObjectType}.
     </dd>
 
-    <dt><code>persistence-tools-jakarta</code></dt>
+    <dt><code>hibernate-orm-persistence-tools</code></dt>
     <dd>
         Jakarta Persistence (JPA&nbsp;3.x) provider. Uses Hibernate ORM&nbsp;6
         to compile JPQL queries into Semantic Query Model (SQM) trees,
         validate database schemas, and enhance entity bytecode.
         <br>Key classes:
-        {@code hibernate.persistence.tools.provider.HibernateNamedObjectParserFactory},
-        {@code hibernate.persistence.tools.HibernateNamedObjectParser},
-        {@code hibernate.persistence.tools.provider.HibernateSchemaValidatorFactory},
-        {@code hibernate.persistence.tools.HibernateSchemaValidator},
-        {@code hibernate.persistence.tools.provider.HibernateEnhancerProvider}, and
-        {@code hibernate.persistence.tools.HibernateEnhancer}.
+        {@code hibernate.jakarta.persistence.tools.provider.HibernateNamedObjectParserFactory},
+        {@code hibernate.jakarta.persistence.tools.HibernateNamedObjectParser},
+        {@code hibernate.jakarta.persistence.tools.provider.HibernateSchemaValidatorFactory},
+        {@code hibernate.jakarta.persistence.tools.HibernateSchemaValidator},
+        {@code hibernate.jakarta.persistence.tools.provider.HibernateEnhancerProvider}, and
+        {@code hibernate.jakarta.persistence.tools.HibernateEnhancer}.
     </dd>
 
-    <dt><code>persistence-tools-legacy</code></dt>
+    <dt><code>hibernate-persistence-tools</code></dt>
     <dd>
         Legacy {@code javax.persistence} (JPA&nbsp;2.x) provider. Uses
         Hibernate&nbsp;5 and its AST-based query translator to validate
         JPQL queries and database schemas, and to enhance entity bytecode.
         <br>Key classes:
-        {@code hibernate.persistence.tools.provider.HibernateNamedObjectParserFactory},
-        {@code hibernate.persistence.tools.HibernateNamedObjectParser},
-        {@code hibernate.persistence.tools.provider.HibernateSchemaValidatorFactory},
-        {@code hibernate.persistence.tools.HibernateSchemaValidator},
-        {@code hibernate.persistence.tools.provider.HibernateEnhancerProvider}, and
-        {@code hibernate.persistence.tools.HibernateEnhancer}.
+        {@code hibernate.javax.persistence.tools.provider.HibernateNamedObjectParserFactory},
+        {@code hibernate.javax.persistence.tools.HibernateNamedObjectParser},
+        {@code hibernate.javax.persistence.tools.provider.HibernateSchemaValidatorFactory},
+        {@code hibernate.javax.persistence.tools.HibernateSchemaValidator},
+        {@code hibernate.javax.persistence.tools.provider.HibernateEnhancerProvider}, and
+        {@code hibernate.javax.persistence.tools.HibernateEnhancer}.
     </dd>
 
     <dt><code>persistence-tools-bom</code></dt>
@@ -242,21 +240,21 @@
 
 <h3>Enhancing Entity Bytecode</h3>
 <p>
-    Use {@link persistence.tools.spi.EnhancerProvider#getHibernateEnhancerProvider(String)}
+    Use {@link persistence.tools.spi.EnhancerProvider#getEnhancerProvider(String)}
     to obtain the appropriate provider for a given JPA specification version,
     then create a {@link persistence.tools.Enhancer} to
     transform entity classes at build time:
 </p>
 <pre>{@code
-    HibernateEnhancerProvider provider =
-        HibernateEnhancerProvider.getHibernateEnhancerProvider("3.1");
+    EnhancerProvider provider =
+        EnhancerProvider.getEnhancerProvider("3.1");
 
-    HibernateEnhancer enhancer = provider.getEnhancer(
+    Enhancer enhancer = provider.getEnhancer(
         classesDir,
         classpathFiles,
         Map.of(
-            HibernateEnhancer.Option.LAZY_INITIALIZATION, true,
-            HibernateEnhancer.Option.DIRTY_TRACKING, true));
+            Enhancer.Option.LAZY_INITIALIZATION, true,
+            Enhancer.Option.DIRTY_TRACKING, true));
 
     byte[] enhancedBytes = enhancer.enhance(
         "com.example.Order", originalClassBytes);

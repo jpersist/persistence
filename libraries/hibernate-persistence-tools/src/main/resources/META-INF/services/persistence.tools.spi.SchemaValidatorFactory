@@ -1,1 +1,1 @@
-hibernate.persistence.tools.provider.HibernateSchemaValidatorFactory
+hibernate.javax.persistence.tools.provider.HibernateSchemaValidatorFactory

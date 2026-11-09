@@ -1,0 +1,152 @@
+<html>
+<body>
+<h1>Persistence Tools Core API &amp; SPI</h1>
+<p>
+    The <strong>Persistence Tools API</strong> module ({@code io.github.jpersist.tools.api}) provides
+    vendor-agnostic abstractions and Service Provider Interfaces (SPI) for build-time validation,
+    query parsing, schema verification, and bytecode enhancement of JPA persistence artifacts.
+</p>
+<p>
+    By decoupling application tooling and build plugins from specific JPA provider implementations,
+    this module enables consistent build-time analysis across different persistence specifications
+    (e.g.&nbsp;Jakarta Persistence JPA&nbsp;3.x and legacy Java Persistence JPA&nbsp;2.x).
+</p>
+
+<h2>Architecture &amp; Key Contracts</h2>
+<p>
+    The API is divided into two primary package layers:
+</p>
+
+<h3>1. Public API Contracts (<code>persistence.tools</code>)</h3>
+<p>
+    Defines the consumer-facing interfaces and data models for persistence tooling:
+</p>
+<ul>
+    <li>
+        <strong>{@link persistence.tools.Enhancer}</strong> &mdash; Transforms compiled entity class bytecode
+        at build time to incorporate runtime optimizations such as lazy-loading proxies, inline dirty tracking,
+        and bidirectional association management.
+    </li>
+    <li>
+        <strong>{@link persistence.tools.NamedObjectParser}</strong> &mdash; Validates named JPQL queries and
+        stored procedure declarations against the entity metamodel, returning rich metadata descriptors.
+    </li>
+    <li>
+        <strong>{@link persistence.tools.SchemaValidator}</strong> &mdash; Validates the entity metamodel against
+        a live database schema via JDBC connections.
+    </li>
+    <li>
+        <strong>{@link persistence.tools.NamedObjectDescriptor}</strong> &mdash; Immutable descriptor encapsulating
+        the validation results, target type, query/procedure name, and extracted parameter definitions.
+    </li>
+    <li>
+        <strong>{@link persistence.tools.NamedObjectType}</strong> &mdash; Enumeration classifying named persistence
+        objects ({@link persistence.tools.NamedObjectType#QUERY QUERY} or
+        {@link persistence.tools.NamedObjectType#STORED_PROCEDURE STORED_PROCEDURE}).
+    </li>
+    <li>
+        <strong>{@link persistence.tools.PersistenceLinter}</strong> &mdash; Common marker interface for all
+        persistence linting components.
+    </li>
+</ul>
+
+<h3>2. Service Provider Interfaces (<code>persistence.tools.spi</code>)</h3>
+<p>
+    Defines the factory interfaces and runtime discovery mechanisms implemented by provider modules:
+</p>
+<ul>
+    <li>
+        <strong>{@link persistence.tools.spi.PersistenceServiceProvider}</strong> &mdash; Common root SPI for
+        version-to-namespace mapping and {@link java.util.ServiceLoader}-based factory resolution.
+    </li>
+    <li>
+        <strong>{@link persistence.tools.spi.EnhancerProvider}</strong> &mdash; Factory SPI for discovering
+        and instantiating namespace-specific bytecode enhancers.
+    </li>
+    <li>
+        <strong>{@link persistence.tools.spi.NamedObjectParserFactory}</strong> &mdash; Factory SPI for creating
+        named object query and procedure parsers.
+    </li>
+    <li>
+        <strong>{@link persistence.tools.spi.SchemaValidatorFactory}</strong> &mdash; Factory SPI for creating
+        database schema validators.
+    </li>
+    <li>
+        <strong>{@link persistence.tools.spi.PersistenceLinterFactory}</strong> &mdash; Generic base factory SPI
+        for discovering linter factory subtypes.
+    </li>
+</ul>
+
+<h2>Service Discovery and Usage</h2>
+
+<h3>Bytecode Enhancement</h3>
+<p>
+    Obtain an enhancer for a specific JPA specification version (e.g.&nbsp;{@code "3.1"}) via
+    {@link persistence.tools.spi.EnhancerProvider#getEnhancerProvider(String)}:
+</p>
+<pre>{@code
+EnhancerProvider provider = EnhancerProvider.getEnhancerProvider("3.1");
+Enhancer enhancer = provider.getEnhancer(
+    classpathFiles,
+    Map.of("enhancement.option.lazy-initialization", true,
+           "enhancement.option.dirty-tracking", true));
+
+byte[] enhancedBytes = enhancer.enhance("com.example.Order", originalBytecode);
+}</pre>
+
+<h3>Named Query and Stored Procedure Validation</h3>
+<p>
+    Obtain a parser factory via
+    {@link persistence.tools.spi.NamedObjectParserFactory#newNamedObjectParserFactory(String)}:
+</p>
+<pre>{@code
+NamedObjectParserFactory factory = NamedObjectParserFactory.newNamedObjectParserFactory("3.1");
+try (NamedObjectParser parser = factory.newNamedObjectParser(entityClassNames)) {
+    NamedObjectDescriptor queryDesc = parser.parseQuery(
+        "Order.findByStatus", "SELECT o FROM Order o WHERE o.status = :status");
+
+    NamedObjectDescriptor procDesc = parser.parseStoredProcedure(
+        "Order.archive", "sp_archive_orders", Set.of("cutoffDate"));
+}
+}</pre>
+
+<h3>Database Schema Validation</h3>
+<p>
+    Obtain a schema validator factory via
+    {@link persistence.tools.spi.SchemaValidatorFactory#newSchemaValidatorFactory(String)}:
+</p>
+<pre>{@code
+SchemaValidatorFactory factory = SchemaValidatorFactory.newSchemaValidatorFactory("3.1");
+SchemaValidator validator = factory.newSchemaValidator(entityClassNames);
+validator.validateSchema(Map.of(
+    "driver",   "org.h2.Driver",
+    "url",      "jdbc:h2:mem:testdb",
+    "username", "sa",
+    "password", ""));
+}</pre>
+
+<h2>Java Platform Module System (JPMS)</h2>
+<p>
+    The {@code io.github.jpersist.tools.api} module descriptor exports its API packages and declares
+    ServiceLoader dependencies:
+</p>
+<ul>
+    <li>{@code exports persistence.tools;}</li>
+    <li>{@code exports persistence.tools.spi;}</li>
+    <li>{@code uses persistence.tools.spi.PersistenceServiceProvider;}</li>
+    <li>{@code uses persistence.tools.spi.PersistenceLinterFactory;}</li>
+    <li>{@code uses persistence.tools.spi.NamedObjectParserFactory;}</li>
+    <li>{@code uses persistence.tools.spi.SchemaValidatorFactory;}</li>
+    <li>{@code uses persistence.tools.spi.EnhancerProvider;}</li>
+</ul>
+
+<h2>Package Summary</h2>
+<dl>
+    <dt>{@link persistence.tools}</dt>
+    <dd>Public contracts for persistence bytecode enhancement, query parsing, and schema validation.</dd>
+
+    <dt>{@link persistence.tools.spi}</dt>
+    <dd>Service Provider Interfaces (SPI) and dynamic discovery mechanisms for persistence tooling providers.</dd>
+</dl>
+</body>
+</html>

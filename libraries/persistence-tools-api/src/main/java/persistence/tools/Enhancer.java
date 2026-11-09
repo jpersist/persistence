@@ -2,96 +2,64 @@ package persistence.tools;
 
 import persistence.tools.spi.EnhancerProvider;
 
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 /**
- * SPI for Hibernate bytecode enhancement of JPA entity classes.
+ * Public API contract for bytecode enhancement and instrumentation of persistence entity classes.
  *
- * <p>Implementations transform compiled entity class bytes to add
- * Hibernate-specific instrumentation such as lazy-loading proxies,
- * inline dirty tracking, bi-directional association management, and
- * extended enhancement. The transformation is performed entirely at
- * build time so that enhanced classes are ready for deployment without
- * runtime bytecode manipulation.</p>
+ * <p>An {@code Enhancer} transforms compiled class bytecode to inject persistence-related
+ * capabilities directly into domain models at build time. By instrumenting classes ahead of
+ * runtime, applications benefit from optimized persistence operations without incurring the
+ * overhead or complexity of dynamic runtime bytecode generation and Java agents.</p>
  *
- * <p>Concrete implementations are namespace-specific: Jakarta
- * Persistence classes are enhanced by
- * {@code JakartaHibernateEnhancer} (Hibernate&nbsp;6), while legacy
- * {@code javax.persistence} classes are handled by
- * {@code LegacyHibernateEnhancer} (Hibernate&nbsp;5). Instances are
- * typically obtained through a {@link EnhancerProvider}.</p>
+ * <h2>Common Enhancement Capabilities</h2>
+ * <p>Depending on provider configuration and options, bytecode enhancement typically includes:</p>
+ * <ul>
+ *   <li><strong>Lazy Loading &amp; Field Interception:</strong> Injects interception hooks into
+ *       persistent field or property accessors, enabling fine-grained lazy initialization of
+ *       attributes and associations without dynamic proxy wrappers.</li>
+ *   <li><strong>Inline Dirty Tracking:</strong> Tracks attribute mutations directly within
+ *       the entity instance, avoiding expensive snapshot comparisons during persistence context
+ *       flush operations.</li>
+ *   <li><strong>Bidirectional Association Management:</strong> Automatically synchronizes both sides
+ *       of bidirectional relationships when one side is updated.</li>
+ *   <li><strong>Optimized State Access:</strong> Provides direct field access and internal state
+ *       handling for improved runtime execution performance.</li>
+ * </ul>
  *
- * @since 1.0.0
+ * <h2>Build-Time Integration</h2>
+ * <p>Enhancement is designed to be integrated into build tools and CI/CD pipelines (such as
+ * Gradle, Maven, or IDE compiler tasks) after compilation and prior to packaging:</p>
+ * <pre>{@code
+ * EnhancerProvider provider = EnhancerProvider.getEnhancerProvider("3.1");
+ * Enhancer enhancer = provider.getEnhancer(classpathFiles, enhancementSettings);
+ *
+ * byte[] originalBytes = Files.readAllBytes(classFile);
+ * byte[] enhancedBytes = enhancer.enhance("com.example.Order", originalBytes);
+ * Files.write(classFile, enhancedBytes);
+ * }</pre>
+ *
+ * <h2>Provider Independence</h2>
+ * <p>This interface serves as a vendor-neutral contract. Concrete implementations and provider-specific
+ * transformation logic are encapsulated behind {@link EnhancerProvider} and discovered via the
+ * {@link java.util.ServiceLoader} mechanism.</p>
+ *
+ * @since 4.0.0
  * @see EnhancerProvider
- * @see Option
  */
 public interface Enhancer {
 
     /**
-     * Enhances the bytecode of the given entity class.
+     * Transforms the bytecode of the specified class to incorporate persistence enhancements.
      *
-     * @param className  the fully qualified name of the class being enhanced
-     * @param classBytes the original class bytes read from disk
-     * @return the enhanced class bytes, or the original bytes if no
-     *         enhancement was applied
+     * <p>If the target class is eligible for enhancement and matching configuration options
+     * are active, this method returns the modified bytecode array. If the class is ineligible,
+     * already enhanced, or no transformations are applicable, the original {@code classBytes}
+     * array (or an equivalent representation) is returned unmodified.</p>
+     *
+     * @param className  the fully qualified binary name of the class (e.g., {@code "com.example.Order"})
+     * @param classBytes the original compiled class bytecode
+     * @return the enhanced bytecode array, or the original unmodified bytecode if no changes were applied
+     * @throws RuntimeException if an unrecoverable error occurs during bytecode parsing or transformation
      */
     byte[] enhance(String className, byte[] classBytes);
-
-    /**
-     * Converts a {@link File} to a {@link URL}.
-     *
-     * @param file the file to convert
-     * @return the corresponding URL
-     * @throws RuntimeException if the file URI cannot be converted to a URL
-     */
-    static URL toURL(File file) {
-        try {
-            return file.toURI().toURL();
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * Creates a {@link URLClassLoader} whose classpath consists of the
-     * compiled classes directory followed by the supplied classpath files.
-     *
-     * @param classesDir     the directory containing compiled class files
-     * @param classpathFiles additional classpath entries (JARs or directories)
-     * @param parent         the parent class loader to delegate to
-     * @return a new class loader covering the specified classpath
-     */
-    static URLClassLoader createURLClassLoader(File classesDir, Set<File> classpathFiles, ClassLoader parent) {
-        List<URL> urls = new ArrayList<>();
-        urls.add(toURL(classesDir));
-        urls.addAll(classpathFiles.stream().map(Enhancer::toURL).toList());
-        return new URLClassLoader(urls.toArray(new URL[0]), parent);
-    }
-
-    /**
-     * Enhancement options that control which bytecode transformations
-     * are applied during entity enhancement.
-     */
-    enum Option {
-
-        /** Enable lazy-loading of persistent attributes. */
-        LAZY_INITIALIZATION,
-
-        /** Enable inline dirty tracking to avoid snapshot comparisons. */
-        DIRTY_TRACKING,
-
-        /** Enable automatic bi-directional association management. */
-        ASSOCIATION_MANAGEMENT,
-
-        /** Enable extended enhancement beyond the standard JPA model. */
-        EXTENDED_ENHANCEMENT
-
-    }
 
 }

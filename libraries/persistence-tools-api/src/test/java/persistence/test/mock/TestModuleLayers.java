@@ -37,10 +37,8 @@ public final class TestModuleLayers {
 
         ModuleDescriptor apiDescriptor = ModuleDescriptor.newModule(apiModuleName)
             .requires("java.base")
-            .exports("persist.api.spi")
-            .exports("persist.lint.api.spi")
-            .exports("persist.lint.api")
-            .exports("persist.hibernate.enhance.spi")
+            .exports("persistence.tools")
+            .exports("persistence.tools.spi")
             .uses(serviceClass.getName())
             .build();
 
@@ -124,7 +122,7 @@ public final class TestModuleLayers {
             Class<?> loadedClass = loader.loadClass(targetClass.getName());
             Class<?>[] resolvedParamTypes = new Class<?>[paramTypes.length];
             for (int i = 0; i < paramTypes.length; i++) {
-                if (paramTypes[i].getName().startsWith("persist.")) {
+                if (paramTypes[i].getName().startsWith("persistence.")) {
                     resolvedParamTypes[i] = loader.loadClass(paramTypes[i].getName());
                 } else {
                     resolvedParamTypes[i] = paramTypes[i];
@@ -133,7 +131,7 @@ public final class TestModuleLayers {
 
             Object[] resolvedArgs = new Object[args.length];
             for (int i = 0; i < args.length; i++) {
-                if (args[i] instanceof Class<?> cls && cls.getName().startsWith("persist.")) {
+                if (args[i] instanceof Class<?> cls && cls.getName().startsWith("persistence.")) {
                     resolvedArgs[i] = loader.loadClass(cls.getName());
                 } else {
                     resolvedArgs[i] = args[i];

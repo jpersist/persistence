@@ -1,1 +1,1 @@
-hibernate.persistence.tools.provider.HibernateNamedObjectParserFactory
+hibernate.jakarta.persistence.tools.provider.HibernateNamedObjectParserFactory

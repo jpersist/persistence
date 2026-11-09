@@ -3,6 +3,7 @@ package persistence.tools.spi;
 import persistence.tools.Enhancer;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -19,31 +20,29 @@ import java.util.Set;
  * classloader, or modular {@link ModuleLayer} runtime environments.</p>
  *
  * <p>In JPMS environments, provider modules register their implementation
- * with {@code provides persistence.tools.spi.HibernateEnhancerProvider}
+ * with {@code provides persistence.tools.spi.EnhancerProvider}
  * in {@code module-info.java}.</p>
  *
- * @since 1.0.0
+ * @since 4.0.0
  * @see Enhancer
  * @see PersistenceServiceProvider
  */
 public interface EnhancerProvider extends PersistenceServiceProvider {
 
     /**
-     * Creates a {@link Enhancer} configured with the given
-     * classpath and enhancement options.
+     * Creates an {@link Enhancer} configured with the given
+     * classpath and enhancement settings.
      *
-     * @param classesDir     the directory containing compiled entity class files
-     * @param classpathFiles additional classpath entries required for
-     *                       enhancement (e.g.&nbsp;JPA API and Hibernate JARs)
-     * @param options        a map of {@link Enhancer.Option} flags
-     *                       controlling which transformations are applied
+     * @param classpathFilesCollection additional classpath entries required for
+     *                                 enhancement (e.g.&nbsp;persistence API and provider JARs)
+     * @param settings                 a map of enhancement settings and option flags
      * @return a new enhancer instance
      */
-    Enhancer getEnhancer(File classesDir, Set<File> classpathFiles,
-                         Map<Enhancer.Option, Boolean> options);
+    Enhancer getEnhancer(Collection<Set<File>> classpathFilesCollection,
+                         Map<String, Object> settings);
 
     /**
-     * Discovers and returns the {@code HibernateEnhancerProvider} for the
+     * Discovers and returns the {@code EnhancerProvider} for the
      * given JPA specification version using the thread context class loader.
      *
      * @param jpaVersion the JPA specification version (e.g.&nbsp;{@code "3.1"})
@@ -58,7 +57,7 @@ public interface EnhancerProvider extends PersistenceServiceProvider {
     }
 
     /**
-     * Discovers and returns the {@code HibernateEnhancerProvider} for the
+     * Discovers and returns the {@code EnhancerProvider} for the
      * given JPA specification version using the specified {@link ClassLoader}.
      *
      * @param jpaVersion  the JPA specification version (e.g.&nbsp;{@code "3.1"})
@@ -74,7 +73,7 @@ public interface EnhancerProvider extends PersistenceServiceProvider {
     }
 
     /**
-     * Discovers and returns the {@code HibernateEnhancerProvider} for the
+     * Discovers and returns the {@code EnhancerProvider} for the
      * given JPA specification version using the specified {@link ModuleLayer}.
      *
      * @param jpaVersion the JPA specification version (e.g.&nbsp;{@code "3.1"})
