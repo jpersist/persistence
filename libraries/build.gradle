@@ -84,21 +84,14 @@ void configureModularJavadoc(Javadoc task, Project targetProject, Project apiPro
 
         // Dynamic cross-reference link mapping for implementation modules
         if (targetProject.name != apiProject.name) {
-            try {
-                // Allows implementation Javadoc to safely hyperlink back to core API definitions
-                def specLink = "https://jpersist.github.io/persistence/tools/specifications/api/${apiProject.version}/"
-                def url = URI.create(specLink).toURL()
-                def connection = (HttpURLConnection) url.openConnection()
-                connection.requestMethod = "HEAD"
-                connection.connectTimeout = 3000 // Timeout de 3 secondes
-                connection.readTimeout = 3000
+            def useOnlineJavadoc = targetProject.findProperty('useOnlineJavadoc')
+            boolean isOnline = useOnlineJavadoc != null ? (useOnlineJavadoc.toString().isEmpty() || useOnlineJavadoc.toString().toBoolean()) : (targetProject.hasProperty('useOnlineJavadoc'))
 
-                int responseCode = connection.responseCode
-                if (responseCode != HttpURLConnection.HTTP_OK) {
-                    throw new Exception("The remote URL returns: ${responseCode}")
-                }
-                links(specLink)
-            } catch (Exception ignored) {
+            if (isOnline) {
+                // Allows implementation Javadoc to safely hyperlink back to online core API definitions
+                def apiVersion = targetProject.findProperty('releasedApiVersion') ?: apiProject.version.toString()
+                links("https://jpersist.github.io/persistence/tools/specifications/api/${apiVersion}/")
+            } else {
                 File localDir = rootProject.layout.buildDirectory.dir("docs/javadoc/specifications").get().asFile
                 if (localDir.exists()) {
                     links("${localDir.toURI().toString()}")

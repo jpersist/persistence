@@ -14,6 +14,10 @@ on:
         description: 'The version tag to checkout and publish'
         required: false
         type: string
+      releasedApiVersion:
+        description: 'Released core API version'
+        required: false
+        type: string
     secrets:
       SONATYPE_USERNAME:
         required: true
@@ -36,6 +40,7 @@ jobs:
       - name: Check out Repository
         uses: actions/checkout@v7
         with:
+          fetch-depth: 0
           ref: ${{ inputs.tag || github.ref }}
 
       - name: Set up Java Development Kit
@@ -87,21 +92,23 @@ jobs:
           echo "Publishing version ${PUBLISH_VERSION} via tasks: ${PUBLISH_TASK}"
 
           # Re-inject the dynamic versions to make sure the BOM's generated POM is written correctly
-          if [[ "$TAG_NAME" == bom-v* ]]; then
+          API_VER="${{ inputs.releasedApiVersion }}"
+          if [ -z "$API_VER" ]; then
             API_TAG=$(git tag -l "spec-v*" | sort -V | tail -n1)
+            API_VER="${API_TAG#spec-v}"
+          fi
+
+          if [[ "$TAG_NAME" == bom-v* ]]; then
             HIB5_TAG=$(git tag -l "hib5-v*" | sort -V | tail -n1)
             HIB6_TAG=$(git tag -l "hib6-v*" | sort -V | tail -n1)
 
             ./gradlew -p libraries ${PUBLISH_TASK} -Pversion="${PUBLISH_VERSION}" -PisBomRelease=true \
-              -PreleasedApiVersion="${API_TAG#spec-v}" \
+              -PreleasedApiVersion="${API_VER}" \
               -PreleasedHib5Version="${HIB5_TAG#hib5-v}" \
               -PreleasedHib6Version="${HIB6_TAG#hib6-v}"
           elif [[ "$TAG_NAME" == hib5-v* || "$TAG_NAME" == hib6-v* ]]; then
-            # Re-fetch the latest released API tag during the detached CD pipeline
-            API_TAG=$(git tag -l "spec-v*" | sort -V | tail -n1)
-
             ./gradlew -p libraries ${PUBLISH_TASK} -Pversion="${PUBLISH_VERSION}" -PisHibernateRelease=true \
-              -PreleasedApiVersion="${API_TAG#spec-v}"
+              -PreleasedApiVersion="${API_VER}"
           else
             ./gradlew -p libraries ${PUBLISH_TASK} -Pversion="${PUBLISH_VERSION}"
           fi

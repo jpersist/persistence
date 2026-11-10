@@ -7,7 +7,16 @@ on:
         description: 'The version tag to checkout and publish'
         required: false
         type: string
+      releasedApiVersion:
+        description: 'Released core API version for Javadoc cross-linking'
+        required: false
+        type: string
   workflow_dispatch:
+    inputs:
+      releasedApiVersion:
+        description: 'Released core API version for Javadoc cross-linking'
+        required: false
+        type: string
 
 permissions:
   contents: write
@@ -26,12 +35,21 @@ jobs:
         uses: actions/checkout@v7
         with:
           ref: ${{ inputs.tag || github.ref }}
+          fetch-depth: 0
 
       - name: Resolve Project Context and Version
         id: context
         run: |
           TARGET_REF="${{ inputs.tag || github.ref }}"
           TAG_NAME="${TARGET_REF#refs/tags/}"
+
+          # Resolve API Version for cross-linking
+          API_VER="${{ inputs.releasedApiVersion }}"
+          if [ -z "$API_VER" ]; then
+            API_TAG=$(git tag -l "spec-v*" | sort -V | tail -n1)
+            API_VER="${API_TAG#spec-v}"
+          fi
+          echo "api_version=${API_VER}" >> "$GITHUB_OUTPUT"
 
           # Extract meta context according to the specific layout structure matching the tag
           if [[ "$TAG_NAME" == bom-v* ]]; then
@@ -63,7 +81,7 @@ jobs:
             echo "ptype=specifications" >> "$GITHUB_OUTPUT"
             echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
             echo "doc_task=aggregateApiJavadoc" >> "$GITHUB_OUTPUT"
-            echo "src_doc_dir=libraries/build/docs/javadoc/specification" >> "$GITHUB_OUTPUT"
+            echo "src_doc_dir=libraries/build/docs/javadoc/specifications" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Set up Java Development Kit
@@ -83,7 +101,11 @@ jobs:
 
       - name: Generate Documentation
         if: steps.context.outputs.skip_docs != 'true'
-        run: ./gradlew -p libraries ${{ steps.context.outputs.doc_task }}
+        run: |
+          API_VER="${{ steps.context.outputs.api_version }}"
+          ./gradlew -p libraries ${{ steps.context.outputs.doc_task }} \
+            -PuseOnlineJavadoc=true \
+            -PreleasedApiVersion="${API_VER}"
 
       - name: Prepare Versioned Site
         if: steps.context.outputs.skip_docs != 'true'

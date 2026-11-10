@@ -22,6 +22,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: release-libraries
+  cancel-in-progress: false
+
 jobs:
   release:
     name: Execute Release Automation
@@ -30,6 +34,7 @@ jobs:
     outputs:
       release_version: ${{ steps.versions.outputs.release_version }}
       tag_prefix: ${{ steps.context.outputs.tag_prefix }}
+      api_version: ${{ steps.resolve_api.outputs.api_version }}
 
     steps:
       - name: Check out Repository
@@ -41,7 +46,7 @@ jobs:
       - name: Configure Git Author Profile
         run: |
           git config --global user.name "github-actions[bot]"
-          git config --global user.email "41898282+github-actions[bot]@://github.com"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
       - name: Resolve Project Context
         id: context
@@ -81,7 +86,7 @@ jobs:
 
           # Initialize property file if it does not exist yet for the isolated BOM subfolder
           if [ ! -f "$PROP_PATH" ]; then
-            echo "version=1.0.0-SNAPSHOT" > "$PROP_PATH"
+            printf "group=io.github.jpersist.tools\nversion=1.0.0-SNAPSHOT\n" > "$PROP_PATH"
           fi
 
           CURRENT_VERSION=$(grep '^version=' "$PROP_PATH" | cut -d'=' -f2)
@@ -107,6 +112,22 @@ jobs:
           echo "release_version=${RELEASE_VERSION}" >> "$GITHUB_OUTPUT"
           echo "next_version=${NEXT_VERSION}" >> "$GITHUB_OUTPUT"
 
+      - name: Resolve Core API Version
+        id: resolve_api
+        run: |
+          if [ "${{ github.event.inputs.project_type }}" = "API" ]; then
+            API_VER="${{ steps.versions.outputs.release_version }}"
+          else
+            API_TAG=$(git tag -l "spec-v*" | sort -V | tail -n1)
+            API_VER="${API_TAG#spec-v}"
+          fi
+          if [ -z "$API_VER" ]; then
+            echo "::error::No existing 'spec-v*' API release tag found. Please release the API module first."
+            exit 1
+          fi
+          echo "Resolved core API version: ${API_VER}"
+          echo "api_version=${API_VER}" >> "$GITHUB_OUTPUT"
+
       - name: Set up Java Development Kit
         uses: actions/setup-java@v6
         with:
@@ -121,6 +142,7 @@ jobs:
           PROP_PATH="${{ steps.context.outputs.prop_path }}"
           RELEASE_VERSION="${{ steps.versions.outputs.release_version }}"
           BUILD_TASK="${{ steps.context.outputs.build_task }}"
+          API_VER="${{ steps.resolve_api.outputs.api_version }}"
 
           # Apply release version to target gradle.properties
           sed -i "s/^version=.*/version=${RELEASE_VERSION}/" "$PROP_PATH"
@@ -128,11 +150,9 @@ jobs:
 
           # If compiling the independent BOM, fetch the latest tags of all dependencies
           if [ "${{ github.event.inputs.project_type }}" = "BOM" ]; then
-            API_TAG=$(git tag -l "spec-v*" | sort -V | tail -n1)
             HIB5_TAG=$(git tag -l "hib5-v*" | sort -V | tail -n1)
             HIB6_TAG=$(git tag -l "hib6-v*" | sort -V | tail -n1)
 
-            API_VER="${API_TAG#spec-v}"
             HIB5_VER="${HIB5_TAG#hib5-v}"
             HIB6_VER="${HIB6_TAG#hib6-v}"
 
@@ -143,10 +163,6 @@ jobs:
               -PreleasedHib5Version="${HIB5_VER}" \
               -PreleasedHib6Version="${HIB6_VER}"
           elif [[ "${{ github.event.inputs.project_type }}" == HIBERNATE_* ]]; then
-            # Query Git to find the absolute latest stable release of the core API
-            API_TAG=$(git tag -l "spec-v*" | sort -V | tail -n1)
-            API_VER="${API_TAG#spec-v}"
-
             echo "Hibernate release train building against stable API version: ${API_VER}"
 
             ./gradlew -p libraries $BUILD_TASK -PisHibernateRelease=true -PreleasedApiVersion="${API_VER}"
@@ -202,6 +218,7 @@ jobs:
     uses: ./.github/workflows/gradle-libraries-cd.yml
     with:
       tag: ${{ needs.release.outputs.tag_prefix }}${{ needs.release.outputs.release_version }}
+      releasedApiVersion: ${{ needs.release.outputs.api_version }}
     secrets:
       SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
       SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
@@ -214,5 +231,6 @@ jobs:
     uses: ./.github/workflows/gradle-libraries-doc.yml
     with:
       tag: ${{ needs.release.outputs.tag_prefix }}${{ needs.release.outputs.release_version }}
+      releasedApiVersion: ${{ needs.release.outputs.api_version }}
     permissions:
       contents: write
