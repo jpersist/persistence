@@ -96,6 +96,12 @@ jobs:
               -PreleasedApiVersion="${API_TAG#spec-v}" \
               -PreleasedHib5Version="${HIB5_TAG#hib5-v}" \
               -PreleasedHib6Version="${HIB6_TAG#hib6-v}"
+          elif [[ "$TAG_NAME" == hib5-v* || "$TAG_NAME" == hib6-v* ]]; then
+            # Re-fetch the latest released API tag during the detached CD pipeline
+            API_TAG=$(git tag -l "spec-v*" | sort -V | tail -n1)
+
+            ./gradlew -p libraries ${PUBLISH_TASK} -Pversion="${PUBLISH_VERSION}" -PisHibernateRelease=true \
+              -PreleasedApiVersion="${API_TAG#spec-v}"
           else
             ./gradlew -p libraries ${PUBLISH_TASK} -Pversion="${PUBLISH_VERSION}"
           fi

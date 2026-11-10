@@ -142,6 +142,14 @@ jobs:
               -PreleasedApiVersion="${API_VER}" \
               -PreleasedHib5Version="${HIB5_VER}" \
               -PreleasedHib6Version="${HIB6_VER}"
+          elif [[ "${{ github.event.inputs.project_type }}" == HIBERNATE_* ]]; then
+            # Query Git to find the absolute latest stable release of the core API
+            API_TAG=$(git tag -l "spec-v*" | sort -V | tail -n1)
+            API_VER="${API_TAG#spec-v}"
+
+            echo "Hibernate release train building against stable API version: ${API_VER}"
+
+            ./gradlew -p libraries $BUILD_TASK -PisHibernateRelease=true -PreleasedApiVersion="${API_VER}"
           else
             ./gradlew -p libraries $BUILD_TASK
           fi
