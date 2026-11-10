@@ -3,11 +3,24 @@ plugins {
     id 'publishing-conventions'
 }
 
+// Resolve versions from production variables (passed via CLI during release) or fallback to local snapshot versions
+def apiVersion = project.findProperty('releasedApiVersion') ?: project(':persistence-tools-api').version.toString()
+def hibernateLegacyVersion = project.findProperty('releasedHib5Version') ?: project(':hibernate-persistence-tools').version.toString()
+def hibernateModernVersion = project.findProperty('releasedHib6Version') ?: project(':hibernate-orm-persistence-tools').version.toString()
+
 dependencies {
     constraints {
-        api project(':persistence-tools-api')
-        api project(':hibernate-persistence-tools')
-        api project(':hibernate-orm-persistence-tools')
+        // Dynamically resolve all components to static released versions during a production deployment
+        if (project.hasProperty('isBomRelease')) {
+            api "io.github.jpersist.tools:persistence-tools-api:${apiVersion}"
+            api "io.github.jpersist.tools:hibernate-persistence-tools:${hibernateLegacyVersion}"
+            api "io.github.jpersist.tools:hibernate-orm-persistence-tools:${hibernateModernVersion}"
+        } else {
+            // Fallback for local development execution
+            api project(':persistence-tools-api')
+            api project(':hibernate-persistence-tools')
+            api project(':hibernate-orm-persistence-tools')
+        }
     }
 }
 

@@ -34,53 +34,59 @@ jobs:
           TAG_NAME="${TARGET_REF#refs/tags/}"
 
           # Extract meta context according to the specific layout structure matching the tag
-          if [[ "$TAG_NAME" == hib6-v* ]]; then
-            PTYPE="hibernate-orm"
-            PROP_PATH="libraries/hibernate-orm-persistence-tools/gradle.properties"
+          if [[ "$TAG_NAME" == bom-v* ]]; then
+            echo "BOM packages do not contain code api docs. Skipping generation."
+            echo "skip_docs=true" >> "$GITHUB_OUTPUT"
+          elif [[ "$TAG_NAME" == hib6-v* ]]; then
             VERSION="${TAG_NAME#hib6-v}"
-            DOC_TASK="aggregateModernHibernateJavadoc"
-            SRC_DOC_DIR="libraries/build/docs/javadoc/hibernate-orm"
+            echo "skip_docs=false" >> "$GITHUB_OUTPUT"
+            echo "ptype=hibernate-orm" >> "$GITHUB_OUTPUT"
+            echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+            echo "doc_task=aggregateModernHibernateJavadoc" >> "$GITHUB_OUTPUT"
+            echo "src_doc_dir=libraries/build/docs/javadoc/hibernate-orm" >> "$GITHUB_OUTPUT"
           elif [[ "$TAG_NAME" == hib5-v* ]]; then
-            PTYPE="hibernate"
-            PROP_PATH="libraries/hibernate-persistence-tools/gradle.properties"
             VERSION="${TAG_NAME#hib5-v}"
-            DOC_TASK="aggregateLegacyHibernateJavadoc"
-            SRC_DOC_DIR="libraries/build/docs/javadoc/hibernate"
+            echo "skip_docs=false" >> "$GITHUB_OUTPUT"
+            echo "ptype=hibernate" >> "$GITHUB_OUTPUT"
+            echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+            echo "doc_task=aggregateLegacyHibernateJavadoc" >> "$GITHUB_OUTPUT"
+            echo "src_doc_dir=libraries/build/docs/javadoc/hibernate" >> "$GITHUB_OUTPUT"
           else
-            # Default fallback for API / BOM matching spec-v* or manual triggers
-            PTYPE="specifications"
-            PROP_PATH="libraries/gradle.properties"
+            # Default fallback for API matching spec-v* or manual triggers
             if [[ "$TAG_NAME" == spec-v* ]]; then
               VERSION="${TAG_NAME#spec-v}"
             else
-              VERSION=$(grep '^version=' "$PROP_PATH" | cut -d'=' -f2)
+              VERSION=$(grep '^version=' libraries/gradle.properties | cut -d'=' -f2)
               VERSION="${VERSION%-SNAPSHOT}"
             fi
-            DOC_TASK="aggregateApiJavadoc"
-            SRC_DOC_DIR="libraries/build/docs/javadoc/specifications"
+            echo "skip_docs=false" >> "$GITHUB_OUTPUT"
+            echo "ptype=specifications" >> "$GITHUB_OUTPUT"
+            echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+            echo "doc_task=aggregateApiJavadoc" >> "$GITHUB_OUTPUT"
+            echo "src_doc_dir=libraries/build/docs/javadoc/specification" >> "$GITHUB_OUTPUT"
           fi
 
-          echo "ptype=${PTYPE}" >> "$GITHUB_OUTPUT"
-          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
-          echo "doc_task=${DOC_TASK}" >> "$GITHUB_OUTPUT"
-          echo "src_doc_dir=${SRC_DOC_DIR}" >> "$GITHUB_OUTPUT"
-
       - name: Set up Java Development Kit
+        if: steps.context.outputs.skip_docs != 'true'
         uses: actions/setup-java@v6
         with:
           java-version: '21'
           distribution: 'temurin'
 
       - name: Setup Gradle
+        if: steps.context.outputs.skip_docs != 'true'
         uses: gradle/actions/setup-gradle@v6
 
       - name: Make Gradle Wrapper Executable
+        if: steps.context.outputs.skip_docs != 'true'
         run: chmod +x ./gradlew
 
       - name: Generate Documentation
+        if: steps.context.outputs.skip_docs != 'true'
         run: ./gradlew -p libraries ${{ steps.context.outputs.doc_task }}
 
       - name: Prepare Versioned Site
+        if: steps.context.outputs.skip_docs != 'true'
         run: |
           PTYPE="${{ steps.context.outputs.ptype }}"
           VERSION="${{ steps.context.outputs.version }}"
@@ -91,13 +97,13 @@ jobs:
           LATEST_DIR="site/tools/${PTYPE}/api/latest"
 
           mkdir -p "$TARGET_DIR"
-          # Standard Gradle location for root-executed aggregate tasks
           cp -r "$SRC_DOC_DIR"/* "$TARGET_DIR"/
 
           mkdir -p "$LATEST_DIR"
           cp -r "$TARGET_DIR"/* "$LATEST_DIR"/
 
       - name: Deploy to GitHub Pages
+        if: steps.context.outputs.skip_docs != 'true'
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}

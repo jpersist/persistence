@@ -9,6 +9,7 @@ on:
         type: choice
         options:
           - API
+          - BOM
           - HIBERNATE_LEGACY
           - HIBERNATE_MODERN
       releaseVersion:
@@ -50,7 +51,12 @@ jobs:
             API)
               PROP_PATH="libraries/gradle.properties"
               TAG_PREFIX="spec-v"
-              BUILD_TASK=":persistence-tools-api:build :persistence-tools-bom:build"
+              BUILD_TASK=":persistence-tools-api:build"
+              ;;
+            BOM)
+              PROP_PATH="libraries/persistence-tools-bom/gradle.properties"
+              TAG_PREFIX="bom-v"
+              BUILD_TASK=":persistence-tools-bom:build"
               ;;
             HIBERNATE_LEGACY)
               PROP_PATH="libraries/hibernate-persistence-tools/gradle.properties"
@@ -72,6 +78,12 @@ jobs:
         id: versions
         run: |
           PROP_PATH="${{ steps.context.outputs.prop_path }}"
+
+          # Initialize property file if it does not exist yet for the isolated BOM subfolder
+          if [ ! -f "$PROP_PATH" ]; then
+            echo "version=1.0.0-SNAPSHOT" > "$PROP_PATH"
+          fi
+
           CURRENT_VERSION=$(grep '^version=' "$PROP_PATH" | cut -d'=' -f2)
 
           # Determine the target release version
@@ -112,9 +124,27 @@ jobs:
 
           # Apply release version to target gradle.properties
           sed -i "s/^version=.*/version=${RELEASE_VERSION}/" "$PROP_PATH"
-
           chmod +x ./gradlew
-          ./gradlew -p libraries $BUILD_TASK
+
+          # If compiling the independent BOM, fetch the latest tags of all dependencies
+          if [ "${{ github.event.inputs.project_type }}" = "BOM" ]; then
+            API_TAG=$(git tag -l "spec-v*" | sort -V | tail -n1)
+            HIB5_TAG=$(git tag -l "hib5-v*" | sort -V | tail -n1)
+            HIB6_TAG=$(git tag -l "hib6-v*" | sort -V | tail -n1)
+
+            API_VER="${API_TAG#spec-v}"
+            HIB5_VER="${HIB5_TAG#hib5-v}"
+            HIB6_VER="${HIB6_TAG#hib6-v}"
+
+            echo "BOM integration resolving: API=${API_VER}, Hib5=${HIB5_VER}, Hib6=${HIB6_VER}"
+
+            ./gradlew -p libraries $BUILD_TASK -PisBomRelease=true \
+              -PreleasedApiVersion="${API_VER}" \
+              -PreleasedHib5Version="${HIB5_VER}" \
+              -PreleasedHib6Version="${HIB6_VER}"
+          else
+            ./gradlew -p libraries $BUILD_TASK
+          fi
 
       - name: Commit and Tag Release
         run: |

@@ -5,6 +5,7 @@ on:
     # Trigger deployment when an authorized version tag is pushed manually or via workflow
     tags:
       - 'spec-v[0-9]+.[0-9]+.[0-9]+'
+      - 'bom-v[0-9]+.[0-9]+.[0-9]+'
       - 'hib5-v[0-9]+.[0-9]+.[0-9]+'
       - 'hib6-v[0-9]+.[0-9]+.[0-9]+'
   workflow_call:
@@ -68,9 +69,13 @@ jobs:
             PUBLISH_TASK=":hibernate-persistence-tools:publish"
             PROP_PATH="libraries/hibernate-persistence-tools/gradle.properties"
             PUBLISH_VERSION="${TAG_NAME#hib5-v}"
+          elif [[ "$TAG_NAME" == bom-v* ]]; then
+            PUBLISH_TASK=":persistence-tools-bom:publish"
+            PROP_PATH="libraries/persistence-tools-bom/gradle.properties"
+            PUBLISH_VERSION="${TAG_NAME#bom-v}"
           else
-            # Default fallback for API / BOM matching spec-v* or manual triggers
-            PUBLISH_TASK=":persistence-tools-api:publish :persistence-tools-bom:publish"
+            # Default fallback for API matching spec-v* or manual triggers
+            PUBLISH_TASK=":persistence-tools-api:publish"
             PROP_PATH="libraries/gradle.properties"
             if [[ "$TAG_NAME" == spec-v* ]]; then
               PUBLISH_VERSION="${TAG_NAME#spec-v}"
@@ -81,8 +86,19 @@ jobs:
 
           echo "Publishing version ${PUBLISH_VERSION} via tasks: ${PUBLISH_TASK}"
 
-          # Execute the publication passing the resolved explicit target version
-          ./gradlew -p libraries ${PUBLISH_TASK} -Pversion="${PUBLISH_VERSION}"
+          # Re-inject the dynamic versions to make sure the BOM's generated POM is written correctly
+          if [[ "$TAG_NAME" == bom-v* ]]; then
+            API_TAG=$(git tag -l "spec-v*" | sort -V | tail -n1)
+            HIB5_TAG=$(git tag -l "hib5-v*" | sort -V | tail -n1)
+            HIB6_TAG=$(git tag -l "hib6-v*" | sort -V | tail -n1)
+
+            ./gradlew -p libraries ${PUBLISH_TASK} -Pversion="${PUBLISH_VERSION}" -PisBomRelease=true \
+              -PreleasedApiVersion="${API_TAG#spec-v}" \
+              -PreleasedHib5Version="${HIB5_TAG#hib5-v}" \
+              -PreleasedHib6Version="${HIB6_TAG#hib6-v}"
+          else
+            ./gradlew -p libraries ${PUBLISH_TASK} -Pversion="${PUBLISH_VERSION}"
+          fi
 
       - name: Finalize Maven Central Deployment
         env:
