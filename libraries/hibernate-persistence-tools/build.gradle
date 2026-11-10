@@ -20,12 +20,6 @@ dependencies {
     testRuntimeOnly 'com.h2database:h2:1.4.200'
 }
 
-tasks.named('jar', Jar) {
-    manifest {
-        attributes('Automatic-Module-Name': 'io.github.jpersist.tools.hibernate')
-    }
-}
-
 publishing {
     publications {
         mavenJava(MavenPublication) {

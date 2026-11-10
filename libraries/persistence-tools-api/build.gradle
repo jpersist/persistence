@@ -3,12 +3,6 @@ plugins {
     id 'publishing-conventions'
 }
 
-tasks.named('jar', Jar) {
-    manifest {
-        attributes('Automatic-Module-Name': 'io.github.jpersist.tools.api')
-    }
-}
-
 publishing {
     publications {
         mavenJava(MavenPublication) {
