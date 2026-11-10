@@ -18,10 +18,10 @@ develocity {
     }
 }
 
-rootProject.name = "libraries"
+rootProject.name = 'libraries'
 
-include("persistence-tools-api")
-include("persistence-tools-jakarta")
-include("persistence-tools-legacy")
+include 'persistence-tools-api'
+include 'hibernate-persistence-tools'
+include 'hibernate-orm-persistence-tools'
 
-include("persistence-tools-bom")
+include 'persistence-tools-bom'

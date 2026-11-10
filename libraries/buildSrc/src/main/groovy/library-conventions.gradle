@@ -7,7 +7,7 @@ dependencies {
     testImplementation platform('org.junit:junit-bom:6.0.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-    testImplementation libs.assertj.core
+    testImplementation 'org.assertj:assertj-core:3.27.3'
 }
 
 java {
@@ -27,12 +27,33 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 tasks.withType(Jar).configureEach {
-    def moduleName = "io.github.jpersist.tools.${project.name.replace('persistence-tools-', '')}"
+    def metadata = [
+        'persistence-tools-api': [ title: 'Persistence Tools Core Specification', version: '4.0' ],
+        'hibernate-persistence-tools': [ title: 'JPA 2.x Legacy Persistence Specification Bridge', version: '2.2' ],
+        'hibernate-orm-persistence-tools': [ title: 'JPA 3.x Jakarta Persistence Specification Bridge', version: '3.1' ]
+    ]
+
+    def spec = metadata[project.name]
+    def specTitle = spec.title
+    def specVersion = spec.version
+
     manifest {
         attributes(
+            // 🌟 Standard Package Specification Metadata
+            'Specification-Title': specTitle,
+            'Specification-Version': specVersion,
+            'Specification-Vendor': 'JPersist Project',
+
+            // 🌟 Standard Package Implementation Metadata
             'Implementation-Title': project.name,
-            'Implementation-Version': project.version,
-            'Automatic-Module-Name': moduleName
+            'Implementation-Version': project.version.toString(),
+            'Implementation-Vendor': 'JPersist',
+
+            // 🌟 OSGi Architecture Compatibility Attributes
+            'Bundle-SymbolicName': "io.github.jpersist.tools.${project.name.replaceAll('-', '.')}",
+            'Bundle-Name': specTitle,
+            'Bundle-Vendor': 'JPersist',
+            'Bundle-Version': project.version.toString().replaceAll('-SNAPSHOT', '.SNAPSHOT')
         )
     }
 }

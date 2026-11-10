@@ -7,8 +7,8 @@ plugins {
 
 dependencies {
     testReportAggregation project(':persistence-tools-api')
-    testReportAggregation project(':persistence-tools-jakarta')
-    testReportAggregation project(':persistence-tools-legacy')
+    testReportAggregation project(':hibernate-persistence-tools')
+    testReportAggregation project(':hibernate-orm-persistence-tools')
 }
 
 configurations.jacocoAggregation.extendsFrom(configurations.testReportAggregation)
@@ -46,17 +46,26 @@ sonar {
     }
 }
 
-// 🌟 REUSABLE JAVADOC CONFIGURATION HELPER
-// Extracts shared configurations, HTML5 options, custom vector SVG favicon injections,
-// and post-build copy actions into a single maintainable routine.
-void configureSharedJavadoc(Javadoc task, String docTitle, String windowTitle, String relativeDestPath) {
+// 🌟 REUSABLE TYPE-SAFE JPMS JAVADOC CONFIGURATION HELPER
+// Configures independent, native modular Javadoc for each project node.
+void configureModularJavadoc(Javadoc task, Project targetProject, Project apiProject, String docTitle, String windowTitle, String destSubFolder) {
     task.group = 'documentation'
 
-    // Wire up common doclet output locations
-    task.destinationDir = file("${buildDir}/docs/javadoc/${relativeDestPath}")
+    // Ensure bytecode compilation is complete before documenting
+    task.dependsOn targetProject.tasks.named('classes')
+
+    // Native JPMS mapping: compile directly against the project source set
+    task.source = targetProject.sourceSets.main.allJava
+    task.classpath = targetProject.sourceSets.main.compileClasspath
+
+    // Enforce Gradle's native JPMS path inference for strict module-path documentation
+    task.modularity.inferModulePath = true
+
+    // Separate output targets to prevent workspace overlap
+    task.destinationDir = file("${buildDir}/docs/javadoc/${destSubFolder}")
 
     task.options {
-        overview = file("${rootDir}/src/docs/overview.html")
+        overview = targetProject.file("src/docs/overview.html")
         encoding = 'UTF-8'
         docEncoding = 'UTF-8'
         charSet = 'UTF-8'
@@ -64,44 +73,39 @@ void configureSharedJavadoc(Javadoc task, String docTitle, String windowTitle, S
         task.options.docTitle = docTitle
         task.options.windowTitle = windowTitle
 
-        // Force native HTML5 compilation structure
+        // Force native HTML5 compilation structure (enables the "Modules" tab and graphs)
         addBooleanOption('html5', true)
 
-        // 🌟 CRITICAL SECURITY FIX FOR JAVA 13+
-        // Explicitly allows the use of JavaScript within Javadoc comments and options (like -bottom)
-        // to bypass the "error: option -bottom contains JavaScript" compilation failure.
+        // Security bypass required for Java 13+ to allow the bottom JavaScript favicon injection
         addBooleanOption('-allow-script-in-comments', true)
 
-        // Bind core JDK documentation reference maps
+        // Cross-reference link to the standard JDK 17 Platform APIs
         links('https://docs.oracle.com/en/java/javase/17/docs/api/')
 
-        // INJECT CUSTOM SVG FAVICON via -bottom EXECUTION HOOK
-        // Injects a lightweight responsive inline observer script to bind the high-integrity
-        // vector graphic directly inside the active HTML <head> node across compiled views.
-        bottom = """
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                var links = document.getElementsByTagName('link');
-                var hasFavicon = false;
-                for (var i = 0; i < links.length; i++) {
-                    if (links[i].rel === 'icon' || links[i].rel === 'shortcut icon') {
-                        hasFavicon = true;
-                        break;
-                    }
+        // Dynamic cross-reference link mapping for implementation modules
+        if (targetProject.name != apiProject.name) {
+            def useOnlineJavadoc = targetProject.findProperty('useOnlineJavadoc')
+            boolean isOnline = useOnlineJavadoc != null ? (useOnlineJavadoc.toString().isEmpty() || useOnlineJavadoc.toString().toBoolean()) : (targetProject.hasProperty('useOnlineJavadoc'))
+
+            if (isOnline) {
+                // Allows implementation Javadoc to safely hyperlink back to online core API definitions
+                def apiVersion = targetProject.findProperty('releasedApiVersion') ?: apiProject.version.toString()
+                links("https://jpersist.github.io/persistence/tools/specifications/api/${apiVersion}/")
+            } else {
+                File localDir = rootProject.layout.buildDirectory.dir("docs/javadoc/specifications").get().asFile
+                if (localDir.exists()) {
+                    links("${localDir.toURI().toString()}")
                 }
-                if (!hasFavicon) {
-                    var link = document.createElement('link');
-                    link.rel = 'icon';
-                    link.type = 'image/svg+xml';
-                    link.href = 'resources/favicon.svg';
-                    document.getElementsByTagName('head')[0].appendChild(link);
-                }
-            });
-        </script>
-        """
+            }
+        }
+
+        // 🌟 FIXED & LINEARIZED JAVADOC INTEGRATION WITH CUSTOM SVG FAVICON via -bottom FLAG
+        // The script is compressed onto a single line to guarantee seamless compatibility inside 'javadoc.options'.
+        // It dynamically inspects the existing Javadoc stylesheet link to extract the accurate relative prefix location.
+        bottom = '<script>document.addEventListener("DOMContentLoaded",function(){var links=document.getElementsByTagName("link");var hasFavicon=false;var relPrefix="";for(var i=0;i<links.length;i++){if(links[i].rel==="icon"||links[i].rel==="shortcut icon"){hasFavicon=true;}if(links[i].href&&links[i].href.indexOf("stylesheet.css")!==-1){var parts=links[i].getAttribute("href").split("stylesheet.css");if(parts.length>0){relPrefix=parts[0];}}}if(!hasFavicon){var link=document.createElement("link");link.rel="icon";link.type="image/svg+xml";link.href=relPrefix+"resources/favicon.svg";document.getElementsByTagName("head")[0].appendChild(link);}});</script>'
     }
 
-    // DISCOVERY HOOK: Automate static asset copies into target distribution directories
+    // Copy the raw SVG favicon into the dedicated project target documentation directory
     task.doLast {
         copy {
             from "${rootDir}/src/docs/resources/favicon.svg"
@@ -111,87 +115,50 @@ void configureSharedJavadoc(Javadoc task, String docTitle, String windowTitle, S
 }
 
 // ------------------------------------------------------------------------------------------------
-// JAVADOC AGGREGATION TASKS DEFINITIONS
+// INDEPENDENT MODULAR JAVADOC TASKS DEFINITIONS
 // ------------------------------------------------------------------------------------------------
 
-tasks.register('aggregateJavadoc', Javadoc) {
-    description = 'Generates aggregated Javadoc for all library modules with flat classpath fallback.'
+def apiProject = project(':persistence-tools-api')
 
-    def javaSubprojects = subprojects.findAll { it.plugins.hasPlugin('java-library') }
-    dependsOn javaSubprojects.collect { it.tasks.named('classes') }
-
-    // Strip module-info.java descriptors to avoid compilation path pollution on a flat model
-    source = files(javaSubprojects.collect { it.sourceSets.main.allJava }).asFileTree.matching {
-        exclude 'module-info.java'
-    }
-
-    classpath = files(javaSubprojects.collect { it.sourceSets.main.compileClasspath })
-    modularity.inferModulePath = false
-
-    // Apply corporate styling conventions through our shared helper logic
-    configureSharedJavadoc(it, 'JPersist Persistence Tools Libraries API Reference', 'JPersist Persistence Tools API', '')
+// 1. Core API Module Javadoc (Fully Modular / No external dependencies)
+tasks.register('aggregateApiJavadoc', Javadoc) {
+    description = 'Generates native modular JPMS Javadoc for the core vendor-agnostic API module.'
+    configureModularJavadoc(it, project(':persistence-tools-api'), apiProject, 'JPersist Persistence Tools Core API Reference', 'JPersist Tools API', 'specifications')
 }
 
-tasks.register('aggregateJavadocJakarta', Javadoc) {
-    description = 'Generates aggregated modular Javadoc for the Jakarta/Hibernate 6 ecosystem.'
-
-    def targetProjects = [project(':persistence-tools-api'), project(':persistence-tools-jakarta')]
-    dependsOn targetProjects.collect { it.tasks.named('classes') }
-
-    source = files(targetProjects.collect { it.sourceSets.main.allJava })
-    classpath = files(targetProjects.collect { it.sourceSets.main.compileClasspath })
-
-    options {
-        // Enforce exact module source mappings for strict multi-module isolation
-        addMultilineStringsOption('-module-source-path').value = [
-            "io.github.jpersist.tools.api=${project(':persistence-tools-api').file('src/main/java')}".toString(),
-            "io.github.jpersist.tools.jakarta=${project(':persistence-tools-jakarta').file('src/main/java')}".toString()
-        ]
-    }
-
-    configureSharedJavadoc(it, 'JPersist Persistence Tools Libraries API Reference (Jakarta Suite)', 'JPersist Persistence Tools API - Jakarta', 'jakarta')
+// 2. Hibernate Legacy Module Javadoc (Modular / Bound to Hibernate 5 & javax)
+tasks.register('aggregateLegacyHibernateJavadoc', Javadoc) {
+    description = 'Generates native modular JPMS Javadoc for the Hibernate 5 Legacy reference implementation.'
+    configureModularJavadoc(it, project(':hibernate-persistence-tools'), apiProject, 'JPersist Persistence Tools - Hibernate 5 Core Reference', 'JPersist Tools - Hibernate 5', 'hibernate')
 }
 
-tasks.register('aggregateJavadocLegacy', Javadoc) {
-    description = 'Generates aggregated modular Javadoc for the Legacy/Hibernate 5 ecosystem.'
-
-    def targetProjects = [project(':persistence-tools-api'), project(':persistence-tools-legacy')]
-    dependsOn targetProjects.collect { it.tasks.named('classes') }
-
-    source = files(targetProjects.collect { it.sourceSets.main.allJava })
-    classpath = files(targetProjects.collect { it.sourceSets.main.compileClasspath })
-
-    options {
-        // Enforce exact module source mappings for strict multi-module isolation
-        addMultilineStringsOption('-module-source-path').value = [
-            "io.github.jpersist.tools.api=${project(':persistence-tools-api').file('src/main/java')}".toString(),
-            "io.github.jpersist.tools.legacy=${project(':persistence-tools-legacy').file('src/main/java')}".toString()
-        ]
-    }
-
-    configureSharedJavadoc(it, 'JPersist Persistence Tools Libraries API Reference (Legacy Suite)', 'JPersist Persistence Tools API - Legacy', 'legacy')
+// 3. Hibernate Modern Module Javadoc (Modular / Bound to Hibernate 6 & jakarta)
+tasks.register('aggregateModernHibernateJavadoc', Javadoc) {
+    description = 'Generates native modular JPMS Javadoc for the Hibernate 6 Modern reference implementation.'
+    configureModularJavadoc(it, project(':hibernate-orm-persistence-tools'), apiProject, 'JPersist Persistence Tools - Hibernate 6 ORM Reference', 'JPersist Tools - Hibernate 6', 'hibernate-orm')
 }
 
-// 🌟 LIFECYCLE AGGREGATION TASK
-// Groups all documentation pipelines (Global Flat, Modular Jakarta, and Modular Legacy)
-// under a single execution shortcut task: ./gradlew aggregateAllJavadocs
+// ------------------------------------------------------------------------------------------------
+// LIFECYCLE PIPELINE AGGREGATION
+// ------------------------------------------------------------------------------------------------
+
 tasks.register('aggregateAllJavadocs') {
     group = 'documentation'
-    description = 'Executes all three Javadoc generation pipelines sequentially (Flat first, then Modular versions).'
+    description = 'Executes all three independent modular Javadoc generation tasks concurrently.'
 
-    // Bind dependencies to trigger execution of all three variant targets automatically
-    dependsOn tasks.named('aggregateJavadoc')
-    dependsOn tasks.named('aggregateJavadocJakarta')
-    dependsOn tasks.named('aggregateJavadocLegacy')
+    // Bind dependencies to trigger execution of all three standalone targets
+    dependsOn tasks.named('aggregateApiJavadoc')
+    dependsOn tasks.named('aggregateLegacyHibernateJavadoc')
+    dependsOn tasks.named('aggregateModernHibernateJavadoc')
 }
 
 // 🌟 SEQUENTIAL EXECUTION ENFORCEMENT
-// Ensures that modular Javadoc builds strictly execute AFTER the global flat classpath Javadoc
+// Ensures that Hibernate Javadoc builds strictly execute AFTER the API Javadoc
 // has finished its compilation and asset lifecycle steps.
-tasks.named('aggregateJavadocJakarta') {
-    mustRunAfter tasks.named('aggregateJavadoc')
+tasks.named('aggregateLegacyHibernateJavadoc') {
+    mustRunAfter tasks.named('aggregateApiJavadoc')
 }
 
-tasks.named('aggregateJavadocLegacy') {
-    mustRunAfter tasks.named('aggregateJavadoc')
+tasks.named('aggregateModernHibernateJavadoc') {
+    mustRunAfter tasks.named('aggregateApiJavadoc')
 }

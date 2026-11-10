@@ -1,0 +1,34 @@
+plugins {
+    id 'library-conventions'
+    id 'publishing-conventions'
+}
+
+// Read the resolved released API version passed via CLI, or fallback to the local project version
+def apiVersion = project.findProperty('releasedApiVersion') ?: project(':persistence-tools-api').version.toString()
+
+dependencies {
+    // If running a production release, compile against the stable published artifact coordinates
+    if (project.hasProperty('isHibernateRelease')) {
+        api "io.github.jpersist.tools:persistence-tools-api:${apiVersion}"
+    } else {
+        // Fallback for everyday local development and testing
+        api project(':persistence-tools-api')
+    }
+
+    implementation libs.hibernate.core
+
+    testRuntimeOnly 'com.h2database:h2:1.4.200'
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            pom {
+                name = 'Hibernate 5 Persistence Tools'
+                description = 'Hibernate Legacy `javax.persistence` (JPA 2.x) provider'
+            }
+        }
+    }
+}

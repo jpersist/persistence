@@ -177,8 +177,8 @@ The plugin automatically detects your entity classes and generates the appropria
 | `plugins/eclipse-persistence-gradle-plugin`   | EclipseLink aggregate plugin — metamodel generation and compile-time static weaving.                                      |
 | `plugins/openjpa-persistence-gradle-plugin`    | OpenJPA aggregate plugin — metamodel generation and compile-time PCEnhancer bytecode enhancement.                         |
 | `libraries/persistence-tools-api`              | SPI contract and core interfaces for the named query linter (`io.github.jpersist.tools:persistence-tools-api`).           |
-| `libraries/persistence-tools-jakarta`          | Jakarta Persistence (3.x) linter implementation (`io.github.jpersist.tools:persistence-tools-jakarta`).                   |
-| `libraries/persistence-tools-legacy`           | Legacy JPA (2.x) linter implementation (`io.github.jpersist.tools:persistence-tools-legacy`).                             |
+| `libraries/hibernate-orm-persistence-tools`          | Jakarta Persistence (3.x) linter implementation (`io.github.jpersist.tools:persistence-tools-jakarta`).                   |
+| `libraries/hibernate-persistence-tools`           | Legacy JPA (2.x) linter implementation (`io.github.jpersist.tools:persistence-tools-legacy`).                             |
 | `libraries/persistence-tools-bom`              | BOM (Bill of Materials) for aligning all persistence-tools library versions.                                               |
 | `examples/`                                   | Runnable example projects for Hibernate, EclipseLink, and standalone Jakarta Persistence.                                 |
 

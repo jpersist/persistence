@@ -1,35 +1,42 @@
-# 🔍 Persistence Tools Libraries: Build-Time JPA Validation & Enhancement
+# 🛠️ Persistence Tools Libraries: Build-Time JPA Validation & Enhancement
 
 ![Maven Central](https://img.shields.io/maven-central/v/io.github.jpersist.tools/persistence-tools-api)
 [![Quality gate status](https://sonarcloud.io/api/project_badges/measure?project=jpersist_persistence_libraries&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=jpersist_persistence_libraries)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=jpersist_persistence_libraries&metric=coverage)](https://sonarcloud.io/summary/new_code?id=jpersist_persistence_libraries)
 ![GitHub License](https://img.shields.io/github/license/jpersist/persistence)
 
-The **Persistence Tools Libraries** (group `io.github.jpersist.tools`) provide build-time validation and bytecode enhancement of JPA persistence artifacts — named JPQL queries, stored procedure declarations, database schemas, and entity classes — without deploying the application. By compiling query strings against the entity metamodel, comparing the metamodel with a live database schema, and enhancing entity bytecode at build time, syntax errors, unknown entity references, invalid property paths, schema mismatches, and missing runtime instrumentation are caught early.
+The **Persistence Tools Libraries** (group `io.github.jpersist.tools`) provide a **vendor-agnostic API** and **reference implementations** for build-time validation, query parsing, schema verification, and bytecode enhancement of JPA persistence artifacts — without deploying the application or running dynamic bytecode agents.
+
+By decoupling tooling contracts from specific persistence providers, the core API enables consistent static analysis across JPA specification baselines. The libraries ship with complete reference implementations powered by **Hibernate ORM 6** (for Jakarta Persistence / JPA 3.x) and **Hibernate 5** (for legacy Java Persistence / JPA 2.x).
 
 ---
 
 ## 📦 Modules
 
-| Module                         | Description                                                                                                                                                                                                     |
-|:-------------------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **`persistence-tools-api`**     | Defines the Service Provider Interfaces (SPIs): `PersistenceServiceProvider` (shared root), `PersistenceLinter` / `PersistenceLinterFactory` (linting contracts), `NamedObjectParser` / `NamedObjectParserFactory` (query validation), `SchemaValidator` / `SchemaValidatorFactory` (schema validation), and `HibernateEnhancer` / `HibernateEnhancerProvider` (bytecode enhancement). `NamedObjectParser` extends `AutoCloseable`, so instances should be used within a try-with-resources block. Contains no implementation; provider modules are discovered at runtime through the `ServiceLoader` mechanism. |
-| **`persistence-tools-jakarta`** | Jakarta Persistence (JPA 3.x) provider. Uses Hibernate ORM 6 to compile JPQL queries into Semantic Query Model (SQM) trees, validate persistence schemas against a live database, and enhance entity bytecode.     |
-| **`persistence-tools-legacy`**  | Legacy `javax.persistence` (JPA 2.x) provider. Uses Hibernate 5 and its AST-based query translator to validate JPQL queries and schemas, and to enhance entity bytecode.                                           |
-| **`persistence-tools-bom`**     | Bill of Materials (BOM) for convenient dependency management of all Persistence Tools modules.                                                                                                                   |
+| Module | Artifact | Description |
+|:---|:---|:---|
+| **`persistence-tools-api`** | `io.github.jpersist.tools:persistence-tools-api` | Defines the vendor-agnostic public contracts and Service Provider Interfaces (SPIs): `PersistenceServiceProvider` (shared root), `PersistenceLinter` / `PersistenceLinterFactory` (linting contracts), `NamedObjectParser` / `NamedObjectParserFactory` (named query & stored procedure validation; `AutoCloseable`), `SchemaValidator` / `SchemaValidatorFactory` (database schema validation), and `Enhancer` / `EnhancerProvider` (bytecode enhancement). Contains no vendor-specific implementation; provider modules are discovered dynamically at runtime via the Java `ServiceLoader` mechanism. |
+| **`hibernate-orm-persistence-tools`** | `io.github.jpersist.tools:hibernate-orm-persistence-tools` | Jakarta Persistence (JPA 3.x / `jakarta.*` namespace) reference implementation. Powered by **Hibernate ORM 6** to compile JPQL queries into Semantic Query Model (SQM) trees, validate persistence schemas against a live database, and enhance entity bytecode. |
+| **`hibernate-persistence-tools`** | `io.github.jpersist.tools:hibernate-persistence-tools` | Legacy Java Persistence (JPA 2.x / `javax.*` namespace) reference implementation. Powered by **Hibernate 5** to validate JPQL queries using AST query translation, validate database schemas, and enhance entity bytecode. |
+| **`persistence-tools-bom`** | `io.github.jpersist.tools:persistence-tools-bom` | Bill of Materials (BOM) for convenient, aligned dependency management across all Persistence Tools modules. |
 
 ---
 
 ## ⚡ Quick Start
 
-### 1. Add the BOM and the appropriate provider
+### 1. Add the BOM and dependencies
 
 #### Jakarta Persistence (JPA 3.x)
 
 ```groovy
 dependencies {
-    implementation platform('io.github.jpersist.tools:persistence-tools-bom:3.1.0')
-    implementation 'io.github.jpersist.tools:persistence-tools-jakarta'
+    implementation platform('io.github.jpersist.tools:persistence-tools-bom:4.0.0')
+
+    // Vendor-agnostic Persistence Tools API
+    implementation 'io.github.jpersist.tools:persistence-tools-api'
+
+    // Hibernate ORM 6 reference implementation provider
+    runtimeOnly 'io.github.jpersist.tools:hibernate-orm-persistence-tools'
 }
 ```
 
@@ -37,44 +44,57 @@ dependencies {
 
 ```groovy
 dependencies {
-    implementation platform('io.github.jpersist.tools:persistence-tools-bom:3.1.0')
-    implementation 'io.github.jpersist.tools:persistence-tools-legacy'
+    implementation platform('io.github.jpersist.tools:persistence-tools-bom:4.0.0')
+
+    // Vendor-agnostic Persistence Tools API
+    implementation 'io.github.jpersist.tools:persistence-tools-api'
+
+    // Hibernate 5 reference implementation provider
+    runtimeOnly 'io.github.jpersist.tools:hibernate-persistence-tools'
 }
 ```
 
 ### 2. Enhance entity bytecode
 
-Use `HibernateEnhancerProvider.getHibernateEnhancerProvider(String)` to obtain the appropriate provider for a given JPA specification version, then create a `HibernateEnhancer` to transform entity classes at build time:
+Use `EnhancerProvider.getEnhancerProvider(String)` to discover the provider for a given JPA specification version (e.g. `"3.1"`), then obtain an `Enhancer` to transform compiled entity classes at build time:
 
 ```java
-HibernateEnhancerProvider provider =
-    HibernateEnhancerProvider.getHibernateEnhancerProvider("3.1");
+import persistence.tools.Enhancer;
+import persistence.tools.spi.EnhancerProvider;
 
-HibernateEnhancer enhancer = provider.getEnhancer(
-    classesDir,
+EnhancerProvider provider = EnhancerProvider.getEnhancerProvider("3.1");
+
+Enhancer enhancer = provider.getEnhancer(
     classpathFiles,
     Map.of(
-        HibernateEnhancer.Option.LAZY_INITIALIZATION, true,
-        HibernateEnhancer.Option.DIRTY_TRACKING, true));
+        "lazyInitialization", true,
+        "dirtyTracking", true
+    )
+);
 
-byte[] enhancedBytes = enhancer.enhance(
-    "com.example.Order", originalClassBytes);
+byte[] originalBytes = Files.readAllBytes(classFile);
+byte[] enhancedBytes = enhancer.enhance("com.example.Order", originalBytes);
+Files.write(classFile, enhancedBytes);
 ```
 
 ### 3. Validate named queries & stored procedures
 
-Use `NamedObjectParserFactory.newNamedObjectParserFactory(String)` to obtain the appropriate factory for a given JPA specification version, then create a `NamedObjectParser` to validate named queries and stored procedures:
+Use `NamedObjectParserFactory.newNamedObjectParserFactory(String)` to resolve the factory matching the JPA specification version, then create a `NamedObjectParser` to validate named queries and stored procedures against entity models:
 
 ```java
+import persistence.tools.NamedObjectDescriptor;
+import persistence.tools.NamedObjectParser;
+import persistence.tools.spi.NamedObjectParserFactory;
+
 NamedObjectParserFactory factory = NamedObjectParserFactory.newNamedObjectParserFactory("3.1");
 
 try (NamedObjectParser parser = factory.newNamedObjectParser(entityClassNames)) {
-    // Validate a named query
+    // Validate a named JPQL query
     NamedObjectDescriptor queryDescriptor = parser.parseQuery(
         "Order.findByStatus",
         "SELECT o FROM Order o WHERE o.status = :status");
 
-    // Validate a named stored procedure
+    // Validate a named stored procedure declaration
     NamedObjectDescriptor procDescriptor = parser.parseStoredProcedure(
         "Order.archiveOldOrders",
         "sp_archive_orders",
@@ -82,13 +102,16 @@ try (NamedObjectParser parser = factory.newNamedObjectParser(entityClassNames)) 
 }
 ```
 
-> **Note:** `NamedObjectParser` implements `AutoCloseable`. Always use try-with-resources to ensure the underlying Hibernate `SessionFactory` and `ServiceRegistry` are properly released.
+> **Note:** `NamedObjectParser` implements `AutoCloseable`. Always use try-with-resources to ensure underlying provider resources and registries are properly released.
 
-### 4. Validate persistence schema against a database
+### 4. Validate persistence schema against a live database
 
-Use `SchemaValidatorFactory.newSchemaValidatorFactory(String)` to obtain the appropriate factory, then create a `SchemaValidator` to compare the entity metamodel with a live database schema:
+Use `SchemaValidatorFactory.newSchemaValidatorFactory(String)` to obtain the factory, then create a `SchemaValidator` to compare the entity metamodel against a live database schema:
 
 ```java
+import persistence.tools.SchemaValidator;
+import persistence.tools.spi.SchemaValidatorFactory;
+
 SchemaValidatorFactory factory = SchemaValidatorFactory.newSchemaValidatorFactory("3.1");
 SchemaValidator validator = factory.newSchemaValidator(entityClassNames);
 
@@ -100,7 +123,7 @@ validator.validateSchema(Map.of(
 ));
 ```
 
-Both factory methods accept JPA version strings (`"2.0"` – `"2.2"` for `javax`, `"3.0"` – `"3.2"` for `jakarta`) and resolve the correct provider via the `ServiceLoader` API. Overloaded methods accepting explicit `ClassLoader` and `ModuleLayer` instances are also supported across all provider factory interfaces for custom runtime topologies.
+All factory methods accept JPA version strings (`"2.0"` – `"2.2"` for legacy `javax`, `"3.0"` – `"3.2"` for `jakarta`) and resolve the matching registered provider via Java's `ServiceLoader` API. Overloaded factory methods accepting explicit `ClassLoader` and `ModuleLayer` parameters are available for advanced and custom modular runtime environments.
 
 > **Tip:** You can also use the generic entry point `PersistenceLinterFactory.newPersistenceLinterFactory(jpaVersion, factoryClass)` to discover any `PersistenceLinterFactory` subtype by version.
 
@@ -108,10 +131,17 @@ Both factory methods accept JPA version strings (`"2.0"` – `"2.2"` for `javax`
 
 ## 🧩 Java Platform Module System (JPMS) Integration
 
-Starting with version `3.1.0`, all **Persistence Tools Libraries** provide native support for the Java Platform Module System (JPMS). The libraries ship with explicit module descriptors, ensuring strong encapsulation and compile-time safety.
+All **Persistence Tools Libraries** provide native support for the Java Platform Module System (JPMS) with explicit `module-info.java` descriptors, ensuring strong encapsulation and compile-time boundary enforcement.
 
 ### 1. Module Identifiers
-If your application or Gradle plugin is modularized, add the core API module to your `module-info.java`:
+
+| Project / Artifact | JPMS Module Name |
+|:---|:---|
+| `persistence-tools-api` | `io.github.jpersist.tools.api` |
+| `hibernate-orm-persistence-tools` | `io.github.jpersist.tools.hibernate.orm` |
+| `hibernate-persistence-tools` | `io.github.jpersist.tools.hibernate` |
+
+When building a modular application or tool, declare a dependency on the core API module:
 
 ```java
 module com.example.myapp {
@@ -119,74 +149,78 @@ module com.example.myapp {
 }
 ```
 
-*Note: You only need to require the `api` module. Concrete providers (`jakarta` or `legacy`) are decoupled and automatically discovered at runtime via the native JVM `ServiceLoader` path.*
+*Concrete provider implementations are fully decoupled and automatically discovered at runtime via `ServiceLoader`.*
 
 ### 2. Deep Reflection Boundaries (`opens` Directives)
-Because `HibernateEnhancer` transforms bytecode at build time and Hibernate routinely utilizes deep reflection to inspect entity fields and properties, you **must** open your entity packages to the concrete provider modules.
 
-Failure to do so will cause the JVM to throw `InaccessibleObjectException` or `IllegalAccessError` during verification tasks.
+Because Hibernate inspects entity fields and properties using deep reflection during validation and enhancement, entity packages in modular applications must be opened to the active provider module:
 
 #### For Jakarta Persistence (JPA 3.x / Hibernate 6)
-Open your application's domain or entity packages to the `persistence-tools-jakarta` provider:
-
 ```java
 module com.example.myapp {
     requires io.github.jpersist.tools.api;
 
-    // Open entity packages to allow Hibernate 6 reflective metadata access
-    opens com.example.myapp.domain to io.github.jpersist.tools.jakarta;
+    // Open entity packages to allow Hibernate ORM 6 reflective metadata access
+    opens com.example.myapp.domain to io.github.jpersist.tools.hibernate.orm;
 }
 ```
 
 #### For Legacy Persistence (JPA 2.x / Hibernate 5)
-Open your application's domain or entity packages to the `persistence-tools-legacy` provider:
-
 ```java
 module com.example.myapp {
     requires io.github.jpersist.tools.api;
 
     // Open entity packages to allow Hibernate 5 reflective metadata access
-    opens com.example.myapp.domain to io.github.jpersist.tools.legacy;
+    opens com.example.myapp.domain to io.github.jpersist.tools.hibernate;
 }
 ```
+
 ---
 
 ## 🏗️ Architecture
 
 ```
-persistence-tools-api  (SPI)
- ├── PersistenceServiceProvider        — shared root; version-to-namespace mapping & ServiceLoader discovery
- ├── PersistenceLinter                 — root marker interface for all linting operations
- ├── PersistenceLinterFactory          — base linter factory; generic ServiceLoader discovery by JPA version
- ├── NamedObjectParser                 — parses and validates named queries and stored procedures (AutoCloseable)
- ├── NamedObjectParserFactory          — creates NamedObjectParser instances
- ├── SchemaValidator                   — validates persistence schema against a live database
- ├── SchemaValidatorFactory            — creates SchemaValidator instances
- ├── HibernateEnhancer                 — transforms entity class bytes (lazy-loading, dirty tracking, etc.)
- ├── HibernateEnhancerProvider         — discovers and creates namespace-specific enhancer instances
- ├── NamedObjectDescriptor             — immutable result containing parsed metadata and parameters
- └── NamedObjectType                   — QUERY or STORED_PROCEDURE
+persistence-tools-api  (Vendor-Agnostic SPI & Public Contracts)
+ ├── persistence.tools
+ │    ├── Enhancer                         — bytecode enhancement contract
+ │    ├── NamedObjectParser                 — named query & stored procedure parser (AutoCloseable)
+ │    ├── NamedObjectDescriptor             — immutable metadata result for parsed objects
+ │    ├── NamedObjectType                   — QUERY or STORED_PROCEDURE
+ │    ├── SchemaValidator                   — database schema validation contract
+ │    └── PersistenceLinter                 — root marker interface for linting operations
+ └── persistence.tools.spi
+      ├── PersistenceServiceProvider        — root SPI; version-to-namespace mapping & ServiceLoader discovery
+      ├── PersistenceLinterFactory          — generic base linter factory
+      ├── NamedObjectParserFactory          — factory SPI for NamedObjectParser
+      ├── SchemaValidatorFactory            — factory SPI for SchemaValidator
+      └── EnhancerProvider                  — factory SPI for Enhancer
 
-persistence-tools-jakarta  (Provider — "jakarta" namespace)
- ├── JakartaPersistenceLinterFactory          — base factory for Jakarta providers
- ├── JakartaNamedObjectParser                 — Hibernate 6 / SQM-based query validation
- ├── JakartaNamedObjectParserFactory          — creates JakartaNamedObjectParser instances
- ├── JakartaSchemaValidator                   — Hibernate 6-based schema validation
- ├── JakartaSchemaValidatorFactory            — creates JakartaSchemaValidator instances
- ├── JakartaHibernateEnhancer                 — Hibernate 6-based bytecode enhancement
- └── JakartaHibernateEnhancerProvider         — creates JakartaHibernateEnhancer instances
+hibernate-orm-persistence-tools  (Reference Implementation — "jakarta" namespace / Hibernate ORM 6)
+ ├── hibernate.jakarta.persistence.tools.provider
+ │    ├── HibernatePersistenceServiceProvider
+ │    ├── HibernatePersistenceLinterFactory
+ │    ├── HibernateNamedObjectParserFactory
+ │    ├── HibernateSchemaValidatorFactory
+ │    └── HibernateEnhancerProvider
+ └── hibernate.jakarta.persistence.tools
+      ├── HibernateNamedObjectParser        — SQM-based query validation
+      ├── HibernateSchemaValidator          — Hibernate 6 schema validation
+      └── HibernateEnhancer                 — Hibernate 6 bytecode enhancement
 
-persistence-tools-legacy  (Provider — "javax" namespace)
- ├── LegacyPersistenceLinterFactory           — base factory for Legacy providers
- ├── LegacyNamedObjectParser                  — Hibernate 5 / AST-based query validation
- ├── LegacyNamedObjectParserFactory           — creates LegacyNamedObjectParser instances
- ├── LegacySchemaValidator                    — Hibernate 5-based schema validation
- ├── LegacySchemaValidatorFactory             — creates LegacySchemaValidator instances
- ├── LegacyHibernateEnhancer                  — Hibernate 5-based bytecode enhancement
- └── LegacyHibernateEnhancerProvider          — creates LegacyHibernateEnhancer instances
+hibernate-persistence-tools  (Reference Implementation — "javax" namespace / Hibernate 5)
+ ├── hibernate.javax.persistence.tools.provider
+ │    ├── HibernatePersistenceServiceProvider
+ │    ├── HibernatePersistenceLinterFactory
+ │    ├── HibernateNamedObjectParserFactory
+ │    ├── HibernateSchemaValidatorFactory
+ │    └── HibernateEnhancerProvider
+ └── hibernate.javax.persistence.tools
+      ├── HibernateNamedObjectParser        — AST-based query validation
+      ├── HibernateSchemaValidator          — Hibernate 5 schema validation
+      └── HibernateEnhancer                 — Hibernate 5 bytecode enhancement
 
-persistence-tools-bom  (BOM)
- └── Aligns versions of all modules above
+persistence-tools-bom  (Bill of Materials)
+ └── Aligns versions of API and Hibernate reference implementations
 ```
 
 ---
@@ -195,38 +229,29 @@ persistence-tools-bom  (BOM)
 
 Browse the full API documentation online:
 
-- 🌐 **[Unified API Reference (Global Search)](https://jpersist.github.io/persistence/libraries/api/latest/)** — Flat aggregate documentation indexing all modules with global search.
-- ☕ **[Jakarta Persistence Suite (Modular Javadoc)](https://jpersist.github.io/persistence/libraries/api/latest/jakarta/)** — Native JPMS modular documentation for Jakarta Persistence (JPA 3.x) & Hibernate 6 (`io.github.jpersist.tools.api` + `io.github.jpersist.tools.jakarta`).
-- 🏛️ **[Legacy Persistence Suite (Modular Javadoc)](https://jpersist.github.io/persistence/libraries/api/latest/legacy/)** — Native JPMS modular documentation for Legacy Persistence (JPA 2.x) & Hibernate 5 (`io.github.jpersist.tools.api` + `io.github.jpersist.tools.legacy`).
+- **[Core API Reference (Vendor-Agnostic)](https://jpersist.github.io/persistence/tools/specifications/api/latest/)** — Native JPMS modular documentation for `persistence-tools-api` (`io.github.jpersist.tools.api`).
+- **[Hibernate ORM 6 Suite (Jakarta Persistence)](https://jpersist.github.io/persistence/tools/hibernate-orm/api/latest/)** — Native JPMS modular documentation for `hibernate-orm-persistence-tools` (`io.github.jpersist.tools.hibernate.orm`).
+- **[Hibernate 5 Suite (Legacy Persistence)](https://jpersist.github.io/persistence/tools/hibernate/api/latest/)** — Native JPMS modular documentation for `hibernate-persistence-tools` (`io.github.jpersist.tools.hibernate`).
 
-To generate the documentation locally, navigate to the `libraries` directory. You can compile all documentation variants at once using the unified lifecycle task:
-
-```bash
-cd libraries
-
-# Generate all documentation variants sequentially (Flat first, then Modular suites)
-../gradlew aggregateAllJavadocs
-```
-
-Alternatively, you can trigger individual documentation pipelines independently:
+To generate the documentation locally, execute the Gradle tasks from the project root or the `libraries` directory:
 
 ```bash
-# Generate unified aggregate Javadoc across all modules (flat classpath fallback)
-../gradlew aggregateJavadoc
-
-# Generate modular JPMS Javadoc for the Jakarta ecosystem (Hibernate 6)
-../gradlew aggregateJavadocJakarta
-
-# Generate modular JPMS Javadoc for the Legacy ecosystem (Hibernate 5)
-../gradlew aggregateJavadocLegacy
+# Generate all documentation variants
+./gradlew :libraries:aggregateAllJavadocs
 ```
 
-The compiled responsive HTML5 documentation sites are written to:
-- `build/docs/javadoc/` — Unified flat aggregate documentation
-- `build/docs/javadoc/jakarta/` — Jakarta Suite native modular graphs
-- `build/docs/javadoc/legacy/` — Legacy Suite native modular graphs
+Or generate individual documentation suites independently:
 
-*Note: The modular Javadoc pipelines are configured to execute sequentially after the flat aggregate documentation task completes to guarantee clean workspace isolation and prevent build cache layout pollution.*
+```bash
+# Core vendor-agnostic API Javadoc (build/docs/javadoc/specifications/)
+./gradlew :libraries:aggregateApiJavadoc
+
+# Hibernate ORM 6 Jakarta reference implementation Javadoc (build/docs/javadoc/hibernate-orm/)
+./gradlew :libraries:aggregateModernHibernateJavadoc
+
+# Hibernate 5 Legacy reference implementation Javadoc (build/docs/javadoc/hibernate/)
+./gradlew :libraries:aggregateLegacyHibernateJavadoc
+```
 
 ---
 

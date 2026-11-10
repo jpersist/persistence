@@ -10,29 +10,7 @@ publishing {
 
             pom {
                 name = 'Persistence Tools API'
-                description = 'Defines the Service Provider Interface (SPI)'
-            }
-        }
-
-        relocation(MavenPublication) {
-            pom {
-                // Old artifact coordinates
-                groupId = 'io.github.jpersist.lint'
-                artifactId = 'lint-persistence-api'
-                version = project.version
-
-                name = 'Lint Persistence API'
-                description = 'Defines the Service Provider Interface (SPI): `PersistenceLinter` / `PersistenceLinterFactory` (root contracts), `NamedObjectParser` / `NamedObjectParserFactory` (query validation), and `SchemaValidator` / `SchemaValidatorFactory` (schema validation)'
-
-                distributionManagement {
-                    relocation {
-                        // New artifact coordinates
-                        groupId = 'io.github.jpersist.tools'
-                        artifactId = 'persistence-tools-api'
-                        version = project.version
-                        message = 'The JPersist Lint libraries have been renamed and relocated to align with the core tools ecosystem governance.'
-                    }
-                }
+                description = 'Defines the public API and Service Provider Interfaces (SPI) for JPersist Persistence Tools.'
             }
         }
     }

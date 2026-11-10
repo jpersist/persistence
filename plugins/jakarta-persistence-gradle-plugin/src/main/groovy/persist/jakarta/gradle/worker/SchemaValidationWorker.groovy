@@ -7,8 +7,8 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
-import persist.lint.api.spi.SchemaValidator
-import persist.lint.api.spi.SchemaValidatorFactory
+import persistence.tools.SchemaValidator
+import persistence.tools.spi.SchemaValidatorFactory
 
 /**
  * Parameter interface for the {@link SchemaValidationWorker} work action.
@@ -47,7 +47,7 @@ interface SchemaValidationParameters extends WorkParameters {
     /**
      * Fully qualified entity class names discovered by the ASM bytecode
      * scanner, used to initialize the SPI-loaded
-     * {@link persist.lint.api.spi.SchemaValidator}.
+     * {@link persistence.tools.SchemaValidator}.
      *
      * @return The list property tracking the entity class names.
      * @since 1.7.0
@@ -60,8 +60,8 @@ interface SchemaValidationParameters extends WorkParameters {
  * Gradle {@link WorkAction} that validates JPA entity mappings against a
  * database schema inside an isolated classloader.
  * <p>
- * The worker initializes an SPI-loaded {@link SchemaValidator} via
- * {@link SchemaValidatorFactory} using the configured JPA version and the
+ * The worker initializes an SPI-loaded {@link persistence.tools.SchemaValidator} via
+ * {@link persistence.tools.spi.SchemaValidatorFactory} using the configured JPA version and the
  * list of discovered entity class names. It then iterates over every
  * serialized tenant profile and validates each active persistence unit
  * against that tenant's database. If any tenant/unit combination produces
@@ -87,7 +87,7 @@ abstract class SchemaValidationWorker implements WorkAction<SchemaValidationPara
     /**
      * Executes the multi-tenant schema validation pipeline.
      * <p>
-     * Initializes the SPI-loaded {@link SchemaValidator}, iterates over every
+     * Initializes the SPI-loaded {@link persistence.tools.SchemaValidator}, iterates over every
      * serialized tenant profile, validates each active persistence unit against
      * that tenant's database, and throws a {@link GradleException} if any
      * schema mismatches are detected.

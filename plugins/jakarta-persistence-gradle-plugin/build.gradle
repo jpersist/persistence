@@ -36,7 +36,7 @@ def generatePluginInfo = tasks.register("generatePluginInfo", WriteProperties) {
 
     // Wire property evaluation lazily inside a Provider block to satisfy Configuration Cache rules
     property("persistence-tools.version", providers.provider {
-        String toolsVersionTarget = "3.0.0" // Ultimate safe fallback coordinate string
+        String toolsVersionTarget = "4.0.0" // Ultimate safe fallback coordinate string
         def catalogs = project.extensions.findByType(VersionCatalogsExtension)
 
         if (catalogs != null) {

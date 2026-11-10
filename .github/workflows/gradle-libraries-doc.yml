@@ -1,13 +1,22 @@
 name: Publish Libraries Documentation
 
 on:
-  workflow_call:  # Called from gradle-libraries-release.yml after a release
+  workflow_call:
     inputs:
       tag:
-        description: 'The version tag to checkout and publish (e.g., libs-v1.0.0)'
+        description: 'The version tag to checkout and publish'
         required: false
         type: string
-  workflow_dispatch:  # Allow manual triggering from the Actions tab
+      releasedApiVersion:
+        description: 'Released core API version for Javadoc cross-linking'
+        required: false
+        type: string
+  workflow_dispatch:
+    inputs:
+      releasedApiVersion:
+        description: 'Released core API version for Javadoc cross-linking'
+        required: false
+        type: string
 
 permissions:
   contents: write
@@ -26,49 +35,97 @@ jobs:
         uses: actions/checkout@v7
         with:
           ref: ${{ inputs.tag || github.ref }}
+          fetch-depth: 0
 
-      - name: Resolve Documentation Version
-        id: version
+      - name: Resolve Project Context and Version
+        id: context
         run: |
-          # Extract version from the Git tag (e.g., libs-v1.0.0 -> 1.0.0)
-          if [[ "${GITHUB_REF}" == refs/tags/libs-v* ]]; then
-            VERSION="${GITHUB_REF#refs/tags/libs-v}"
-          else
-            # Fall back to libraries/gradle.properties for workflow_call triggers
-            VERSION=$(grep '^version=' libraries/gradle.properties | cut -d'=' -f2)
-            VERSION="${VERSION%-SNAPSHOT}"
+          TARGET_REF="${{ inputs.tag || github.ref }}"
+          TAG_NAME="${TARGET_REF#refs/tags/}"
+
+          # Resolve API Version for cross-linking
+          API_VER="${{ inputs.releasedApiVersion }}"
+          if [ -z "$API_VER" ]; then
+            API_TAG=$(git tag -l "spec-v*" | sort -V | tail -n1)
+            API_VER="${API_TAG#spec-v}"
           fi
-          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
-          echo "Documentation version: ${VERSION}"
+          echo "api_version=${API_VER}" >> "$GITHUB_OUTPUT"
+
+          # Extract meta context according to the specific layout structure matching the tag
+          if [[ "$TAG_NAME" == bom-v* ]]; then
+            echo "BOM packages do not contain code api docs. Skipping generation."
+            echo "skip_docs=true" >> "$GITHUB_OUTPUT"
+          elif [[ "$TAG_NAME" == hib6-v* ]]; then
+            VERSION="${TAG_NAME#hib6-v}"
+            echo "skip_docs=false" >> "$GITHUB_OUTPUT"
+            echo "ptype=hibernate-orm" >> "$GITHUB_OUTPUT"
+            echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+            echo "doc_task=aggregateModernHibernateJavadoc" >> "$GITHUB_OUTPUT"
+            echo "src_doc_dir=libraries/build/docs/javadoc/hibernate-orm" >> "$GITHUB_OUTPUT"
+          elif [[ "$TAG_NAME" == hib5-v* ]]; then
+            VERSION="${TAG_NAME#hib5-v}"
+            echo "skip_docs=false" >> "$GITHUB_OUTPUT"
+            echo "ptype=hibernate" >> "$GITHUB_OUTPUT"
+            echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+            echo "doc_task=aggregateLegacyHibernateJavadoc" >> "$GITHUB_OUTPUT"
+            echo "src_doc_dir=libraries/build/docs/javadoc/hibernate" >> "$GITHUB_OUTPUT"
+          else
+            # Default fallback for API matching spec-v* or manual triggers
+            if [[ "$TAG_NAME" == spec-v* ]]; then
+              VERSION="${TAG_NAME#spec-v}"
+            else
+              VERSION=$(grep '^version=' libraries/gradle.properties | cut -d'=' -f2)
+              VERSION="${VERSION%-SNAPSHOT}"
+            fi
+            echo "skip_docs=false" >> "$GITHUB_OUTPUT"
+            echo "ptype=specifications" >> "$GITHUB_OUTPUT"
+            echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+            echo "doc_task=aggregateApiJavadoc" >> "$GITHUB_OUTPUT"
+            echo "src_doc_dir=libraries/build/docs/javadoc/specifications" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Set up Java Development Kit
+        if: steps.context.outputs.skip_docs != 'true'
         uses: actions/setup-java@v6
         with:
           java-version: '21'
           distribution: 'temurin'
 
       - name: Setup Gradle
+        if: steps.context.outputs.skip_docs != 'true'
         uses: gradle/actions/setup-gradle@v6
 
       - name: Make Gradle Wrapper Executable
+        if: steps.context.outputs.skip_docs != 'true'
         run: chmod +x ./gradlew
 
       - name: Generate Documentation
-        working-directory: libraries
-        run: ../gradlew aggregateAllJavadocs
+        if: steps.context.outputs.skip_docs != 'true'
+        run: |
+          API_VER="${{ steps.context.outputs.api_version }}"
+          ./gradlew -p libraries ${{ steps.context.outputs.doc_task }} \
+            -PuseOnlineJavadoc=true \
+            -PreleasedApiVersion="${API_VER}"
 
       - name: Prepare Versioned Site
+        if: steps.context.outputs.skip_docs != 'true'
         run: |
-          VERSION="${{ steps.version.outputs.version }}"
+          PTYPE="${{ steps.context.outputs.ptype }}"
+          VERSION="${{ steps.context.outputs.version }}"
+          SRC_DOC_DIR="${{ steps.context.outputs.src_doc_dir }}"
 
-          mkdir -p site/libraries/api/${VERSION}
-          cp -r libraries/build/docs/javadoc/* site/libraries/api/${VERSION}/
+          # Target directory structure layout: site/tools/<ptype>/api/<version>
+          TARGET_DIR="site/tools/${PTYPE}/api/${VERSION}"
+          LATEST_DIR="site/tools/${PTYPE}/api/latest"
 
-          # Also publish as 'latest' for convenient access
-          mkdir -p site/libraries/api/latest
-          cp -r site/libraries/api/${VERSION}/* site/libraries/api/latest/
+          mkdir -p "$TARGET_DIR"
+          cp -r "$SRC_DOC_DIR"/* "$TARGET_DIR"/
+
+          mkdir -p "$LATEST_DIR"
+          cp -r "$TARGET_DIR"/* "$LATEST_DIR"/
 
       - name: Deploy to GitHub Pages
+        if: steps.context.outputs.skip_docs != 'true'
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}

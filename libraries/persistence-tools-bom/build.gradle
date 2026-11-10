@@ -3,15 +3,24 @@ plugins {
     id 'publishing-conventions'
 }
 
-javaPlatform {
-    allowDependencies()
-}
+// Resolve versions from production variables (passed via CLI during release) or fallback to local snapshot versions
+def apiVersion = project.findProperty('releasedApiVersion') ?: project(':persistence-tools-api').version.toString()
+def hibernateLegacyVersion = project.findProperty('releasedHib5Version') ?: project(':hibernate-persistence-tools').version.toString()
+def hibernateModernVersion = project.findProperty('releasedHib6Version') ?: project(':hibernate-orm-persistence-tools').version.toString()
 
 dependencies {
     constraints {
-        api project(':persistence-tools-api')
-        api project(':persistence-tools-jakarta')
-        api project(':persistence-tools-legacy')
+        // Dynamically resolve all components to static released versions during a production deployment
+        if (project.hasProperty('isBomRelease')) {
+            api "io.github.jpersist.tools:persistence-tools-api:${apiVersion}"
+            api "io.github.jpersist.tools:hibernate-persistence-tools:${hibernateLegacyVersion}"
+            api "io.github.jpersist.tools:hibernate-orm-persistence-tools:${hibernateModernVersion}"
+        } else {
+            // Fallback for local development execution
+            api project(':persistence-tools-api')
+            api project(':hibernate-persistence-tools')
+            api project(':hibernate-orm-persistence-tools')
+        }
     }
 }
 
@@ -23,28 +32,6 @@ publishing {
             pom {
                 name = 'Persistence Tools BOM'
                 description = 'Bill of Materials (BOM) for convenient dependency management of all Persistence Tools modules'
-            }
-        }
-
-        relocation(MavenPublication) {
-            pom {
-                // Old artifact coordinates
-                groupId = 'io.github.jpersist.lint'
-                artifactId = 'lint-persistence-bom'
-                version = project.version
-
-                name = 'Lint Persistence BOM'
-                description = 'Bill of Materials (BOM) for convenient dependency management of all Lint Persistence modules'
-
-                distributionManagement {
-                    relocation {
-                        // New artifact coordinates
-                        groupId = 'io.github.jpersist.tools'
-                        artifactId = 'persistence-tools-bom'
-                        version = project.version
-                        message = 'The JPersist Lint libraries have been renamed and relocated to align with the core tools ecosystem governance.'
-                    }
-                }
             }
         }
     }

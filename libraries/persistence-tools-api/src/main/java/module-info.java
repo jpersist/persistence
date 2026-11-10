@@ -1,46 +1,43 @@
 /**
- * Core API module for the Persistence Tools Libraries.
+ * Defines the public API and Service Provider Interfaces (SPI) for JPersist persistence tools.
  *
- * <p>Defines the Service Provider Interfaces (SPIs) for build-time
- * validation and bytecode enhancement of JPA persistence artifacts.
- * This module contains no concrete implementations; provider modules
- * such as {@code io.github.jpersist.tools.jakarta} and
- * {@code io.github.jpersist.tools.legacy} are discovered at runtime
- * through the {@link java.util.ServiceLoader} mechanism.</p>
+ * <p>This module provides vendor-agnostic abstractions and contracts for build-time persistence
+ * validation, bytecode enhancement, schema verification, and named query parsing across JPA
+ * specification versions.</p>
  *
- * <h2>Exported packages</h2>
+ * <h2>Exported Packages</h2>
  * <ul>
- *   <li>{@code persist.api.spi} &mdash; root service-provider interface
- *       ({@link persist.api.spi.PersistenceServiceProvider})</li>
- *   <li>{@code persist.lint.api} &mdash; shared model types
- *       ({@link persist.lint.api.NamedObjectDescriptor},
- *       {@link persist.lint.api.NamedObjectType})</li>
- *   <li>{@code persist.lint.api.spi} &mdash; linting SPIs
- *       ({@link persist.lint.api.spi.NamedObjectParser},
- *       {@link persist.lint.api.spi.SchemaValidator}, and their factories)</li>
- *   <li>{@code persist.hibernate.enhance.spi} &mdash; Hibernate bytecode
- *       enhancement SPI ({@link persist.hibernate.enhance.spi.HibernateEnhancer},
- *       {@link persist.hibernate.enhance.spi.HibernateEnhancerProvider})</li>
+ *   <li>{@link persistence.tools} &ndash; User-facing validation, query parsing, schema verification,
+ *       and bytecode enhancement contracts.</li>
+ *   <li>{@link persistence.tools.spi} &ndash; Service Provider Interfaces (SPI) and factory discovery
+ *       mechanisms for namespace-specific implementations.</li>
  * </ul>
  *
- * <h2>Service declarations</h2>
- * <p>This module declares {@code uses} directives for all provider
- * interfaces so that {@link java.util.ServiceLoader} can locate
- * implementations at runtime.</p>
+ * <h2>Service Loader Discoveries</h2>
+ * <p>This module declares {@code uses} directives for the following service provider interfaces:</p>
+ * <ul>
+ *   <li>{@link persistence.tools.spi.PersistenceServiceProvider}</li>
+ *   <li>{@link persistence.tools.spi.PersistenceLinterFactory}</li>
+ *   <li>{@link persistence.tools.spi.NamedObjectParserFactory}</li>
+ *   <li>{@link persistence.tools.spi.SchemaValidatorFactory}</li>
+ *   <li>{@link persistence.tools.spi.EnhancerProvider}</li>
+ * </ul>
  *
- * @since 3.1.0
+ * @since 4.0.0
  */
 module io.github.jpersist.tools.api {
 
-    exports persist.api.spi;
-    exports persist.lint.api;
-    exports persist.lint.api.spi;
-    exports persist.hibernate.enhance.spi;
+    // 1. Export clean, vendor-agnostic user-facing API contracts
+    exports persistence.tools;
 
-    uses persist.api.spi.PersistenceServiceProvider;
-    uses persist.lint.api.spi.PersistenceLinterFactory;
-    uses persist.lint.api.spi.NamedObjectParserFactory;
-    uses persist.lint.api.spi.SchemaValidatorFactory;
-    uses persist.hibernate.enhance.spi.HibernateEnhancerProvider;
+    // 2. Export service provider interfaces for reference implementations
+    exports persistence.tools.spi;
+
+    // 3. Declare modular ServiceLoader discovery targets across the new SPI layout
+    uses persistence.tools.spi.PersistenceServiceProvider;
+    uses persistence.tools.spi.PersistenceLinterFactory;
+    uses persistence.tools.spi.NamedObjectParserFactory;
+    uses persistence.tools.spi.SchemaValidatorFactory;
+    uses persistence.tools.spi.EnhancerProvider;
 
 }

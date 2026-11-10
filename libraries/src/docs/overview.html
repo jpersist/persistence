@@ -20,42 +20,42 @@
 
 <h3>Persistence Linting</h3>
 <p>
-    Rooted in {@link persist.lint.api.spi.PersistenceLinter} (the marker
+    Rooted in {@link persistence.tools.PersistenceLinter} (the marker
     interface for all linting operations) and
-    {@link persist.lint.api.spi.PersistenceLinterFactory} (the base factory
+    {@link persistence.tools.spi.PersistenceLinterFactory} (the base factory
     with {@link java.util.ServiceLoader}-based discovery):
 </p>
 <ul>
     <li>
-        <strong>{@link persist.lint.api.spi.NamedObjectParser}</strong> /
-        {@link persist.lint.api.spi.NamedObjectParserFactory} — parses and
+        <strong>{@link persistence.tools.NamedObjectParser}</strong> /
+        {@link persistence.tools.spi.NamedObjectParserFactory} — parses and
         validates named JPQL queries and stored procedure declarations,
-        returning {@link persist.lint.api.NamedObjectDescriptor} results
+        returning {@link persistence.tools.NamedObjectDescriptor} results
         with parameter metadata.
     </li>
     <li>
-        <strong>{@link persist.lint.api.spi.SchemaValidator}</strong> /
-        {@link persist.lint.api.spi.SchemaValidatorFactory} — validates the
+        <strong>{@link persistence.tools.SchemaValidator}</strong> /
+        {@link persistence.tools.spi.SchemaValidatorFactory} — validates the
         entity metamodel against a live database schema via JDBC.
     </li>
 </ul>
 
 <h3>Hibernate Bytecode Enhancement</h3>
 <p>
-    Rooted in {@link persist.hibernate.enhance.spi.HibernateEnhancer} (the
+    Rooted in {@link persistence.tools.Enhancer} (the
     bytecode transformation contract) and
-    {@link persist.hibernate.enhance.spi.HibernateEnhancerProvider} (the
+    {@link persistence.tools.spi.EnhancerProvider} (the
     {@link java.util.ServiceLoader}-based provider):
 </p>
 <ul>
     <li>
-        <strong>{@link persist.hibernate.enhance.spi.HibernateEnhancer}</strong>
+        <strong>{@link persistence.tools.Enhancer}</strong>
         — transforms compiled entity class bytes to add Hibernate-specific
         instrumentation such as lazy-loading proxies, inline dirty tracking,
         bi-directional association management, and extended enhancement.
     </li>
     <li>
-        <strong>{@link persist.hibernate.enhance.spi.HibernateEnhancerProvider}</strong>
+        <strong>{@link persistence.tools.spi.EnhancerProvider}</strong>
         — discovers and creates namespace-specific enhancer instances for a
         given JPA specification version.
     </li>
@@ -63,7 +63,7 @@
 
 <p>
     Both hierarchies share a common root through
-    {@link persist.api.spi.PersistenceServiceProvider}, which maps a JPA
+    {@link persistence.tools.spi.PersistenceServiceProvider}, which maps a JPA
     specification version string (e.g.&nbsp;{@code "3.1"} or {@code "2.2"})
     to a persistence namespace ({@code "jakarta"} for JPA&nbsp;3.x,
     {@code "javax"} for JPA&nbsp;2.x) and locates the matching provider
@@ -94,11 +94,11 @@
     <li>
         <strong>Service declarations</strong> — the API module declares
         {@code uses} directives for all SPI interfaces
-        ({@link persist.api.spi.PersistenceServiceProvider},
-        {@link persist.lint.api.spi.PersistenceLinterFactory},
-        {@link persist.lint.api.spi.NamedObjectParserFactory},
-        {@link persist.lint.api.spi.SchemaValidatorFactory}, and
-        {@link persist.hibernate.enhance.spi.HibernateEnhancerProvider}),
+        ({@link persistence.tools.spi.PersistenceServiceProvider},
+        {@link persistence.tools.spi.PersistenceLinterFactory},
+        {@link persistence.tools.spi.NamedObjectParserFactory},
+        {@link persistence.tools.spi.SchemaValidatorFactory}, and
+        {@link persistence.tools.spi.EnhancerProvider}),
         while the provider modules register their implementations via
         {@code provides…with} directives, allowing
         {@link java.util.ServiceLoader} discovery on the module path.
@@ -132,15 +132,15 @@
         the {@code io.github.jpersist.tools} group identifier.
     </li>
     <li>
-        {@link persist.api.spi.PersistenceServiceProvider} — new root
+        {@link persistence.tools.spi.PersistenceServiceProvider} — new root
         service-provider interface shared by both the linting and
         enhancement hierarchies, with version-to-namespace mapping and
         generic {@link java.util.ServiceLoader} discovery via
-        {@link persist.api.spi.PersistenceServiceProvider#getServiceProvider(String, Class)}.
+        {@link persistence.tools.spi.PersistenceServiceProvider#getServiceProvider(String, Class)}.
     </li>
     <li>
-        {@link persist.hibernate.enhance.spi.HibernateEnhancer} and
-        {@link persist.hibernate.enhance.spi.HibernateEnhancerProvider} —
+        {@link persistence.tools.Enhancer} and
+        {@link persistence.tools.spi.EnhancerProvider} —
         new SPI for build-time Hibernate bytecode enhancement of entity
         classes, with configurable options for lazy initialisation, dirty
         tracking, association management, and extended enhancement.
@@ -153,29 +153,29 @@
 </p>
 <ul>
     <li>
-        {@link persist.lint.api.spi.PersistenceLinter} — marker interface
+        {@link persistence.tools.PersistenceLinter} — marker interface
         that serves as the root type for all linting operations.
     </li>
     <li>
-        {@link persist.lint.api.spi.PersistenceLinterFactory} — base factory
+        {@link persistence.tools.spi.PersistenceLinterFactory} — base factory
         with generic discovery via
-        {@link persist.lint.api.spi.PersistenceLinterFactory#newPersistenceLinterFactory(String, Class)}.
+        {@link persistence.tools.spi.PersistenceLinterFactory#newPersistenceLinterFactory(String, Class)}.
     </li>
     <li>
-        {@link persist.lint.api.spi.SchemaValidator} and
-        {@link persist.lint.api.spi.SchemaValidatorFactory} — SPI for
+        {@link persistence.tools.SchemaValidator} and
+        {@link persistence.tools.spi.SchemaValidatorFactory} — SPI for
         build-time database schema validation against the entity metamodel.
     </li>
 </ul>
 
 <h3>Version 2.0.0</h3>
 <p>
-    Version 2.0.0 introduced the {@link persist.lint.api.spi.NamedObjectParser}
-    and {@link persist.lint.api.spi.NamedObjectParserFactory} APIs with
+    Version 2.0.0 introduced the {@link persistence.tools.NamedObjectParser}
+    and {@link persistence.tools.spi.NamedObjectParserFactory} APIs with
     support for validating
-    {@link persist.lint.api.NamedObjectType#STORED_PROCEDURE named stored procedures}
+    {@link persistence.tools.NamedObjectType#STORED_PROCEDURE named stored procedures}
     alongside named queries, returning rich
-    {@link persist.lint.api.NamedObjectDescriptor} results containing parameter
+    {@link persistence.tools.NamedObjectDescriptor} results containing parameter
     metadata.
 </p>
 
@@ -184,51 +184,49 @@
     <dt><code>persistence-tools-api</code></dt>
     <dd>
         Defines the Service Provider Interfaces (SPIs):
-        {@link persist.api.spi.PersistenceServiceProvider},
-        {@link persist.lint.api.spi.PersistenceLinter},
-        {@link persist.lint.api.spi.PersistenceLinterFactory},
-        {@link persist.lint.api.spi.NamedObjectParser},
-        {@link persist.lint.api.spi.NamedObjectParserFactory},
-        {@link persist.lint.api.spi.SchemaValidator},
-        {@link persist.lint.api.spi.SchemaValidatorFactory},
-        {@link persist.hibernate.enhance.spi.HibernateEnhancer}, and
-        {@link persist.hibernate.enhance.spi.HibernateEnhancerProvider}.
+        {@link persistence.tools.spi.PersistenceServiceProvider},
+        {@link persistence.tools.PersistenceLinter},
+        {@link persistence.tools.spi.PersistenceLinterFactory},
+        {@link persistence.tools.NamedObjectParser},
+        {@link persistence.tools.spi.NamedObjectParserFactory},
+        {@link persistence.tools.SchemaValidator},
+        {@link persistence.tools.spi.SchemaValidatorFactory},
+        {@link persistence.tools.Enhancer}, and
+        {@link persistence.tools.spi.EnhancerProvider}.
         This module contains no implementation; provider modules are
         discovered at runtime through the {@link java.util.ServiceLoader}
         mechanism.
         It also hosts the shared model types
-        {@link persist.lint.api.NamedObjectDescriptor} and
-        {@link persist.lint.api.NamedObjectType}, as well as the
-        enhancement option enum
-        {@link persist.hibernate.enhance.spi.HibernateEnhancer.Option}.
+        {@link persistence.tools.NamedObjectDescriptor} and
+        {@link persistence.tools.NamedObjectType}.
     </dd>
 
-    <dt><code>persistence-tools-jakarta</code></dt>
+    <dt><code>hibernate-orm-persistence-tools</code></dt>
     <dd>
         Jakarta Persistence (JPA&nbsp;3.x) provider. Uses Hibernate ORM&nbsp;6
         to compile JPQL queries into Semantic Query Model (SQM) trees,
         validate database schemas, and enhance entity bytecode.
         <br>Key classes:
-        {@code persist.lint.jakarta.JakartaNamedObjectParserFactory},
-        {@code persist.lint.jakarta.JakartaNamedObjectParser},
-        {@code persist.lint.jakarta.JakartaSchemaValidatorFactory},
-        {@code persist.lint.jakarta.JakartaSchemaValidator},
-        {@code persist.hibernate.enhance.jakarta.JakartaHibernateEnhancerProvider}, and
-        {@code persist.hibernate.enhance.jakarta.JakartaHibernateEnhancer}.
+        {@code hibernate.jakarta.persistence.tools.provider.HibernateNamedObjectParserFactory},
+        {@code hibernate.jakarta.persistence.tools.HibernateNamedObjectParser},
+        {@code hibernate.jakarta.persistence.tools.provider.HibernateSchemaValidatorFactory},
+        {@code hibernate.jakarta.persistence.tools.HibernateSchemaValidator},
+        {@code hibernate.jakarta.persistence.tools.provider.HibernateEnhancerProvider}, and
+        {@code hibernate.jakarta.persistence.tools.HibernateEnhancer}.
     </dd>
 
-    <dt><code>persistence-tools-legacy</code></dt>
+    <dt><code>hibernate-persistence-tools</code></dt>
     <dd>
         Legacy {@code javax.persistence} (JPA&nbsp;2.x) provider. Uses
         Hibernate&nbsp;5 and its AST-based query translator to validate
         JPQL queries and database schemas, and to enhance entity bytecode.
         <br>Key classes:
-        {@code persist.lint.legacy.LegacyNamedObjectParserFactory},
-        {@code persist.lint.legacy.LegacyNamedObjectParser},
-        {@code persist.lint.legacy.LegacySchemaValidatorFactory},
-        {@code persist.lint.legacy.LegacySchemaValidator},
-        {@code persist.hibernate.enhance.legacy.LegacyHibernateEnhancerProvider}, and
-        {@code persist.hibernate.enhance.legacy.LegacyHibernateEnhancer}.
+        {@code hibernate.javax.persistence.tools.provider.HibernateNamedObjectParserFactory},
+        {@code hibernate.javax.persistence.tools.HibernateNamedObjectParser},
+        {@code hibernate.javax.persistence.tools.provider.HibernateSchemaValidatorFactory},
+        {@code hibernate.javax.persistence.tools.HibernateSchemaValidator},
+        {@code hibernate.javax.persistence.tools.provider.HibernateEnhancerProvider}, and
+        {@code hibernate.javax.persistence.tools.HibernateEnhancer}.
     </dd>
 
     <dt><code>persistence-tools-bom</code></dt>
@@ -242,21 +240,21 @@
 
 <h3>Enhancing Entity Bytecode</h3>
 <p>
-    Use {@link persist.hibernate.enhance.spi.HibernateEnhancerProvider#getHibernateEnhancerProvider(String)}
+    Use {@link persistence.tools.spi.EnhancerProvider#getEnhancerProvider(String)}
     to obtain the appropriate provider for a given JPA specification version,
-    then create a {@link persist.hibernate.enhance.spi.HibernateEnhancer} to
+    then create a {@link persistence.tools.Enhancer} to
     transform entity classes at build time:
 </p>
 <pre>{@code
-    HibernateEnhancerProvider provider =
-        HibernateEnhancerProvider.getHibernateEnhancerProvider("3.1");
+    EnhancerProvider provider =
+        EnhancerProvider.getEnhancerProvider("3.1");
 
-    HibernateEnhancer enhancer = provider.getEnhancer(
+    Enhancer enhancer = provider.getEnhancer(
         classesDir,
         classpathFiles,
         Map.of(
-            HibernateEnhancer.Option.LAZY_INITIALIZATION, true,
-            HibernateEnhancer.Option.DIRTY_TRACKING, true));
+            Enhancer.Option.LAZY_INITIALIZATION, true,
+            Enhancer.Option.DIRTY_TRACKING, true));
 
     byte[] enhancedBytes = enhancer.enhance(
         "com.example.Order", originalClassBytes);
@@ -264,9 +262,9 @@
 
 <h3>Validating Named Queries and Stored Procedures</h3>
 <p>
-    Use {@link persist.lint.api.spi.NamedObjectParserFactory#newNamedObjectParserFactory(String)}
+    Use {@link persistence.tools.spi.NamedObjectParserFactory#newNamedObjectParserFactory(String)}
     to obtain the appropriate factory for a given JPA specification version, then
-    create a {@link persist.lint.api.spi.NamedObjectParser} to validate named
+    create a {@link persistence.tools.NamedObjectParser} to validate named
     queries and stored procedures:
 </p>
 <pre>{@code
@@ -290,9 +288,9 @@
 
 <h3>Validating Database Schemas</h3>
 <p>
-    Use {@link persist.lint.api.spi.SchemaValidatorFactory#newSchemaValidatorFactory(String)}
+    Use {@link persistence.tools.spi.SchemaValidatorFactory#newSchemaValidatorFactory(String)}
     to obtain a schema validator factory, then create a
-    {@link persist.lint.api.spi.SchemaValidator} and validate the entity metamodel
+    {@link persistence.tools.SchemaValidator} and validate the entity metamodel
     against a live database:
 </p>
 <pre>{@code
@@ -309,7 +307,7 @@
 
 <h3>Generic Factory Discovery</h3>
 <p>
-    The {@link persist.lint.api.spi.PersistenceLinterFactory#newPersistenceLinterFactory(String, Class)}
+    The {@link persistence.tools.spi.PersistenceLinterFactory#newPersistenceLinterFactory(String, Class)}
     method provides a generic way to discover any linter factory subtype for a
     given JPA version:
 </p>
