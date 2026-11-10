@@ -7,16 +7,14 @@ import org.gradle.api.logging.Logging
 import org.gradle.api.provider.Property
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
-import persist.hibernate.enhance.spi.HibernateEnhancerProvider
-
-import static persist.hibernate.enhance.spi.HibernateEnhancer.Option.*
+import persistence.tools.spi.EnhancerProvider
 
 /**
  * Gradle {@link WorkAction} that performs Hibernate compile-time bytecode enhancement
  * inside a classloader-isolated worker process.
  * <p>
  * The worker resolves the appropriate Hibernate bytecode engine via the decoupled
- * {@link HibernateEnhancerProvider} SPI, which is loaded from the
+ * {@link persistence.tools.spi.EnhancerProvider} SPI, which is loaded from the
  * {@code persistence-tools-jakarta} or {@code persistence-tools-legacy} provider
  * library depending on the active JPA specification version. It then iterates over
  * every {@code .class} file in the compiled source directory, applies the two-pass
@@ -32,7 +30,7 @@ import static persist.hibernate.enhance.spi.HibernateEnhancer.Option.*
  *
  * @since 1.8.0
  * @see persist.hibernate.gradle.task.HibernateEnhancementTask
- * @see HibernateEnhancerProvider
+ * @see persistence.tools.spi.EnhancerProvider
  */
 abstract class EnhancementWorker implements WorkAction<Parameters> {
 
@@ -42,7 +40,7 @@ abstract class EnhancementWorker implements WorkAction<Parameters> {
     /**
      * Executes the two-pass bytecode enhancement cycle.
      * <p>
-     * Resolves the {@link HibernateEnhancerProvider} SPI for the configured JPA version,
+     * Resolves the {@link persistence.tools.spi.EnhancerProvider} SPI for the configured JPA version,
      * iterates over every {@code .class} file in the compiled source directory, applies
      * the enhancement transformation, and writes the results (enhanced or original bytes)
      * to the isolated target directory.
@@ -62,12 +60,15 @@ abstract class EnhancementWorker implements WorkAction<Parameters> {
             def log = logger
 
             // Resolve the specific lifecycle engine provider via decoupled SPI ServiceLoader maps
-            def enhancerProvider = HibernateEnhancerProvider.getHibernateEnhancerProvider(version)
-            def enhancer = enhancerProvider.getEnhancer(src, parameters.compileClasspath.getFiles(), [
-                (LAZY_INITIALIZATION)    : parameters.lazyInitializationEnabled.getOrElse(true),
-                (DIRTY_TRACKING)         : parameters.dirtyTrackingEnabled.getOrElse(true),
-                (ASSOCIATION_MANAGEMENT) : parameters.associationManagementEnabled.getOrElse(true),
-                (EXTENDED_ENHANCEMENT)   : parameters.extendedEnhancementEnabled.getOrElse(false)
+            def enhancerProvider = EnhancerProvider.getEnhancerProvider(version)
+            def enhancer = enhancerProvider.getEnhancer([
+                Set.of(src),
+                parameters.compileClasspath.getFiles()
+            ], [
+                "hibernate.enhancement.option.lazy-initialization"    : parameters.lazyInitializationEnabled.getOrElse(true),
+                "hibernate.enhancement.option.dirty-tracking"         : parameters.dirtyTrackingEnabled.getOrElse(true),
+                "hibernate.enhancement.option.association-management" : parameters.associationManagementEnabled.getOrElse(true),
+                "hibernate.enhancement.option.extended-enhancement"   : parameters.extendedEnhancementEnabled.getOrElse(false)
             ])
 
             src.eachFileRecurse { file ->

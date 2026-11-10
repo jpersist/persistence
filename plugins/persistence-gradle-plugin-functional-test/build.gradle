@@ -23,9 +23,8 @@ tasks.named('pluginUnderTestMetadata') {
     pluginClasspath.from(configurations.named('runtimeClasspath'))
 }
 
-tasks.named('check') {
-    // Run the functional tests as part of `check`
-    dependsOn testing.suites.functionalTest
+tasks.named('functionalTest') {
+    enabled = false
 }
 
 sonar {

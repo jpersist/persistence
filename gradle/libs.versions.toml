@@ -1,5 +1,5 @@
 [versions]
-persistence-tools= "3.0.0"
+persistence-tools= "4.0.0"
 spock = "2.3-groovy-4.0"
 asm = "9.10.1"
 
@@ -9,8 +9,3 @@ asm = { group = "org.ow2.asm", name = "asm", version.ref = "asm" }
 
 persistence-tools-bom = { group = "io.github.jpersist.tools", name = "persistence-tools-bom", version.ref = "persistence-tools" }
 persistence-tools-api = { group = "io.github.jpersist.tools", name = "persistence-tools-api" }
-persistence-tools-jakarta = { group = "io.github.jpersist.tools", name = "persistence-tools-jakarta" }
-persistence-tools-legacy = { group = "io.github.jpersist.tools", name = "persistence-tools-legacy" }
-
-[bundles]
-persistence-tools = ["persistence-tools-api", "persistence-tools-jakarta", "persistence-tools-legacy"]

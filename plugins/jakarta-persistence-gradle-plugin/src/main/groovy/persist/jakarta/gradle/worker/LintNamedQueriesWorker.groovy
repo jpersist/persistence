@@ -13,9 +13,8 @@ import org.objectweb.asm.AnnotationVisitor
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.Opcodes
-import persist.lint.api.NamedObjectDescriptor
-import persist.lint.api.spi.NamedObjectParser
-import persist.lint.api.spi.NamedObjectParserFactory
+import persistence.tools.NamedObjectDescriptor
+import persistence.tools.NamedObjectParser
 
 /**
  * Parameters required by the {@link LintNamedQueriesWorker}.
@@ -67,7 +66,7 @@ interface LintNamedQueriesParameters extends WorkParameters {
  * using ASM to discover {@code @NamedQuery} and
  * {@code @NamedStoredProcedureQuery} annotations. Discovered queries are then
  * validated using an ANTLR4-based parser loaded via the
- * {@link persist.lint.api.spi.NamedObjectParserFactory} SPI contract.
+ * {@link persistence.tools.spi.NamedObjectParserFactory} SPI contract.
  * Parameter naming conventions are checked against strict camelCase rules.
  * </p>
  *
