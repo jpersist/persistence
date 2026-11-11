@@ -18,10 +18,11 @@
  *
  * @since 2.0.0
  * @see io.github.jpersist.tools.api
+ * @see io.github.jpersist.tools.hibernate.base
  */
 module io.github.jpersist.tools.hibernate.orm {
     // 1. Depend on the core JPersist validation and enhancer API
-    requires io.github.jpersist.tools.api;
+    requires io.github.jpersist.tools.hibernate.base;
 
     // 2. Require JDK modules utilized by Hibernate internals (JNDI/Naming)
     requires java.naming;

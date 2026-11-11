@@ -1,3 +1,19 @@
+<!--
+  ~ Copyright 2024-2026 JPersist
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
 <html>
 <body>
 <h1>Persistence Tools &mdash; Hibernate ORM 6 Provider</h1>
@@ -15,7 +31,7 @@
 
 <h3>1. Bytecode Enhancement</h3>
 <p>
-    <strong>{@link hibernate.jakarta.persistence.tools.HibernateEnhancer}</strong> transforms compiled entity
+    <strong>{@link io.github.jpersist.tools.hibernate.orm/hibernate.jakarta.persistence.tools.HibernateEnhancer}</strong> transforms compiled entity
     classes at build time using Hibernate ORM&nbsp;6's enhancement engine. It instruments classes for:
 </p>
 <ul>
@@ -26,19 +42,19 @@
 </ul>
 <p>
     Enhancement settings can be configured using string property keys or the
-    {@link hibernate.jakarta.persistence.tools.HibernateEnhancer.Option} enum.
+    {@link hibernate.base.persistence.tools.HibernateEnhancerOption} enum.
 </p>
 
 <h3>2. Named Query &amp; Stored Procedure Validation</h3>
 <p>
-    <strong>{@link hibernate.jakarta.persistence.tools.HibernateNamedObjectParser}</strong> parses and validates
+    <strong>{@link io.github.jpersist.tools.hibernate.orm/hibernate.jakarta.persistence.tools.HibernateNamedObjectParser}</strong> parses and validates
     named JPQL queries and stored procedure declarations by compiling query strings into Hibernate&nbsp;6
     Semantic Query Model (SQM) trees against the JPA entity metamodel.
 </p>
 
 <h3>3. Database Schema Validation</h3>
 <p>
-    <strong>{@link hibernate.jakarta.persistence.tools.HibernateSchemaValidator}</strong> validates the entity
+    <strong>{@link io.github.jpersist.tools.hibernate.orm/hibernate.jakarta.persistence.tools.HibernateSchemaValidator}</strong> validates the entity
     metamodel against a target database schema via JDBC, ensuring tables, columns, data types, and foreign key
     constraints conform to JPA mappings.
 </p>
@@ -51,23 +67,23 @@
 <ul>
     <li>
         {@link persistence.tools.spi.NamedObjectParserFactory} &mdash; implemented by
-        {@link hibernate.jakarta.persistence.tools.provider.HibernateNamedObjectParserFactory}
+        {@link io.github.jpersist.tools.hibernate.orm/hibernate.jakarta.persistence.tools.provider.HibernateNamedObjectParserFactory}
     </li>
     <li>
         {@link persistence.tools.spi.SchemaValidatorFactory} &mdash; implemented by
-        {@link hibernate.jakarta.persistence.tools.provider.HibernateSchemaValidatorFactory}
+        {@link io.github.jpersist.tools.hibernate.orm/hibernate.jakarta.persistence.tools.provider.HibernateSchemaValidatorFactory}
     </li>
     <li>
         {@link persistence.tools.spi.EnhancerProvider} &mdash; implemented by
-        {@link hibernate.jakarta.persistence.tools.provider.HibernateEnhancerProvider}
+        {@link io.github.jpersist.tools.hibernate.orm/hibernate.jakarta.persistence.tools.provider.HibernateEnhancerProvider}
     </li>
     <li>
         {@link persistence.tools.spi.PersistenceLinterFactory} &mdash; base implementation
-        {@link hibernate.jakarta.persistence.tools.provider.HibernatePersistenceLinterFactory}
+        {@link io.github.jpersist.tools.hibernate.orm/hibernate.jakarta.persistence.tools.provider.HibernatePersistenceLinterFactory}
     </li>
     <li>
         {@link persistence.tools.spi.PersistenceServiceProvider} &mdash; base implementation
-        {@link hibernate.jakarta.persistence.tools.provider.HibernatePersistenceServiceProvider}
+        {@link io.github.jpersist.tools.hibernate.orm/hibernate.jakarta.persistence.tools.provider.HibernatePersistenceServiceProvider}
     </li>
 </ul>
 
@@ -90,10 +106,10 @@ module com.example.domain {
 
 <h2>Package Summary</h2>
 <dl>
-    <dt>{@link hibernate.jakarta.persistence.tools}</dt>
+    <dt>{@link io.github.jpersist.tools.hibernate.orm/hibernate.jakarta.persistence.tools}</dt>
     <dd>Hibernate ORM&nbsp;6 implementations of bytecode enhancement, query parsing, and schema validation.</dd>
 
-    <dt>{@link hibernate.jakarta.persistence.tools.provider}</dt>
+    <dt>{@link io.github.jpersist.tools.hibernate.orm/hibernate.jakarta.persistence.tools.provider}</dt>
     <dd>ServiceLoader provider factories for Jakarta Persistence tooling under Hibernate ORM&nbsp;6.</dd>
 </dl>
 </body>

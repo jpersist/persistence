@@ -1,3 +1,19 @@
+/*
+ * Copyright 2024-2026 JPersist
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 plugins {
     id 'java-platform'
     id 'publishing-conventions'
@@ -7,6 +23,7 @@ plugins {
 def apiVersion = project.findProperty('releasedApiVersion') ?: project(':persistence-tools-api').version.toString()
 def hibernateLegacyVersion = project.findProperty('releasedHib5Version') ?: project(':hibernate-persistence-tools').version.toString()
 def hibernateModernVersion = project.findProperty('releasedHib6Version') ?: project(':hibernate-orm-persistence-tools').version.toString()
+def hibernateBaseVersion = project.findProperty('releasedHibernateBaseVersion') ?: project(':hibernate-base-persistence-tools').version.toString()
 
 dependencies {
     constraints {
@@ -15,11 +32,13 @@ dependencies {
             api "io.github.jpersist.tools:persistence-tools-api:${apiVersion}"
             api "io.github.jpersist.tools:hibernate-persistence-tools:${hibernateLegacyVersion}"
             api "io.github.jpersist.tools:hibernate-orm-persistence-tools:${hibernateModernVersion}"
+            api "io.github.jpersist.tools:hibernate-base-persistence-tools:${hibernateBaseVersion}"
         } else {
             // Fallback for local development execution
             api project(':persistence-tools-api')
             api project(':hibernate-persistence-tools')
             api project(':hibernate-orm-persistence-tools')
+            api project(':hibernate-base-persistence-tools')
         }
     }
 }

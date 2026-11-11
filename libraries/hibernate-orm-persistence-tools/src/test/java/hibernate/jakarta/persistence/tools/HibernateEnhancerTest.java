@@ -1,5 +1,22 @@
+/*
+ * Copyright 2024-2026 JPersist
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package hibernate.jakarta.persistence.tools;
 
+import hibernate.base.persistence.tools.HibernateEnhancerOption;
 import hibernate.jakarta.persistence.tools.provider.HibernateEnhancerProvider;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -98,10 +115,10 @@ class HibernateEnhancerTest {
     @Test
     void enhance_withAllOptionsEnabled_returnsEnhancedBytes() throws IOException {
         Map<String, Object> settings = Map.of(
-                HibernateEnhancer.Option.LAZY_INITIALIZATION.value(), Boolean.TRUE,
-                HibernateEnhancer.Option.DIRTY_TRACKING.value(), Boolean.TRUE,
-                HibernateEnhancer.Option.ASSOCIATION_MANAGEMENT.value(), Boolean.TRUE,
-                HibernateEnhancer.Option.EXTENDED_ENHANCEMENT.value(), Boolean.TRUE
+                HibernateEnhancerOption.LAZY_INITIALIZATION.value(), Boolean.TRUE,
+                HibernateEnhancerOption.DIRTY_TRACKING.value(), Boolean.TRUE,
+                HibernateEnhancerOption.ASSOCIATION_MANAGEMENT.value(), Boolean.TRUE,
+                HibernateEnhancerOption.EXTENDED_ENHANCEMENT.value(), Boolean.TRUE
         );
         var enhancer = HibernateEnhancer.from(
                 Thread.currentThread().getContextClassLoader(), settings);
@@ -113,8 +130,8 @@ class HibernateEnhancerTest {
     }
 
     @ParameterizedTest
-    @EnumSource(HibernateEnhancer.Option.class)
-    void enhance_withSingleOptionEnabled_doesNotThrowException(HibernateEnhancer.Option option) throws IOException {
+    @EnumSource(HibernateEnhancerOption.class)
+    void enhance_withSingleOptionEnabled_doesNotThrowException(HibernateEnhancerOption option) throws IOException {
         Map<String, Object> settings = Map.of(option.value(), Boolean.TRUE);
         var enhancer = HibernateEnhancer.from(
                 Thread.currentThread().getContextClassLoader(), settings);
@@ -127,10 +144,10 @@ class HibernateEnhancerTest {
     @Test
     void enhance_withAllOptionsDisabled_returnsEnhancedBytes() throws IOException {
         Map<String, Object> settings = Map.of(
-                HibernateEnhancer.Option.LAZY_INITIALIZATION.value(), Boolean.FALSE,
-                HibernateEnhancer.Option.DIRTY_TRACKING.value(), Boolean.FALSE,
-                HibernateEnhancer.Option.ASSOCIATION_MANAGEMENT.value(), Boolean.FALSE,
-                HibernateEnhancer.Option.EXTENDED_ENHANCEMENT.value(), Boolean.FALSE
+                HibernateEnhancerOption.LAZY_INITIALIZATION.value(), Boolean.FALSE,
+                HibernateEnhancerOption.DIRTY_TRACKING.value(), Boolean.FALSE,
+                HibernateEnhancerOption.ASSOCIATION_MANAGEMENT.value(), Boolean.FALSE,
+                HibernateEnhancerOption.EXTENDED_ENHANCEMENT.value(), Boolean.FALSE
         );
         var enhancer = HibernateEnhancer.from(
                 Thread.currentThread().getContextClassLoader(), settings);

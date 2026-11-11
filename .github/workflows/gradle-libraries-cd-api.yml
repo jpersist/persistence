@@ -1,0 +1,75 @@
+name: Publish Persistence Tools API to Maven Central
+
+on:
+  push:
+    tags:
+      - 'api-v[0-9]+.[0-9]+.[0-9]+'
+  workflow_call:
+    inputs:
+      tag:
+        description: 'The version tag to checkout and publish (e.g., api-v4.0.0)'
+        required: false
+        type: string
+    secrets:
+      SONATYPE_USERNAME:
+        required: true
+      SONATYPE_PASSWORD:
+        required: true
+      GPG_SIGNING_KEY:
+        required: true
+      GPG_SIGNING_PASSWORD:
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    name: Publish API Package
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out Repository
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+
+      - name: Set up Java Development Kit
+        uses: actions/setup-java@v6
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Make Gradle Wrapper Executable
+        run: chmod +x ./gradlew
+
+      - name: Execute Maven Central Publication
+        env:
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+          GPG_SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
+          GPG_SIGNING_PASSWORD: ${{ secrets.GPG_SIGNING_PASSWORD }}
+        working-directory: libraries
+        run: |
+          if [ -n "${{ inputs.tag }}" ]; then
+            PUBLISH_VERSION="${{ inputs.tag }}"
+            PUBLISH_VERSION="${PUBLISH_VERSION#api-v}"
+          elif [[ "${GITHUB_REF}" == refs/tags/api-v* ]]; then
+            PUBLISH_VERSION="${GITHUB_REF#refs/tags/api-v}"
+          else
+            PUBLISH_VERSION=$(grep '^version=' gradle.properties | cut -d'=' -f2)
+          fi
+          ../gradlew :persistence-tools-api:publish -Pversion="${PUBLISH_VERSION}"
+
+      - name: Finalize Maven Central Deployment
+        env:
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+        run: |
+          TOKEN=$(echo -n "${SONATYPE_USERNAME}:${SONATYPE_PASSWORD}" | base64)
+          curl --fail -X POST \
+            "https://ossrh-staging-api.central.sonatype.com/manual/upload/defaultRepository/io.github.jpersist?publishing_type=automatic" \
+            -H "Authorization: Bearer ${TOKEN}"
