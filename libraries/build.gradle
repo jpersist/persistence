@@ -48,21 +48,24 @@ sonar {
 
 // 🌟 REUSABLE TYPE-SAFE JPMS JAVADOC CONFIGURATION HELPER
 // Configures independent, native modular Javadoc for each project node.
-void configureModularJavadoc(Javadoc task, Project targetProject, Project apiProject, String docTitle, String windowTitle, String destSubFolder) {
+void configureModularJavadoc(Javadoc task, List<Project> targetProjects, Project apiProject, String docTitle, String windowTitle, String destSubFolder) {
     task.group = 'documentation'
 
-    // Ensure bytecode compilation is complete before documenting
-    task.dependsOn targetProject.tasks.named('classes')
+    // Ensure bytecode compilation is complete across all target modules before documenting
+    task.dependsOn targetProjects.collect { it.tasks.named('classes') }
 
-    // Native JPMS mapping: compile directly against the project source set
-    task.source = targetProject.sourceSets.main.allJava
-    task.classpath = targetProject.sourceSets.main.compileClasspath
+    // Aggregate sources and compile classpaths from all included projects
+    task.source = files(targetProjects.collect { it.sourceSets.main.allJava })
+    task.classpath = files(targetProjects.collect { it.sourceSets.main.compileClasspath })
 
     // Enforce Gradle's native JPMS path inference for strict module-path documentation
     task.modularity.inferModulePath = true
 
     // Separate output targets to prevent workspace overlap
     task.destinationDir = file("${buildDir}/docs/javadoc/${destSubFolder}")
+
+    // Use the target project (the last one in the list) to resolve overview.html
+    def targetProject = targetProjects.last()
 
     task.options {
         overview = targetProject.file("src/docs/overview.html")
@@ -99,6 +102,20 @@ void configureModularJavadoc(Javadoc task, Project targetProject, Project apiPro
             }
         }
 
+        // Map module names to their physical source directories when documenting multiple modules together
+        if (targetProjects.size() > 1) {
+            def moduleMappings = [
+                "io.github.jpersist.tools.hibernate.base=${project(':hibernate-base-persistence-tools').file('src/main/java')}".toString(),
+                "io.github.jpersist.tools.hibernate=${project(':hibernate-persistence-tools').file('src/main/java')}".toString(),
+                "io.github.jpersist.tools.hibernate.orm=${project(':hibernate-orm-persistence-tools').file('src/main/java')}".toString()
+            ]
+            // Filter mappings to only include modules present in targetProjects
+            def activeMappings = moduleMappings.findAll { mapping ->
+                targetProjects.any { proj -> mapping.contains(proj.name) }
+            }
+            addMultilineStringsOption('-module-source-path').value = activeMappings
+        }
+
         // 🌟 FIXED & LINEARIZED JAVADOC INTEGRATION WITH CUSTOM SVG FAVICON via -bottom FLAG
         // The script is compressed onto a single line to guarantee seamless compatibility inside 'javadoc.options'.
         // It dynamically inspects the existing Javadoc stylesheet link to extract the accurate relative prefix location.
@@ -119,23 +136,24 @@ void configureModularJavadoc(Javadoc task, Project targetProject, Project apiPro
 // ------------------------------------------------------------------------------------------------
 
 def apiProject = project(':persistence-tools-api')
+def hibernateBaseProject = project(':hibernate-base-persistence-tools')
 
 // 1. Core API Module Javadoc (Fully Modular / No external dependencies)
 tasks.register('aggregateApiJavadoc', Javadoc) {
     description = 'Generates native modular JPMS Javadoc for the core vendor-agnostic API module.'
-    configureModularJavadoc(it, project(':persistence-tools-api'), apiProject, 'JPersist Persistence Tools Core API Reference', 'JPersist Tools API', 'specifications')
+    configureModularJavadoc(it, [project(':persistence-tools-api')], apiProject, 'JPersist Persistence Tools Core API Reference', 'JPersist Tools API', 'specifications')
 }
 
 // 2. Hibernate Legacy Module Javadoc (Modular / Bound to Hibernate 5 & javax)
 tasks.register('aggregateLegacyHibernateJavadoc', Javadoc) {
     description = 'Generates native modular JPMS Javadoc for the Hibernate 5 Legacy reference implementation.'
-    configureModularJavadoc(it, project(':hibernate-persistence-tools'), apiProject, 'JPersist Persistence Tools - Hibernate 5 Core Reference', 'JPersist Tools - Hibernate 5', 'hibernate')
+    configureModularJavadoc(it, [hibernateBaseProject, project(':hibernate-persistence-tools')], apiProject, 'JPersist Persistence Tools - Hibernate 5 Core Reference', 'JPersist Tools - Hibernate 5', 'hibernate')
 }
 
 // 3. Hibernate Modern Module Javadoc (Modular / Bound to Hibernate 6 & jakarta)
 tasks.register('aggregateModernHibernateJavadoc', Javadoc) {
     description = 'Generates native modular JPMS Javadoc for the Hibernate 6 Modern reference implementation.'
-    configureModularJavadoc(it, project(':hibernate-orm-persistence-tools'), apiProject, 'JPersist Persistence Tools - Hibernate 6 ORM Reference', 'JPersist Tools - Hibernate 6', 'hibernate-orm')
+    configureModularJavadoc(it, [hibernateBaseProject, project(':hibernate-orm-persistence-tools')], apiProject, 'JPersist Persistence Tools - Hibernate 6 ORM Reference', 'JPersist Tools - Hibernate 6', 'hibernate-orm')
 }
 
 // ------------------------------------------------------------------------------------------------

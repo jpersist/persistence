@@ -5,14 +5,17 @@ plugins {
 
 // Read the resolved released API version passed via CLI, or fallback to the local project version
 def apiVersion = project.findProperty('releasedApiVersion') ?: project(':persistence-tools-api').version.toString()
+def hibernateBaseVersion = project.findProperty('releasedHibernateBaseVersion') ?: project(':hibernate-base-persistence-tools').version.toString()
 
 dependencies {
     // If running a production release, compile against the stable published artifact coordinates
     if (project.hasProperty('isHibernateRelease')) {
         api "io.github.jpersist.tools:persistence-tools-api:${apiVersion}"
+        implementation "io.github.jpersist.tools:hibernate-base-persistence-tools:${hibernateBaseVersion}"
     } else {
         // Fallback for everyday local development and testing
         api project(':persistence-tools-api')
+        implementation project(':hibernate-base-persistence-tools')
     }
 
     implementation libs.hibernate.core

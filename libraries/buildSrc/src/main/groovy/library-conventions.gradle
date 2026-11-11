@@ -30,10 +30,11 @@ tasks.withType(Jar).configureEach {
     def metadata = [
         'persistence-tools-api': [ title: 'Persistence Tools Core Specification', version: '4.0' ],
         'hibernate-persistence-tools': [ title: 'JPA 2.x Legacy Persistence Specification Bridge', version: '2.2' ],
-        'hibernate-orm-persistence-tools': [ title: 'JPA 3.x Jakarta Persistence Specification Bridge', version: '3.1' ]
+        'hibernate-orm-persistence-tools': [ title: 'JPA 3.x Jakarta Persistence Specification Bridge', version: '3.1' ],
+        'hibernate-base-persistence-tools': [ title: 'Hibernate Persistence Tools Core Foundation', version: '1.0' ]
     ]
 
-    def spec = metadata[project.name]
+    def spec = metadata[project.name] ?: [ title: 'Persistence Tools Module', version: '4.0' ]
     def specTitle = spec.title
     def specVersion = spec.version
 

@@ -23,5 +23,6 @@ rootProject.name = 'libraries'
 include 'persistence-tools-api'
 include 'hibernate-persistence-tools'
 include 'hibernate-orm-persistence-tools'
+include 'hibernate-base-persistence-tools'
 
 include 'persistence-tools-bom'

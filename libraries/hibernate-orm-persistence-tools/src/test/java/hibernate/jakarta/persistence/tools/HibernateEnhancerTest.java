@@ -1,5 +1,6 @@
 package hibernate.jakarta.persistence.tools;
 
+import hibernate.base.persistence.tools.HibernateEnhancerOption;
 import hibernate.jakarta.persistence.tools.provider.HibernateEnhancerProvider;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -98,10 +99,10 @@ class HibernateEnhancerTest {
     @Test
     void enhance_withAllOptionsEnabled_returnsEnhancedBytes() throws IOException {
         Map<String, Object> settings = Map.of(
-                HibernateEnhancer.Option.LAZY_INITIALIZATION.value(), Boolean.TRUE,
-                HibernateEnhancer.Option.DIRTY_TRACKING.value(), Boolean.TRUE,
-                HibernateEnhancer.Option.ASSOCIATION_MANAGEMENT.value(), Boolean.TRUE,
-                HibernateEnhancer.Option.EXTENDED_ENHANCEMENT.value(), Boolean.TRUE
+                HibernateEnhancerOption.LAZY_INITIALIZATION.value(), Boolean.TRUE,
+                HibernateEnhancerOption.DIRTY_TRACKING.value(), Boolean.TRUE,
+                HibernateEnhancerOption.ASSOCIATION_MANAGEMENT.value(), Boolean.TRUE,
+                HibernateEnhancerOption.EXTENDED_ENHANCEMENT.value(), Boolean.TRUE
         );
         var enhancer = HibernateEnhancer.from(
                 Thread.currentThread().getContextClassLoader(), settings);
@@ -113,8 +114,8 @@ class HibernateEnhancerTest {
     }
 
     @ParameterizedTest
-    @EnumSource(HibernateEnhancer.Option.class)
-    void enhance_withSingleOptionEnabled_doesNotThrowException(HibernateEnhancer.Option option) throws IOException {
+    @EnumSource(HibernateEnhancerOption.class)
+    void enhance_withSingleOptionEnabled_doesNotThrowException(HibernateEnhancerOption option) throws IOException {
         Map<String, Object> settings = Map.of(option.value(), Boolean.TRUE);
         var enhancer = HibernateEnhancer.from(
                 Thread.currentThread().getContextClassLoader(), settings);
@@ -127,10 +128,10 @@ class HibernateEnhancerTest {
     @Test
     void enhance_withAllOptionsDisabled_returnsEnhancedBytes() throws IOException {
         Map<String, Object> settings = Map.of(
-                HibernateEnhancer.Option.LAZY_INITIALIZATION.value(), Boolean.FALSE,
-                HibernateEnhancer.Option.DIRTY_TRACKING.value(), Boolean.FALSE,
-                HibernateEnhancer.Option.ASSOCIATION_MANAGEMENT.value(), Boolean.FALSE,
-                HibernateEnhancer.Option.EXTENDED_ENHANCEMENT.value(), Boolean.FALSE
+                HibernateEnhancerOption.LAZY_INITIALIZATION.value(), Boolean.FALSE,
+                HibernateEnhancerOption.DIRTY_TRACKING.value(), Boolean.FALSE,
+                HibernateEnhancerOption.ASSOCIATION_MANAGEMENT.value(), Boolean.FALSE,
+                HibernateEnhancerOption.EXTENDED_ENHANCEMENT.value(), Boolean.FALSE
         );
         var enhancer = HibernateEnhancer.from(
                 Thread.currentThread().getContextClassLoader(), settings);

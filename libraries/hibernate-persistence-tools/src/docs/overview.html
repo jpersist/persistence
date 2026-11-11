@@ -15,7 +15,7 @@
 
 <h3>1. Bytecode Enhancement</h3>
 <p>
-    <strong>{@link hibernate.javax.persistence.tools.HibernateEnhancer}</strong> transforms compiled entity
+    <strong>{@link io.github.jpersist.tools.hibernate/hibernate.javax.persistence.tools.HibernateEnhancer}</strong> transforms compiled entity
     classes at build time using Hibernate&nbsp;5's enhancement engine. It instruments classes for:
 </p>
 <ul>
@@ -26,19 +26,19 @@
 </ul>
 <p>
     Enhancement settings can be configured using string property keys or the
-    {@link hibernate.javax.persistence.tools.HibernateEnhancer.Option} enum.
+    {@link hibernate.base.persistence.tools.HibernateEnhancerOption} enum.
 </p>
 
 <h3>2. Named Query &amp; Stored Procedure Validation</h3>
 <p>
-    <strong>{@link hibernate.javax.persistence.tools.HibernateNamedObjectParser}</strong> parses and validates
+    <strong>{@link io.github.jpersist.tools.hibernate/hibernate.javax.persistence.tools.HibernateNamedObjectParser}</strong> parses and validates
     named JPQL queries and stored procedure declarations using Hibernate&nbsp;5's Abstract Syntax Tree (AST)
     query translator against the JPA entity metamodel.
 </p>
 
 <h3>3. Database Schema Validation</h3>
 <p>
-    <strong>{@link hibernate.javax.persistence.tools.HibernateSchemaValidator}</strong> validates the entity
+    <strong>{@link io.github.jpersist.tools.hibernate/hibernate.javax.persistence.tools.HibernateSchemaValidator}</strong> validates the entity
     metamodel against a target database schema via JDBC, ensuring tables, columns, data types, and foreign key
     constraints conform to JPA mappings.
 </p>
@@ -51,23 +51,23 @@
 <ul>
     <li>
         {@link persistence.tools.spi.NamedObjectParserFactory} &mdash; implemented by
-        {@link hibernate.javax.persistence.tools.provider.HibernateNamedObjectParserFactory}
+        {@link io.github.jpersist.tools.hibernate/hibernate.javax.persistence.tools.provider.HibernateNamedObjectParserFactory}
     </li>
     <li>
         {@link persistence.tools.spi.SchemaValidatorFactory} &mdash; implemented by
-        {@link hibernate.javax.persistence.tools.provider.HibernateSchemaValidatorFactory}
+        {@link io.github.jpersist.tools.hibernate/hibernate.javax.persistence.tools.provider.HibernateSchemaValidatorFactory}
     </li>
     <li>
         {@link persistence.tools.spi.EnhancerProvider} &mdash; implemented by
-        {@link hibernate.javax.persistence.tools.provider.HibernateEnhancerProvider}
+        {@link io.github.jpersist.tools.hibernate/hibernate.javax.persistence.tools.provider.HibernateEnhancerProvider}
     </li>
     <li>
         {@link persistence.tools.spi.PersistenceLinterFactory} &mdash; base implementation
-        {@link hibernate.javax.persistence.tools.provider.HibernatePersistenceLinterFactory}
+        {@link io.github.jpersist.tools.hibernate/hibernate.javax.persistence.tools.provider.HibernatePersistenceLinterFactory}
     </li>
     <li>
         {@link persistence.tools.spi.PersistenceServiceProvider} &mdash; base implementation
-        {@link hibernate.javax.persistence.tools.provider.HibernatePersistenceServiceProvider}
+        {@link io.github.jpersist.tools.hibernate/hibernate.javax.persistence.tools.provider.HibernatePersistenceServiceProvider}
     </li>
 </ul>
 
@@ -90,10 +90,10 @@ module com.example.domain {
 
 <h2>Package Summary</h2>
 <dl>
-    <dt>{@link hibernate.javax.persistence.tools}</dt>
+    <dt>{@link io.github.jpersist.tools.hibernate/hibernate.javax.persistence.tools}</dt>
     <dd>Hibernate&nbsp;5 implementations of bytecode enhancement, query parsing, and schema validation.</dd>
 
-    <dt>{@link hibernate.javax.persistence.tools.provider}</dt>
+    <dt>{@link io.github.jpersist.tools.hibernate/hibernate.javax.persistence.tools.provider}</dt>
     <dd>ServiceLoader provider factories for Java Persistence tooling under Hibernate&nbsp;5.</dd>
 </dl>
 </body>

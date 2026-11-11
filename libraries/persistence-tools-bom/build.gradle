@@ -7,6 +7,7 @@ plugins {
 def apiVersion = project.findProperty('releasedApiVersion') ?: project(':persistence-tools-api').version.toString()
 def hibernateLegacyVersion = project.findProperty('releasedHib5Version') ?: project(':hibernate-persistence-tools').version.toString()
 def hibernateModernVersion = project.findProperty('releasedHib6Version') ?: project(':hibernate-orm-persistence-tools').version.toString()
+def hibernateBaseVersion = project.findProperty('releasedHibernateBaseVersion') ?: project(':hibernate-base-persistence-tools').version.toString()
 
 dependencies {
     constraints {
@@ -15,11 +16,13 @@ dependencies {
             api "io.github.jpersist.tools:persistence-tools-api:${apiVersion}"
             api "io.github.jpersist.tools:hibernate-persistence-tools:${hibernateLegacyVersion}"
             api "io.github.jpersist.tools:hibernate-orm-persistence-tools:${hibernateModernVersion}"
+            api "io.github.jpersist.tools:hibernate-base-persistence-tools:${hibernateBaseVersion}"
         } else {
             // Fallback for local development execution
             api project(':persistence-tools-api')
             api project(':hibernate-persistence-tools')
             api project(':hibernate-orm-persistence-tools')
+            api project(':hibernate-base-persistence-tools')
         }
     }
 }
