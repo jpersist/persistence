@@ -1,3 +1,19 @@
+/*
+ * Copyright 2024-2026 JPersist
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 plugins {
     id("base")
     id("test-report-aggregation")
@@ -66,6 +82,8 @@ void configureModularJavadoc(Javadoc task, List<Project> targetProjects, Project
 
     // Use the target project (the last one in the list) to resolve overview.html
     def targetProject = targetProjects.last()
+    def currentYear = java.time.Year.now().toString()
+    def moduleVersion = targetProject.version.toString()
 
     task.options {
         overview = targetProject.file("src/docs/overview.html")
@@ -116,10 +134,24 @@ void configureModularJavadoc(Javadoc task, List<Project> targetProjects, Project
             addMultilineStringsOption('-module-source-path').value = activeMappings
         }
 
-        // 🌟 FIXED & LINEARIZED JAVADOC INTEGRATION WITH CUSTOM SVG FAVICON via -bottom FLAG
-        // The script is compressed onto a single line to guarantee seamless compatibility inside 'javadoc.options'.
-        // It dynamically inspects the existing Javadoc stylesheet link to extract the accurate relative prefix location.
-        bottom = '<script>document.addEventListener("DOMContentLoaded",function(){var links=document.getElementsByTagName("link");var hasFavicon=false;var relPrefix="";for(var i=0;i<links.length;i++){if(links[i].rel==="icon"||links[i].rel==="shortcut icon"){hasFavicon=true;}if(links[i].href&&links[i].href.indexOf("stylesheet.css")!==-1){var parts=links[i].getAttribute("href").split("stylesheet.css");if(parts.length>0){relPrefix=parts[0];}}}if(!hasFavicon){var link=document.createElement("link");link.rel="icon";link.type="image/svg+xml";link.href=relPrefix+"resources/favicon.svg";document.getElementsByTagName("head")[0].appendChild(link);}});</script>'
+        // 1. HEADER: Inject a styled version badge in the top-right navigation bar
+        header = "<div style='padding: 4px 10px; background: rgba(255,255,255,0.15); border-radius: 4px; font-weight: bold;'>JPersist Suite &bull; v${moduleVersion}</div>"
+
+        // 2. FOOTER (BOTTOM): Dynamic copyright notice, Apache 2.0 license, GitHub link, and linearized SVG favicon script
+        def footerHtml = "<div style='text-align: center; padding: 10px 0; color: #555; font-size: 0.9em;'>" +
+            "Copyright &copy; 2024-${currentYear} <a href='https://github.com/jpersist/persistence' target='_blank'>JPersist Project</a>. " +
+            "Licensed under the <a href='https://www.apache.org/licenses/LICENSE-2.0.txt' target='_blank'>Apache License, Version 2.0</a>." +
+            "</div>"
+
+        def faviconScript = '<script>document.addEventListener("DOMContentLoaded",function(){var links=document.getElementsByTagName("link");var hasFavicon=false;var relPrefix="";for(var i=0;i<links.length;i++){if(links[i].rel==="icon"||links[i].rel==="shortcut icon"){hasFavicon=true;}if(links[i].href&&links[i].href.indexOf("stylesheet.css")!==-1){var parts=links[i].getAttribute("href").split("stylesheet.css");if(parts.length>0){relPrefix=parts[0];}}}if(!hasFavicon){var link=document.createElement("link");link.rel="icon";link.type="image/svg+xml";link.href=relPrefix+"resources/favicon.svg";document.getElementsByTagName("head")[0].appendChild(link);}});</script>'
+
+        bottom = "${footerHtml}${faviconScript}"
+
+        // 3. CUSTOM CSS: Optional stylesheet override for corporate branding (Java 17+ native CSS variables)
+        def stylesheet = file("${rootDir}/src/docs/resources/jpersist.css")
+        if (stylesheet.exists()) {
+            addStringOption('-add-stylesheet', stylesheet.absolutePath)
+        }
     }
 
     // Copy the raw SVG favicon into the dedicated project target documentation directory
