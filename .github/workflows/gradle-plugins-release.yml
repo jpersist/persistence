@@ -13,6 +13,10 @@ on:
 permissions:
   contents: write # Crucial permission: allows the pipeline runner to push Git tags and commits
 
+concurrency:
+  group: release-plugins
+  cancel-in-progress: false
+
 jobs:
   release:
     name: Execute Release Automation
@@ -116,6 +120,7 @@ jobs:
 
       - name: Push Changes and Tag
         run: |
+          git pull --rebase origin main
           git push origin main
           git push origin "v${{ steps.versions.outputs.release_version }}"
 

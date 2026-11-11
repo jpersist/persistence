@@ -1,0 +1,111 @@
+name: Publish Persistence Tools Platform BOM to Maven Central
+
+on:
+  push:
+    tags:
+      - 'platform-v[0-9]+.[0-9]+.[0-9]+'
+  workflow_call:
+    inputs:
+      tag:
+        description: 'The version tag to checkout and publish (e.g., platform-v4.0.0)'
+        required: false
+        type: string
+      releasedApiVersion:
+        description: 'Published Persistence Tools API version'
+        required: false
+        type: string
+      releasedHibernateBaseVersion:
+        description: 'Published Hibernate Base version'
+        required: false
+        type: string
+      releasedHib5Version:
+        description: 'Published Hibernate 5 Legacy version'
+        required: false
+        type: string
+      releasedHib6Version:
+        description: 'Published Hibernate 6 Modern version'
+        required: false
+        type: string
+    secrets:
+      SONATYPE_USERNAME:
+        required: true
+      SONATYPE_PASSWORD:
+        required: true
+      GPG_SIGNING_KEY:
+        required: true
+      GPG_SIGNING_PASSWORD:
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    name: Publish Platform BOM Package
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out Repository
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+
+      - name: Set up Java Development Kit
+        uses: actions/setup-java@v6
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Make Gradle Wrapper Executable
+        run: chmod +x ./gradlew
+
+      - name: Execute Maven Central Publication
+        env:
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+          GPG_SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
+          GPG_SIGNING_PASSWORD: ${{ secrets.GPG_SIGNING_PASSWORD }}
+        working-directory: libraries
+        run: |
+          if [ -n "${{ inputs.tag }}" ]; then
+            PUBLISH_VERSION="${{ inputs.tag }}"
+            PUBLISH_VERSION="${PUBLISH_VERSION#platform-v}"
+          elif [[ "${GITHUB_REF}" == refs/tags/platform-v* ]]; then
+            PUBLISH_VERSION="${GITHUB_REF#refs/tags/platform-v}"
+          else
+            PUBLISH_VERSION=$(grep '^version=' persistence-tools-bom/gradle.properties | cut -d'=' -f2)
+          fi
+
+          # Resolve component versions from inputs or fall back to current properties stripped of -SNAPSHOT
+          API_VER="${{ inputs.releasedApiVersion }}"
+          if [ -z "${API_VER}" ]; then RAW=$(grep '^version=' gradle.properties | cut -d'=' -f2); API_VER="${RAW%-SNAPSHOT}"; fi
+
+          BASE_VER="${{ inputs.releasedHibernateBaseVersion }}"
+          if [ -z "${BASE_VER}" ]; then RAW=$(grep '^version=' hibernate-base-persistence-tools/gradle.properties | cut -d'=' -f2); BASE_VER="${RAW%-SNAPSHOT}"; fi
+
+          HIB5_VER="${{ inputs.releasedHib5Version }}"
+          if [ -z "${HIB5_VER}" ]; then RAW=$(grep '^version=' hibernate-persistence-tools/gradle.properties | cut -d'=' -f2); HIB5_VER="${RAW%-SNAPSHOT}"; fi
+
+          HIB6_VER="${{ inputs.releasedHib6Version }}"
+          if [ -z "${HIB6_VER}" ]; then RAW=$(grep '^version=' hibernate-orm-persistence-tools/gradle.properties | cut -d'=' -f2); HIB6_VER="${RAW%-SNAPSHOT}"; fi
+
+          ../gradlew :persistence-tools-bom:publish \
+            -Pversion="${PUBLISH_VERSION}" \
+            -PisBomRelease \
+            -PreleasedApiVersion="${API_VER}" \
+            -PreleasedHibernateBaseVersion="${BASE_VER}" \
+            -PreleasedHib5Version="${HIB5_VER}" \
+            -PreleasedHib6Version="${HIB6_VER}"
+
+      - name: Finalize Maven Central Deployment
+        env:
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+        run: |
+          TOKEN=$(echo -n "${SONATYPE_USERNAME}:${SONATYPE_PASSWORD}" | base64)
+          curl --fail -X POST \
+            "https://ossrh-staging-api.central.sonatype.com/manual/upload/defaultRepository/io.github.jpersist?publishing_type=automatic" \
+            -H "Authorization: Bearer ${TOKEN}"
