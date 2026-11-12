@@ -7,18 +7,19 @@
 
 The **Persistence Tools Libraries** (group `io.github.jpersist.tools`) provide a **vendor-agnostic API** and **reference implementations** for build-time validation, query parsing, schema verification, and bytecode enhancement of JPA persistence artifacts — without deploying the application or running dynamic bytecode agents.
 
-By decoupling tooling contracts from specific persistence providers, the core API enables consistent static analysis across JPA specification baselines. The libraries ship with complete reference implementations powered by **Hibernate ORM 6** (for Jakarta Persistence / JPA 3.x) and **Hibernate 5** (for legacy Java Persistence / JPA 2.x).
+By decoupling tooling contracts from specific persistence providers, the core API enables consistent static analysis across JPA specification baselines. The libraries ship with complete reference implementations powered by **Hibernate ORM 6** (for Jakarta Persistence / JPA 3.x) and **Hibernate 5** (for legacy Java Persistence / JPA 2.x), backed by a shared base infrastructure module.
 
 ---
 
 ## 📦 Modules
 
-| Module | Artifact | Description |
-|:---|:---|:---|
-| **`persistence-tools-api`** | `io.github.jpersist.tools:persistence-tools-api` | Defines the vendor-agnostic public contracts and Service Provider Interfaces (SPIs): `PersistenceServiceProvider` (shared root), `PersistenceLinter` / `PersistenceLinterFactory` (linting contracts), `NamedObjectParser` / `NamedObjectParserFactory` (named query & stored procedure validation; `AutoCloseable`), `SchemaValidator` / `SchemaValidatorFactory` (database schema validation), and `Enhancer` / `EnhancerProvider` (bytecode enhancement). Contains no vendor-specific implementation; provider modules are discovered dynamically at runtime via the Java `ServiceLoader` mechanism. |
-| **`hibernate-orm-persistence-tools`** | `io.github.jpersist.tools:hibernate-orm-persistence-tools` | Jakarta Persistence (JPA 3.x / `jakarta.*` namespace) reference implementation. Powered by **Hibernate ORM 6** to compile JPQL queries into Semantic Query Model (SQM) trees, validate persistence schemas against a live database, and enhance entity bytecode. |
-| **`hibernate-persistence-tools`** | `io.github.jpersist.tools:hibernate-persistence-tools` | Legacy Java Persistence (JPA 2.x / `javax.*` namespace) reference implementation. Powered by **Hibernate 5** to validate JPQL queries using AST query translation, validate database schemas, and enhance entity bytecode. |
-| **`persistence-tools-bom`** | `io.github.jpersist.tools:persistence-tools-bom` | Bill of Materials (BOM) for convenient, aligned dependency management across all Persistence Tools modules. |
+| Module | Artifact | Version | Description |
+|:---|:---|:---|:---|
+| **`persistence-tools-api`** | `io.github.jpersist.tools:persistence-tools-api` | `4.0.0` | Defines the vendor-agnostic public contracts and Service Provider Interfaces (SPIs): `PersistenceServiceProvider` (shared root), `PersistenceLinter` / `PersistenceLinterFactory` (linting contracts), `NamedObjectParser` / `NamedObjectParserFactory` (named query & stored procedure validation; `AutoCloseable`), `SchemaValidator` / `SchemaValidatorFactory` (database schema validation), and `Enhancer` / `EnhancerProvider` (bytecode enhancement). Contains no vendor-specific implementation; provider modules are discovered dynamically at runtime via the Java `ServiceLoader` mechanism. |
+| **`hibernate-base-persistence-tools`** | `io.github.jpersist.tools:hibernate-base-persistence-tools` | `1.0.0` | Shared base module for Hibernate implementations. Provides common enhancement configuration options (`HibernateEnhancerOption`) and shared reflection, URL, and class-loading utilities (`HibernateUtil`). Transitively exposes `persistence-tools-api`. |
+| **`hibernate-orm-persistence-tools`** | `io.github.jpersist.tools:hibernate-orm-persistence-tools` | `2.0.0` | Jakarta Persistence (JPA 3.x / `jakarta.*` namespace) reference implementation. Powered by **Hibernate ORM 6** to compile JPQL queries into Semantic Query Model (SQM) trees, validate persistence schemas against a live database, and enhance entity bytecode. |
+| **`hibernate-persistence-tools`** | `io.github.jpersist.tools:hibernate-persistence-tools` | `1.0.0` | Legacy Java Persistence (JPA 2.x / `javax.*` namespace) reference implementation. Powered by **Hibernate 5** to validate JPQL queries using AST query translation, validate database schemas, and enhance entity bytecode. |
+| **`persistence-tools-bom`** | `io.github.jpersist.tools:persistence-tools-bom` | `4.0.0` | Bill of Materials (BOM) for convenient, aligned dependency management across all Persistence Tools modules. |
 
 ---
 
@@ -59,6 +60,7 @@ dependencies {
 Use `EnhancerProvider.getEnhancerProvider(String)` to discover the provider for a given JPA specification version (e.g. `"3.1"`), then obtain an `Enhancer` to transform compiled entity classes at build time:
 
 ```java
+import hibernate.base.persistence.tools.HibernateEnhancerOption;
 import persistence.tools.Enhancer;
 import persistence.tools.spi.EnhancerProvider;
 
@@ -67,8 +69,8 @@ EnhancerProvider provider = EnhancerProvider.getEnhancerProvider("3.1");
 Enhancer enhancer = provider.getEnhancer(
     classpathFiles,
     Map.of(
-        "lazyInitialization", true,
-        "dirtyTracking", true
+        HibernateEnhancerOption.LAZY_INITIALIZATION.value(), true,
+        HibernateEnhancerOption.DIRTY_TRACKING.value(), true
     )
 );
 
@@ -138,6 +140,7 @@ All **Persistence Tools Libraries** provide native support for the Java Platform
 | Project / Artifact | JPMS Module Name |
 |:---|:---|
 | `persistence-tools-api` | `io.github.jpersist.tools.api` |
+| `hibernate-base-persistence-tools` | `io.github.jpersist.tools.hibernate.base` |
 | `hibernate-orm-persistence-tools` | `io.github.jpersist.tools.hibernate.orm` |
 | `hibernate-persistence-tools` | `io.github.jpersist.tools.hibernate` |
 
@@ -195,6 +198,11 @@ persistence-tools-api  (Vendor-Agnostic SPI & Public Contracts)
       ├── SchemaValidatorFactory            — factory SPI for SchemaValidator
       └── EnhancerProvider                  — factory SPI for Enhancer
 
+hibernate-base-persistence-tools  (Shared Hibernate Infrastructure)
+ └── hibernate.base.persistence.tools
+      ├── HibernateEnhancerOption           — standardized enhancement configuration option keys
+      └── HibernateUtil                     — settings conversion, URL & ClassLoader utilities
+
 hibernate-orm-persistence-tools  (Reference Implementation — "jakarta" namespace / Hibernate ORM 6)
  ├── hibernate.jakarta.persistence.tools.provider
  │    ├── HibernatePersistenceServiceProvider
@@ -220,7 +228,7 @@ hibernate-persistence-tools  (Reference Implementation — "javax" namespace / H
       └── HibernateEnhancer                 — Hibernate 5 bytecode enhancement
 
 persistence-tools-bom  (Bill of Materials)
- └── Aligns versions of API and Hibernate reference implementations
+ └── Aligns versions of all API, base, and Hibernate provider modules
 ```
 
 ---

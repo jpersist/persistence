@@ -67,8 +67,13 @@ jobs:
           if [ -n "${{ inputs.releasedApiVersion }}" ]; then
             API_VERSION="${{ inputs.releasedApiVersion }}"
           else
-            RAW_API=$(grep '^version=' libraries/gradle.properties | cut -d'=' -f2)
-            API_VERSION="${RAW_API%-SNAPSHOT}"
+            API_TAG=$(git tag -l "api-v*" | sort -V | tail -n1)
+            API_VERSION="${API_TAG#api-v}"
+          fi
+
+          if [ -z "${API_VERSION}" ]; then
+            echo "::error::No existing 'api-v*' API release tag found and no releasedApiVersion input provided. Please release the API module first."
+            exit 1
           fi
 
           echo "subfolder=${SUBFOLDER}" >> "$GITHUB_OUTPUT"
@@ -100,12 +105,12 @@ jobs:
           SUBFOLDER="${{ steps.context.outputs.subfolder }}"
           VERSION="${{ steps.context.outputs.version }}"
 
-          mkdir -p "site/tools/${SUBFOLDER}/${VERSION}"
-          cp -r "libraries/build/docs/javadoc/${SUBFOLDER}"/* "site/tools/${SUBFOLDER}/${VERSION}/"
+          mkdir -p "site/tools/${SUBFOLDER}/api/${VERSION}"
+          cp -r "libraries/build/docs/javadoc/${SUBFOLDER}"/* "site/tools/${SUBFOLDER}/api/${VERSION}/"
 
-          mkdir -p "site/tools/${SUBFOLDER}/latest"
-          rm -rf "site/tools/${SUBFOLDER}/latest"/*
-          cp -r "site/tools/${SUBFOLDER}/${VERSION}"/* "site/tools/${SUBFOLDER}/latest/"
+          mkdir -p "site/tools/${SUBFOLDER}/api/latest"
+          rm -rf "site/tools/${SUBFOLDER}/api/latest"/*
+          cp -r "site/tools/${SUBFOLDER}/api/${VERSION}"/* "site/tools/${SUBFOLDER}/api/latest/"
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
