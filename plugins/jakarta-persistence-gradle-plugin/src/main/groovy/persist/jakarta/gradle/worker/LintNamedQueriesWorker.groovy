@@ -15,6 +15,7 @@ import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.Opcodes
 import persistence.tools.NamedObjectDescriptor
 import persistence.tools.NamedObjectParser
+import persistence.tools.spi.NamedObjectParserFactory
 
 /**
  * Parameters required by the {@link LintNamedQueriesWorker}.
