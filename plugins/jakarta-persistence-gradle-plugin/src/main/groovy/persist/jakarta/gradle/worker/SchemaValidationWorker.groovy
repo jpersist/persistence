@@ -7,6 +7,7 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
+import persist.jakarta.gradle.util.PersistenceServiceResolver
 import persistence.tools.SchemaValidator
 import persistence.tools.spi.SchemaValidatorFactory
 
@@ -103,7 +104,7 @@ abstract class SchemaValidationWorker implements WorkAction<SchemaValidationPara
         def log = logger
         SchemaValidator validator
         try {
-            def validatorFactory = SchemaValidatorFactory.newSchemaValidatorFactory(jpaVersion)
+            def validatorFactory = Helper.resolveValidatorFactory(jpaVersion)
             validator = validatorFactory.newSchemaValidator(discoveredEntityClasses)
         } catch (Exception e) {
             throw new GradleException("JPersist Schema Validation failed on setup configuration.", e)
@@ -150,6 +151,14 @@ abstract class SchemaValidationWorker implements WorkAction<SchemaValidationPara
         } else {
             log.lifecycle("✅ Multi-tenant schema matrix validation completed successfully without errors!")
         }
+    }
+
+    private static class Helper {
+
+        private static SchemaValidatorFactory resolveValidatorFactory(String jpaVersion) {
+            return PersistenceServiceResolver.resolvePersistenceServiceProvider(jpaVersion, SchemaValidatorFactory)
+        }
+
     }
 
 }

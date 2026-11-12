@@ -7,6 +7,7 @@ import org.gradle.api.logging.Logging
 import org.gradle.api.provider.Property
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
+import persist.jakarta.gradle.util.PersistenceServiceResolver
 import persistence.tools.spi.EnhancerProvider
 
 /**
@@ -60,7 +61,7 @@ abstract class EnhancementWorker implements WorkAction<Parameters> {
             def log = logger
 
             // Resolve the specific lifecycle engine provider via decoupled SPI ServiceLoader maps
-            def enhancerProvider = EnhancerProvider.getEnhancerProvider(version)
+            def enhancerProvider = PersistenceServiceResolver.resolvePersistenceServiceProvider(version, EnhancerProvider)
             def enhancer = enhancerProvider.getEnhancer([
                 Set.of(src),
                 parameters.compileClasspath.getFiles()
