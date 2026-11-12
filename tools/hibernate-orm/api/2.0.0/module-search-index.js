@@ -1,0 +1,1 @@
+moduleSearchIndex = [{"l":"io.github.jpersist.tools.hibernate.base"},{"l":"io.github.jpersist.tools.hibernate.orm"}];updateSearchResults();

@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"m":"io.github.jpersist.tools.hibernate.base","l":"hibernate.base.persistence.tools"},{"m":"io.github.jpersist.tools.hibernate.orm","l":"hibernate.jakarta.persistence.tools"},{"m":"io.github.jpersist.tools.hibernate.orm","l":"hibernate.jakarta.persistence.tools.provider"}];updateSearchResults();
