@@ -163,6 +163,7 @@ jobs:
         run: |
           MODULE="${{ github.event.inputs.providerModule }}"
           NEXT_VERSION="${{ steps.versions.outputs.next_version }}"
+          COMMIT_MESSAGE_PREFIX="${{ steps.versions.outputs.commit_message_prefix }}"
 
           sed -i "s/^version=.*/version=${NEXT_VERSION}/" "libraries/${MODULE}/gradle.properties"
           git add "libraries/${MODULE}/gradle.properties"
