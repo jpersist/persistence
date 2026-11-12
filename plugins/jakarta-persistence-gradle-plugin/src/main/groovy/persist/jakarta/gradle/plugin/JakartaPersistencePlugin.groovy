@@ -552,10 +552,10 @@ class JakartaPersistencePlugin implements Plugin<Project> {
                                                                    Provider<String> jpaVersionProvider) {
         def version = jpaVersionProvider.get()
         boolean isLegacy = isLegacyJpaVersion(version)
-        String providerArtifact = isLegacy ? "persistence-tools-legacy" : "persistence-tools-jakarta"
+        String providerArtifact = isLegacy ? "hibernate-persistence-tools" : "hibernate-orm-persistence-tools"
 
         // 🌟 STEP 1: Read the embedded tools version from the plugin's own resources context
-        String toolsVersion = "3.0.0" // Safe fallback standard
+        String toolsVersion = "4.0.0" // Safe fallback standard
 
         def props = new Properties()
         def resourceStream = JakartaPersistencePlugin.class.classLoader.getResourceAsStream("persistence-plugin-info.properties")
@@ -570,7 +570,8 @@ class JakartaPersistencePlugin implements Plugin<Project> {
         // 🌟 STEP 2: Resolve the full coordinates cleanly from Maven Central/Local via a detached container
         // This prevents classloader contamination and works flawlessly on Gradle 7.6.6+
         def detachedConfig = project.configurations.detachedConfiguration(
-            project.dependencies.create("io.github.jpersist.tools:${providerArtifact}:${toolsVersion}")
+            project.dependencies.platform("io.github.jpersist.tools:persistence-tools-bom:${toolsVersion}"),
+            project.dependencies.create("io.github.jpersist.tools:${providerArtifact}")
         )
 
         // Return the deterministic fully resolved files collection

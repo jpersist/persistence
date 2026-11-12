@@ -13,8 +13,10 @@ import org.objectweb.asm.AnnotationVisitor
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.Opcodes
+import persist.jakarta.gradle.util.PersistenceServiceResolver
 import persistence.tools.NamedObjectDescriptor
 import persistence.tools.NamedObjectParser
+import persistence.tools.spi.NamedObjectParserFactory
 
 /**
  * Parameters required by the {@link LintNamedQueriesWorker}.
@@ -141,7 +143,7 @@ abstract class LintNamedQueriesWorker implements WorkAction<LintNamedQueriesPara
         // 2. RE-ENGINEERED TRY-WITH-RESOURCES PARSING PIPELINE
         try {
             // Factory lookup maps via ServiceLoader
-            def factory = NamedObjectParserFactory.newNamedObjectParserFactory(jpaVersion)
+            def factory = Helper.resolveParserFactory(jpaVersion)
 
             // Open the closeable parser inside a safe container block
             factory.newNamedObjectParser(discoveredClasses).withCloseable { namedObjectParser ->
@@ -331,6 +333,10 @@ abstract class LintNamedQueriesWorker implements WorkAction<LintNamedQueriesPara
      * </p>
      */
     private static class Helper {
+
+        private static NamedObjectParserFactory resolveParserFactory(String jpaVersion) {
+            return PersistenceServiceResolver.resolvePersistenceServiceProvider(jpaVersion, NamedObjectParserFactory)
+        }
 
         /**
          * Scans a single compiled class file using ASM, collecting named query
