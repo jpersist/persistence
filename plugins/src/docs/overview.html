@@ -89,39 +89,39 @@
     </tr>
 </table>
 
-<h2>What's New in v1.8.0</h2>
+<h2>What's New in v1.9.0</h2>
 <p>
-    Version 1.8.0 introduces <strong>Apache OpenJPA provider support</strong> and
-    <strong>consolidated build reporting</strong>:
+    Version 1.9.0 introduces <strong>Java Platform Module System (JPMS) worker isolation</strong>,
+    <strong>centralized persistence SPI service resolution</strong>, and <strong>persistence-tools 4.0.0 alignment</strong>:
 </p>
 <ul>
-    <li><strong>OpenJPA Provider Support</strong> &mdash; A new
-        <a href="persist/openjpa/gradle/plugin/OpenJPAPersistencePlugin.html">openjpa-persistence</a>
-        aggregate plugin brings first-class Apache OpenJPA support to jPersist.
-        It applies the core JPA plugin together with two new OpenJPA-specific plugins:
-        <a href="persist/openjpa/gradle/plugin/OpenJPAMetaModelGenerationPlugin.html">openjpa-metamodelgen</a>
-        for static canonical metamodel generation, and
-        <a href="persist/openjpa/gradle/plugin/OpenJPAEnhancementPlugin.html">openjpa-enhancement</a>
-        for compile-time PCEnhancer bytecode enhancement executed in an isolated JVM process.
+    <li><strong>Java Platform Module System (JPMS) Worker Support</strong> &mdash; Introduces hybrid
+        execution isolation for Gradle worker tasks (
+        <a href="persist/hibernate/gradle/task/HibernateEnhancementTask.html">HibernateEnhancementTask</a>,
+        <a href="persist/jakarta/gradle/task/ValidatePersistenceSchema.html">ValidatePersistenceSchema</a>, and
+        <a href="persist/jakarta/gradle/task/LintNamedQueries.html">LintNamedQueries</a>) via
+        <a href="persist/jakarta/gradle/util/JPMSWorkerSupport.html">JPMSWorkerSupport</a>.
+        When a <code>module-info.class</code> descriptor is detected in the compiled classes directory,
+        workers run in a forked process using <code>processIsolation</code> configured with
+        <code>--module-path</code>, <code>--add-modules</code>, and dynamic <code>--add-opens</code>
+        exports for module packages to Hibernate persistence tools. Non-modular projects continue to
+        leverage fast <code>classLoaderIsolation</code> without JVM fork overhead.
     </li>
-    <li><strong>OpenJPA DSL Extension</strong> &mdash; The new
-        <a href="persist/openjpa/gradle/extension/OpenJPAExtension.html">OpenJPAExtension</a> provides
-        per-source-set configuration for OpenJPA, with nested
-        <a href="persist/openjpa/gradle/extension/MetaModelExtension.html">metaModel</a> and
-        <a href="persist/openjpa/gradle/extension/EnhancementExtension.html">enhancement</a>
-        blocks. An <code>enhancement</code> dependency configuration is created for
-        declaring PCEnhancer classpath dependencies.
+    <li><strong>Centralized Persistence SPI Service Provider Resolution</strong> &mdash; A new
+        <a href="persist/jakarta/gradle/util/PersistenceServiceResolver.html">PersistenceServiceResolver</a>
+        utility centralizes SPI discovery for <code>PersistenceServiceProvider</code> implementations
+        across worker executions, seamlessly checking both the modular JPMS boot layer and the
+        thread context classloader.
     </li>
-    <li><strong>Consolidated Reporting Architecture</strong> &mdash; All build-time
-        report outputs (persistence descriptors, GraalVM metadata, lint reports) are
-        now unified under <code>${buildDir}/reports/persistence/</code>. The
-        <code>reflectConfigFile</code> property replaces the deprecated <code>outputFile</code>
-        on the GraalVM metadata generation task.
+    <li><strong>Persistence Tools 4.0.0 Platform Alignment</strong> &mdash; Aligns with the
+        <code>persistence-tools-bom</code> platform and updated modular tool artifacts
+        (<code>hibernate-persistence-tools</code> and <code>hibernate-orm-persistence-tools</code>),
+        providing full JPMS modular runtime support across JPA providers.
     </li>
-    <li><strong>GraalVM Metadata Property Rename</strong> &mdash; The
-        <a href="persist/jakarta/gradle/task/GenerateJPAGraalVMMetadata.html">generateJPAGraalVMMetadata</a>
-        task introduces <code>reflectConfigFile</code> as the primary output property.
-        The former <code>outputFile</code> property is deprecated since v1.8.0.
+    <li><strong>Direct Java Compilation Output Tracking</strong> &mdash; The
+        <a href="persist/jakarta/gradle/task/ValidatePersistenceSchema.html">ValidatePersistenceSchema</a>
+        task now directly consumes <code>compileJava.destinationDirectory</code> and establishes explicit
+        task dependencies on <code>compileJava</code>, ensuring accurate incremental bytecode scanning.
     </li>
 </ul>
 
@@ -164,6 +164,7 @@ dependencies {
     <li><a href="persist/jakarta/gradle/extension/package-summary.html">persist.jakarta.gradle.extension</a> &mdash; Jakarta Persistence DSL extension configuration model, including XML formatting options.</li>
     <li><a href="persist/jakarta/gradle/task/package-summary.html">persist.jakarta.gradle.task</a> &mdash; Jakarta Persistence build-time task implementations, including schema validation, GraalVM metadata generation, and named query linting.</li>
     <li><a href="persist/jakarta/gradle/worker/package-summary.html">persist.jakarta.gradle.worker</a> &mdash; Gradle Worker API implementations for isolated JPA schema validation and named query analysis.</li>
+    <li><a href="persist/jakarta/gradle/util/package-summary.html">persist.jakarta.gradle.util</a> &mdash; Internal utilities for hybrid JPMS worker isolation and SPI service provider resolution.</li>
     <li><a href="persist/jakarta/gradle/task/delegate/package-summary.html">persist.jakarta.gradle.task.delegate</a> &mdash; Version-specific strategy delegates for JPA persistence descriptor processing.</li>
     <li><a href="persist/jakarta/gradle/task/registry/package-summary.html">persist.jakarta.gradle.task.registry</a> &mdash; Registry for mapping JPA specification versions to descriptor processing strategies.</li>
     <li><a href="persist/eclipse/gradle/plugin/package-summary.html">persist.eclipse.gradle.plugin</a> &mdash; EclipseLink plugin implementations.</li>

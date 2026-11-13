@@ -37,12 +37,19 @@ import java.nio.file.Files
  */
 final class JPMSWorkerSupport {
 
+    /** Comma-separated list of Hibernate persistence tools JPMS module identifiers requiring reflective access. */
     private static final String HIBERNATE_MODULES = "io.github.jpersist.tools.hibernate.orm,io.github.jpersist.tools.hibernate"
 
+    /**
+     * Private constructor to prevent instantiation of utility class.
+     */
     private JPMSWorkerSupport() {}
 
     /**
      * Checks whether the compiled classes directory contains a JPMS {@code module-info.class} descriptor.
+     *
+     * @param classesDir The compiled classes directory of the target source set.
+     * @return {@code true} if a {@code module-info.class} exists in the directory, {@code false} otherwise.
      */
     static boolean isModularProject(File classesDir) {
         return classesDir != null && new File(classesDir, "module-info.class").exists()
@@ -111,6 +118,9 @@ final class JPMSWorkerSupport {
     /**
      * Parses {@code module-info.class} using standard {@link ModuleDescriptor} APIs and appends
      * {@code --add-opens <moduleName>/<pkg>=<hibernateModules>} for every package in the module.
+     *
+     * @param moduleInfoFile The {@code module-info.class} file descriptor to parse.
+     * @param jvmArgs        The mutable list of JVM arguments to append {@code --add-opens} flags to.
      */
     private static void appendDynamicUserModuleOpens(File moduleInfoFile, List<String> jvmArgs) {
         try {
@@ -127,6 +137,13 @@ final class JPMSWorkerSupport {
         }
     }
 
+    /**
+     * Resolves the JAR file or classpath location containing the worker class to ensure
+     * it can be placed on the bootstrap classpath of the forked worker process.
+     *
+     * @param workerClass The worker class to resolve code source location for.
+     * @return A set containing the resolved worker bridge file, or an empty set if unresolved.
+     */
     private static Set<File> resolveWorkerBridgeFiles(Class<?> workerClass) {
         def location = workerClass.protectionDomain?.codeSource?.location
         return (location != null ? [new File(location.toURI())]: []) as Set<File>

@@ -59,7 +59,7 @@ interface SchemaValidationParameters extends WorkParameters {
 
 /**
  * Gradle {@link WorkAction} that validates JPA entity mappings against a
- * database schema inside an isolated classloader.
+ * database schema inside an isolated worker process.
  * <p>
  * The worker initializes an SPI-loaded {@link persistence.tools.SchemaValidator} via
  * {@link persistence.tools.spi.SchemaValidatorFactory} using the configured JPA version and the
@@ -72,8 +72,9 @@ interface SchemaValidationParameters extends WorkParameters {
  * <p>
  * The worker is submitted by
  * {@link persist.jakarta.gradle.task.ValidatePersistenceSchema} using
- * classloader isolation so that the project's JPA provider, entity classes,
- * and JDBC driver are loaded in a separate classloader, avoiding conflicts
+ * {@link persist.jakarta.gradle.util.JPMSWorkerSupport} (process isolation for modular projects
+ * or classloader isolation for traditional projects) so that the project's JPA provider,
+ * entity classes, and JDBC driver are loaded in an isolated environment, avoiding conflicts
  * with the Gradle daemon's own classpath.
  * </p>
  *
@@ -83,6 +84,7 @@ interface SchemaValidationParameters extends WorkParameters {
  */
 abstract class SchemaValidationWorker implements WorkAction<SchemaValidationParameters> {
 
+    /** Logger instance used to report schema validation lifecycle events and error diagnostics. */
     private final Logger logger = Logging.getLogger(SchemaValidationWorker)
 
     /**
@@ -153,8 +155,17 @@ abstract class SchemaValidationWorker implements WorkAction<SchemaValidationPara
         }
     }
 
+    /**
+     * Static helper class isolating SPI service resolution logic from dynamic method dispatch.
+     */
     private static class Helper {
 
+        /**
+         * Resolves the {@link SchemaValidatorFactory} SPI provider for the specified JPA version.
+         *
+         * @param jpaVersion The JPA specification version string (e.g. {@code "3.0"}).
+         * @return The resolved {@link SchemaValidatorFactory} instance.
+         */
         private static SchemaValidatorFactory resolveValidatorFactory(String jpaVersion) {
             return PersistenceServiceResolver.resolvePersistenceServiceProvider(jpaVersion, SchemaValidatorFactory)
         }

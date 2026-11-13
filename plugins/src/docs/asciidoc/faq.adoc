@@ -56,6 +56,15 @@ See xref:configuration.adoc#jpa-version-selection[Configuration — JPA Version 
 
 Yes. All JPersist plugins are fully compatible with Gradle's Configuration Cache and Isolated Projects features.
 
+[#faq-jpms]
+== Does JPersist support the Java Platform Module System (JPMS)?
+
+Yes. Since v1.9.0, JPersist provides native support for JPMS modular projects (`module-info.java`).
+Worker tasks (`hibernateEnhanceClasses`, `validatePersistenceSchema`, and `lintNamedQueries`) automatically detect `module-info.class`, fork isolated worker processes, configure module paths, and dynamically open module packages for bytecode enhancement and schema validation without requiring manual JVM argument configuration.
+See xref:configuration.adoc#java-platform-module-system[Configuration — Java Platform Module System (JPMS)] for details.
+
+TIP: If a modularized persistence module applies a model generator plugin, it must either add `requires static java.compiler;` in the `module-info.java` or disable adding `@Generated` annotation on generated static metamodel classes using provider Java compiler options.
+
 [#faq-bytecode-enhancement]
 == Do I need a runtime `-javaagent` for bytecode enhancement?
 

@@ -1,6 +1,6 @@
 plugins {
     id 'java-library'
-    id 'io.github.jpersist.openjpa-persistence'
+    id 'io.github.jpersist.openjpa-persistence' version '1.9.0'
     id 'com.netflix.nebula.dependency-recommender' version '14.2.1'
 }
 

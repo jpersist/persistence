@@ -90,6 +90,8 @@ No additional configuration is needed — the annotation processor version is re
 
 For each JPA entity class annotated with `@Entity`, `@Embeddable`, or `@MappedSuperclass`, Hibernate generates a corresponding static metamodel class (e.g. `Person_`) that provides compile-time-safe attribute references for Criteria API queries.
 
+TIP: If a modularized persistence module applies a model generator plugin, it must either add `requires static java.compiler;` in the `module-info.java` or disable adding `@Generated` annotation on generated static metamodel classes using provider Java compiler options.
+
 [#dsl-extension-hibernate]
 == DSL Extension: `hibernate`
 
@@ -207,8 +209,9 @@ In addition, all tasks inherited from the core `io.github.jpersist.jpa` plugin (
 **Group:** `build` +
 **Type:** `HibernateEnhancementTask`
 
-Performs compile-time bytecode enhancement on Hibernate entity classes using Hibernate's internal `Enhancer` engine.
+Performs compile-time bytecode enhancement on Hibernate entity classes using Hibernate's internal `Enhancer` engine executed through the Gradle Worker API.
 The task reads raw compiled `.class` files from the Java compilation output directory, runs multi-pass bytecode transformation (type discovery and byte-level rewriting), and writes the enhanced classes to an isolated output directory.
+Execution uses hybrid worker isolation (`JPMSWorkerSupport`): for modular projects containing a `module-info.class` descriptor, the enhancement worker runs in a forked JVM process (`processIsolation`) configured with `--module-path`, `--add-modules`, dynamic `--add-opens` flags granting Hibernate persistence tools reflective access to all module packages, and bootstrap worker bridge files; for non-modular projects, it runs using fast in-process `classLoaderIsolation`. _(Since 1.9.0)_
 
 The enhanced classes are automatically included in the final JAR with higher priority than the original unenhanced classes (using `DuplicatesStrategy.EXCLUDE`), so no additional packaging configuration is needed.
 

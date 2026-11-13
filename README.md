@@ -15,37 +15,32 @@
 
 ## 🧩 What is JPersist?
 
-**JPersist** is a suite of modern, high-performance, and **Gradle Configuration Cache-compliant** plugins that completely automates the tedious boilerplate configuration of enterprise **Jakarta Persistence API (JPA)** environments.
+**JPersist** is the ultimate developer productivity suite for enterprise **Jakarta Persistence API (JPA)** on Gradle. Built from the ground up for modern enterprise engineering teams, JPersist delivers a frictionless, **zero-boilerplate build automation platform** that eliminates manual configuration, accelerates developer onboarding, and guarantees robust, high-performance builds.
 
-It handles everything a JPA developer needs at build time — from `persistence.xml` descriptor generation and merge to bytecode enhancement, metamodel generation, schema validation, GraalVM native image metadata, and compile-time named query linting — so you can focus on writing entities and queries instead of fighting build scripts.
+From automated descriptor generation and bytecode enhancement to instant schema validation, query linting, and GraalVM native image readiness, JPersist allows developers to focus on delivering business value rather than maintaining fragile build scripts.
 
 ---
 
-## 🏆 Why JPersist is the Ultimate JPA Development Tool for Gradle
+## 🏆 Why Choose JPersist?
 
-Standard Gradle setups require verbose XML overrides, break incremental compilation states during bytecode manipulation, and crash with complex classpath decoration proxy loops. **JPersist fixes this permanently.**
+Modern enterprise applications require robust persistence architectures, but standard build configurations are notoriously fragile, slow to set up, and prone to silent runtime failures. **JPersist eliminates this friction entirely.**
 
-| Standard Gradle Setup                 | The JPersist Advantage                                                             |
-|:--------------------------------------|:-----------------------------------------------------------------------------------|
-| ❌ Manual `<class>` tagging required  | **✅ ASM-powered bytecode scanning** auto-detects entities                         |
-| ❌ Hardcoded schema structures        | **✅ Strategy-driven polymorphism** supports JPA 2.0 to 3.2 dynamically            |
-| ❌ Rigid monolithic output paths      | **✅ Declarative attributes** route individual JAR locations via the DSL           |
-| ❌ Broken workspace sync mappings     | **✅ Automated IDE indexing** hooks into Buildship and IntelliJ out-of-the-box     |
-| ❌ Named query errors only at runtime | **✅ Compile-time query linting** catches JPQL/HQL syntax errors before deployment |
-| ❌ Manual GraalVM reflection config   | **✅ Automatic `reflect-config.json`** generation for native images                |
+| Traditional Build Setup               | The JPersist Advantage                                                             | Business Impact                                      |
+|:--------------------------------------|:-----------------------------------------------------------------------------------|:-----------------------------------------------------|
+| ❌ Manual `<class>` entity tagging     | **✅ Instant entity discovery** via automated bytecode scanning                   | ⚡ **Faster Onboarding** — Zero boilerplate to write |
+| ❌ Runtime query & mapping errors     | **✅ Compile-time query linting & schema validation**                              | 🛡️ **Zero Runtime Surprises** — Catch bugs in CI     |
+| ❌ Complex performance tuning setup   | **✅ Automatic bytecode enhancement & weaving** (Hibernate, EclipseLink, OpenJPA)  | 🚀 **Peak Performance** — Optimized dirty tracking   |
+| ❌ Fragile Native & Modular setups    | **✅ Out-of-the-box GraalVM metadata & JPMS modular support**                      | ☁️ **Cloud Native Ready** — Fast boot & low memory   |
+| ❌ Broken IDE workspace sync          | **✅ Seamless IDE integration** for IntelliJ IDEA and Eclipse Buildship            | 💻 **Frictionless DX** — Developers stay in the flow |
 
-### ⚡ Key Features
+### ⚡ Key Capabilities
 
-- **Descriptor Generation & Merging** — Generates or intelligently merges `persistence.xml` descriptors per source set using ASM bytecode scanning for automatic entity class discovery.
-- **Hibernate Bytecode Enhancement** — Compile-time enhancement for lazy initialization, dirty tracking, and association management without runtime agents.
-- **EclipseLink Static Weaving** — Compile-time static weaving fully isolated from the Gradle daemon classpath.
-- **OpenJPA Bytecode Enhancement** *(new in v1.8.0)* — Compile-time PCEnhancer-based bytecode enhancement for OpenJPA entities, forked in an isolated JVM process.
-- **JPA Static Metamodel Generation** — Automatic annotation processor setup for type-safe Criteria API queries (Hibernate, EclipseLink, and OpenJPA).
-- **Schema Validation** — Validates entity mappings against a database schema at build time using an isolated Gradle Worker process.
-- **Multi-Tenant Schema Validation** *(new in v1.7.0)* — Extends schema validation with named tenant profiles, each carrying its own JDBC connection properties for validating against multiple database tenants in a single build.
-- **GraalVM Native Image Metadata** — Generates `reflect-config.json` for all discovered JPA entities, enabling ahead-of-time reflection registration. *(v1.8.0: new `reflectConfigFile` property; `outputFile` deprecated)*
-- **Consolidated Reporting** *(new in v1.8.0)* — All verification reports (schema validation, query linting) are written to a unified `${buildDir}/reports/persistence/` directory for streamlined CI/CD artifact collection.
-- **Lint Named Queries** — Static, compile-time AST verification of `@NamedQuery` and `@NamedStoredProcedureQuery` definitions with JPQL/HQL syntax and parameter naming validation.
+- **Zero-Config Descriptor Generation** — Automatic entity discovery and `persistence.xml` generation across all source sets.
+- **Automated Performance Enhancement** — Build-time bytecode enhancement for Hibernate, EclipseLink static weaving, and OpenJPA PCEnhancer.
+- **Compile-Time Query Safety** — Static AST validation of `@NamedQuery` and stored procedure definitions to catch syntax errors during build.
+- **Enterprise Schema Validation** — Automated database schema verification against live databases or multi-tenant database profiles directly in CI/CD.
+- **Cloud-Native & Modular Ready** — Native AOT reflection configuration generation for GraalVM and zero-configuration Java Platform Module System (JPMS) support.
+- **Lightning-Fast Builds** — Fully compatible with Gradle Configuration Cache and incremental builds for maximum throughput.
 
 ---
 
@@ -61,7 +56,7 @@ Apply the plugin matching your JPA provider. The `jpa` dependency configuration 
 
 ```groovy
 plugins {
-    id 'io.github.jpersist.hibernate-persistence' version '1.8.0'
+    id 'io.github.jpersist.hibernate-persistence' version '1.9.0'
 }
 
 dependencies {
@@ -78,7 +73,7 @@ dependencies {
 
 ```kotlin
 plugins {
-    id("io.github.jpersist.hibernate-persistence") version "1.8.0"
+    id("io.github.jpersist.hibernate-persistence") version "1.9.0"
 }
 
 dependencies {
@@ -97,7 +92,7 @@ dependencies {
 
 ```groovy
 plugins {
-    id 'io.github.jpersist.eclipse-persistence' version '1.8.0'
+    id 'io.github.jpersist.eclipse-persistence' version '1.9.0'
 }
 
 dependencies {
@@ -115,7 +110,7 @@ dependencies {
 
 ```kotlin
 plugins {
-    id("io.github.jpersist.eclipse-persistence") version "1.8.0"
+    id("io.github.jpersist.eclipse-persistence") version "1.9.0"
 }
 
 dependencies {
@@ -135,7 +130,7 @@ dependencies {
 
 ```groovy
 plugins {
-    id 'io.github.jpersist.openjpa-persistence' version '1.8.0'
+    id 'io.github.jpersist.openjpa-persistence' version '1.9.0'
 }
 
 dependencies {
@@ -152,7 +147,7 @@ dependencies {
 
 ```kotlin
 plugins {
-    id("io.github.jpersist.openjpa-persistence") version "1.8.0"
+    id("io.github.jpersist.openjpa-persistence") version "1.9.0"
 }
 
 dependencies {

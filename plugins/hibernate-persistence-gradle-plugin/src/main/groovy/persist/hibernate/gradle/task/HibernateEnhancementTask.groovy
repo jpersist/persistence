@@ -137,6 +137,7 @@ abstract class HibernateEnhancementTask extends DefaultTask {
     @CompileClasspath
     abstract ConfigurableFileCollection getCompileClasspath()
 
+    /** The Gradle worker executor used to submit isolated bytecode enhancement work actions. */
     private final WorkerExecutor workerExecutor
 
     /**

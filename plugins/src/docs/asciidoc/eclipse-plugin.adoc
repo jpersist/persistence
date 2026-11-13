@@ -98,6 +98,8 @@ WARNING: While it is possible to work without a user-provided `persistence.xml` 
 This is because in this scenario, the `persistence.xml` will be generated _after_ the `compileJava` task and without static metamodel classes.
 For this reason, the user *must* provide a `persistence.xml` template with at least the persistence unit name (mandatory) and the full list of entity classes to include.
 
+TIP: If a modularized persistence module applies a model generator plugin, it must either add `requires static java.compiler;` in the `module-info.java` or disable adding `@Generated` annotation on generated static metamodel classes using provider Java compiler options.
+
 .Example minimal `persistence.xml` template for metamodel generation
 [source,xml]
 ----
