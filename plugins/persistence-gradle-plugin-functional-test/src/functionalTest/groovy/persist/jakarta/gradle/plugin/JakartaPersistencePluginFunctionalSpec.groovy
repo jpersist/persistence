@@ -493,6 +493,23 @@ class JakartaPersistencePluginFunctionalSpec extends Specification {
         assert outcome == TaskOutcome.SUCCESS || outcome == TaskOutcome.UP_TO_DATE
     }
 
+    def "should execute Hibernate enhancement and query linting via JPMS process isolation for modular projects"() {
+        given: "a modularized project containing a module-info.java descriptor"
+        def runner = createRunner()
+            .withArguments(':stock-management-persistence-module:classes', ':stock-management-persistence-module:lintNamedQueries', '--stacktrace')
+
+        when: "running compilation, bytecode enhancement, and query linting"
+        def result = runner.build()
+
+        then: "all modular tasks succeed via processIsolation without manual opens directives"
+        result.task(":stock-management-persistence-module:compileJava").outcome == TaskOutcome.SUCCESS
+        result.task(":stock-management-persistence-module:hibernateEnhanceClasses").outcome == TaskOutcome.SUCCESS
+        result.task(":stock-management-persistence-module:lintNamedQueries").outcome == TaskOutcome.SUCCESS
+
+        and: "the entities were successfully enhanced by the forked JPMS worker"
+        assert result.output.contains("Successfully enhanced class : com.example.stockmanagement.model.Product")
+    }
+
     def "should trigger eviction notice tracking logs when an entity file is completely removed from the workspace tree"() {
         given: "a completed baseline cache state targeting the dedicated lint validation module"
         def runner = createRunner()
@@ -604,6 +621,11 @@ class JakartaPersistencePluginFunctionalSpec extends Specification {
             .withProjectDir(testProjectDir.toFile())
             .withArguments(arguments)
             .withPluginClasspath()
+
+        String targetVersion = System.getProperty('test.gradle.version')
+        if (targetVersion) {
+            runner.withGradleVersion(targetVersion)
+        }
 
         // Forward the JaCoCo agent to the TestKit JVM so coverage is collected on plugin code
         // Extract the agent jar path from the original arg and reconstruct with the correct

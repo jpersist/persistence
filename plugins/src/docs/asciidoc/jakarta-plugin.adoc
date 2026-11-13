@@ -730,9 +730,10 @@ TIP: The task is automatically skipped when no persistence units are enabled.
 **Group:** `verification` +
 **Type:** `ValidatePersistenceSchema`
 
-Validates that the JPA entity mappings align correctly with the database schema by booting an isolated JVM worker process.
-Since 1.7.0, validation is performed by an SPI-loaded `SchemaValidator` obtained via `SchemaValidatorFactory`, replacing the previous direct use of the JPA `Persistence` bootstrap API.
-The task iterates over every configured tenant profile and validates each active persistence unit against that tenant's database independently.
+Validates that the JPA entity mappings align correctly with the database schema by executing an isolated worker action via Gradle's Worker API.
+Validation is performed by an SPI-loaded `SchemaValidator` obtained via `SchemaValidatorFactory` (resolved across JPMS boot layers and classloaders via `PersistenceServiceResolver`).
+The task uses hybrid worker isolation (`JPMSWorkerSupport`): for modular projects (when a `module-info.class` descriptor is detected in the compiled output), the worker runs in a forked process using `processIsolation` configured with `--module-path`, `--add-modules`, dynamic `--add-opens` flags for Hibernate persistence tools, and bootstrap worker bridge files; for non-modular projects, it runs via fast in-process `classLoaderIsolation`. _(Since 1.9.0)_
+The task directly tracks Java compilation output directory changes (`compileJava.destinationDirectory`) and validates every active persistence unit across configured tenant profiles independently.
 Failures are collected across the entire tenant × unit matrix and reported in a single summary.
 
 [cols="2,2,2,4"]
@@ -835,8 +836,8 @@ _Since 1.6.0_
 **Type:** `LintNamedQueries`
 
 Performs a static, compile-time AST verification pass over all `@NamedQuery` and `@NamedStoredProcedureQuery` definitions discovered in the compiled source set output.
-The task uses ASM bytecode scanning to locate query annotations, then validates JPQL/HQL syntax and parameter naming conventions using an ANTLR4-based parser loaded via SPI.
-Processing runs inside an isolated Gradle Worker classloader.
+The task uses ASM bytecode scanning to locate query annotations, then validates JPQL/HQL syntax and parameter naming conventions using an ANTLR4-based parser loaded via SPI (resolved via `PersistenceServiceResolver`).
+Processing runs inside an isolated Gradle worker using hybrid execution isolation (`JPMSWorkerSupport`): for modular projects containing `module-info.class`, it runs in a forked process with `processIsolation` and module path configuration; for non-modular projects, it runs using `classLoaderIsolation`. _(Since 1.9.0)_
 
 [cols="2,2,2,4"]
 |===

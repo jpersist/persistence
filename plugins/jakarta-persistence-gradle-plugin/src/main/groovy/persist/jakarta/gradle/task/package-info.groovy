@@ -16,8 +16,9 @@
  *         {@link persist.jakarta.gradle.task.registry.JPAVersionStrategyRegistry}.</li>
  *     <li>{@link persist.jakarta.gradle.task.ValidatePersistenceSchema} &mdash;
  *         Boots an isolated JVM worker process to validate that JPA entity
- *         configurations match the database schema. Uses classloader isolation
- *         via Gradle's {@link org.gradle.workers.WorkerExecutor} and delegates
+ *         configurations match the database schema. Uses worker isolation
+ *         (modular JPMS process isolation or classloader isolation) via Gradle's
+ *         {@link org.gradle.workers.WorkerExecutor} and delegates
  *         the actual validation to
  *         {@link persist.jakarta.gradle.worker.SchemaValidationWorker}.</li>
  *     <li>{@link persist.jakarta.gradle.task.GenerateJPAGraalVMMetadata} &mdash;
@@ -28,9 +29,9 @@
  *         Executes a static, compile-time AST verification loop over all
  *         {@code @NamedQuery} and {@code @NamedStoredProcedureQuery}
  *         definitions discovered in the compiled source set output directories.
- *         Uses classloader isolation via Gradle's
- *         {@link org.gradle.workers.WorkerExecutor} and delegates the actual
- *         analysis to
+ *         Uses worker isolation (modular JPMS process isolation or classloader
+ *         isolation) via Gradle's {@link org.gradle.workers.WorkerExecutor} and
+ *         delegates the actual analysis to
  *         {@link persist.jakarta.gradle.worker.LintNamedQueriesWorker}.</li>
  * </ul>
  *

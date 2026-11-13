@@ -62,7 +62,7 @@ interface LintNamedQueriesParameters extends WorkParameters {
 
 /**
  * An isolated Worker Action that performs bytecode sweeping and query AST
- * validation inside a classloader-isolated process.
+ * validation inside an isolated worker process.
  * <p>
  * The worker scans all {@code .class} files in the compiled output directory
  * using ASM to discover {@code @NamedQuery} and
@@ -77,6 +77,7 @@ interface LintNamedQueriesParameters extends WorkParameters {
  */
 abstract class LintNamedQueriesWorker implements WorkAction<LintNamedQueriesParameters> {
 
+    /** Logger instance used to report query linting progress and diagnostics. */
     private final Logger logger = Logging.getLogger(LintNamedQueriesWorker)
 
     /**
@@ -334,6 +335,12 @@ abstract class LintNamedQueriesWorker implements WorkAction<LintNamedQueriesPara
      */
     private static class Helper {
 
+        /**
+         * Resolves the {@link NamedObjectParserFactory} SPI for the given JPA specification version.
+         *
+         * @param jpaVersion The JPA specification version string (e.g. {@code "3.0"}).
+         * @return The resolved {@link NamedObjectParserFactory} instance.
+         */
         private static NamedObjectParserFactory resolveParserFactory(String jpaVersion) {
             return PersistenceServiceResolver.resolvePersistenceServiceProvider(jpaVersion, NamedObjectParserFactory)
         }
@@ -361,6 +368,9 @@ abstract class LintNamedQueriesWorker implements WorkAction<LintNamedQueriesPara
 
         /**
          * Asserts parameter tokens against strict camelCase regular expression rules.
+         *
+         * @param contextName The query or procedure name context for diagnostic logging.
+         * @param paramName   The parameter token string to validate.
          */
         private static void validateParameterStyle(String contextName, String paramName) {
             boolean isCamelCase = paramName ==~ /^[a-z][a-zA-Z0-9]*$/

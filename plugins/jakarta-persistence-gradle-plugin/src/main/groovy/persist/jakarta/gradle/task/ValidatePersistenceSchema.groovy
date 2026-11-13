@@ -22,6 +22,7 @@ import org.gradle.work.Incremental
 import org.gradle.work.InputChanges
 import org.gradle.workers.WorkerExecutor
 import persist.jakarta.gradle.extension.ValidationExtension
+import persist.jakarta.gradle.util.JPMSWorkerSupport
 import persist.jakarta.gradle.worker.SchemaValidationWorker
 
 import javax.inject.Inject
@@ -87,7 +88,7 @@ abstract class ValidatePersistenceSchema extends DefaultTask {
      * bytecode scanner during the compile phase.
      * <p>
      * These names are forwarded to the {@link SchemaValidationWorker} so the
-     * SPI-loaded {@link persist.lint.api.spi.SchemaValidator} can resolve the
+     * SPI-loaded {@link persistence.tools.SchemaValidator} can resolve the
      * entity mappings without scanning the classpath itself.
      * </p>
      *
@@ -107,6 +108,15 @@ abstract class ValidatePersistenceSchema extends DefaultTask {
     @InputFiles
     @PathSensitive(PathSensitivity.RELATIVE)
     abstract ConfigurableFileCollection getSourceFiles()
+
+    /**
+     * The input source directory holding the compiled Java class files to be scanned via ASM.
+     *
+     * @return The lazy directory property tracking the compiled classes directory.
+     */
+    @InputDirectory
+    @PathSensitive(PathSensitivity.RELATIVE)
+    abstract DirectoryProperty getClassesDir()
 
     /**
      * The built-in resource destination directory containing the META-INF/persistence.xml structure.
@@ -164,7 +174,7 @@ abstract class ValidatePersistenceSchema extends DefaultTask {
      * multi-tenant connection profiles, the discovered entity class names,
      * and the full runtime classpath. For each tenant profile, every active
      * persistence unit is validated via the SPI-loaded
-     * {@link persist.lint.api.spi.SchemaValidator}.
+     * {@link persistence.tools.SchemaValidator}.
      * </p>
      *
      * @param inputChanges The Gradle incremental input changes descriptor.
@@ -174,6 +184,7 @@ abstract class ValidatePersistenceSchema extends DefaultTask {
         def version = jpaVersion.get()
         def unitNames = persistenceUnitNames.get()
         def classpathFiles = classpath.files
+        def classesFolder = classesDir.get().asFile
         def resourcesFolder = resourcesDir.get().asFile
         def fullEntityClasses = discoveredEntityClasses.get()
         def isIncrementalPass = inputChanges.incremental
@@ -225,18 +236,19 @@ abstract class ValidatePersistenceSchema extends DefaultTask {
         logger.lifecycle("⏳ Starting JPersist Multi-Tenant Schema Validation pipeline pass...")
         logger.lifecycle("🔍 Auditing ${affectedEntities.size()} active entities across ${profiles.size()} tenant profiles (Incremental: ${isIncrementalPass}).")
 
-        // Submit the action with isolated ClassLoader bindings managed natively by Gradle
-        workerExecutor.classLoaderIsolation { workerSpec ->
-            // Feed the project classpath, the dynamic resources root folder, and H2 elements
-            workerSpec.classpath.from(classpathFiles)
-            workerSpec.classpath.from(resourcesFolder)
-        }.submit(SchemaValidationWorker) { params ->
+        // Submit the action via JPMS process isolation or standard ClassLoader isolation
+        def workQueue = JPMSWorkerSupport.createWorkQueue(
+            workerExecutor,
+            SchemaValidationWorker,
+            classesFolder,
+            classpathFiles,
+            resourcesFolder
+        )
+
+        workQueue.submit(SchemaValidationWorker) { params ->
             params.jpaVersion.set(version)
             params.persistenceUnitNames.set(unitNames)
-
-            // Pass the serialized matrix string array to the validation worker parameters queue
             params.tenantProfiles.set(profiles)
-            // Forward the entity class name tokens safely to the isolated worker container
             params.discoveredEntityClasses.set(affectedEntities)
         }
 

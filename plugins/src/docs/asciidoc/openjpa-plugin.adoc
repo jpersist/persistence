@@ -93,6 +93,8 @@ No additional configuration is needed — the annotation processor version is re
 
 For each JPA entity class annotated with `@Entity`, `@Embeddable`, or `@MappedSuperclass`, OpenJPA generates a corresponding static metamodel class (e.g. `Person_`) that provides compile-time-safe attribute references for Criteria API queries.
 
+TIP: If a modularized persistence module applies a model generator plugin, it must either add `requires static java.compiler;` in the `module-info.java` or disable adding `@Generated` annotation on generated static metamodel classes using provider Java compiler options.
+
 [#dsl-extension-openjpa]
 == DSL Extension: `openjpa`
 

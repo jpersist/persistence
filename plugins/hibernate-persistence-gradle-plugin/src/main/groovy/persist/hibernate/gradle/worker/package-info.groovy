@@ -2,7 +2,7 @@
  * Gradle Worker API implementations for Hibernate compile-time bytecode enhancement.
  * <p>
  * This package contains the worker action and its parameter interface used to
- * perform classloader-isolated bytecode enhancement of Hibernate entity classes
+ * perform isolated bytecode enhancement of Hibernate entity classes
  * inside a worker process managed by Gradle's
  * {@link org.gradle.workers.WorkerExecutor}.
  * </p>

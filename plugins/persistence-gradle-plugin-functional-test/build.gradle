@@ -15,12 +15,16 @@ gradlePlugin {
 }
 
 // Force the metadata task to include the outputs of your actual plugin subprojects
-tasks.named('pluginUnderTestMetadata') {
+tasks.named('pluginUnderTestMetadata', PluginUnderTestMetadata) {
     submodules.forEach { module ->
         def mainSourceSet = module.extensions.getByType(SourceSetContainer).named('main')
         pluginClasspath.from(mainSourceSet.map { it.output })
     }
     pluginClasspath.from(configurations.named('runtimeClasspath'))
+}
+
+tasks.named('functionalTest', Test) {
+    systemProperty 'test.gradle.version', project.findProperty('testGradleVersion') ?: gradle.gradleVersion
 }
 
 sonar {

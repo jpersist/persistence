@@ -15,6 +15,7 @@ import org.gradle.api.tasks.SkipWhenEmpty
 import org.gradle.api.tasks.TaskAction
 import org.gradle.workers.WorkerExecutor
 import persist.hibernate.gradle.worker.EnhancementWorker
+import persist.jakarta.gradle.util.JPMSWorkerSupport
 
 import javax.inject.Inject
 
@@ -136,6 +137,7 @@ abstract class HibernateEnhancementTask extends DefaultTask {
     @CompileClasspath
     abstract ConfigurableFileCollection getCompileClasspath()
 
+    /** The Gradle worker executor used to submit isolated bytecode enhancement work actions. */
     private final WorkerExecutor workerExecutor
 
     /**
@@ -175,19 +177,21 @@ abstract class HibernateEnhancementTask extends DefaultTask {
         def toolsetFiles = enhanceClasspath.getFiles()
         def externalDependencies = compileClasspath.getFiles()
 
-        // Configure classloader isolation for the child worker container.
-        // We load the structural tools and SPI factories into the worker's parent context.
-        workerExecutor.classLoaderIsolation { spec ->
-            spec.classpath.from(toolsetFiles)
-        }.submit(EnhancementWorker) { params ->
+        Set<File> allModularFiles = new LinkedHashSet<>(toolsetFiles)
+        allModularFiles.addAll(externalDependencies)
+
+        def workQueue = JPMSWorkerSupport.createWorkQueue(
+            workerExecutor,
+            EnhancementWorker,
+            src,
+            allModularFiles
+        )
+
+        workQueue.submit(EnhancementWorker) { params ->
             params.jpaVersion.set(version)
             params.compiledClassesDir.set(src)
             params.enhancedClassesDir.set(dst)
-
-            // Pass the complete compilation dependencies classpath so the worker can
-            // merge it dynamically with the execution context URLClassLoader array
             params.compileClasspath.from(externalDependencies)
-
             params.lazyInitializationEnabled.set(enableLazyInitialization)
             params.dirtyTrackingEnabled.set(enableDirtyTracking)
             params.associationManagementEnabled.set(enableAssociationManagement)

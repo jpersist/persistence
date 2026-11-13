@@ -169,6 +169,31 @@ persistence {
 
 Supported versions: `2.0`, `2.1`, `2.2`, `3.0`, `3.1` and `3.2`.
 
+[#java-platform-module-system]
+== Java Platform Module System (JPMS)
+
+_Since 1.9.0_
+
+JPersist provides first-class, zero-configuration support for modular Java applications using the Java Platform Module System (JPMS / `module-info.java`).
+
+When running build-time analysis and bytecode transformation tasks (`hibernateEnhanceClasses`, `validatePersistenceSchema`, and `lintNamedQueries`), JPersist automatically inspects the compiled classes directory of the target source set.
+If a `module-info.class` descriptor is detected, the plugin configures hybrid execution isolation via the Gradle Worker API:
+
+* **Modular Projects (`module-info.class` present):**
+The tasks execute inside a forked JVM process using `processIsolation`.
+The worker process is dynamically configured with:
+** `--module-path` containing the source set output and toolset dependencies.
+** `--add-modules` referencing all resolved modules.
+** Dynamic `--add-opens <moduleName>/<pkg>=io.github.jpersist.tools.hibernate.orm,io.github.jpersist.tools.hibernate` arguments for every package declared in the user module descriptor, granting necessary reflective access to Hibernate persistence tools.
+** Worker bridge JARs attached to the bootstrap classpath.
+
+* **Non-Modular Projects (traditional classpath):**
+The tasks execute in-process using `classLoaderIsolation`, avoiding process forking overhead for maximum build performance.
+
+In addition, persistence service provider interfaces (such as `SchemaValidatorFactory` and `NamedObjectParserFactory`) are resolved via `PersistenceServiceResolver`, which seamlessly discovers providers from either the JPMS boot layer (`ModuleLayer.boot()`) in modular environments or the current thread context classloader.
+
+TIP: If a modularized persistence module applies a model generator plugin, it must either add `requires static java.compiler;` in the `module-info.java` or disable adding `@Generated` annotation on generated static metamodel classes using provider Java compiler options.
+
 [#gradle-configuration-cache]
 == Gradle Configuration Cache
 

@@ -10,7 +10,7 @@ The [`eclipse-example`](eclipse-example) project demonstrates how to use the `io
 
 ```bash
 cd examples/eclipse-example
-gradle build
+./gradlew build
 ```
 
 ## Hibernate Example
@@ -21,7 +21,7 @@ The [`hibernate-example`](hibernate-example) project demonstrates how to use the
 
 ```bash
 cd examples/hibernate-example
-gradle build
+./gradlew build
 ```
 
 ## OpenJPA Example
@@ -32,7 +32,7 @@ The [`openjpa-example`](openjpa-example) project demonstrates how to use the `io
 
 ```bash
 cd examples/openjpa-example
-gradle build
+./gradlew build
 ```
 
 ## Jakarta Persistence Example
@@ -43,5 +43,5 @@ The [`jakarta-persistence-example`](jakarta-persistence-example) project demonst
 
 ```bash
 cd examples/jakarta-persistence-example
-gradle build
+./gradlew build
 ```
