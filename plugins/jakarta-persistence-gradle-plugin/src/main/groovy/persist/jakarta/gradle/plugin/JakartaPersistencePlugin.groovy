@@ -431,6 +431,11 @@ class JakartaPersistencePlugin implements Plugin<Project> {
                 return !units.trim().isEmpty()
             }
 
+            // Target the raw Java compilation output directory directly
+            def compileJavaTask = project.tasks.named(sourceSet.compileJavaTaskName, JavaCompile)
+            task.getClassesDir().set(compileJavaTask.flatMap { it.destinationDirectory })
+            task.mustRunAfter(compileJavaTask)
+
             // FIX: Enforce an explicit dependency rule on the processResources task instance.
             // This guarantees the directory is physically present before validation triggers!
             def processResourcesProvider = project.tasks.named(sourceSet.processResourcesTaskName, ProcessResources)

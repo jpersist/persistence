@@ -12,6 +12,7 @@ import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.Incremental
 import org.gradle.work.InputChanges
 import org.gradle.workers.WorkerExecutor
+import persist.jakarta.gradle.util.JPMSWorkerSupport
 import persist.jakarta.gradle.worker.LintNamedQueriesWorker
 import javax.inject.Inject
 
@@ -173,17 +174,19 @@ abstract class LintNamedQueries extends DefaultTask {
             totalSkipped = 0
         }
 
-        // 2. Submit execution payload across the ClassLoader barrier to the isolated worker container
-        workerExecutor.classLoaderIsolation { workerSpec ->
-            workerSpec.classpath.from(runtimeClasspathFiles)
-            workerSpec.classpath.from(classesFolder)
-        }.submit(LintNamedQueriesWorker) { params ->
+        // 2. Submit execution payload via JPMS process isolation or standard ClassLoader isolation
+        def workQueue = JPMSWorkerSupport.createWorkQueue(
+            workerExecutor,
+            LintNamedQueriesWorker,
+            classesFolder,
+            runtimeClasspathFiles
+        )
+
+        workQueue.submit(LintNamedQueriesWorker) { params ->
             params.compiledClassesDir.set(classesFolder)
             params.failOnError.set(failOnValidationError)
             params.ignoreWarnings.set(skipWarnings)
             params.jpaVersion.set(version)
-
-            // Inject incremental delta tracing lists into parameters
             params.incrementalPass.set(isIncrementalPass)
             params.affectedClassFiles.set(affectedClassFiles)
             params.removedClassFiles.set(removedClassFiles)
