@@ -18,7 +18,9 @@ package persistence.tools.spi;
 
 import persistence.tools.SchemaValidator;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Factory for creating {@link SchemaValidator} instances.
@@ -41,13 +43,28 @@ public interface SchemaValidatorFactory extends PersistenceLinterFactory {
 
     /**
      * Creates a new {@link SchemaValidator} configured with the given
-     * entity class names.
+     * entity class names and default validator settings.
      *
      * @param discoveredClassNames fully qualified class names of the JPA
      *                             entities to register in the metamodel
      * @return a ready-to-use schema validator
      */
-    SchemaValidator newSchemaValidator(List<String> discoveredClassNames);
+    default SchemaValidator newSchemaValidator(List<String> discoveredClassNames) {
+        return newSchemaValidator(discoveredClassNames, Collections.emptyMap());
+    }
+
+    /**
+     * Creates a new {@link SchemaValidator} configured with the given
+     * entity class names and custom configuration settings.
+     *
+     * @param discoveredClassNames fully qualified class names of the JPA
+     *                             entities to register in the metamodel
+     * @param settings             a map of configuration settings allowing consumers
+     *                             to override default service implementation settings
+     * @return a ready-to-use schema validator
+     * @since 4.1.0
+     */
+    SchemaValidator newSchemaValidator(List<String> discoveredClassNames, Map<String, Object> settings);
 
     /**
      * Discovers and returns the {@link SchemaValidatorFactory}
