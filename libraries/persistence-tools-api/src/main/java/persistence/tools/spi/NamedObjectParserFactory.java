@@ -18,7 +18,9 @@ package persistence.tools.spi;
 
 import persistence.tools.NamedObjectParser;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.ServiceLoader;
 
 /**
@@ -41,14 +43,30 @@ public interface NamedObjectParserFactory extends PersistenceLinterFactory {
 
     /**
      * Creates a new {@link NamedObjectParser} configured with the given entity
-     * class names.
+     * class names and default parser settings.
      *
      * @param discoveredClassNames fully qualified class names of the JPA
      *                             entities to register in the metamodel
      * @return a ready-to-use named object parser; the caller is responsible
      *         for closing it (preferably via try-with-resources)
      */
-    NamedObjectParser newNamedObjectParser(List<String> discoveredClassNames);
+    default NamedObjectParser newNamedObjectParser(List<String> discoveredClassNames) {
+        return newNamedObjectParser(discoveredClassNames, Collections.emptyMap());
+    }
+
+    /**
+     * Creates a new {@link NamedObjectParser} configured with the given entity
+     * class names and custom configuration settings.
+     *
+     * @param discoveredClassNames fully qualified class names of the JPA
+     *                             entities to register in the metamodel
+     * @param settings             a map of configuration settings allowing consumers
+     *                             to override default service implementation settings
+     * @return a ready-to-use named object parser; the caller is responsible
+     *         for closing it (preferably via try-with-resources)
+     * @since 4.1.0
+     */
+    NamedObjectParser newNamedObjectParser(List<String> discoveredClassNames, Map<String, Object> settings);
 
     /**
      * Discovers and returns the {@link NamedObjectParserFactory} implementation
