@@ -28,9 +28,9 @@ import java.util.stream.Collectors;
  *
  * <p>
  * This class provides shared helper methods for working with Hibernate persistence tools,
- * including converting configuration settings maps to strongly-typed enhancer options,
- * converting filesystem references to URLs, and constructing isolated class loaders for
- * inspection of compiled entity classes.
+ * including merging configuration settings maps across precedence tiers, converting configuration
+ * settings maps to strongly-typed enhancer options, converting filesystem references to URLs,
+ * and constructing isolated class loaders for inspection of compiled entity classes.
  * </p>
  *
  * @since 1.0.0
@@ -43,6 +43,64 @@ public class HibernateUtil {
      */
     private HibernateUtil() {
         // Do not create instances of this class
+    }
+
+    /**
+     * Merges predefined default settings with consumer-supplied overrides.
+     *
+     * <p>Keys present in {@code consumerSettings} override matching keys in
+     * {@code defaults}. Any {@code null} map argument or entry with a
+     * {@code null} value is safely ignored.</p>
+     *
+     * @param defaults         the baseline settings defined by the persistence provider
+     * @param consumerSettings custom settings supplied by the caller to override defaults
+     * @return an unmodifiable {@link Map} containing the merged settings
+     * @since 1.1.0
+     */
+    public static Map<String, Object> mergeSettings(Map<String, ?> defaults,
+                                                    Map<String, ?> consumerSettings) {
+        return mergeSettings(defaults, consumerSettings, Collections.emptyMap());
+    }
+
+    /**
+     * Merges predefined default settings, consumer-supplied overrides, and
+     * enforced safety invariants according to a strict three-tier precedence:
+     *
+     * <ol>
+     *   <li>{@code defaults} — baseline settings defined by the provider.</li>
+     *   <li>{@code consumerSettings} — caller overrides that replace matching defaults.</li>
+     *   <li>{@code enforcedSettings} — protected invariants that take final precedence
+     *       and cannot be overwritten by consumer input.</li>
+     * </ol>
+     *
+     * <p>Any {@code null} map argument or entry with a {@code null} key or value
+     * is safely ignored.</p>
+     *
+     * @param defaults         the baseline settings defined by the persistence provider
+     * @param consumerSettings custom settings supplied by the caller
+     * @param enforcedSettings protected settings applied last so they cannot be overridden
+     * @return an unmodifiable {@link Map} containing the merged settings
+     * @since 1.1.0
+     */
+    public static Map<String, Object> mergeSettings(Map<String, ?> defaults,
+                                                    Map<String, ?> consumerSettings,
+                                                    Map<String, ?> enforcedSettings) {
+        Map<String, Object> merged = new LinkedHashMap<>();
+        putNonNullEntries(merged, defaults);
+        putNonNullEntries(merged, consumerSettings);
+        putNonNullEntries(merged, enforcedSettings);
+        return Collections.unmodifiableMap(merged);
+    }
+
+    private static void putNonNullEntries(Map<String, Object> target, Map<String, ?> source) {
+        if (source == null || source.isEmpty()) {
+            return;
+        }
+        source.forEach((key, value) -> {
+            if (Objects.nonNull(key) && Objects.nonNull(value)) {
+                target.put(key, value);
+            }
+        });
     }
 
     /**
