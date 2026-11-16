@@ -92,6 +92,38 @@ public class HibernateUtil {
         return Collections.unmodifiableMap(merged);
     }
 
+    /**
+     * Translates simplified JDBC connection properties into standard Hibernate
+     * {@code hibernate.connection.*} configuration settings.
+     *
+     * <p>The following shorthand keys are mapped when present with non-null values:</p>
+     * <ul>
+     *   <li>{@code "driver"} &rarr; {@code "hibernate.connection.driver_class"}</li>
+     *   <li>{@code "url"} &rarr; {@code "hibernate.connection.url"}</li>
+     *   <li>{@code "username"} &rarr; {@code "hibernate.connection.username"}</li>
+     *   <li>{@code "password"} &rarr; {@code "hibernate.connection.password"}</li>
+     * </ul>
+     *
+     * <p>If {@code connectionProperties} is {@code null} or empty, an empty map is returned.</p>
+     *
+     * @param connectionProperties the simplified JDBC connection properties map; may be {@code null} or empty
+     * @return a {@link Map} containing the corresponding Hibernate connection settings
+     * @since 1.1.0
+     */
+    public static Map<String, Object> toConnectionSettings(Map<String, String> connectionProperties) {
+        if (connectionProperties == null || connectionProperties.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        Map<String, Object> mapped = new LinkedHashMap<>();
+        putIfPresent(mapped, "hibernate.connection.driver_class", connectionProperties.get("driver"));
+        putIfPresent(mapped, "hibernate.connection.url", connectionProperties.get("url"));
+        putIfPresent(mapped, "hibernate.connection.username", connectionProperties.get("username"));
+        putIfPresent(mapped, "hibernate.connection.password", connectionProperties.get("password"));
+
+        return mapped;
+    }
+
     private static void putNonNullEntries(Map<String, Object> target, Map<String, ?> source) {
         if (source == null || source.isEmpty()) {
             return;
@@ -101,6 +133,12 @@ public class HibernateUtil {
                 target.put(key, value);
             }
         });
+    }
+
+    private static void putIfPresent(Map<String, Object> target, String key, String value) {
+        if (value != null) {
+            target.put(key, value);
+        }
     }
 
     /**

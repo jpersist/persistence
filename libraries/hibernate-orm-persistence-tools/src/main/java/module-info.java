@@ -43,7 +43,7 @@ module io.github.jpersist.tools.hibernate.orm {
     provides persistence.tools.spi.EnhancerProvider
         with hibernate.jakarta.persistence.tools.provider.HibernateEnhancerProvider;
 
-    // 6. Enforce strong encapsulation by hiding all implementation packages.
-    // No 'exports' directive is specified here since the project interacts
-    // with this provider strictly decoupled behind the 'persistence-tools-api' SPIs.
+    // 6. Grant Hibernate 6 reflective access to instantiate internal SPI providers (e.g. NoOpConnectionProvider)
+    // without exporting the package at compile time
+    opens hibernate.jakarta.persistence.tools.internal to org.hibernate.orm.core;
 }
