@@ -21,6 +21,7 @@ import persistence.tools.NamedObjectParser;
 import persistence.tools.spi.NamedObjectParserFactory;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * {@link NamedObjectParserFactory} implementation for the legacy
@@ -40,8 +41,8 @@ public class HibernateNamedObjectParserFactory extends HibernatePersistenceLinte
 
     /** {@inheritDoc} */
     @Override
-    public NamedObjectParser newNamedObjectParser(List<String> discoveredClassNames) {
-        return HibernateNamedObjectParser.from(discoveredClassNames);
+    public NamedObjectParser newNamedObjectParser(List<String> discoveredClassNames, Map<String, Object> settings) {
+        return HibernateNamedObjectParser.from(discoveredClassNames, settings);
     }
 
 }

@@ -16,6 +16,8 @@
 
 package hibernate.jakarta.persistence.tools;
 
+import hibernate.base.persistence.tools.HibernateUtil;
+import hibernate.jakarta.persistence.tools.internal.NoOpConnectionProvider;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
@@ -26,9 +28,7 @@ import hibernate.jakarta.persistence.tools.provider.HibernateNamedObjectParserFa
 import persistence.tools.NamedObjectDescriptor;
 import persistence.tools.NamedObjectParser;
 
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * {@link NamedObjectParser} implementation for the Jakarta Persistence namespace.
@@ -41,15 +41,36 @@ import java.util.TreeSet;
  * <p>Stored procedure declarations are validated by recording the procedure
  * name and its parameter names into a {@link NamedObjectDescriptor}.</p>
  *
- * <p>Instances are created through the {@link #from(List)} factory method.
- * This class implements {@link AutoCloseable}; closing an instance releases
- * the underlying Hibernate {@code SessionFactory} and
- * {@code ServiceRegistry}. Always use try-with-resources.</p>
+ * <p>Instances are created through the {@link #from(List)} or
+ * {@link #from(List, Map)} factory methods. This class implements
+ * {@link AutoCloseable}; closing an instance releases the underlying
+ * Hibernate {@code SessionFactory} and {@code ServiceRegistry}. Always use
+ * try-with-resources.</p>
  *
  * @since 1.0.0
  * @see HibernateNamedObjectParserFactory
  */
 public class HibernateNamedObjectParser implements NamedObjectParser {
+
+    private static final Map<String, Object> DEFAULT_SETTINGS = Map.of(
+        // Provide a baseline dialect so the SQM compiler understands standard function mappings
+        "hibernate.dialect", "org.hibernate.dialect.H2Dialect",
+        // Explicitly disable background JDBC metadata connection passes
+        "hibernate.boot.allow_jdbc_metadata_access", "false",
+        // Prevent Hibernate 6 from falling back to minimum H2 dialect capabilities when offline
+        "jakarta.persistence.database-product-version", "2.2.224",
+        // Suppress HHH000181 connection provider info logs during offline bootstrap
+        "hibernate.connection.provider_class", NoOpConnectionProvider.class.getName(),
+        // Enforce strict compliance with Jakarta Persistence query rules by default
+        "hibernate.jpa.compliance.query", "true",
+        // Bypass runtime bytecode enhancement routines during offline linting
+        "hibernate.bytecode.provider", "none"
+    );
+
+    private static final Map<String, Object> ENFORCED_SETTINGS = Map.of(
+        // Guarantee automatic database schema actions remain disabled during query linting
+        "hibernate.hbm2ddl.auto", "none"
+    );
 
     private final SessionFactoryImplementor sessionFactory;
 
@@ -65,35 +86,52 @@ public class HibernateNamedObjectParser implements NamedObjectParser {
 
     /**
      * Creates a new {@code HibernateNamedObjectParser} configured with the
-     * supplied entity class names.
+     * supplied entity class names and default offline settings.
      *
      * @param discoveredClassNames fully qualified names of JPA entity classes
      * @return a parser ready to validate named queries and stored procedures;
      *         the caller is responsible for closing it when finished
      */
     public static HibernateNamedObjectParser from(List<String> discoveredClassNames) {
+        return from(discoveredClassNames, Collections.emptyMap());
+    }
+
+    /**
+     * Creates a new {@code HibernateNamedObjectParser} configured with the
+     * supplied entity class names and custom settings merged on top of
+     * predefined offline defaults.
+     *
+     * @param discoveredClassNames fully qualified names of JPA entity classes
+     * @param settings             custom configuration overrides (e.g.&nbsp;target SQL dialect
+     *                             or naming strategies); may be {@code null} or empty
+     * @return a parser ready to validate named queries and stored procedures;
+     *         the caller is responsible for closing it when finished
+     * @since 2.1.0
+     */
+    public static HibernateNamedObjectParser from(List<String> discoveredClassNames,
+                                                  Map<String, Object> settings) {
+        Map<String, Object> mergedSettings = HibernateUtil.mergeSettings(
+            DEFAULT_SETTINGS,
+            settings,
+            ENFORCED_SETTINGS
+        );
+
         var ssr = new StandardServiceRegistryBuilder()
-            .applySetting("hibernate.dialect", "org.hibernate.dialect.H2Dialect")
-            // Explicitly disable background JDBC metadata connections query passes!
-            .applySetting("hibernate.boot.allow_jdbc_metadata_access", "false")
-            // Disable DDL validation loops during compilation
-            .applySetting("hibernate.hbm2ddl.auto", "none")
-            // Disable metadata builder cache processing to speed up bootstrap
-            .applySetting("hibernate.bytecode.provider", "none")
+            .applySettings(mergedSettings)
             .build();
 
-        var metadataSources = new MetadataSources(ssr);
+        try {
+            var metadataSources = new MetadataSources(ssr);
+            discoveredClassNames.forEach(metadataSources::addAnnotatedClassName);
 
-        // Strongly register every single ASM-discovered entity class natively!
-        discoveredClassNames.forEach(metadataSources::addAnnotatedClassName);
+            var metadata = metadataSources.getMetadataBuilder().build();
+            SessionFactoryImplementor sf = (SessionFactoryImplementor) metadata.buildSessionFactory();
 
-        var metadata = metadataSources.getMetadataBuilder().build();
-
-        // Build the concrete SessionFactory mapping. Because DDL validation and JDBC lookups
-        // are disabled above, this builds almost instantly using purely reflection mappings.
-        SessionFactoryImplementor sf = (SessionFactoryImplementor) metadata.buildSessionFactory();
-
-        return new HibernateNamedObjectParser(ssr, sf);
+            return new HibernateNamedObjectParser(ssr, sf);
+        } catch (Exception e) {
+            StandardServiceRegistryBuilder.destroy(ssr);
+            throw e;
+        }
     }
 
     /** {@inheritDoc} */

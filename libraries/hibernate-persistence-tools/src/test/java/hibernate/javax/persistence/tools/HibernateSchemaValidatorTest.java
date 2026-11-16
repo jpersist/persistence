@@ -75,4 +75,43 @@ class HibernateSchemaValidatorTest {
                 .hasMessageContaining("code");
     }
 
+    @Test
+    void validateSchema_withCustomDefaultSchemaMatchingDatabase_shouldSucceed() {
+        Map<String, Object> customSettings = Map.of(
+            "hibernate.default_schema", "PUBLIC"
+        );
+        var validator = HibernateSchemaValidator.of(ENTITY_CLASS_NAMES, customSettings);
+
+        var url = "jdbc:h2:mem:legacy_custom_schema_ok;DB_CLOSE_DELAY=-1;"
+            + "INIT=RUNSCRIPT FROM 'classpath:schema/complete-schema.sql'";
+
+        assertThatCode(() -> validator.validateSchema(connectionProperties(url)))
+            .doesNotThrowAnyException();
+    }
+
+    @Test
+    void validateSchema_withCustomDefaultSchemaNotInDatabase_shouldThrowException() {
+        Map<String, Object> customSettings = Map.of(
+            "hibernate.default_schema", "NON_EXISTENT_SCHEMA"
+        );
+        var validator = HibernateSchemaValidator.of(ENTITY_CLASS_NAMES, customSettings);
+
+        var url = "jdbc:h2:mem:legacy_custom_schema_fail;DB_CLOSE_DELAY=-1;"
+            + "INIT=RUNSCRIPT FROM 'classpath:schema/complete-schema.sql'";
+
+        assertThatThrownBy(() -> validator.validateSchema(connectionProperties(url)))
+            .isInstanceOf(Exception.class);
+    }
+
+    @Test
+    void validateSchema_withNullSettings_shouldUseDefaultsAndSucceed() {
+        var validator = HibernateSchemaValidator.of(ENTITY_CLASS_NAMES, null);
+
+        var url = "jdbc:h2:mem:legacy_null_settings;DB_CLOSE_DELAY=-1;"
+            + "INIT=RUNSCRIPT FROM 'classpath:schema/complete-schema.sql'";
+
+        assertThatCode(() -> validator.validateSchema(connectionProperties(url)))
+            .doesNotThrowAnyException();
+    }
+
 }

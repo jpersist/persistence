@@ -181,6 +181,72 @@ class HibernateUtilTest {
     }
 
     @Test
+    void toConnectionSettings_withAllProperties_mapsToHibernateKeys() {
+        Map<String, String> connectionProps = Map.of(
+            "driver", "org.h2.Driver",
+            "url", "jdbc:h2:mem:testdb",
+            "username", "sa",
+            "password", "secret"
+        );
+
+        Map<String, Object> result = HibernateUtil.toConnectionSettings(connectionProps);
+
+        assertThat(result)
+            .isNotNull()
+            .hasSize(4)
+            .containsEntry("hibernate.connection.driver_class", "org.h2.Driver")
+            .containsEntry("hibernate.connection.url", "jdbc:h2:mem:testdb")
+            .containsEntry("hibernate.connection.username", "sa")
+            .containsEntry("hibernate.connection.password", "secret");
+    }
+
+    @Test
+    void toConnectionSettings_withMissingOrNullValues_ignoresNullEntries() {
+        Map<String, String> connectionProps = new HashMap<>();
+        connectionProps.put("driver", "org.h2.Driver");
+        connectionProps.put("url", "jdbc:h2:mem:testdb");
+        connectionProps.put("username", "sa");
+        connectionProps.put("password", null);
+
+        Map<String, Object> result = HibernateUtil.toConnectionSettings(connectionProps);
+
+        assertThat(result)
+            .isNotNull()
+            .hasSize(3)
+            .containsEntry("hibernate.connection.driver_class", "org.h2.Driver")
+            .containsEntry("hibernate.connection.url", "jdbc:h2:mem:testdb")
+            .containsEntry("hibernate.connection.username", "sa")
+            .doesNotContainKey("hibernate.connection.password");
+    }
+
+    @Test
+    void toConnectionSettings_withNullOrEmptyMap_returnsEmptyMap() {
+        assertThat(HibernateUtil.toConnectionSettings(null))
+            .isNotNull()
+            .isEmpty();
+
+        assertThat(HibernateUtil.toConnectionSettings(Collections.emptyMap()))
+            .isNotNull()
+            .isEmpty();
+    }
+
+    @Test
+    void toConnectionSettings_ignoresUnknownKeys() {
+        Map<String, String> connectionProps = Map.of(
+            "url", "jdbc:h2:mem:testdb",
+            "unknown.key", "someValue"
+        );
+
+        Map<String, Object> result = HibernateUtil.toConnectionSettings(connectionProps);
+
+        assertThat(result)
+            .isNotNull()
+            .hasSize(1)
+            .containsEntry("hibernate.connection.url", "jdbc:h2:mem:testdb")
+            .doesNotContainKey("unknown.key");
+    }
+
+    @Test
     void convertSettings_withValidOptions_returnsConvertedMap() {
         Map<String, Object> settings = Map.of(
                 HibernateEnhancerOption.LAZY_INITIALIZATION.value(), Boolean.TRUE,

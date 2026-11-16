@@ -21,6 +21,7 @@ import persistence.tools.SchemaValidator;
 import persistence.tools.spi.SchemaValidatorFactory;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * {@link SchemaValidatorFactory} implementation for the legacy
@@ -41,8 +42,8 @@ public class HibernateSchemaValidatorFactory extends HibernatePersistenceLinterF
 
     /** {@inheritDoc} */
     @Override
-    public SchemaValidator newSchemaValidator(List<String> discoveredClassNames) {
-        return HibernateSchemaValidator.of(discoveredClassNames);
+    public SchemaValidator newSchemaValidator(List<String> discoveredClassNames, Map<String, Object> settings) {
+        return HibernateSchemaValidator.of(discoveredClassNames, settings);
     }
 
 }
