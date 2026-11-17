@@ -15,11 +15,11 @@ By decoupling tooling contracts from specific persistence providers, the core AP
 
 | Module | Artifact | Version | Description |
 |:---|:---|:---|:---|
-| **`persistence-tools-api`** | `io.github.jpersist.tools:persistence-tools-api` | `4.0.0` | Defines the vendor-agnostic public contracts and Service Provider Interfaces (SPIs): `PersistenceServiceProvider` (shared root), `PersistenceLinter` / `PersistenceLinterFactory` (linting contracts), `NamedObjectParser` / `NamedObjectParserFactory` (named query & stored procedure validation; `AutoCloseable`), `SchemaValidator` / `SchemaValidatorFactory` (database schema validation), and `Enhancer` / `EnhancerProvider` (bytecode enhancement). Contains no vendor-specific implementation; provider modules are discovered dynamically at runtime via the Java `ServiceLoader` mechanism. |
-| **`hibernate-base-persistence-tools`** | `io.github.jpersist.tools:hibernate-base-persistence-tools` | `1.0.0` | Shared base module for Hibernate implementations. Provides common enhancement configuration options (`HibernateEnhancerOption`) and shared reflection, URL, and class-loading utilities (`HibernateUtil`). Transitively exposes `persistence-tools-api`. |
-| **`hibernate-orm-persistence-tools`** | `io.github.jpersist.tools:hibernate-orm-persistence-tools` | `2.0.0` | Jakarta Persistence (JPA 3.x / `jakarta.*` namespace) reference implementation. Powered by **Hibernate ORM 6** to compile JPQL queries into Semantic Query Model (SQM) trees, validate persistence schemas against a live database, and enhance entity bytecode. |
-| **`hibernate-persistence-tools`** | `io.github.jpersist.tools:hibernate-persistence-tools` | `1.0.0` | Legacy Java Persistence (JPA 2.x / `javax.*` namespace) reference implementation. Powered by **Hibernate 5** to validate JPQL queries using AST query translation, validate database schemas, and enhance entity bytecode. |
-| **`persistence-tools-bom`** | `io.github.jpersist.tools:persistence-tools-bom` | `4.0.0` | Bill of Materials (BOM) for convenient, aligned dependency management across all Persistence Tools modules. |
+| **`persistence-tools-api`** | `io.github.jpersist.tools:persistence-tools-api` | `4.1.0` | Defines the vendor-agnostic public contracts and Service Provider Interfaces (SPIs): `PersistenceServiceProvider` (shared root), `PersistenceLinter` / `PersistenceLinterFactory` (linting contracts), `NamedObjectParser` / `NamedObjectParserFactory` (named query & stored procedure validation; `AutoCloseable`), `SchemaValidator` / `SchemaValidatorFactory` (database schema validation), and `Enhancer` / `EnhancerProvider` (bytecode enhancement). Contains no vendor-specific implementation; provider modules are discovered dynamically at runtime via the Java `ServiceLoader` mechanism. |
+| **`hibernate-base-persistence-tools`** | `io.github.jpersist.tools:hibernate-base-persistence-tools` | `1.1.0` | Shared base module for Hibernate implementations. Provides common enhancement configuration options (`HibernateEnhancerOption`) and shared reflection, URL, and class-loading utilities (`HibernateUtil`). Transitively exposes `persistence-tools-api`. |
+| **`hibernate-orm-persistence-tools`** | `io.github.jpersist.tools:hibernate-orm-persistence-tools` | `2.1.0` | Jakarta Persistence (JPA 3.x / `jakarta.*` namespace) reference implementation. Powered by **Hibernate ORM 6** to compile JPQL queries into Semantic Query Model (SQM) trees, validate persistence schemas against a live database, and enhance entity bytecode. |
+| **`hibernate-persistence-tools`** | `io.github.jpersist.tools:hibernate-persistence-tools` | `1.1.0` | Legacy Java Persistence (JPA 2.x / `javax.*` namespace) reference implementation. Powered by **Hibernate 5** to validate JPQL queries using AST query translation, validate database schemas, and enhance entity bytecode. |
+| **`persistence-tools-bom`** | `io.github.jpersist.tools:persistence-tools-bom` | `4.1.0` | Bill of Materials (BOM) for convenient, aligned dependency management across all Persistence Tools modules. |
 
 ---
 
@@ -31,7 +31,7 @@ By decoupling tooling contracts from specific persistence providers, the core AP
 
 ```groovy
 dependencies {
-    implementation platform('io.github.jpersist.tools:persistence-tools-bom:4.0.0')
+    implementation platform('io.github.jpersist.tools:persistence-tools-bom:4.1.0')
 
     // Vendor-agnostic Persistence Tools API
     implementation 'io.github.jpersist.tools:persistence-tools-api'
@@ -45,7 +45,7 @@ dependencies {
 
 ```groovy
 dependencies {
-    implementation platform('io.github.jpersist.tools:persistence-tools-bom:4.0.0')
+    implementation platform('io.github.jpersist.tools:persistence-tools-bom:4.1.0')
 
     // Vendor-agnostic Persistence Tools API
     implementation 'io.github.jpersist.tools:persistence-tools-api'
@@ -90,7 +90,12 @@ import persistence.tools.spi.NamedObjectParserFactory;
 
 NamedObjectParserFactory factory = NamedObjectParserFactory.newNamedObjectParserFactory("3.1");
 
-try (NamedObjectParser parser = factory.newNamedObjectParser(entityClassNames)) {
+// Optional: customize provider settings (merged over predefined offline defaults)
+Map<String, Object> settings = Map.of(
+    "hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect"
+);
+
+try (NamedObjectParser parser = factory.newNamedObjectParser(entityClassNames, settings)) {
     // Validate a named JPQL query
     NamedObjectDescriptor queryDescriptor = parser.parseQuery(
         "Order.findByStatus",
@@ -104,7 +109,7 @@ try (NamedObjectParser parser = factory.newNamedObjectParser(entityClassNames)) 
 }
 ```
 
-> **Note:** `NamedObjectParser` implements `AutoCloseable`. Always use try-with-resources to ensure underlying provider resources and registries are properly released.
+> **Note:** `NamedObjectParser` implements `AutoCloseable`. Always use try-with-resources to ensure underlying provider resources and registries are properly released. See the [Hibernate ORM 6 API Docs](https://jpersist.github.io/persistence/tools/hibernate-orm/api/latest/) or [Hibernate 5 API Docs](https://jpersist.github.io/persistence/tools/hibernate/api/latest/) for full details on default, overridable, and enforced settings.
 
 ### 4. Validate persistence schema against a live database
 
@@ -115,7 +120,14 @@ import persistence.tools.SchemaValidator;
 import persistence.tools.spi.SchemaValidatorFactory;
 
 SchemaValidatorFactory factory = SchemaValidatorFactory.newSchemaValidatorFactory("3.1");
-SchemaValidator validator = factory.newSchemaValidator(entityClassNames);
+
+// Optional: customize provider settings (merged with defaults and JDBC connection properties)
+Map<String, Object> settings = Map.of(
+    "hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect",
+    "hibernate.default_schema", "public"
+);
+
+SchemaValidator validator = factory.newSchemaValidator(entityClassNames, settings);
 
 validator.validateSchema(Map.of(
     "driver",   "org.postgresql.Driver",
@@ -124,6 +136,8 @@ validator.validateSchema(Map.of(
     "password", "secret"
 ));
 ```
+
+> **Tip:** Refer to the [Hibernate ORM 6 API Docs](https://jpersist.github.io/persistence/tools/hibernate-orm/api/latest/) and [Hibernate 5 API Docs](https://jpersist.github.io/persistence/tools/hibernate/api/latest/) for the complete configuration reference and precedence rules.
 
 All factory methods accept JPA version strings (`"2.0"` – `"2.2"` for legacy `javax`, `"3.0"` – `"3.2"` for `jakarta`) and resolve the matching registered provider via Java's `ServiceLoader` API. Overloaded factory methods accepting explicit `ClassLoader` and `ModuleLayer` parameters are available for advanced and custom modular runtime environments.
 
@@ -185,7 +199,7 @@ module com.example.myapp {
 ```
 persistence-tools-api  (Vendor-Agnostic SPI & Public Contracts)
  ├── persistence.tools
- │    ├── Enhancer                         — bytecode enhancement contract
+ │    ├── Enhancer                          — bytecode enhancement contract
  │    ├── NamedObjectParser                 — named query & stored procedure parser (AutoCloseable)
  │    ├── NamedObjectDescriptor             — immutable metadata result for parsed objects
  │    ├── NamedObjectType                   — QUERY or STORED_PROCEDURE
@@ -201,7 +215,7 @@ persistence-tools-api  (Vendor-Agnostic SPI & Public Contracts)
 hibernate-base-persistence-tools  (Shared Hibernate Infrastructure)
  └── hibernate.base.persistence.tools
       ├── HibernateEnhancerOption           — standardized enhancement configuration option keys
-      └── HibernateUtil                     — settings conversion, URL & ClassLoader utilities
+      └── HibernateUtil                     — settings merging, connection mapping, URL & ClassLoader utilities
 
 hibernate-orm-persistence-tools  (Reference Implementation — "jakarta" namespace / Hibernate ORM 6)
  ├── hibernate.jakarta.persistence.tools.provider
@@ -210,10 +224,12 @@ hibernate-orm-persistence-tools  (Reference Implementation — "jakarta" namespa
  │    ├── HibernateNamedObjectParserFactory
  │    ├── HibernateSchemaValidatorFactory
  │    └── HibernateEnhancerProvider
- └── hibernate.jakarta.persistence.tools
-      ├── HibernateNamedObjectParser        — SQM-based query validation
-      ├── HibernateSchemaValidator          — Hibernate 6 schema validation
-      └── HibernateEnhancer                 — Hibernate 6 bytecode enhancement
+ ├── hibernate.jakarta.persistence.tools
+ │    ├── HibernateNamedObjectParser        — SQM-based query validation
+ │    ├── HibernateSchemaValidator          — Hibernate 6 schema validation
+ │    └── HibernateEnhancer                 — Hibernate 6 bytecode enhancement
+ └── hibernate.jakarta.persistence.tools.internal
+      └── NoOpConnectionProvider            — offline connection provider suppressing HHH000181 logs
 
 hibernate-persistence-tools  (Reference Implementation — "javax" namespace / Hibernate 5)
  ├── hibernate.javax.persistence.tools.provider
@@ -222,10 +238,12 @@ hibernate-persistence-tools  (Reference Implementation — "javax" namespace / H
  │    ├── HibernateNamedObjectParserFactory
  │    ├── HibernateSchemaValidatorFactory
  │    └── HibernateEnhancerProvider
- └── hibernate.javax.persistence.tools
-      ├── HibernateNamedObjectParser        — AST-based query validation
-      ├── HibernateSchemaValidator          — Hibernate 5 schema validation
-      └── HibernateEnhancer                 — Hibernate 5 bytecode enhancement
+ ├── hibernate.javax.persistence.tools
+ │    ├── HibernateNamedObjectParser        — AST-based query validation
+ │    ├── HibernateSchemaValidator          — Hibernate 5 schema validation
+ │    └── HibernateEnhancer                 — Hibernate 5 bytecode enhancement
+ └── hibernate.javax.persistence.tools.internal
+      └── NoOpConnectionProvider            — offline connection provider suppressing HHH000181 logs
 
 persistence-tools-bom  (Bill of Materials)
  └── Aligns versions of all API, base, and Hibernate provider modules

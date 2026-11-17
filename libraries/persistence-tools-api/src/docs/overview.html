@@ -77,15 +77,15 @@
     </li>
     <li>
         <strong>{@link persistence.tools.spi.EnhancerProvider}</strong> &mdash; Factory SPI for discovering
-        and instantiating namespace-specific bytecode enhancers.
+        and instantiating namespace-specific bytecode enhancers with default or customized enhancement settings.
     </li>
     <li>
         <strong>{@link persistence.tools.spi.NamedObjectParserFactory}</strong> &mdash; Factory SPI for creating
-        named object query and procedure parsers.
+        named object query and procedure parsers with default or custom configuration settings.
     </li>
     <li>
         <strong>{@link persistence.tools.spi.SchemaValidatorFactory}</strong> &mdash; Factory SPI for creating
-        database schema validators.
+        database schema validators with default or custom configuration settings.
     </li>
     <li>
         <strong>{@link persistence.tools.spi.PersistenceLinterFactory}</strong> &mdash; Generic base factory SPI
@@ -94,6 +94,29 @@
 </ul>
 
 <h2>Service Discovery and Usage</h2>
+
+<h3>Custom Configuration Settings</h3>
+<p>
+    Persistence service provider factories ({@link persistence.tools.spi.EnhancerProvider},
+    {@link persistence.tools.spi.NamedObjectParserFactory}, and {@link persistence.tools.spi.SchemaValidatorFactory})
+    overload their factory methods with a {@code Map<String, Object> settings} parameter. This feature enables
+    consumers to override default service implementation settings when instantiating tools, while also supporting
+    convenient overloads that use default settings when custom configuration is omitted:
+</p>
+<ul>
+    <li>
+        {@link persistence.tools.spi.EnhancerProvider#getEnhancer(java.util.Collection, java.util.Map)} and
+        {@link persistence.tools.spi.EnhancerProvider#getEnhancer(java.util.Collection)}
+    </li>
+    <li>
+        {@link persistence.tools.spi.NamedObjectParserFactory#newNamedObjectParser(java.util.List, java.util.Map)} and
+        {@link persistence.tools.spi.NamedObjectParserFactory#newNamedObjectParser(java.util.List)}
+    </li>
+    <li>
+        {@link persistence.tools.spi.SchemaValidatorFactory#newSchemaValidator(java.util.List, java.util.Map)} and
+        {@link persistence.tools.spi.SchemaValidatorFactory#newSchemaValidator(java.util.List)}
+    </li>
+</ul>
 
 <h3>Bytecode Enhancement</h3>
 <p>
@@ -113,11 +136,12 @@ byte[] enhancedBytes = enhancer.enhance("com.example.Order", originalBytecode);
 <h3>Named Query and Stored Procedure Validation</h3>
 <p>
     Obtain a parser factory via
-    {@link persistence.tools.spi.NamedObjectParserFactory#newNamedObjectParserFactory(String)}:
+    {@link persistence.tools.spi.NamedObjectParserFactory#newNamedObjectParserFactory(String)}.
+    Parsers can be created with default settings or with custom configuration settings:
 </p>
 <pre>{@code
 NamedObjectParserFactory factory = NamedObjectParserFactory.newNamedObjectParserFactory("3.1");
-try (NamedObjectParser parser = factory.newNamedObjectParser(entityClassNames)) {
+try (NamedObjectParser parser = factory.newNamedObjectParser(entityClassNames, settings)) {
     NamedObjectDescriptor queryDesc = parser.parseQuery(
         "Order.findByStatus", "SELECT o FROM Order o WHERE o.status = :status");
 
@@ -129,11 +153,12 @@ try (NamedObjectParser parser = factory.newNamedObjectParser(entityClassNames)) 
 <h3>Database Schema Validation</h3>
 <p>
     Obtain a schema validator factory via
-    {@link persistence.tools.spi.SchemaValidatorFactory#newSchemaValidatorFactory(String)}:
+    {@link persistence.tools.spi.SchemaValidatorFactory#newSchemaValidatorFactory(String)}.
+    Validators can be created with default settings or configured with a settings map:
 </p>
 <pre>{@code
 SchemaValidatorFactory factory = SchemaValidatorFactory.newSchemaValidatorFactory("3.1");
-SchemaValidator validator = factory.newSchemaValidator(entityClassNames);
+SchemaValidator validator = factory.newSchemaValidator(entityClassNames, settings);
 validator.validateSchema(Map.of(
     "driver",   "org.h2.Driver",
     "url",      "jdbc:h2:mem:testdb",

@@ -20,6 +20,7 @@ import persistence.tools.Enhancer;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -47,11 +48,25 @@ public interface EnhancerProvider extends PersistenceServiceProvider {
 
     /**
      * Creates an {@link Enhancer} configured with the given
+     * classpath and default enhancement settings.
+     *
+     * @param classpathFilesCollection additional classpath entries required for
+     *                                 enhancement (e.g.&nbsp;persistence API and provider JARs)
+     * @return a new enhancer instance
+     * @since 4.1.0
+     */
+    default Enhancer getEnhancer(Collection<Set<File>> classpathFilesCollection) {
+        return getEnhancer(classpathFilesCollection, Collections.emptyMap());
+    }
+
+    /**
+     * Creates an {@link Enhancer} configured with the given
      * classpath and enhancement settings.
      *
      * @param classpathFilesCollection additional classpath entries required for
      *                                 enhancement (e.g.&nbsp;persistence API and provider JARs)
-     * @param settings                 a map of enhancement settings and option flags
+     * @param settings                 a map of enhancement settings and option flags allowing
+     *                                 consumers to override default service implementation settings
      * @return a new enhancer instance
      */
     Enhancer getEnhancer(Collection<Set<File>> classpathFilesCollection,

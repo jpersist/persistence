@@ -24,7 +24,8 @@
  *   <li>{@link hibernate.base.persistence.tools.HibernateEnhancerOption} &ndash; Enumeration of
  *       bytecode enhancement configuration options and their associated property keys.</li>
  *   <li>{@link hibernate.base.persistence.tools.HibernateUtil} &ndash; Shared utility methods for
- *       class loader creation, file-to-URL conversion, and enhancer setting mapping.</li>
+ *       merging configuration settings, class loader creation, file-to-URL conversion, and enhancer
+ *       setting mapping.</li>
  * </ul>
  *
  * @since 1.0.0

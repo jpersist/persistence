@@ -23,6 +23,7 @@ import persistence.tools.NamedObjectDescriptor;
 import persistence.tools.NamedObjectType;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.*;
@@ -141,6 +142,73 @@ class HibernateNamedObjectParserTest {
         assertThat(descriptor.name()).isEqualTo("Report.generateMonthly");
         assertThat(descriptor.value()).isEqualTo("sp_generate_report");
         assertThat(descriptor.namedParameters()).containsExactly("month");
+    }
+
+    @Test
+    void from_withCustomDialectSetting_compilesQueriesSuccessfully() throws Exception {
+        Map<String, Object> customSettings = Map.of(
+            "hibernate.dialect", "org.hibernate.dialect.PostgreSQL10Dialect"
+        );
+
+        try (var customParser = HibernateNamedObjectParser.from(List.of(TestEntity.class.getName()), customSettings)) {
+            NamedObjectDescriptor descriptor = customParser.parseQuery(
+                "TestEntity.findByNamePostgres",
+                "SELECT e FROM TestEntity e WHERE e.name = :name");
+
+            assertThat(descriptor).isNotNull();
+            assertThat(descriptor.namedParameters()).containsExactly("name");
+        }
+    }
+
+    @Test
+    void from_withConsumerSettings_overridesDefaultSettings() throws Exception {
+        Map<String, Object> customSettings = Map.of(
+            "hibernate.dialect", "org.hibernate.dialect.PostgreSQL10Dialect",
+            "hibernate.implicit_naming_strategy", "org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl"
+        );
+
+        try (var customParser = HibernateNamedObjectParser.from(List.of(TestEntity.class.getName()), customSettings)) {
+            assertThatCode(() ->
+                customParser.parseQuery(
+                    "TestEntity.findByName",
+                    "SELECT e FROM TestEntity e WHERE e.name = :name"))
+                .doesNotThrowAnyException();
+        }
+    }
+
+    @Test
+    void from_withAttemptedHbm2ddlOverride_enforcesNoneInvariant() throws Exception {
+        // If 'validate' or 'create' were not blocked by ENFORCED_SETTINGS, Hibernate would
+        // invoke NoOpConnectionProvider.getConnection() and fail with UnsupportedOperationException
+        Map<String, Object> unsafeSettings = Map.of(
+            "hibernate.hbm2ddl.auto", "validate"
+        );
+
+        try (var safeParser = HibernateNamedObjectParser.from(List.of(TestEntity.class.getName()), unsafeSettings)) {
+            assertThat(safeParser).isNotNull();
+            assertThatCode(() -> safeParser.parseQuery("TestEntity.findAll", "SELECT e FROM TestEntity e"))
+                .doesNotThrowAnyException();
+        }
+    }
+
+    @Test
+    void from_withNullSettings_usesDefaultsSafely() throws Exception {
+        try (var defaultParser = HibernateNamedObjectParser.from(List.of(TestEntity.class.getName()), null)) {
+            assertThat(defaultParser).isNotNull();
+            assertThatCode(() -> defaultParser.parseQuery("TestEntity.findAll", "SELECT e FROM TestEntity e"))
+                .doesNotThrowAnyException();
+        }
+    }
+
+    @Test
+    void from_withInvalidDialect_throwsExceptionCleanly() {
+        Map<String, Object> invalidSettings = Map.of(
+            "hibernate.dialect", "org.hibernate.dialect.NonExistentDialect"
+        );
+
+        assertThatThrownBy(() ->
+            HibernateNamedObjectParser.from(List.of(TestEntity.class.getName()), invalidSettings))
+            .isInstanceOf(Exception.class);
     }
 
     @AfterEach

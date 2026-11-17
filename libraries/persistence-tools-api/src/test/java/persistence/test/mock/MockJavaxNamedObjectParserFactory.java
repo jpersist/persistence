@@ -21,6 +21,7 @@ import persistence.tools.NamedObjectParser;
 import persistence.tools.spi.NamedObjectParserFactory;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class MockJavaxNamedObjectParserFactory extends MockJavaxPersistenceServiceProvider implements NamedObjectParserFactory {
@@ -29,7 +30,7 @@ public class MockJavaxNamedObjectParserFactory extends MockJavaxPersistenceServi
     }
 
     @Override
-    public NamedObjectParser newNamedObjectParser(List<String> discoveredClassNames) {
+    public NamedObjectParser newNamedObjectParser(List<String> discoveredClassNames, Map<String, Object> settings) {
         return new NamedObjectParser() {
             @Override
             public NamedObjectDescriptor parseQuery(String name, String queryString) {

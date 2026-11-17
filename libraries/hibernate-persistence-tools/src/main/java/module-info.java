@@ -30,6 +30,7 @@ module io.github.jpersist.tools.hibernate {
     // Note: 'org.hibernate.orm.core' is the module name assigned to Hibernate 5.x core JARs
     requires org.hibernate.orm.core;
     requires java.persistence;
+    requires java.sql;
 
     // 4. Register legacy linter and validator factories into the native ServiceLoader
     provides persistence.tools.spi.NamedObjectParserFactory
@@ -42,6 +43,7 @@ module io.github.jpersist.tools.hibernate {
     provides persistence.tools.spi.EnhancerProvider
         with hibernate.javax.persistence.tools.provider.HibernateEnhancerProvider;
 
-    // 6. Maintain strict implementation encapsulation
-    // No packages are exported since interaction happens entirely behind the API module SPIs.
+    // 6. Grant Hibernate 5 reflective access to instantiate internal SPI providers (e.g. NoOpConnectionProvider)
+    // without exporting the package at compile time
+    opens hibernate.javax.persistence.tools.internal to org.hibernate.orm.core;
 }

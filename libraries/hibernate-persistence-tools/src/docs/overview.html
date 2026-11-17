@@ -14,7 +14,7 @@
   ~ limitations under the License.
   -->
 
-<html>
+<html lang="en">
 <body>
 <h1>Persistence Tools &mdash; Hibernate 5 Provider</h1>
 <p>
@@ -58,6 +58,125 @@
     metamodel against a target database schema via JDBC, ensuring tables, columns, data types, and foreign key
     constraints conform to JPA mappings.
 </p>
+
+<h2>Configuration &amp; Settings Reference</h2>
+<p>
+    Both {@link io.github.jpersist.tools.hibernate/hibernate.javax.persistence.tools.HibernateNamedObjectParser} and
+    {@link io.github.jpersist.tools.hibernate/hibernate.javax.persistence.tools.HibernateSchemaValidator} accept consumer-supplied configuration
+    maps via their factory overloads (<code>Map&lt;String, Object&gt;</code>), merged using
+    {@link hibernate.base.persistence.tools.HibernateUtil#mergeSettings}.
+</p>
+
+<h3>Named Object Parser Settings</h3>
+<p>
+    Consumer settings override predefined defaults, while enforced invariants cannot be overwritten:
+</p>
+
+<table class="striped">
+    <caption>Named Object Parser Configuration Properties</caption>
+    <thead>
+    <tr>
+        <th>Property Key</th>
+        <th>Tier</th>
+        <th>Value</th>
+        <th>Purpose</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>{@code hibernate.dialect}</td>
+        <td>Default</td>
+        <td>{@code org.hibernate.dialect.H2Dialect}</td>
+        <td>Baseline SQL dialect for offline HQL function resolution (overridable).</td>
+    </tr>
+    <tr>
+        <td>{@code hibernate.temp.use_jdbc_metadata_defaults}</td>
+        <td>Default</td>
+        <td>{@code "false"}</td>
+        <td>Blocks background JDBC metadata lookups during offline bootstrap.</td>
+    </tr>
+    <tr>
+        <td>{@code hibernate.connection.provider_class}</td>
+        <td>Default</td>
+        <td>{@code ...internal.NoOpConnectionProvider}</td>
+        <td>Suppresses <code>HHH000181</code> startup logs when no data source is configured.</td>
+    </tr>
+    <tr>
+        <td>{@code hibernate.jpa.compliance.query}</td>
+        <td>Default</td>
+        <td>{@code "true"}</td>
+        <td>Enforces strict JPA 2.2 JPQL compliance rules by default.</td>
+    </tr>
+    <tr>
+        <td>{@code hibernate.bytecode.provider}</td>
+        <td>Default</td>
+        <td>{@code "none"}</td>
+        <td>Disables runtime bytecode enhancement routines during offline linting.</td>
+    </tr>
+    <tr>
+        <td>{@code hibernate.hbm2ddl.auto}</td>
+        <td><b>Enforced</b></td>
+        <td>{@code "none"}</td>
+        <td>Guarantees schema DDL mutations remain disabled during query linting.</td>
+    </tr>
+    </tbody>
+</table>
+
+<h3>Schema Validator Configuration Properties</h3>
+<p>
+    Factory settings override predefined defaults, and JDBC connection properties passed to
+    <code>validateSchema(Map&lt;String, String&gt;)</code> take final precedence:
+</p>
+
+<table class="striped">
+    <caption>Schema Validator Settings</caption>
+    <thead>
+    <tr>
+        <th>Property Key / Connection Key</th>
+        <th>Tier</th>
+        <th>Value / Mapping</th>
+        <th>Purpose</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>{@code hibernate.dialect}</td>
+        <td>Default</td>
+        <td>{@code org.hibernate.dialect.H2Dialect}</td>
+        <td>Baseline SQL dialect when not overridden or auto-detected (overridable).</td>
+    </tr>
+    <tr>
+        <td>{@code hibernate.temp.use_jdbc_metadata_defaults}</td>
+        <td>Default</td>
+        <td>{@code "true"}</td>
+        <td>Enables JDBC metadata inspection against the target database.</td>
+    </tr>
+    <tr>
+        <td>{@code driver}</td>
+        <td><b>Required</b> (Connection)</td>
+        <td>&rarr; {@code hibernate.connection.driver_class}</td>
+        <td>Fully qualified JDBC driver class name.</td>
+    </tr>
+    <tr>
+        <td>{@code url}</td>
+        <td><b>Required</b> (Connection)</td>
+        <td>&rarr; {@code hibernate.connection.url}</td>
+        <td>Target JDBC database connection URL.</td>
+    </tr>
+    <tr>
+        <td>{@code username}</td>
+        <td>Optional (Connection)</td>
+        <td>&rarr; {@code hibernate.connection.username}</td>
+        <td>Database authentication username (ignored if {@code null}).</td>
+    </tr>
+    <tr>
+        <td>{@code password}</td>
+        <td>Optional (Connection)</td>
+        <td>&rarr; {@code hibernate.connection.password}</td>
+        <td>Database authentication password (ignored if {@code null}).</td>
+    </tr>
+    </tbody>
+</table>
 
 <h2>Service Provider Registrations</h2>
 <p>

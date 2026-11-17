@@ -20,6 +20,7 @@ import persistence.tools.SchemaValidator;
 import persistence.tools.spi.SchemaValidatorFactory;
 
 import java.util.List;
+import java.util.Map;
 
 public class MockJavaxSchemaValidatorFactory extends MockJavaxPersistenceServiceProvider implements SchemaValidatorFactory {
 
@@ -27,7 +28,7 @@ public class MockJavaxSchemaValidatorFactory extends MockJavaxPersistenceService
     }
 
     @Override
-    public SchemaValidator newSchemaValidator(List<String> discoveredClassNames) {
+    public SchemaValidator newSchemaValidator(List<String> discoveredClassNames, Map<String, Object> settings) {
         return connectionProperties -> {};
     }
 }

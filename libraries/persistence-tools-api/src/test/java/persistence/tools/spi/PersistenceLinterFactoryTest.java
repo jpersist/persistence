@@ -35,6 +35,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -43,7 +44,7 @@ class PersistenceLinterFactoryTest {
 
     public static class CustomNamedObjectParserFactory implements NamedObjectParserFactory {
         @Override
-        public NamedObjectParser newNamedObjectParser(List<String> discoveredClassNames) {
+        public NamedObjectParser newNamedObjectParser(List<String> discoveredClassNames, Map<String, Object> settings) {
             return null;
         }
 
@@ -55,7 +56,7 @@ class PersistenceLinterFactoryTest {
 
     public static class CustomSchemaValidatorFactory implements SchemaValidatorFactory {
         @Override
-        public SchemaValidator newSchemaValidator(List<String> discoveredClassNames) {
+        public SchemaValidator newSchemaValidator(List<String> discoveredClassNames, Map<String, Object> settings) {
             return null;
         }
 

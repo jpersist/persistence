@@ -4,10 +4,15 @@ on:
   workflow_call:
     inputs:
       tag:
-        description: 'The version tag to checkout and publish (e.g., api-v4.0.0)'
+        description: 'Release tag to checkout and publish (e.g., libs-v4.1.0 or api-v4.1.0)'
         required: false
         type: string
   workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag to checkout and publish (defaults to latest libs-v* or api-v* tag)'
+        required: false
+        type: string
 
 permissions:
   contents: write
@@ -22,24 +27,36 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out Repository
+      - name: Check out Repository History
         uses: actions/checkout@v7
         with:
-          ref: ${{ inputs.tag || github.ref }}
           fetch-depth: 0
 
-      - name: Resolve Documentation Version
-        id: version
+      - name: Resolve Release Tag and Checkout
+        id: release_tag
         run: |
-          if [ -n "${{ inputs.tag }}" ]; then
-            VERSION="${{ inputs.tag }}"
-            VERSION="${VERSION#api-v}"
-          elif [[ "${GITHUB_REF}" == refs/tags/api-v* ]]; then
-            VERSION="${GITHUB_REF#refs/tags/api-v}"
-          else
-            VERSION=$(grep '^version=' libraries/gradle.properties | cut -d'=' -f2)
-            VERSION="${VERSION%-SNAPSHOT}"
+          TARGET_TAG="${{ inputs.tag || github.event.inputs.tag }}"
+
+          if [ -z "${TARGET_TAG}" ] && [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            TARGET_TAG="${GITHUB_REF#refs/tags/}"
           fi
+
+          if [ -z "${TARGET_TAG}" ]; then
+            TARGET_TAG=$(git tag -l "libs-v*" "api-v*" | sort -V | tail -n1)
+          fi
+
+          if [ -z "${TARGET_TAG}" ]; then
+            echo "::error::No release tag provided and no existing 'libs-v*' or 'api-v*' tag found."
+            exit 1
+          fi
+
+          echo "Checking out release tag: ${TARGET_TAG}"
+          git checkout "refs/tags/${TARGET_TAG}"
+
+          VERSION=$(grep '^version=' libraries/persistence-tools-api/gradle.properties | cut -d'=' -f2)
+          VERSION="${VERSION%-SNAPSHOT}"
+
+          echo "tag=${TARGET_TAG}" >> "$GITHUB_OUTPUT"
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
 
       - name: Set up Java Development Kit
@@ -60,7 +77,7 @@ jobs:
 
       - name: Prepare Versioned Site
         run: |
-          VERSION="${{ steps.version.outputs.version }}"
+          VERSION="${{ steps.release_tag.outputs.version }}"
 
           # Publish to site/tools/specifications/api/{version} matching cross-reference links
           mkdir -p "site/tools/specifications/api/${VERSION}"

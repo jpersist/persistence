@@ -40,7 +40,7 @@ jobs:
       - name: Resolve Release and Next Versions
         id: versions
         run: |
-          CURRENT_VERSION=$(grep '^version=' libraries/gradle.properties | cut -d'=' -f2)
+          CURRENT_VERSION=$(grep '^version=' libraries/persistence-tools-api/gradle.properties | cut -d'=' -f2)
 
           if [ -n "${{ github.event.inputs.releaseVersion }}" ]; then
             RELEASE_VERSION="${{ github.event.inputs.releaseVersion }}"
@@ -77,21 +77,21 @@ jobs:
         working-directory: libraries
         run: |
           RELEASE_VERSION="${{ steps.versions.outputs.release_version }}"
-          sed -i "s/^version=.*/version=${RELEASE_VERSION}/" gradle.properties
+          sed -i "s/^version=.*/version=${RELEASE_VERSION}/" persistence-tools-api/gradle.properties
           ../gradlew :persistence-tools-api:build
 
       - name: Commit and Tag Release
         run: |
           RELEASE_VERSION="${{ steps.versions.outputs.release_version }}"
-          git add libraries/gradle.properties
+          git add libraries/persistence-tools-api/gradle.properties
           git commit -m "[API Release] - pre tag commit: '${RELEASE_VERSION}'."
           git tag -a "api-v${RELEASE_VERSION}" -m "Persistence Tools API Release api-v${RELEASE_VERSION}"
 
       - name: Set Next Development Version
         run: |
           NEXT_VERSION="${{ steps.versions.outputs.next_version }}"
-          sed -i "s/^version=.*/version=${NEXT_VERSION}/" libraries/gradle.properties
-          git add libraries/gradle.properties
+          sed -i "s/^version=.*/version=${NEXT_VERSION}/" libraries/persistence-tools-api/gradle.properties
+          git add libraries/persistence-tools-api/gradle.properties
           git commit -m "[API Release] - new version commit: '${NEXT_VERSION}'."
 
       - name: Push Changes and Tag
