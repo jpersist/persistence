@@ -37,7 +37,7 @@ jobs:
           elif [[ "${GITHUB_REF}" == refs/tags/api-v* ]]; then
             VERSION="${GITHUB_REF#refs/tags/api-v}"
           else
-            VERSION=$(grep '^version=' libraries/gradle.properties | cut -d'=' -f2)
+            VERSION=$(grep '^version=' libraries/persistence-tools-api/gradle.properties | cut -d'=' -f2)
             VERSION="${VERSION%-SNAPSHOT}"
           fi
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"

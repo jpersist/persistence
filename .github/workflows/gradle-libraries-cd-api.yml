@@ -60,7 +60,7 @@ jobs:
           elif [[ "${GITHUB_REF}" == refs/tags/api-v* ]]; then
             PUBLISH_VERSION="${GITHUB_REF#refs/tags/api-v}"
           else
-            PUBLISH_VERSION=$(grep '^version=' gradle.properties | cut -d'=' -f2)
+            PUBLISH_VERSION=$(grep '^version=' persistence-tools-api/gradle.properties | cut -d'=' -f2)
           fi
           ../gradlew :persistence-tools-api:publish -Pversion="${PUBLISH_VERSION}"
 

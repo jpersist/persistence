@@ -81,7 +81,7 @@ jobs:
 
           # Resolve component versions from inputs or fall back to current properties stripped of -SNAPSHOT
           API_VER="${{ inputs.releasedApiVersion }}"
-          if [ -z "${API_VER}" ]; then RAW=$(grep '^version=' gradle.properties | cut -d'=' -f2); API_VER="${RAW%-SNAPSHOT}"; fi
+          if [ -z "${API_VER}" ]; then RAW=$(grep '^version=' persistence-tools-api/gradle.properties | cut -d'=' -f2); API_VER="${RAW%-SNAPSHOT}"; fi
 
           BASE_VER="${{ inputs.releasedHibernateBaseVersion }}"
           if [ -z "${BASE_VER}" ]; then RAW=$(grep '^version=' hibernate-base-persistence-tools/gradle.properties | cut -d'=' -f2); BASE_VER="${RAW%-SNAPSHOT}"; fi

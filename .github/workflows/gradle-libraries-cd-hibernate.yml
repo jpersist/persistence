@@ -79,7 +79,7 @@ jobs:
           if [ -n "${{ inputs.releasedApiVersion }}" ]; then
             API_VERSION="${{ inputs.releasedApiVersion }}"
           else
-            RAW_API=$(grep '^version=' gradle.properties | cut -d'=' -f2)
+            RAW_API=$(grep '^version=' persistence-tools-api/gradle.properties | cut -d'=' -f2)
             API_VERSION="${RAW_API%-SNAPSHOT}"
           fi
 
