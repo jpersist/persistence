@@ -4,8 +4,12 @@ on:
   workflow_call:
     inputs:
       tag:
-        description: 'The version tag to checkout and publish (e.g., hibernate-v1.0.0 or hibernate-orm-v2.0.0)'
+        description: 'Release tag to checkout and publish (e.g., libs-v4.1.0, hibernate-v1.1.0, or hibernate-orm-v2.1.0)'
         required: true
+        type: string
+      providerModule:
+        description: 'Provider module when using a unified libs-v* tag'
+        required: false
         type: string
       releasedApiVersion:
         description: 'Published Persistence Tools API version for cross-linking'
@@ -20,6 +24,14 @@ on:
         options:
           - 'hibernate-persistence-tools'
           - 'hibernate-orm-persistence-tools'
+      tag:
+        description: 'Release tag to checkout (defaults to latest matching libs-v* or module release tag)'
+        required: false
+        type: string
+      releasedApiVersion:
+        description: 'Optional override for Published Persistence Tools API version'
+        required: false
+        type: string
 
 permissions:
   contents: write
@@ -34,45 +46,62 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out Repository
+      - name: Check out Repository History
         uses: actions/checkout@v7
         with:
-          ref: ${{ inputs.tag || github.ref }}
           fetch-depth: 0
 
-      - name: Resolve Documentation Target and Version
+      - name: Resolve Release Tag, Target Module, and Versions
         id: context
         run: |
-          ACTIVE_TAG="${{ inputs.tag }}"
-          if [[ "${ACTIVE_TAG}" == hibernate-orm-v* ]]; then
-            SUBFOLDER="hibernate-orm"
-            TASK_NAME="aggregateModernHibernateJavadoc"
-            VERSION="${ACTIVE_TAG#hibernate-orm-v}"
-          elif [[ "${ACTIVE_TAG}" == hibernate-v* ]]; then
-            SUBFOLDER="hibernate"
-            TASK_NAME="aggregateLegacyHibernateJavadoc"
-            VERSION="${ACTIVE_TAG#hibernate-v}"
-          elif [ "${{ github.event.inputs.providerModule }}" == "hibernate-orm-persistence-tools" ]; then
-            SUBFOLDER="hibernate-orm"
-            TASK_NAME="aggregateModernHibernateJavadoc"
-            TAG_VER=$(git tag -l "hibernate-orm-v*" | sort -V | tail -n1)
-            VERSION="${TAG_VER#hibernate-orm-v}"
-          else
-            SUBFOLDER="hibernate"
-            TASK_NAME="aggregateLegacyHibernateJavadoc"
-            TAG_VER=$(git tag -l "hibernate-v*" | sort -V | tail -n1)
-            VERSION="${TAG_VER#hibernate-v}"
+          ACTIVE_TAG="${{ inputs.tag || github.event.inputs.tag }}"
+          SELECTED_MODULE="${{ inputs.providerModule || github.event.inputs.providerModule }}"
+
+          if [ -z "${ACTIVE_TAG}" ] && [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            ACTIVE_TAG="${GITHUB_REF#refs/tags/}"
           fi
 
-          if [ -n "${{ inputs.releasedApiVersion }}" ]; then
-            API_VERSION="${{ inputs.releasedApiVersion }}"
+          if [ -z "${ACTIVE_TAG}" ]; then
+            if [ "${SELECTED_MODULE}" == "hibernate-orm-persistence-tools" ]; then
+              ACTIVE_TAG=$(git tag -l "libs-v*" "hibernate-orm-v*" | sort -V | tail -n1)
+            else
+              ACTIVE_TAG=$(git tag -l "libs-v*" "hibernate-v*" | sort -V | tail -n1)
+            fi
+          fi
+
+          if [ -z "${ACTIVE_TAG}" ]; then
+            echo "::error::No release tag provided and no matching release tag found."
+            exit 1
+          fi
+
+          echo "Checking out release tag: ${ACTIVE_TAG}"
+          git checkout "refs/tags/${ACTIVE_TAG}"
+
+          if [[ "${ACTIVE_TAG}" == hibernate-orm-v* ]] || [ "${SELECTED_MODULE}" == "hibernate-orm-persistence-tools" ]; then
+            MODULE_DIR="hibernate-orm-persistence-tools"
+            SUBFOLDER="hibernate-orm"
+            TASK_NAME="aggregateModernHibernateJavadoc"
+          elif [[ "${ACTIVE_TAG}" == hibernate-v* ]] || [ "${SELECTED_MODULE}" == "hibernate-persistence-tools" ]; then
+            MODULE_DIR="hibernate-persistence-tools"
+            SUBFOLDER="hibernate"
+            TASK_NAME="aggregateLegacyHibernateJavadoc"
           else
-            API_TAG=$(git tag -l "api-v*" | sort -V | tail -n1)
-            API_VERSION="${API_TAG#api-v}"
+            echo "::error::Cannot determine provider module from tag '${ACTIVE_TAG}'. Please specify providerModule."
+            exit 1
+          fi
+
+          VERSION=$(grep '^version=' "libraries/${MODULE_DIR}/gradle.properties" | cut -d'=' -f2)
+          VERSION="${VERSION%-SNAPSHOT}"
+
+          if [ -n "${{ inputs.releasedApiVersion || github.event.inputs.releasedApiVersion }}" ]; then
+            API_VERSION="${{ inputs.releasedApiVersion || github.event.inputs.releasedApiVersion }}"
+          else
+            API_VERSION=$(grep '^version=' libraries/persistence-tools-api/gradle.properties | cut -d'=' -f2)
+            API_VERSION="${API_VERSION%-SNAPSHOT}"
           fi
 
           if [ -z "${API_VERSION}" ]; then
-            echo "::error::No existing 'api-v*' API release tag found and no releasedApiVersion input provided. Please release the API module first."
+            echo "::error::Unable to resolve Persistence Tools API version for cross-linking."
             exit 1
           fi
 
