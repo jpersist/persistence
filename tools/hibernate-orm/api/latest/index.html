@@ -25,7 +25,7 @@ loadScripts(document, 'script');</script>
 <!-- ========= START OF TOP NAVBAR ======= -->
 <div class="top-nav" id="navbar-top"><button id="navbar-toggle-button" aria-controls="navbar-top" aria-expanded="false" aria-label="Toggle navigation links"><span class="nav-bar-toggle-icon">&nbsp;</span><span class="nav-bar-toggle-icon">&nbsp;</span><span class="nav-bar-toggle-icon">&nbsp;</span></button>
 <div class="skip-nav"><a href="#skip-navbar-top" title="Skip navigation links">Skip navigation links</a></div>
-<div class="about-language"><div style='padding: 4px 10px; background: rgba(255,255,255,0.15); border-radius: 4px; font-weight: bold;'>JPersist Suite &bull; v2.0.1-SNAPSHOT</div></div>
+<div class="about-language"><div style='padding: 4px 10px; background: rgba(255,255,255,0.15); border-radius: 4px; font-weight: bold;'>JPersist Suite &bull; v2.1.0</div></div>
 <ul id="navbar-top-firstrow" class="nav-list" title="Navigation">
 <li class="nav-bar-cell1-rev">Overview</li>
 <li>Module</li>
@@ -94,6 +94,163 @@ loadScripts(document, 'script');</script>
     constraints conform to JPA mappings.
 </p>
 
+<h2 id="configuration-settings-reference-heading">Configuration &amp; Settings Reference</h2>
+<p>
+    Both <a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/HibernateNamedObjectParser.html" title="class in hibernate.jakarta.persistence.tools"><code>HibernateNamedObjectParser</code></a> and
+    <a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/HibernateSchemaValidator.html" title="class in hibernate.jakarta.persistence.tools"><code>HibernateSchemaValidator</code></a> accept consumer-supplied configuration maps
+    via their factory overloads (<code>Map&lt;String, Object&gt;</code>), merged using <a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/HibernateUtil.html#mergeSettings(java.util.Map,java.util.Map)"><code>HibernateUtil.mergeSettings(java.util.Map&lt;java.lang.String, ?&gt;, java.util.Map&lt;java.lang.String, ?&gt;)</code></a>.
+</p>
+
+<h3 id="named-object-parser-settings-heading">Named Object Parser Settings</h3>
+<p>
+    Consumer settings override predefined defaults, while enforced invariants
+    cannot be overwritten:
+</p>
+
+<table class="striped">
+    <caption>Named Object Parser Configuration Properties</caption>
+    <thead>
+    <tr>
+        <th>Property Key</th>
+        <th>Tier</th>
+        <th>Value</th>
+        <th>Purpose</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td><code>hibernate.dialect</code></td>
+        <td>Default</td>
+        <td><code>org.hibernate.dialect.H2Dialect</code></td>
+        <td>
+            Baseline SQL dialect for offline SQM function resolution
+            (overridable).
+        </td>
+    </tr>
+    <tr>
+        <td><code>hibernate.boot.allow_jdbc_metadata_access</code></td>
+        <td>Default</td>
+        <td><code>"false"</code></td>
+        <td>
+            Explicitly disables background JDBC metadata connection passes.
+        </td>
+    </tr>
+    <tr>
+        <td><code>jakarta.persistence.database-product-version</code></td>
+        <td>Default</td>
+        <td><code>"2.2.224"</code></td>
+        <td>
+            Prevents Hibernate 6 from falling back to minimum H2 dialect
+            capabilities offline.
+        </td>
+    </tr>
+    <tr>
+        <td><code>hibernate.connection.provider_class</code></td>
+        <td>Default</td>
+        <td><code>...internal.NoOpConnectionProvider</code></td>
+        <td>
+            Suppresses <code>HHH000181</code> startup logs when no data source
+            is configured.
+        </td>
+    </tr>
+    <tr>
+        <td><code>hibernate.jpa.compliance.query</code></td>
+        <td>Default</td>
+        <td><code>"true"</code></td>
+        <td>
+            Enforces strict Jakarta Persistence query compliance rules by
+            default.
+        </td>
+    </tr>
+    <tr>
+        <td><code>hibernate.bytecode.provider</code></td>
+        <td>Default</td>
+        <td><code>"none"</code></td>
+        <td>
+            Disables runtime bytecode enhancement routines during offline
+            linting.
+        </td>
+    </tr>
+    <tr>
+        <td><code>hibernate.hbm2ddl.auto</code></td>
+        <td><b>Enforced</b></td>
+        <td><code>"none"</code></td>
+        <td>
+            Guarantees schema DDL mutations remain disabled during query
+            linting.
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<h3 id="schema-validator-settings-heading">Schema Validator Settings</h3>
+<p>
+    Factory settings override predefined defaults, and JDBC connection
+    properties passed to <code>validateSchema(Map&lt;String, String&gt;)</code>
+    take final precedence:
+</p>
+
+<table class="striped">
+    <caption>Schema Validator Configuration Properties</caption>
+    <thead>
+    <tr>
+        <th>Property Key / Connection Key</th>
+        <th>Tier</th>
+        <th>Value / Mapping</th>
+        <th>Purpose</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td><code>hibernate.dialect</code></td>
+        <td>Default</td>
+        <td><code>org.hibernate.dialect.H2Dialect</code></td>
+        <td>
+            Baseline SQL dialect when not overridden or auto-detected
+            (overridable).
+        </td>
+    </tr>
+    <tr>
+        <td><code>hibernate.boot.allow_jdbc_metadata_access</code></td>
+        <td>Default</td>
+        <td><code>"true"</code></td>
+        <td>
+            Enables JDBC metadata inspection against the target database.
+        </td>
+    </tr>
+    <tr>
+        <td><code>driver</code></td>
+        <td><strong>Required</strong> (Connection)</td>
+        <td>&rarr; <code>hibernate.connection.driver_class</code></td>
+        <td>Fully qualified JDBC driver class name.</td>
+    </tr>
+    <tr>
+        <td><code>url</code></td>
+        <td><strong>Required</strong> (Connection)</td>
+        <td>&rarr; <code>hibernate.connection.url</code></td>
+        <td>Target JDBC database connection URL.</td>
+    </tr>
+    <tr>
+        <td><code>username</code></td>
+        <td>Optional (Connection)</td>
+        <td>&rarr; <code>hibernate.connection.username</code></td>
+        <td>
+            Database authentication username
+            (ignored if <code>null</code>).
+        </td>
+    </tr>
+    <tr>
+        <td><code>password</code></td>
+        <td>Optional (Connection)</td>
+        <td>&rarr; <code>hibernate.connection.password</code></td>
+        <td>
+            Database authentication password
+            (ignored if <code>null</code>).
+        </td>
+    </tr>
+    </tbody>
+</table>
+
 <h2 id="service-provider-registrations-heading">Service Provider Registrations</h2>
 <p>
     The module implements and registers the following Service Provider Interfaces (SPI) declared in
@@ -101,23 +258,23 @@ loadScripts(document, 'script');</script>
 </p>
 <ul>
     <li>
-        <a href="https://jpersist.github.io/persistence/tools/specifications/api/4.0.0/io.github.jpersist.tools.api/persistence/tools/spi/NamedObjectParserFactory.html" title="class or interface in persistence.tools.spi" class="external-link"><code>NamedObjectParserFactory</code></a> &mdash; implemented by
+        <a href="https://jpersist.github.io/persistence/tools/specifications/api/4.1.0/io.github.jpersist.tools.api/persistence/tools/spi/NamedObjectParserFactory.html" title="class or interface in persistence.tools.spi" class="external-link"><code>NamedObjectParserFactory</code></a> &mdash; implemented by
         <a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/provider/HibernateNamedObjectParserFactory.html" title="class in hibernate.jakarta.persistence.tools.provider"><code>HibernateNamedObjectParserFactory</code></a>
     </li>
     <li>
-        <a href="https://jpersist.github.io/persistence/tools/specifications/api/4.0.0/io.github.jpersist.tools.api/persistence/tools/spi/SchemaValidatorFactory.html" title="class or interface in persistence.tools.spi" class="external-link"><code>SchemaValidatorFactory</code></a> &mdash; implemented by
+        <a href="https://jpersist.github.io/persistence/tools/specifications/api/4.1.0/io.github.jpersist.tools.api/persistence/tools/spi/SchemaValidatorFactory.html" title="class or interface in persistence.tools.spi" class="external-link"><code>SchemaValidatorFactory</code></a> &mdash; implemented by
         <a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/provider/HibernateSchemaValidatorFactory.html" title="class in hibernate.jakarta.persistence.tools.provider"><code>HibernateSchemaValidatorFactory</code></a>
     </li>
     <li>
-        <a href="https://jpersist.github.io/persistence/tools/specifications/api/4.0.0/io.github.jpersist.tools.api/persistence/tools/spi/EnhancerProvider.html" title="class or interface in persistence.tools.spi" class="external-link"><code>EnhancerProvider</code></a> &mdash; implemented by
+        <a href="https://jpersist.github.io/persistence/tools/specifications/api/4.1.0/io.github.jpersist.tools.api/persistence/tools/spi/EnhancerProvider.html" title="class or interface in persistence.tools.spi" class="external-link"><code>EnhancerProvider</code></a> &mdash; implemented by
         <a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/provider/HibernateEnhancerProvider.html" title="class in hibernate.jakarta.persistence.tools.provider"><code>HibernateEnhancerProvider</code></a>
     </li>
     <li>
-        <a href="https://jpersist.github.io/persistence/tools/specifications/api/4.0.0/io.github.jpersist.tools.api/persistence/tools/spi/PersistenceLinterFactory.html" title="class or interface in persistence.tools.spi" class="external-link"><code>PersistenceLinterFactory</code></a> &mdash; base implementation
+        <a href="https://jpersist.github.io/persistence/tools/specifications/api/4.1.0/io.github.jpersist.tools.api/persistence/tools/spi/PersistenceLinterFactory.html" title="class or interface in persistence.tools.spi" class="external-link"><code>PersistenceLinterFactory</code></a> &mdash; base implementation
         <a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/provider/HibernatePersistenceLinterFactory.html" title="class in hibernate.jakarta.persistence.tools.provider"><code>HibernatePersistenceLinterFactory</code></a>
     </li>
     <li>
-        <a href="https://jpersist.github.io/persistence/tools/specifications/api/4.0.0/io.github.jpersist.tools.api/persistence/tools/spi/PersistenceServiceProvider.html" title="class or interface in persistence.tools.spi" class="external-link"><code>PersistenceServiceProvider</code></a> &mdash; base implementation
+        <a href="https://jpersist.github.io/persistence/tools/specifications/api/4.1.0/io.github.jpersist.tools.api/persistence/tools/spi/PersistenceServiceProvider.html" title="class or interface in persistence.tools.spi" class="external-link"><code>PersistenceServiceProvider</code></a> &mdash; base implementation
         <a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/provider/HibernatePersistenceServiceProvider.html" title="class in hibernate.jakarta.persistence.tools.provider"><code>HibernatePersistenceServiceProvider</code></a>
     </li>
 </ul>
