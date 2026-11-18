@@ -448,9 +448,9 @@ class JakartaPersistencePlugin implements Plugin<Project> {
             // 1. Add pure compiled java entity classes directories ONLY (No resources included)
             task.getClasspath().from(sourceSet.output.classesDirs)
 
-            // 2. Add external framework dependencies from compileClasspath configuration
-            // compileClasspath contains Hibernate/EclipseLink but does NOT track processResources outputs!
-            task.getClasspath().from(project.configurations.named(sourceSet.compileClasspathConfigurationName))
+            // 2. Add external framework dependencies from runtimeClasspath configuration
+            // runtimeClasspath contains Hibernate/EclipseLink but does NOT track processResources outputs!
+            task.getClasspath().from(project.configurations.named(sourceSet.runtimeClasspathConfigurationName))
 
             // 3. 🌟 OPTIMIZED TOOLSET EXTRACTION: Direct extraction from active Plugin ClassLoader
             task.getClasspath().from(resolvePersistenceToolsFiles(project, extension.version))
@@ -511,7 +511,7 @@ class JakartaPersistencePlugin implements Plugin<Project> {
 
             // Feed compilation runtime configurations safely using execution views
             task.classpath.from(sourceSet.output.classesDirs)
-            task.classpath.from(project.configurations.named(sourceSet.compileClasspathConfigurationName))
+            task.classpath.from(project.configurations.named(sourceSet.runtimeClasspathConfigurationName))
 
             // Ensure the plugin's own compiled files directory is attached to locate the worker classes
             task.classpath.from(resolvePersistenceToolsFiles(project, extension.version))

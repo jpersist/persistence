@@ -93,7 +93,7 @@ abstract class LintNamedQueries extends DefaultTask {
      *
      * @return The file collection managing the linter's runtime classpath.
      */
-    @CompileClasspath
+    @Classpath
     abstract ConfigurableFileCollection getClasspath()
 
     /**

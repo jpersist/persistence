@@ -8,6 +8,9 @@ dependencies {
 
     implementation 'org.eclipse.persistence:org.eclipse.persistence.jpa'
 
+    compileOnly 'jakarta.enterprise:jakarta.enterprise.cdi-api:4.0.1'
+    compileOnly 'jakarta.transaction:jakarta.transaction-api:2.0.1'
+
     jarFile project(':common-persistence-module')
     jarFile project(':bookstore-persistence-module')
 }
