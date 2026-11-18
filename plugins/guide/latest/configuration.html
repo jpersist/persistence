@@ -605,7 +605,7 @@ $(addBlockSwitches);
 <div id="header">
 <h1>Configuration</h1>
 <div class="details">
-<span id="revnumber">version 1.8.1</span>
+<span id="revnumber">version 1.9.0</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -618,8 +618,9 @@ $(addBlockSwitches);
 </ul>
 </li>
 <li><a href="#jpa-version-selection">2. JPA Version Selection</a></li>
-<li><a href="#gradle-configuration-cache">3. Gradle Configuration Cache</a></li>
-<li><a href="#ide-integration">4. IDE Integration</a></li>
+<li><a href="#java-platform-module-system">3. Java Platform Module System (JPMS)</a></li>
+<li><a href="#gradle-configuration-cache">4. Gradle Configuration Cache</a></li>
+<li><a href="#ide-integration">5. IDE Integration</a></li>
 </ul>
 </div>
 </div>
@@ -645,7 +646,7 @@ Use the <code>jarFile</code> dependency configuration together with DSL jar-file
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">plugins {
     id <span class="string"><span class="delimiter">'</span><span class="content">base</span><span class="delimiter">'</span></span>
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.hibernate-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.8.1</span><span class="delimiter">'</span></span> apply <span class="predefined-constant">false</span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.hibernate-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.9.0</span><span class="delimiter">'</span></span> apply <span class="predefined-constant">false</span>
 }
 
 subprojects {
@@ -660,7 +661,7 @@ subprojects {
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
     base
-    id(&quot;io.github.jpersist.hibernate-persistence&quot;) version &quot;1.8.1&quot; apply false
+    id(&quot;io.github.jpersist.hibernate-persistence&quot;) version &quot;1.9.0&quot; apply false
 }
 
 subprojects {
@@ -818,7 +819,66 @@ See <a href="jakarta-plugin.html#jakarta-persistence-plugin">Jakarta Persistence
 </div>
 </div>
 <div class="sect1">
-<h2 id="gradle-configuration-cache">3. Gradle Configuration Cache</h2>
+<h2 id="java-platform-module-system">3. Java Platform Module System (JPMS)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><em>Since 1.9.0</em></p>
+</div>
+<div class="paragraph">
+<p>JPersist provides first-class, zero-configuration support for modular Java applications using the Java Platform Module System (JPMS / <code>module-info.java</code>).</p>
+</div>
+<div class="paragraph">
+<p>When running build-time analysis and bytecode transformation tasks (<code>hibernateEnhanceClasses</code>, <code>validatePersistenceSchema</code>, and <code>lintNamedQueries</code>), JPersist automatically inspects the compiled classes directory of the target source set.
+If a <code>module-info.class</code> descriptor is detected, the plugin configures hybrid execution isolation via the Gradle Worker API:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Modular Projects (<code>module-info.class</code> present):</strong>
+The tasks execute inside a forked JVM process using <code>processIsolation</code>.
+The worker process is dynamically configured with:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>--module-path</code> containing the source set output and toolset dependencies.</p>
+</li>
+<li>
+<p><code>--add-modules</code> referencing all resolved modules.</p>
+</li>
+<li>
+<p>Dynamic <code>--add-opens &lt;moduleName&gt;/&lt;pkg&gt;=io.github.jpersist.tools.hibernate.orm,io.github.jpersist.tools.hibernate</code> arguments for every package declared in the user module descriptor, granting necessary reflective access to Hibernate persistence tools.</p>
+</li>
+<li>
+<p>Worker bridge JARs attached to the bootstrap classpath.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Non-Modular Projects (traditional classpath):</strong>
+The tasks execute in-process using <code>classLoaderIsolation</code>, avoiding process forking overhead for maximum build performance.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>In addition, persistence service provider interfaces (such as <code>SchemaValidatorFactory</code> and <code>NamedObjectParserFactory</code>) are resolved via <code>PersistenceServiceResolver</code>, which seamlessly discovers providers from either the JPMS boot layer (<code>ModuleLayer.boot()</code>) in modular environments or the current thread context classloader.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+If a modularized persistence module applies a model generator plugin, it must either add <code>requires static java.compiler;</code> in the <code>module-info.java</code> or disable adding <code>@Generated</code> annotation on generated static metamodel classes using provider Java compiler options.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="gradle-configuration-cache">4. Gradle Configuration Cache</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>All JPersist plugins are fully compatible with Gradle&#8217;s Configuration Cache.
@@ -827,7 +887,7 @@ No special configuration is required — the plugins use lazy <code>Property</co
 </div>
 </div>
 <div class="sect1">
-<h2 id="ide-integration">4. IDE Integration</h2>
+<h2 id="ide-integration">5. IDE Integration</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>JPersist automatically hooks into Buildship (Eclipse) and IntelliJ IDEA project synchronization.
@@ -838,8 +898,8 @@ Generated source directories for metamodel classes are registered as source root
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.8.1<br>
-Last updated 2026-11-02 14:42:40 UTC
+Version 1.9.0<br>
+Last updated 2026-11-18 15:02:26 UTC
 </div>
 </div>
 </body>

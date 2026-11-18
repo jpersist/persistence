@@ -608,8 +608,8 @@ $(addBlockSwitches);
 <h1>JPersist User Guide</h1>
 <div class="details">
 <span id="author" class="author">Yannick Ebongue</span><br>
-<span id="revnumber">version 1.8.1,</span>
-<span id="revdate">2026-11-02</span>
+<span id="revnumber">version 1.9.0,</span>
+<span id="revdate">2026-11-18</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -735,8 +735,9 @@ $(addBlockSwitches);
 </ul>
 </li>
 <li><a href="#jpa-version-selection">6.2. JPA Version Selection</a></li>
-<li><a href="#gradle-configuration-cache">6.3. Gradle Configuration Cache</a></li>
-<li><a href="#ide-integration">6.4. IDE Integration</a></li>
+<li><a href="#java-platform-module-system">6.3. Java Platform Module System (JPMS)</a></li>
+<li><a href="#gradle-configuration-cache">6.4. Gradle Configuration Cache</a></li>
+<li><a href="#ide-integration">6.5. IDE Integration</a></li>
 </ul>
 </li>
 <li><a href="#examples">7. Examples</a>
@@ -755,8 +756,9 @@ $(addBlockSwitches);
 <li><a href="#faq-hibernate-eclipselink">8.2. Can I use both Hibernate and EclipseLink in the same project?</a></li>
 <li><a href="#faq-jpa-versions">8.3. Which JPA specification versions are supported?</a></li>
 <li><a href="#faq-configuration-cache">8.4. Is the Gradle Configuration Cache supported?</a></li>
-<li><a href="#faq-bytecode-enhancement">8.5. Do I need a runtime <code>-javaagent</code> for bytecode enhancement?</a></li>
-<li><a href="#faq-api-docs">8.6. Where can I find the API documentation?</a></li>
+<li><a href="#faq-jpms">8.5. Does JPersist support the Java Platform Module System (JPMS)?</a></li>
+<li><a href="#faq-bytecode-enhancement">8.6. Do I need a runtime <code>-javaagent</code> for bytecode enhancement?</a></li>
+<li><a href="#faq-api-docs">8.7. Where can I find the API documentation?</a></li>
 </ul>
 </li>
 </ul>
@@ -852,7 +854,7 @@ The provider-specific plugins (<code>hibernate-persistence</code>, <code>eclipse
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">plugins {
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.hibernate-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.8.1</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.hibernate-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.9.0</span><span class="delimiter">'</span></span>
 }</code></pre>
 </div>
 </div>
@@ -860,7 +862,7 @@ The provider-specific plugins (<code>hibernate-persistence</code>, <code>eclipse
 <div class="title">Kotlin</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
-    id(&quot;io.github.jpersist.hibernate-persistence&quot;) version &quot;1.8.1&quot;
+    id(&quot;io.github.jpersist.hibernate-persistence&quot;) version &quot;1.9.0&quot;
 }</code></pre>
 </div>
 </div>
@@ -871,7 +873,7 @@ The provider-specific plugins (<code>hibernate-persistence</code>, <code>eclipse
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">plugins {
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.eclipse-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.8.1</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.eclipse-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.9.0</span><span class="delimiter">'</span></span>
 }</code></pre>
 </div>
 </div>
@@ -879,7 +881,7 @@ The provider-specific plugins (<code>hibernate-persistence</code>, <code>eclipse
 <div class="title">Kotlin</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
-    id(&quot;io.github.jpersist.eclipse-persistence&quot;) version &quot;1.8.1&quot;
+    id(&quot;io.github.jpersist.eclipse-persistence&quot;) version &quot;1.9.0&quot;
 }</code></pre>
 </div>
 </div>
@@ -890,7 +892,7 @@ The provider-specific plugins (<code>hibernate-persistence</code>, <code>eclipse
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">plugins {
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.openjpa-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.8.1</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.openjpa-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.9.0</span><span class="delimiter">'</span></span>
 }</code></pre>
 </div>
 </div>
@@ -898,7 +900,7 @@ The provider-specific plugins (<code>hibernate-persistence</code>, <code>eclipse
 <div class="title">Kotlin</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
-    id(&quot;io.github.jpersist.openjpa-persistence&quot;) version &quot;1.8.1&quot;
+    id(&quot;io.github.jpersist.openjpa-persistence&quot;) version &quot;1.9.0&quot;
 }</code></pre>
 </div>
 </div>
@@ -1003,7 +1005,7 @@ It automatically applies the <code>java</code> plugin, registers a <code>persist
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">plugins {
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.jpa</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.8.1</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.jpa</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.9.0</span><span class="delimiter">'</span></span>
 }</code></pre>
 </div>
 </div>
@@ -1011,7 +1013,7 @@ It automatically applies the <code>java</code> plugin, registers a <code>persist
 <div class="title">Kotlin</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
-    id(&quot;io.github.jpersist.jpa&quot;) version &quot;1.8.1&quot;
+    id(&quot;io.github.jpersist.jpa&quot;) version &quot;1.9.0&quot;
 }</code></pre>
 </div>
 </div>
@@ -1420,6 +1422,12 @@ The plugin automatically creates one entry per source set (e.g. <code>main</code
 <td class="tableblock halign-left valign-top"><p class="tableblock">The database password.</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>settings</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>MapProperty&lt;String, Object&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>empty</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Vendor-specific configuration settings forwarded to the underlying <code>SchemaValidatorFactory</code> (e.g. <code>hibernate.dialect</code>, <code>hibernate.default_schema</code>, <code>hibernate.physical_naming_strategy</code>). <em>(Since 1.9.0)</em></p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>tenants</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>NamedDomainObjectContainer&lt;TenantValidationExtension&gt;</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><em>empty</em></p></td>
@@ -1437,6 +1445,10 @@ The plugin automatically creates one entry per source set (e.g. <code>main</code
             driver = <span class="string"><span class="delimiter">'</span><span class="content">org.h2.Driver</span><span class="delimiter">'</span></span>
             user = <span class="string"><span class="delimiter">'</span><span class="content">sa</span><span class="delimiter">'</span></span>
             password = <span class="string"><span class="delimiter">'</span><span class="delimiter">'</span></span>
+            settings = [
+                <span class="string"><span class="delimiter">'</span><span class="content">hibernate.dialect</span><span class="delimiter">'</span></span>: <span class="string"><span class="delimiter">'</span><span class="content">org.hibernate.dialect.H2Dialect</span><span class="delimiter">'</span></span>,
+                <span class="string"><span class="delimiter">'</span><span class="content">hibernate.default_schema</span><span class="delimiter">'</span></span>: <span class="string"><span class="delimiter">'</span><span class="content">PUBLIC</span><span class="delimiter">'</span></span>
+            ]
         }
     }
 }</code></pre>
@@ -1452,6 +1464,8 @@ The plugin automatically creates one entry per source set (e.g. <code>main</code
             driver.set(&quot;org.h2.Driver&quot;)
             user.set(&quot;sa&quot;)
             password.set(&quot;&quot;)
+            settings.put(&quot;hibernate.dialect&quot;, &quot;org.hibernate.dialect.H2Dialect&quot;)
+            settings.put(&quot;hibernate.default_schema&quot;, &quot;PUBLIC&quot;)
         }
     }
 }</code></pre>
@@ -1613,6 +1627,12 @@ All properties default to an in-memory H2 database whose name is derived from th
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>false</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Whether sub-critical semantic validation warnings should be muted.</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>settings</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>MapProperty&lt;String, Object&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>empty</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Vendor-specific configuration settings forwarded to the underlying <code>NamedObjectParserFactory</code> (e.g. <code>hibernate.dialect</code>, <code>hibernate.jpa.compliance.query</code>, or naming strategies). <em>(Since 1.9.0)</em></p></td>
+</tr>
 </tbody>
 </table>
 <div class="listingblock primary">
@@ -1624,6 +1644,10 @@ All properties default to an in-memory H2 database whose name is derived from th
             enabled = <span class="predefined-constant">true</span>
             failOnError = <span class="predefined-constant">true</span>
             ignoreWarnings = <span class="predefined-constant">false</span>
+            settings = [
+                <span class="string"><span class="delimiter">'</span><span class="content">hibernate.dialect</span><span class="delimiter">'</span></span>: <span class="string"><span class="delimiter">'</span><span class="content">org.hibernate.dialect.PostgreSQLDialect</span><span class="delimiter">'</span></span>,
+                <span class="string"><span class="delimiter">'</span><span class="content">hibernate.jpa.compliance.query</span><span class="delimiter">'</span></span>: <span class="string"><span class="delimiter">'</span><span class="content">false</span><span class="delimiter">'</span></span>
+            ]
         }
     }
 }</code></pre>
@@ -1638,6 +1662,8 @@ All properties default to an in-memory H2 database whose name is derived from th
             enabled.set(true)
             failOnError.set(true)
             ignoreWarnings.set(false)
+            settings.put(&quot;hibernate.dialect&quot;, &quot;org.hibernate.dialect.PostgreSQLDialect&quot;)
+            settings.put(&quot;hibernate.jpa.compliance.query&quot;, &quot;false&quot;)
         }
     }
 }</code></pre>
@@ -1919,9 +1945,10 @@ The task is automatically skipped when no persistence units are enabled.
 <strong>Type:</strong> <code>ValidatePersistenceSchema</code></p>
 </div>
 <div class="paragraph">
-<p>Validates that the JPA entity mappings align correctly with the database schema by booting an isolated JVM worker process.
-Since 1.7.0, validation is performed by an SPI-loaded <code>SchemaValidator</code> obtained via <code>SchemaValidatorFactory</code>, replacing the previous direct use of the JPA <code>Persistence</code> bootstrap API.
-The task iterates over every configured tenant profile and validates each active persistence unit against that tenant&#8217;s database independently.
+<p>Validates that the JPA entity mappings align correctly with the database schema by executing an isolated worker action via Gradle&#8217;s Worker API.
+Validation is performed by an SPI-loaded <code>SchemaValidator</code> obtained via <code>SchemaValidatorFactory</code> (resolved across JPMS boot layers and classloaders via <code>PersistenceServiceResolver</code>).
+The task uses hybrid worker isolation (<code>JPMSWorkerSupport</code>): for modular projects (when a <code>module-info.class</code> descriptor is detected in the compiled output), the worker runs in a forked process using <code>processIsolation</code> configured with <code>--module-path</code>, <code>--add-modules</code>, dynamic <code>--add-opens</code> flags for Hibernate persistence tools, and bootstrap worker bridge files; for non-modular projects, it runs via fast in-process <code>classLoaderIsolation</code>. <em>(Since 1.9.0)</em>
+The task directly tracks Java compilation output directory changes (<code>compileJava.destinationDirectory</code>) and validates every active persistence unit across configured tenant profiles independently.
 Failures are collected across the entire tenant × unit matrix and reported in a single summary.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
@@ -2090,8 +2117,8 @@ The task is automatically skipped when no active persistence unit names are pres
 </div>
 <div class="paragraph">
 <p>Performs a static, compile-time AST verification pass over all <code>@NamedQuery</code> and <code>@NamedStoredProcedureQuery</code> definitions discovered in the compiled source set output.
-The task uses ASM bytecode scanning to locate query annotations, then validates JPQL/HQL syntax and parameter naming conventions using an ANTLR4-based parser loaded via SPI.
-Processing runs inside an isolated Gradle Worker classloader.</p>
+The task uses ASM bytecode scanning to locate query annotations, then validates JPQL/HQL syntax and parameter naming conventions using an ANTLR4-based parser loaded via SPI (resolved via <code>PersistenceServiceResolver</code>).
+Processing runs inside an isolated Gradle worker using hybrid execution isolation (<code>JPMSWorkerSupport</code>): for modular projects containing <code>module-info.class</code>, it runs in a forked process with <code>processIsolation</code> and module path configuration; for non-modular projects, it runs using <code>classLoaderIsolation</code>. <em>(Since 1.9.0)</em></p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -2126,6 +2153,12 @@ Processing runs inside an isolated Gradle Worker classloader.</p>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Property&lt;Boolean&gt;</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>false</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Whether sub-critical semantic validation warnings should be muted.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>settings</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>MapProperty&lt;String, Object&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>from extension</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Vendor-specific configuration settings forwarded to the underlying <code>NamedObjectParserFactory</code>. <em>(Since 1.9.0)</em></p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>sourceFiles</code></p></td>
@@ -2220,7 +2253,7 @@ It automatically applies the core <code>io.github.jpersist.jpa</code> plugin (se
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">plugins {
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.hibernate-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.8.1</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.hibernate-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.9.0</span><span class="delimiter">'</span></span>
 }
 
 dependencies {
@@ -2234,7 +2267,7 @@ dependencies {
 <div class="title">Kotlin</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
-    id(&quot;io.github.jpersist.hibernate-persistence&quot;) version &quot;1.8.1&quot;
+    id(&quot;io.github.jpersist.hibernate-persistence&quot;) version &quot;1.9.0&quot;
 }
 
 dependencies {
@@ -2296,7 +2329,7 @@ Use it to declare a Hibernate platform BOM so that all Hibernate module versions
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">plugins {
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.hibernate-enhancement</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.8.1</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.hibernate-enhancement</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.9.0</span><span class="delimiter">'</span></span>
 }</code></pre>
 </div>
 </div>
@@ -2304,7 +2337,7 @@ Use it to declare a Hibernate platform BOM so that all Hibernate module versions
 <div class="title">Kotlin</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
-    id(&quot;io.github.jpersist.hibernate-enhancement&quot;) version &quot;1.8.1&quot;
+    id(&quot;io.github.jpersist.hibernate-enhancement&quot;) version &quot;1.9.0&quot;
 }</code></pre>
 </div>
 </div>
@@ -2332,6 +2365,18 @@ Use it to declare a Hibernate platform BOM so that all Hibernate module versions
 </div>
 <div class="paragraph">
 <p>For each JPA entity class annotated with <code>@Entity</code>, <code>@Embeddable</code>, or <code>@MappedSuperclass</code>, Hibernate generates a corresponding static metamodel class (e.g. <code>Person_</code>) that provides compile-time-safe attribute references for Criteria API queries.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+If a modularized persistence module applies a model generator plugin, it must either add <code>requires static java.compiler;</code> in the <code>module-info.java</code> or disable adding <code>@Generated</code> annotation on generated static metamodel classes using provider Java compiler options.
+</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect2">
@@ -2496,8 +2541,9 @@ For the <code>main</code> source set the task name is <code>hibernateEnhanceClas
 <strong>Type:</strong> <code>HibernateEnhancementTask</code></p>
 </div>
 <div class="paragraph">
-<p>Performs compile-time bytecode enhancement on Hibernate entity classes using Hibernate&#8217;s internal <code>Enhancer</code> engine.
-The task reads raw compiled <code>.class</code> files from the Java compilation output directory, runs multi-pass bytecode transformation (type discovery and byte-level rewriting), and writes the enhanced classes to an isolated output directory.</p>
+<p>Performs compile-time bytecode enhancement on Hibernate entity classes using Hibernate&#8217;s internal <code>Enhancer</code> engine executed through the Gradle Worker API.
+The task reads raw compiled <code>.class</code> files from the Java compilation output directory, runs multi-pass bytecode transformation (type discovery and byte-level rewriting), and writes the enhanced classes to an isolated output directory.
+Execution uses hybrid worker isolation (<code>JPMSWorkerSupport</code>): for modular projects containing a <code>module-info.class</code> descriptor, the enhancement worker runs in a forked JVM process (<code>processIsolation</code>) configured with <code>--module-path</code>, <code>--add-modules</code>, dynamic <code>--add-opens</code> flags granting Hibernate persistence tools reflective access to all module packages, and bootstrap worker bridge files; for non-modular projects, it runs using fast in-process <code>classLoaderIsolation</code>. <em>(Since 1.9.0)</em></p>
 </div>
 <div class="paragraph">
 <p>The enhanced classes are automatically included in the final JAR with higher priority than the original unenhanced classes (using <code>DuplicatesStrategy.EXCLUDE</code>), so no additional packaging configuration is needed.</p>
@@ -2607,7 +2653,7 @@ It automatically applies the core <code>io.github.jpersist.jpa</code> plugin (se
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">plugins {
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.eclipse-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.8.1</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.eclipse-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.9.0</span><span class="delimiter">'</span></span>
 }
 
 dependencies {
@@ -2622,7 +2668,7 @@ dependencies {
 <div class="title">Kotlin</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
-    id(&quot;io.github.jpersist.eclipse-persistence&quot;) version &quot;1.8.1&quot;
+    id(&quot;io.github.jpersist.eclipse-persistence&quot;) version &quot;1.9.0&quot;
 }
 
 dependencies {
@@ -2685,7 +2731,7 @@ Use it to declare an EclipseLink platform BOM so that all EclipseLink module ver
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">plugins {
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.eclipse-static-weave</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.8.1</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.eclipse-static-weave</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.9.0</span><span class="delimiter">'</span></span>
 }</code></pre>
 </div>
 </div>
@@ -2693,7 +2739,7 @@ Use it to declare an EclipseLink platform BOM so that all EclipseLink module ver
 <div class="title">Kotlin</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
-    id(&quot;io.github.jpersist.eclipse-static-weave&quot;) version &quot;1.8.1&quot;
+    id(&quot;io.github.jpersist.eclipse-static-weave&quot;) version &quot;1.9.0&quot;
 }</code></pre>
 </div>
 </div>
@@ -2738,6 +2784,18 @@ Use it to declare an EclipseLink platform BOM so that all EclipseLink module ver
 While it is possible to work without a user-provided <code>persistence.xml</code> and rely only on the persistence DSL extension, the <code>io.github.jpersist.eclipse-jpa-modelgen</code> sub-plugin may not work properly.
 This is because in this scenario, the <code>persistence.xml</code> will be generated <em>after</em> the <code>compileJava</code> task and without static metamodel classes.
 For this reason, the user <strong>must</strong> provide a <code>persistence.xml</code> template with at least the persistence unit name (mandatory) and the full list of entity classes to include.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+If a modularized persistence module applies a model generator plugin, it must either add <code>requires static java.compiler;</code> in the <code>module-info.java</code> or disable adding <code>@Generated</code> annotation on generated static metamodel classes using provider Java compiler options.
 </td>
 </tr>
 </table>
@@ -3065,7 +3123,7 @@ It automatically applies the core <code>io.github.jpersist.jpa</code> plugin (se
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">plugins {
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.openjpa-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.8.1</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.openjpa-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.9.0</span><span class="delimiter">'</span></span>
 }
 
 dependencies {
@@ -3079,7 +3137,7 @@ dependencies {
 <div class="title">Kotlin</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
-    id(&quot;io.github.jpersist.openjpa-persistence&quot;) version &quot;1.8.1&quot;
+    id(&quot;io.github.jpersist.openjpa-persistence&quot;) version &quot;1.9.0&quot;
 }
 
 dependencies {
@@ -3141,7 +3199,7 @@ Use it to declare an OpenJPA platform BOM so that all OpenJPA module versions ar
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">plugins {
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.openjpa-enhancement</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.8.1</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.openjpa-enhancement</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.9.0</span><span class="delimiter">'</span></span>
 }</code></pre>
 </div>
 </div>
@@ -3149,7 +3207,7 @@ Use it to declare an OpenJPA platform BOM so that all OpenJPA module versions ar
 <div class="title">Kotlin</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
-    id(&quot;io.github.jpersist.openjpa-enhancement&quot;) version &quot;1.8.1&quot;
+    id(&quot;io.github.jpersist.openjpa-enhancement&quot;) version &quot;1.9.0&quot;
 }</code></pre>
 </div>
 </div>
@@ -3180,6 +3238,18 @@ Use it to declare an OpenJPA platform BOM so that all OpenJPA module versions ar
 </div>
 <div class="paragraph">
 <p>For each JPA entity class annotated with <code>@Entity</code>, <code>@Embeddable</code>, or <code>@MappedSuperclass</code>, OpenJPA generates a corresponding static metamodel class (e.g. <code>Person_</code>) that provides compile-time-safe attribute references for Criteria API queries.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+If a modularized persistence module applies a model generator plugin, it must either add <code>requires static java.compiler;</code> in the <code>module-info.java</code> or disable adding <code>@Generated</code> annotation on generated static metamodel classes using provider Java compiler options.
+</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect2">
@@ -3556,7 +3626,7 @@ Use the <code>jarFile</code> dependency configuration together with DSL jar-file
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">plugins {
     id <span class="string"><span class="delimiter">'</span><span class="content">base</span><span class="delimiter">'</span></span>
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.hibernate-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.8.1</span><span class="delimiter">'</span></span> apply <span class="predefined-constant">false</span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.hibernate-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.9.0</span><span class="delimiter">'</span></span> apply <span class="predefined-constant">false</span>
 }
 
 subprojects {
@@ -3571,7 +3641,7 @@ subprojects {
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
     base
-    id(&quot;io.github.jpersist.hibernate-persistence&quot;) version &quot;1.8.1&quot; apply false
+    id(&quot;io.github.jpersist.hibernate-persistence&quot;) version &quot;1.9.0&quot; apply false
 }
 
 subprojects {
@@ -3726,14 +3796,71 @@ See <a href="#jakarta-persistence-plugin">Jakarta Persistence Plugin</a> for the
 </div>
 </div>
 <div class="sect2">
-<h3 id="gradle-configuration-cache">6.3. Gradle Configuration Cache</h3>
+<h3 id="java-platform-module-system">6.3. Java Platform Module System (JPMS)</h3>
+<div class="paragraph">
+<p><em>Since 1.9.0</em></p>
+</div>
+<div class="paragraph">
+<p>JPersist provides first-class, zero-configuration support for modular Java applications using the Java Platform Module System (JPMS / <code>module-info.java</code>).</p>
+</div>
+<div class="paragraph">
+<p>When running build-time analysis and bytecode transformation tasks (<code>hibernateEnhanceClasses</code>, <code>validatePersistenceSchema</code>, and <code>lintNamedQueries</code>), JPersist automatically inspects the compiled classes directory of the target source set.
+If a <code>module-info.class</code> descriptor is detected, the plugin configures hybrid execution isolation via the Gradle Worker API:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Modular Projects (<code>module-info.class</code> present):</strong>
+The tasks execute inside a forked JVM process using <code>processIsolation</code>.
+The worker process is dynamically configured with:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>--module-path</code> containing the source set output and toolset dependencies.</p>
+</li>
+<li>
+<p><code>--add-modules</code> referencing all resolved modules.</p>
+</li>
+<li>
+<p>Dynamic <code>--add-opens &lt;moduleName&gt;/&lt;pkg&gt;=io.github.jpersist.tools.hibernate.orm,io.github.jpersist.tools.hibernate</code> arguments for every package declared in the user module descriptor, granting necessary reflective access to Hibernate persistence tools.</p>
+</li>
+<li>
+<p>Worker bridge JARs attached to the bootstrap classpath.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Non-Modular Projects (traditional classpath):</strong>
+The tasks execute in-process using <code>classLoaderIsolation</code>, avoiding process forking overhead for maximum build performance.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>In addition, persistence service provider interfaces (such as <code>SchemaValidatorFactory</code> and <code>NamedObjectParserFactory</code>) are resolved via <code>PersistenceServiceResolver</code>, which seamlessly discovers providers from either the JPMS boot layer (<code>ModuleLayer.boot()</code>) in modular environments or the current thread context classloader.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+If a modularized persistence module applies a model generator plugin, it must either add <code>requires static java.compiler;</code> in the <code>module-info.java</code> or disable adding <code>@Generated</code> annotation on generated static metamodel classes using provider Java compiler options.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="gradle-configuration-cache">6.4. Gradle Configuration Cache</h3>
 <div class="paragraph">
 <p>All JPersist plugins are fully compatible with Gradle&#8217;s Configuration Cache.
 No special configuration is required — the plugins use lazy <code>Property</code> and <code>Provider</code> APIs throughout to ensure safe serialization of the build configuration.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="ide-integration">6.4. IDE Integration</h3>
+<h3 id="ide-integration">6.5. IDE Integration</h3>
 <div class="paragraph">
 <p>JPersist automatically hooks into Buildship (Eclipse) and IntelliJ IDEA project synchronization.
 Generated source directories for metamodel classes are registered as source roots, so IDE indexing works out of the box.</p>
@@ -3758,7 +3885,7 @@ Each example demonstrates a minimal JPA project using one of the supported plugi
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">plugins {
     id <span class="string"><span class="delimiter">'</span><span class="content">java-library</span><span class="delimiter">'</span></span>
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.hibernate-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.8.0</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.hibernate-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.9.0</span><span class="delimiter">'</span></span>
 }
 
 dependencies {
@@ -3777,7 +3904,7 @@ repositories {
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
     `java-library`
-    id(&quot;io.github.jpersist.hibernate-persistence&quot;) version &quot;1.8.0&quot;
+    id(&quot;io.github.jpersist.hibernate-persistence&quot;) version &quot;1.9.0&quot;
 }
 
 dependencies {
@@ -3805,7 +3932,7 @@ repositories {
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">plugins {
     id <span class="string"><span class="delimiter">'</span><span class="content">java-library</span><span class="delimiter">'</span></span>
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.eclipse-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.8.0</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.eclipse-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.9.0</span><span class="delimiter">'</span></span>
 }
 
 dependencies {
@@ -3826,7 +3953,7 @@ repositories {
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
     `java-library`
-    id(&quot;io.github.jpersist.eclipse-persistence&quot;) version &quot;1.8.0&quot;
+    id(&quot;io.github.jpersist.eclipse-persistence&quot;) version &quot;1.9.0&quot;
 }
 
 dependencies {
@@ -3856,7 +3983,7 @@ repositories {
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">plugins {
     id <span class="string"><span class="delimiter">'</span><span class="content">java-library</span><span class="delimiter">'</span></span>
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.openjpa-persistence</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.openjpa-persistence</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.9.0</span><span class="delimiter">'</span></span>
     id <span class="string"><span class="delimiter">'</span><span class="content">com.netflix.nebula.dependency-recommender</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">14.2.1</span><span class="delimiter">'</span></span>
 }
 
@@ -3895,7 +4022,7 @@ repositories {
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
     `java-library`
-    id(&quot;io.github.jpersist.openjpa-persistence&quot;)
+    id(&quot;io.github.jpersist.openjpa-persistence&quot;) version &quot;1.9.0&quot;
     id(&quot;com.netflix.nebula.dependency-recommender&quot;) version &quot;14.2.1&quot;
 }
 
@@ -3944,7 +4071,7 @@ It explicitly configures a persistence unit with a provider class and custom pro
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">plugins {
     id <span class="string"><span class="delimiter">'</span><span class="content">java-library</span><span class="delimiter">'</span></span>
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.jpa</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.8.0</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.jpa</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.9.0</span><span class="delimiter">'</span></span>
 }
 
 dependencies {
@@ -3975,7 +4102,7 @@ repositories {
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
     `java-library`
-    id(&quot;io.github.jpersist.jpa&quot;) version &quot;1.8.0&quot;
+    id(&quot;io.github.jpersist.jpa&quot;) version &quot;1.9.0&quot;
 }
 
 dependencies {
@@ -4191,9 +4318,9 @@ For example, instead of applying one of the aggregator plugins (<code>io.github.
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">plugins {
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.jpa</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.8.1</span><span class="delimiter">'</span></span>
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.hibernate-jpamodelgen</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.8.1</span><span class="delimiter">'</span></span>
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.eclipse-static-weave</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.8.1</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.jpa</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.9.0</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.hibernate-jpamodelgen</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.9.0</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.eclipse-static-weave</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.9.0</span><span class="delimiter">'</span></span>
 }</code></pre>
 </div>
 </div>
@@ -4201,9 +4328,9 @@ For example, instead of applying one of the aggregator plugins (<code>io.github.
 <div class="title">Kotlin</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
-    id(&quot;io.github.jpersist.jpa&quot;) version &quot;1.8.1&quot;
-    id(&quot;io.github.jpersist.hibernate-jpamodelgen&quot;) version &quot;1.8.1&quot;
-    id(&quot;io.github.jpersist.eclipse-static-weave&quot;) version &quot;1.8.1&quot;
+    id(&quot;io.github.jpersist.jpa&quot;) version &quot;1.9.0&quot;
+    id(&quot;io.github.jpersist.hibernate-jpamodelgen&quot;) version &quot;1.9.0&quot;
+    id(&quot;io.github.jpersist.eclipse-static-weave&quot;) version &quot;1.9.0&quot;
 }</code></pre>
 </div>
 </div>
@@ -4229,7 +4356,27 @@ The default version is <code>3.0</code> (Jakarta Persistence 3.0).</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="faq-bytecode-enhancement">8.5. Do I need a runtime <code>-javaagent</code> for bytecode enhancement?</h3>
+<h3 id="faq-jpms">8.5. Does JPersist support the Java Platform Module System (JPMS)?</h3>
+<div class="paragraph">
+<p>Yes. Since v1.9.0, JPersist provides native support for JPMS modular projects (<code>module-info.java</code>).
+Worker tasks (<code>hibernateEnhanceClasses</code>, <code>validatePersistenceSchema</code>, and <code>lintNamedQueries</code>) automatically detect <code>module-info.class</code>, fork isolated worker processes, configure module paths, and dynamically open module packages for bytecode enhancement and schema validation without requiring manual JVM argument configuration.
+See <a href="#java-platform-module-system">Configuration — Java Platform Module System (JPMS)</a> for details.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+If a modularized persistence module applies a model generator plugin, it must either add <code>requires static java.compiler;</code> in the <code>module-info.java</code> or disable adding <code>@Generated</code> annotation on generated static metamodel classes using provider Java compiler options.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="faq-bytecode-enhancement">8.6. Do I need a runtime <code>-javaagent</code> for bytecode enhancement?</h3>
 <div class="paragraph">
 <p>No. Both the Hibernate enhancement and EclipseLink static weaving plugins perform bytecode modification at compile time.
 No runtime agent is required.</p>
@@ -4239,7 +4386,7 @@ No runtime agent is required.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="faq-api-docs">8.6. Where can I find the API documentation?</h3>
+<h3 id="faq-api-docs">8.7. Where can I find the API documentation?</h3>
 <div class="paragraph">
 <p>The full Groovydoc API reference is published at <a href="https://jpersist.github.io/persistence/plugins/api/latest/">jpersist.github.io/persistence/plugins/api/latest</a>.
 The User Guide is available at <a href="https://jpersist.github.io/persistence/plugins/guide/latest/">jpersist.github.io/persistence/plugins/guide/latest</a>.</p>
@@ -4250,8 +4397,8 @@ The User Guide is available at <a href="https://jpersist.github.io/persistence/p
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.8.1<br>
-Last updated 2026-11-02 14:42:40 UTC
+Version 1.9.0<br>
+Last updated 2026-11-18 15:02:26 UTC
 </div>
 </div>
 </body>

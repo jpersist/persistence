@@ -10,6 +10,7 @@ persist.jakarta.gradle.plugin
 persist.jakarta.gradle.task
 persist.jakarta.gradle.task.delegate
 persist.jakarta.gradle.task.registry
+persist.jakarta.gradle.util
 persist.jakarta.gradle.worker
 persist.openjpa.gradle.extension
 persist.openjpa.gradle.plugin

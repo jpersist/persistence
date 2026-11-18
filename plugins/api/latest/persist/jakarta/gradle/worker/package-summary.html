@@ -76,18 +76,18 @@ function windowTitle()
 <div class="header"> Gradle Worker API implementations for Jakarta Persistence build-time analysis.
  <p>
  This package contains the worker actions and their parameter interfaces used to
- perform isolated build-time analysis of JPA entity mappings inside classloaders
+ perform isolated build-time analysis of JPA entity mappings inside worker processes
  managed by Gradle's <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/workers/WorkerExecutor.html' title='WorkerExecutor'>WorkerExecutor</a>.
  </p>
  <ul>
-     <li>persist.jakarta.gradle.worker.SchemaValidationParameters &mdash;
-         Parameter interface carrying the persistence unit names and JDBC
-         connection properties into the isolated worker process.</li>
-     <li>persist.jakarta.gradle.worker.SchemaValidationWorker &mdash;
-         <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/workers/WorkAction.html' title='WorkAction'>WorkAction</a> that boots a standard JPA
-         <a href='https://jakarta.ee/specifications/platform/10/apidocs/jakarta/persistence/EntityManagerFactory.html' title='EntityManagerFactory'>EntityManagerFactory</a> per persistence unit
-         with the <TT>validate</TT> schema generation action, failing the build
-         if entity metadata does not match the database schema.</li>
+     <li><a href='../../../../persist/jakarta/gradle/worker/SchemaValidationParameters.html' title='SchemaValidationParameters'>SchemaValidationParameters</a> &mdash;
+         Parameter interface carrying the persistence unit names, multi-tenant
+         connection profiles, and discovered entity class names into the isolated
+         worker process.</li>
+     <li><a href='../../../../persist/jakarta/gradle/worker/SchemaValidationWorker.html' title='SchemaValidationWorker'>SchemaValidationWorker</a> &mdash;
+         <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/workers/WorkAction.html' title='WorkAction'>WorkAction</a> that validates JPA entity
+         mappings against the target database schemas across a multi-tenant matrix
+         using an SPI-loaded persistence.tools.SchemaValidator.</li>
      <li>persist.jakarta.gradle.worker.LintNamedQueriesParameters &mdash;
          Parameter interface carrying the compiled classes directory, JPA
          version, and linter options into the isolated worker process.</li>
@@ -158,7 +158,7 @@ function windowTitle()
                                 </a></strong>
                             </td>
                             <td>An isolated Worker Action that performs bytecode sweeping and query AST
- validation inside a classloader-isolated process.</td>
+ validation inside an isolated worker process.</td>
                         </tr>
 <tr class="altColor">
                             <td class="colOne">
@@ -183,7 +183,7 @@ function windowTitle()
                                 </a></strong>
                             </td>
                             <td>Gradle <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/workers/WorkAction.html' title='WorkAction'>WorkAction</a> that validates JPA entity mappings against a
- database schema inside an isolated classloader.</td>
+ database schema inside an isolated worker process.</td>
                         </tr>
 
                     </tbody>

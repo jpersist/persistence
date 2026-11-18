@@ -161,6 +161,13 @@ if (location.href.indexOf('is-external=true') == -1) {
                             <td class="colLast"><code><strong><a href="#getIgnoreWarnings()">getIgnoreWarnings</a></strong>()</code><br>Toggles whether sub-critical semantic validation warnings should be muted.</td>
                         </tr>
                         
+                        <tr class="rowColor">
+                            <td class="colFirst"><code></code></td>
+                            <td class="colLast"><code>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/MapProperty.html' title='MapProperty'>MapProperty</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html' title='Object'>Object</a>&gt;</code></td>
+                            <td class="colLast"><code><strong><a href="#getSettings()">getSettings</a></strong>()</code><br>Vendor-specific configuration settings forwarded to the underlying
+ persistence.tools.spi.NamedObjectParserFactory (e.g.</td>
+                        </tr>
+                        
                     </table>
                    </ul>
               </li>
@@ -218,6 +225,17 @@ if (location.href.indexOf('is-external=true') == -1) {
                                 <h4>@<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/tasks/Input.html' title='Input'>Input</a><br>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Property.html' title='Property'>Property</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html' title='Boolean'>Boolean</a>&gt; <strong>getIgnoreWarnings</strong>()</h4>
                                 <p> Toggles whether sub-critical semantic validation warnings should be muted.
  <p>Defaults to <CODE>false</CODE>.</p> <DL><DT><B>Returns:</B></DT><DD>The lazy property tracking the warning suppression strategy.</DD></DL></p>
+                            </li>
+                        </ul>
+                    
+                        <a name="getSettings()"><!-- --></a>
+                        <ul class="blockListLast">
+                            <li class="blockList">
+                                <h4>@<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/tasks/Input.html' title='Input'>Input</a><br>@<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/tasks/Optional.html' title='Optional'>Optional</a><br>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/MapProperty.html' title='MapProperty'>MapProperty</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html' title='Object'>Object</a>&gt; <strong>getSettings</strong>()</h4>
+                                <p> Vendor-specific configuration settings forwarded to the underlying
+ persistence.tools.spi.NamedObjectParserFactory (e.g.&nbsp;
+ <CODE>hibernate.dialect</CODE>, <CODE>hibernate.jpa.compliance.query</CODE>).
+ <p>Defaults to an empty map.</p> <DL><DT><B>Returns:</B></DT><DD>The lazy map property tracking custom linter provider settings.</DD></DL><DL><DT><B>Since:</B></DT><DD>1.9.0</DD></DL></p>
                             </li>
                         </ul>
                     

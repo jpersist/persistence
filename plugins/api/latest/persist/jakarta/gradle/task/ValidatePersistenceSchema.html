@@ -189,65 +189,71 @@ extends <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTas
                         
                         <tr class="altColor">
                             <td class="colFirst"><code></code></td>
+                            <td class="colLast"><code>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/file/DirectoryProperty.html' title='DirectoryProperty'>DirectoryProperty</a></code></td>
+                            <td class="colLast"><code><strong><a href="#getClassesDir()">getClassesDir</a></strong>()</code><br>The input source directory holding the compiled Java class files to be scanned via ASM.</td>
+                        </tr>
+                        
+                        <tr class="rowColor">
+                            <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/file/ConfigurableFileCollection.html' title='ConfigurableFileCollection'>ConfigurableFileCollection</a></code></td>
                             <td class="colLast"><code><strong><a href="#getClasspath()">getClasspath</a></strong>()</code><br>The complete runtime and compilation classpath containing the compiled entity classes,
  the JPA provider implementation binaries (Hibernate/EclipseLink), and the H2 driver.</td>
                         </tr>
                         
-                        <tr class="rowColor">
+                        <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/ListProperty.html' title='ListProperty'>ListProperty</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt;</code></td>
                             <td class="colLast"><code><strong><a href="#getDiscoveredEntityClasses()">getDiscoveredEntityClasses</a></strong>()</code><br>The list of fully qualified entity class names discovered by the ASM
  bytecode scanner during the compile phase.</td>
                         </tr>
                         
-                        <tr class="altColor">
+                        <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Property.html' title='Property'>Property</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt;</code></td>
                             <td class="colLast"><code><strong><a href="#getJpaVersion()">getJpaVersion</a></strong>()</code><br>The JPA specification version used to determine the annotation namespace
  (<CODE>jakarta.persistence</CODE> vs <CODE>javax.persistence</CODE>) during bytecode scanning.</td>
                         </tr>
                         
-                        <tr class="rowColor">
+                        <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Property.html' title='Property'>Property</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt;</code></td>
                             <td class="colLast"><code><strong><a href="#getPersistenceUnitNames()">getPersistenceUnitNames</a></strong>()</code><br>A comma-separated list of persistence unit names to validate.</td>
                         </tr>
                         
-                        <tr class="altColor">
+                        <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/file/DirectoryProperty.html' title='DirectoryProperty'>DirectoryProperty</a></code></td>
                             <td class="colLast"><code><strong><a href="#getResourcesDir()">getResourcesDir</a></strong>()</code><br>The built-in resource destination directory containing the META-INF/persistence.xml structure.</td>
                         </tr>
                         
-                        <tr class="rowColor">
+                        <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/file/ConfigurableFileCollection.html' title='ConfigurableFileCollection'>ConfigurableFileCollection</a></code></td>
                             <td class="colLast"><code><strong><a href="#getSourceFiles()">getSourceFiles</a></strong>()</code><br>The input source files collection used to calculate incremental deltas
  immune to compiler erasures.</td>
                         </tr>
                         
-                        <tr class="altColor">
+                        <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/ListProperty.html' title='ListProperty'>ListProperty</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt;</code></td>
                             <td class="colLast"><code><strong><a href="#getTenantProfiles()">getTenantProfiles</a></strong>()</code><br>The serialized list of tenant database connection profiles to validate
  against. </td>
                         </tr>
                         
-                        <tr class="rowColor">
+                        <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Property.html' title='Property'>Property</a>&lt;<a href='../../../../persist/jakarta/gradle/extension/ValidationExtension.html' title='ValidationExtension'>ValidationExtension</a>&gt;</code></td>
                             <td class="colLast"><code><strong><a href="#getValidation()">getValidation</a></strong>()</code><br>Nested database connection configuration used during schema validation.</td>
                         </tr>
                         
-                        <tr class="altColor">
+                        <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/file/RegularFileProperty.html' title='RegularFileProperty'>RegularFileProperty</a></code></td>
                             <td class="colLast"><code><strong><a href="#getValidationReportFile()">getValidationReportFile</a></strong>()</code><br>The generated JSON schema validation audit metrics report.
  </td>
                         </tr>
                         
-                        <tr class="rowColor">
+                        <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>void</code></td>
                             <td class="colLast"><code><strong><a href="#validate(org.gradle.work.InputChanges)">validate</a></strong>(<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/work/InputChanges.html' title='InputChanges'>InputChanges</a> inputChanges)</code><br>Executes schema validation by submitting a
@@ -323,10 +329,18 @@ extends <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTas
                 </a>
                     <h3>Method Detail</h3>
                     
+                        <a name="getClassesDir()"><!-- --></a>
+                        <ul class="blockListLast">
+                            <li class="blockList">
+                                <h4>@<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/tasks/InputDirectory.html' title='InputDirectory'>InputDirectory</a><br>@<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/tasks/PathSensitive.html' title='PathSensitive'>PathSensitive</a>(value: PathSensitivity.RELATIVE)<br>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/file/DirectoryProperty.html' title='DirectoryProperty'>DirectoryProperty</a> <strong>getClassesDir</strong>()</h4>
+                                <p> The input source directory holding the compiled Java class files to be scanned via ASM. <DL><DT><B>Returns:</B></DT><DD>The lazy directory property tracking the compiled classes directory.</DD></DL></p>
+                            </li>
+                        </ul>
+                    
                         <a name="getClasspath()"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>@<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/tasks/CompileClasspath.html' title='CompileClasspath'>CompileClasspath</a><br>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/file/ConfigurableFileCollection.html' title='ConfigurableFileCollection'>ConfigurableFileCollection</a> <strong>getClasspath</strong>()</h4>
+                                <h4>@<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/tasks/Classpath.html' title='Classpath'>Classpath</a><br>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/file/ConfigurableFileCollection.html' title='ConfigurableFileCollection'>ConfigurableFileCollection</a> <strong>getClasspath</strong>()</h4>
                                 <p> The complete runtime and compilation classpath containing the compiled entity classes,
  the JPA provider implementation binaries (Hibernate/EclipseLink), and the H2 driver. <DL><DT><B>Returns:</B></DT><DD>The file collection managing the schema validation runtime classpath.</DD></DL></p>
                             </li>
@@ -340,7 +354,7 @@ extends <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTas
  bytecode scanner during the compile phase.
  <p>
  These names are forwarded to the <a href='../../../../persist/jakarta/gradle/worker/SchemaValidationWorker.html' title='SchemaValidationWorker'>SchemaValidationWorker</a> so the
- SPI-loaded persist.lint.api.spi.SchemaValidator can resolve the
+ SPI-loaded persistence.tools.SchemaValidator can resolve the
  entity mappings without scanning the classpath itself.
  </p> <DL><DT><B>Returns:</B></DT><DD>The lazy list property tracking the discovered entity class names.</DD></DL><DL><DT><B>Since:</B></DT><DD>1.7.0</DD></DL></p>
                             </li>
@@ -435,7 +449,7 @@ extends <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/DefaultTas
  multi-tenant connection profiles, the discovered entity class names,
  and the full runtime classpath. For each tenant profile, every active
  persistence unit is validated via the SPI-loaded
- persist.lint.api.spi.SchemaValidator.
+ persistence.tools.SchemaValidator.
  </p> <DL><DT><B>Parameters:</B></DT><DD><code>inputChanges</code> -  The Gradle incremental input changes descriptor.</DD></DL></p>
                             </li>
                         </ul>

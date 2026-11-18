@@ -76,12 +76,12 @@ function windowTitle()
 <div class="header"> Gradle Worker API implementations for Hibernate compile-time bytecode enhancement.
  <p>
  This package contains the worker action and its parameter interface used to
- perform classloader-isolated bytecode enhancement of Hibernate entity classes
+ perform isolated bytecode enhancement of Hibernate entity classes
  inside a worker process managed by Gradle's
  <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/workers/WorkerExecutor.html' title='WorkerExecutor'>WorkerExecutor</a>.
  </p>
  <ul>
-     <li>persist.hibernate.gradle.worker.EnhancementWorker &mdash;
+     <li><a href='../../../../persist/hibernate/gradle/worker/EnhancementWorker.html' title='EnhancementWorker'>EnhancementWorker</a> &mdash;
          <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/workers/WorkAction.html' title='WorkAction'>WorkAction</a> that loads the Persistence Tools
          SPI factories and the Hibernate bytecode engine, iterates over every
          compiled <TT>.class</TT> file, applies the two-pass enhancement cycle

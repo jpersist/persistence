@@ -167,6 +167,9 @@ if (location.href.indexOf('is-external=true') == -1) {
 <h2 class="title">C</h2>
 <dl>
 
+<dt><span class="strong"><a href="persist/jakarta/gradle/util/JPMSWorkerSupport.html#createWorkQueue(org.gradle.workers.WorkerExecutor, Class<?>, java.io.File, Set<File>, java.io.File)" title="Method in JPMSWorkerSupport">createWorkQueue(org.gradle.workers.WorkerExecutor, Class&lt;?&gt;, java.io.File, Set&lt;File&gt;, java.io.File)</a></span> - Method in <a href="persist/jakarta/gradle/util/JPMSWorkerSupport.html">JPMSWorkerSupport</a>
+</dt><dd> <div class="block">Creates a configured <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/workers/WorkQueue.html' title='WorkQueue'>WorkQueue</a> using <CODE>processIsolation</CODE> for JPMS modules
+ or <CODE>classLoaderIsolation</CODE> for standard classpath projects.</div></dd>
 </dl>
 
     
@@ -269,6 +272,8 @@ if (location.href.indexOf('is-external=true') == -1) {
 </dt><dd> <div class="block">Whether bidirectional association management enhancement is enabled.</div></dd>
 <dt><span class="strong"><a href="persist/hibernate/gradle/task/HibernateEnhancementTask.html#getAssociationManagementEnabled()" title="Method in HibernateEnhancementTask">getAssociationManagementEnabled()</a></span> - Method in <a href="persist/hibernate/gradle/task/HibernateEnhancementTask.html">HibernateEnhancementTask</a>
 </dt><dd> <div class="block">Toggles whether to automatically manage bidirectional associations across mapped relationship bounds.</div></dd>
+<dt><span class="strong"><a href="persist/jakarta/gradle/task/ValidatePersistenceSchema.html#getClassesDir()" title="Method in ValidatePersistenceSchema">getClassesDir()</a></span> - Method in <a href="persist/jakarta/gradle/task/ValidatePersistenceSchema.html">ValidatePersistenceSchema</a>
+</dt><dd> <div class="block">The input source directory holding the compiled Java class files to be scanned via ASM.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/task/LintNamedQueries.html#getClasspath()" title="Method in LintNamedQueries">getClasspath()</a></span> - Method in <a href="persist/jakarta/gradle/task/LintNamedQueries.html">LintNamedQueries</a>
 </dt><dd> <div class="block">The complete runtime and compilation classpath containing the JPA provider binaries
  (Hibernate/EclipseLink) used to drive the internal semantic parsing engine.</div></dd>
@@ -308,7 +313,7 @@ if (location.href.indexOf('is-external=true') == -1) {
 <dt><span class="strong"><a href="persist/jakarta/gradle/worker/SchemaValidationParameters.html#getDiscoveredEntityClasses()" title="Method in SchemaValidationParameters">getDiscoveredEntityClasses()</a></span> - Method in <a href="persist/jakarta/gradle/worker/SchemaValidationParameters.html">SchemaValidationParameters</a>
 </dt><dd> <div class="block">Fully qualified entity class names discovered by the ASM bytecode
  scanner, used to initialize the SPI-loaded
- persist.lint.api.spi.SchemaValidator.</div></dd>
+ persistence.tools.SchemaValidator.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/task/ValidatePersistenceSchema.html#getDiscoveredEntityClasses()" title="Method in ValidatePersistenceSchema">getDiscoveredEntityClasses()</a></span> - Method in <a href="persist/jakarta/gradle/task/ValidatePersistenceSchema.html">ValidatePersistenceSchema</a>
 </dt><dd> <div class="block">The list of fully qualified entity class names discovered by the ASM
  bytecode scanner during the compile phase.</div></dd>
@@ -453,6 +458,19 @@ if (location.href.indexOf('is-external=true') == -1) {
 </dt><dd> <div class="block">The directory containing the processed resources (specifically META-INF/persistence.xml).</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/task/ValidatePersistenceSchema.html#getResourcesDir()" title="Method in ValidatePersistenceSchema">getResourcesDir()</a></span> - Method in <a href="persist/jakarta/gradle/task/ValidatePersistenceSchema.html">ValidatePersistenceSchema</a>
 </dt><dd> <div class="block">The built-in resource destination directory containing the META-INF/persistence.xml structure.</div></dd>
+<dt><span class="strong"><a href="persist/jakarta/gradle/extension/LinterExtension.html#getSettings()" title="Method in LinterExtension">getSettings()</a></span> - Method in <a href="persist/jakarta/gradle/extension/LinterExtension.html">LinterExtension</a>
+</dt><dd> <div class="block">Vendor-specific configuration settings forwarded to the underlying
+ persistence.tools.spi.NamedObjectParserFactory (e.g.</div></dd>
+<dt><span class="strong"><a href="persist/jakarta/gradle/task/LintNamedQueries.html#getSettings()" title="Method in LintNamedQueries">getSettings()</a></span> - Method in <a href="persist/jakarta/gradle/task/LintNamedQueries.html">LintNamedQueries</a>
+</dt><dd> <div class="block">Vendor-specific configuration settings forwarded to the underlying
+ persistence.tools.spi.NamedObjectParserFactory.</div></dd>
+<dt><span class="strong"><a href="persist/jakarta/gradle/worker/LintNamedQueriesParameters.html#getSettings()" title="Method in LintNamedQueriesParameters">getSettings()</a></span> - Method in <a href="persist/jakarta/gradle/worker/LintNamedQueriesParameters.html">LintNamedQueriesParameters</a>
+</dt><dd> <div class="block">Vendor-specific configuration settings forwarded to persistence.tools.spi.NamedObjectParserFactory.</div></dd>
+<dt><span class="strong"><a href="persist/jakarta/gradle/worker/SchemaValidationParameters.html#getSettings()" title="Method in SchemaValidationParameters">getSettings()</a></span> - Method in <a href="persist/jakarta/gradle/worker/SchemaValidationParameters.html">SchemaValidationParameters</a>
+</dt><dd> <div class="block">Vendor-specific configuration settings forwarded to persistence.tools.spi.SchemaValidatorFactory.</div></dd>
+<dt><span class="strong"><a href="persist/jakarta/gradle/extension/ValidationExtension.html#getSettings()" title="Method in ValidationExtension">getSettings()</a></span> - Method in <a href="persist/jakarta/gradle/extension/ValidationExtension.html">ValidationExtension</a>
+</dt><dd> <div class="block">Vendor-specific configuration settings forwarded to the underlying
+ persistence.tools.spi.SchemaValidatorFactory (e.g.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/extension/PersistenceUnitExtension.html#getSharedCacheMode()" title="Method in PersistenceUnitExtension">getSharedCacheMode()</a></span> - Method in <a href="persist/jakarta/gradle/extension/PersistenceUnitExtension.html">PersistenceUnitExtension</a>
 </dt><dd> <div class="block">Whether the shared (second-level) cache is enabled.</div></dd>
 <dt><span class="strong"><a href="persist/openjpa/gradle/extension/MetaModelExtension.html#getSource()" title="Method in MetaModelExtension">getSource()</a></span> - Method in <a href="persist/openjpa/gradle/extension/MetaModelExtension.html">MetaModelExtension</a>
@@ -565,6 +583,8 @@ if (location.href.indexOf('is-external=true') == -1) {
 
 <dt><span class="strong"><a href="persist/openjpa/gradle/extension/MetaModelExtension.LogLevel.html#INFO" title="Enum Constant in MetaModelExtension.LogLevel">INFO</a></span> - Enum Constant in <a href="persist/openjpa/gradle/extension/MetaModelExtension.LogLevel.html">MetaModelExtension.LogLevel</a>
 </dt><dd> <div class="block">Standard informational messages.</div></dd>
+<dt><span class="strong"><a href="persist/jakarta/gradle/util/JPMSWorkerSupport.html#isModularProject(java.io.File)" title="Method in JPMSWorkerSupport">isModularProject(java.io.File)</a></span> - Method in <a href="persist/jakarta/gradle/util/JPMSWorkerSupport.html">JPMSWorkerSupport</a>
+</dt><dd> <div class="block">Checks whether the compiled classes directory contains a JPMS <CODE>module-info.class</CODE> descriptor.</div></dd>
 </dl>
 
     
@@ -616,6 +636,8 @@ if (location.href.indexOf('is-external=true') == -1) {
 </dt><dd><div class="block">Registry factory that maps JPA specification version strings to their
  corresponding XML version, namespace, schema location, and
  <a href='../../../../../persist/jakarta/gradle/task/delegate/DescriptorProcessorDelegate.html' title='DescriptorProcessorDelegate'>DescriptorProcessorDelegate</a> strategy implementation.</div></dd>
+<dt><span class="strong"><a href="persist/jakarta/gradle/util/JPMSWorkerSupport.html" title="Class in persist.jakarta.gradle.util">JPMSWorkerSupport</a></span> - Class in <a href="./persist/jakarta/gradle/util/package-summary.html">persist.jakarta.gradle.util</a>
+</dt><dd><div class="block">Utility class providing hybrid execution isolation for Gradle workers.</div></dd>
 </dl>
 
     
@@ -646,7 +668,7 @@ if (location.href.indexOf('is-external=true') == -1) {
 </dt><dd><div class="block">Parameters required by the <a href='../../../../persist/jakarta/gradle/worker/LintNamedQueriesWorker.html' title='LintNamedQueriesWorker'>LintNamedQueriesWorker</a>.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/worker/LintNamedQueriesWorker.html" title="Class in persist.jakarta.gradle.worker">LintNamedQueriesWorker</a></span> - Class in <a href="./persist/jakarta/gradle/worker/package-summary.html">persist.jakarta.gradle.worker</a>
 </dt><dd><div class="block">An isolated Worker Action that performs bytecode sweeping and query AST
- validation inside a classloader-isolated process.</div></dd>
+ validation inside an isolated worker process.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/worker/LintNamedQueriesWorker.StoredProcedureDataExtractor.1.html" title="Class in persist.jakarta.gradle.worker.LintNamedQueriesWorker.StoredProcedureDataExtractor">LintNamedQueriesWorker.StoredProcedureDataExtractor.1</a></span> - Class in <a href="./persist/jakarta/gradle/worker/package-summary.html">persist.jakarta.gradle.worker</a>
 </dt><dd><div class="block"></div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/worker/LintNamedQueriesWorker.StoredProcedureDataExtractor.1.1.html" title="Class in persist.jakarta.gradle.worker.LintNamedQueriesWorker.StoredProcedureDataExtractor.1">LintNamedQueriesWorker.StoredProcedureDataExtractor.1.1</a></span> - Class in <a href="./persist/jakarta/gradle/worker/package-summary.html">persist.jakarta.gradle.worker</a>
@@ -728,6 +750,8 @@ if (location.href.indexOf('is-external=true') == -1) {
 </dt><dd><div class="block">Named DSL extension for the Jakarta Persistence plugin, scoped per Java source set.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/extension/PersistenceExtension.html#PersistenceExtension(java.lang.String, org.gradle.api.model.ObjectFactory)" title="Constructor in PersistenceExtension">PersistenceExtension(java.lang.String, org.gradle.api.model.ObjectFactory)</a></span> - Constructor in <a href="persist/jakarta/gradle/extension/PersistenceExtension.html">PersistenceExtension</a>
 </dt><dd> <div class="block">Creates a new extension instance.</div></dd>
+<dt><span class="strong"><a href="persist/jakarta/gradle/util/PersistenceServiceResolver.html" title="Class in persist.jakarta.gradle.util">PersistenceServiceResolver</a></span> - Class in <a href="./persist/jakarta/gradle/util/package-summary.html">persist.jakarta.gradle.util</a>
+</dt><dd><div class="block">Utility class for resolving persistence.tools.spi.PersistenceServiceProvider implementations via SPI.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/extension/PersistenceUnitExtension.html" title="Class in persist.jakarta.gradle.extension">PersistenceUnitExtension</a></span> - Class in <a href="./persist/jakarta/gradle/extension/package-summary.html">persist.jakarta.gradle.extension</a>
 </dt><dd><div class="block">Per-unit DSL configuration for a single <CODE>&lt;persistence-unit&gt;</CODE> element.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/extension/PersistenceUnitExtension.html#PersistenceUnitExtension(java.lang.String)" title="Constructor in PersistenceUnitExtension">PersistenceUnitExtension(java.lang.String)</a></span> - Constructor in <a href="persist/jakarta/gradle/extension/PersistenceUnitExtension.html">PersistenceUnitExtension</a>
@@ -768,6 +792,8 @@ if (location.href.indexOf('is-external=true') == -1) {
 <dt><span class="strong"><a href="persist/jakarta/gradle/task/registry/JPAVersionStrategyRegistry.html#resolve(java.lang.String)" title="Method in JPAVersionStrategyRegistry">resolve(java.lang.String)</a></span> - Method in <a href="persist/jakarta/gradle/task/registry/JPAVersionStrategyRegistry.html">JPAVersionStrategyRegistry</a>
 </dt><dd> <div class="block">Resolves the complete strategy metadata for the requested JPA
  specification version.</div></dd>
+<dt><span class="strong"><a href="persist/jakarta/gradle/util/PersistenceServiceResolver.html#resolvePersistenceServiceProvider(java.lang.String, Class<T>)" title="Method in PersistenceServiceResolver">resolvePersistenceServiceProvider(java.lang.String, Class&lt;T&gt;)</a></span> - Method in <a href="persist/jakarta/gradle/util/PersistenceServiceResolver.html">PersistenceServiceResolver</a>
+</dt><dd> <div class="block">Resolves a versioned persistence service provider instance for the specified JPA version and service type.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/plugin/JakartaPersistencePlugin.html#resolvePersistenceToolsFiles(org.gradle.api.Project, Provider<String>)" title="Method in JakartaPersistencePlugin">resolvePersistenceToolsFiles(org.gradle.api.Project, Provider&lt;String&gt;)</a></span> - Method in <a href="persist/jakarta/gradle/plugin/JakartaPersistencePlugin.html">JakartaPersistencePlugin</a>
 </dt><dd> <div class="block">Resolves the required persistence tools implementation JARs for the given JPA
  specification version by reading the tools version from the embedded
@@ -786,7 +812,7 @@ if (location.href.indexOf('is-external=true') == -1) {
 </dt><dd><div class="block">Parameter interface for the <a href='../../../../persist/jakarta/gradle/worker/SchemaValidationWorker.html' title='SchemaValidationWorker'>SchemaValidationWorker</a> work action.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/worker/SchemaValidationWorker.html" title="Class in persist.jakarta.gradle.worker">SchemaValidationWorker</a></span> - Class in <a href="./persist/jakarta/gradle/worker/package-summary.html">persist.jakarta.gradle.worker</a>
 </dt><dd><div class="block">Gradle <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/workers/WorkAction.html' title='WorkAction'>WorkAction</a> that validates JPA entity mappings against a
- database schema inside an isolated classloader.</div></dd>
+ database schema inside an isolated worker process.</div></dd>
 <dt><span class="strong"><a href="persist/jakarta/gradle/worker/SchemaValidationWorker.html#SchemaValidationWorker()" title="Constructor in SchemaValidationWorker">SchemaValidationWorker()</a></span> - Constructor in <a href="persist/jakarta/gradle/worker/SchemaValidationWorker.html">SchemaValidationWorker</a>
 </dt><dd> <div class="block"></div></dd>
 <dt><span class="strong"><a href="persist/eclipse/gradle/extension/JpaModelgenExtension.html#setPersistenceXml(java.lang.String)" title="Method in JpaModelgenExtension">setPersistenceXml(java.lang.String)</a></span> - Method in <a href="persist/eclipse/gradle/extension/JpaModelgenExtension.html">JpaModelgenExtension</a>

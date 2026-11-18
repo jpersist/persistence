@@ -155,7 +155,7 @@ extends <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/workers/WorkPa
                             <td class="colLast"><code>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/ListProperty.html' title='ListProperty'>ListProperty</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt;</code></td>
                             <td class="colLast"><code><strong><a href="#getDiscoveredEntityClasses()">getDiscoveredEntityClasses</a></strong>()</code><br>Fully qualified entity class names discovered by the ASM bytecode
  scanner, used to initialize the SPI-loaded
- persist.lint.api.spi.SchemaValidator.</td>
+ persistence.tools.SchemaValidator.</td>
                         </tr>
                         
                         <tr class="rowColor">
@@ -171,6 +171,12 @@ extends <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/workers/WorkPa
                         </tr>
                         
                         <tr class="rowColor">
+                            <td class="colFirst"><code></code></td>
+                            <td class="colLast"><code>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/MapProperty.html' title='MapProperty'>MapProperty</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html' title='Object'>Object</a>&gt;</code></td>
+                            <td class="colLast"><code><strong><a href="#getSettings()">getSettings</a></strong>()</code><br>Vendor-specific configuration settings forwarded to persistence.tools.spi.SchemaValidatorFactory.</td>
+                        </tr>
+                        
+                        <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/ListProperty.html' title='ListProperty'>ListProperty</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt;</code></td>
                             <td class="colLast"><code><strong><a href="#getTenantProfiles()">getTenantProfiles</a></strong>()</code><br>Pipe-delimited tenant profiles (<CODE>Name|URL|Driver|User|Password</CODE>)
@@ -215,7 +221,7 @@ extends <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/workers/WorkPa
                                 <h4>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/ListProperty.html' title='ListProperty'>ListProperty</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt; <strong>getDiscoveredEntityClasses</strong>()</h4>
                                 <p> Fully qualified entity class names discovered by the ASM bytecode
  scanner, used to initialize the SPI-loaded
- persist.lint.api.spi.SchemaValidator. <DL><DT><B>Returns:</B></DT><DD>The list property tracking the entity class names.</DD></DL><DL><DT><B>Since:</B></DT><DD>1.7.0</DD></DL></p>
+ persistence.tools.SchemaValidator. <DL><DT><B>Returns:</B></DT><DD>The list property tracking the entity class names.</DD></DL><DL><DT><B>Since:</B></DT><DD>1.7.0</DD></DL></p>
                             </li>
                         </ul>
                     
@@ -232,6 +238,14 @@ extends <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/workers/WorkPa
                             <li class="blockList">
                                 <h4>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Property.html' title='Property'>Property</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt; <strong>getPersistenceUnitNames</strong>()</h4>
                                 <p> Comma-separated persistence unit names to validate. <DL><DT><B>Returns:</B></DT><DD>The property tracking the unit names string.</DD></DL></p>
+                            </li>
+                        </ul>
+                    
+                        <a name="getSettings()"><!-- --></a>
+                        <ul class="blockListLast">
+                            <li class="blockList">
+                                <h4>abstract&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/MapProperty.html' title='MapProperty'>MapProperty</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html' title='Object'>Object</a>&gt; <strong>getSettings</strong>()</h4>
+                                <p> Vendor-specific configuration settings forwarded to persistence.tools.spi.SchemaValidatorFactory. <DL><DT><B>Returns:</B></DT><DD>The map property tracking custom schema validator settings.</DD></DL><DL><DT><B>Since:</B></DT><DD>1.9.0</DD></DL></p>
                             </li>
                         </ul>
                     

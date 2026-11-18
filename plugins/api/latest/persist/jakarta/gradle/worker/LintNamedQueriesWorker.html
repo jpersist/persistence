@@ -111,13 +111,13 @@ extends <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/ja
 implements <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/workers/WorkAction.html' title='WorkAction'>WorkAction</a>&lt;<a href='../../../../persist/jakarta/gradle/worker/LintNamedQueriesParameters.html' title='LintNamedQueriesParameters'>LintNamedQueriesParameters</a>&gt;</pre>
 
     <p> An isolated Worker Action that performs bytecode sweeping and query AST
- validation inside a classloader-isolated process.
+ validation inside an isolated worker process.
  <p>
  The worker scans all <CODE>.class</CODE> files in the compiled output directory
  using ASM to discover <CODE>@NamedQuery</CODE> and
  <CODE>@NamedStoredProcedureQuery</CODE> annotations. Discovered queries are then
  validated using an ANTLR4-based parser loaded via the
- persist.lint.api.spi.NamedObjectParserFactory SPI contract.
+ persistence.tools.spi.NamedObjectParserFactory SPI contract.
  Parameter naming conventions are checked against strict camelCase rules.
  </p> <DL><DT><B>Since:</B></DT><DD>1.6.0</DD></DL><DL><DT><B>See Also:</B></DT><DD><a href='../../../../persist/jakarta/gradle/task/LintNamedQueries.html' title='LintNamedQueries'>LintNamedQueries</a></DD></DL></p>
 

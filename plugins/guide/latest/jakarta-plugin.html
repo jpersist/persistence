@@ -605,7 +605,7 @@ $(addBlockSwitches);
 <div id="header">
 <h1>Jakarta Persistence Plugin</h1>
 <div class="details">
-<span id="revnumber">version 1.8.1</span>
+<span id="revnumber">version 1.9.0</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -671,7 +671,7 @@ It automatically applies the <code>java</code> plugin, registers a <code>persist
 <div class="title">Groovy</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">plugins {
-    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.jpa</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.8.1</span><span class="delimiter">'</span></span>
+    id <span class="string"><span class="delimiter">'</span><span class="content">io.github.jpersist.jpa</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.9.0</span><span class="delimiter">'</span></span>
 }</code></pre>
 </div>
 </div>
@@ -679,7 +679,7 @@ It automatically applies the <code>java</code> plugin, registers a <code>persist
 <div class="title">Kotlin</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="kotlin">plugins {
-    id(&quot;io.github.jpersist.jpa&quot;) version &quot;1.8.1&quot;
+    id(&quot;io.github.jpersist.jpa&quot;) version &quot;1.9.0&quot;
 }</code></pre>
 </div>
 </div>
@@ -1092,6 +1092,12 @@ The plugin automatically creates one entry per source set (e.g. <code>main</code
 <td class="tableblock halign-left valign-top"><p class="tableblock">The database password.</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>settings</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>MapProperty&lt;String, Object&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>empty</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Vendor-specific configuration settings forwarded to the underlying <code>SchemaValidatorFactory</code> (e.g. <code>hibernate.dialect</code>, <code>hibernate.default_schema</code>, <code>hibernate.physical_naming_strategy</code>). <em>(Since 1.9.0)</em></p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>tenants</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>NamedDomainObjectContainer&lt;TenantValidationExtension&gt;</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><em>empty</em></p></td>
@@ -1109,6 +1115,10 @@ The plugin automatically creates one entry per source set (e.g. <code>main</code
             driver = <span class="string"><span class="delimiter">'</span><span class="content">org.h2.Driver</span><span class="delimiter">'</span></span>
             user = <span class="string"><span class="delimiter">'</span><span class="content">sa</span><span class="delimiter">'</span></span>
             password = <span class="string"><span class="delimiter">'</span><span class="delimiter">'</span></span>
+            settings = [
+                <span class="string"><span class="delimiter">'</span><span class="content">hibernate.dialect</span><span class="delimiter">'</span></span>: <span class="string"><span class="delimiter">'</span><span class="content">org.hibernate.dialect.H2Dialect</span><span class="delimiter">'</span></span>,
+                <span class="string"><span class="delimiter">'</span><span class="content">hibernate.default_schema</span><span class="delimiter">'</span></span>: <span class="string"><span class="delimiter">'</span><span class="content">PUBLIC</span><span class="delimiter">'</span></span>
+            ]
         }
     }
 }</code></pre>
@@ -1124,6 +1134,8 @@ The plugin automatically creates one entry per source set (e.g. <code>main</code
             driver.set(&quot;org.h2.Driver&quot;)
             user.set(&quot;sa&quot;)
             password.set(&quot;&quot;)
+            settings.put(&quot;hibernate.dialect&quot;, &quot;org.hibernate.dialect.H2Dialect&quot;)
+            settings.put(&quot;hibernate.default_schema&quot;, &quot;PUBLIC&quot;)
         }
     }
 }</code></pre>
@@ -1285,6 +1297,12 @@ All properties default to an in-memory H2 database whose name is derived from th
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>false</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Whether sub-critical semantic validation warnings should be muted.</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>settings</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>MapProperty&lt;String, Object&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>empty</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Vendor-specific configuration settings forwarded to the underlying <code>NamedObjectParserFactory</code> (e.g. <code>hibernate.dialect</code>, <code>hibernate.jpa.compliance.query</code>, or naming strategies). <em>(Since 1.9.0)</em></p></td>
+</tr>
 </tbody>
 </table>
 <div class="listingblock primary">
@@ -1296,6 +1314,10 @@ All properties default to an in-memory H2 database whose name is derived from th
             enabled = <span class="predefined-constant">true</span>
             failOnError = <span class="predefined-constant">true</span>
             ignoreWarnings = <span class="predefined-constant">false</span>
+            settings = [
+                <span class="string"><span class="delimiter">'</span><span class="content">hibernate.dialect</span><span class="delimiter">'</span></span>: <span class="string"><span class="delimiter">'</span><span class="content">org.hibernate.dialect.PostgreSQLDialect</span><span class="delimiter">'</span></span>,
+                <span class="string"><span class="delimiter">'</span><span class="content">hibernate.jpa.compliance.query</span><span class="delimiter">'</span></span>: <span class="string"><span class="delimiter">'</span><span class="content">false</span><span class="delimiter">'</span></span>
+            ]
         }
     }
 }</code></pre>
@@ -1310,6 +1332,8 @@ All properties default to an in-memory H2 database whose name is derived from th
             enabled.set(true)
             failOnError.set(true)
             ignoreWarnings.set(false)
+            settings.put(&quot;hibernate.dialect&quot;, &quot;org.hibernate.dialect.PostgreSQLDialect&quot;)
+            settings.put(&quot;hibernate.jpa.compliance.query&quot;, &quot;false&quot;)
         }
     }
 }</code></pre>
@@ -1597,9 +1621,10 @@ The task is automatically skipped when no persistence units are enabled.
 <strong>Type:</strong> <code>ValidatePersistenceSchema</code></p>
 </div>
 <div class="paragraph">
-<p>Validates that the JPA entity mappings align correctly with the database schema by booting an isolated JVM worker process.
-Since 1.7.0, validation is performed by an SPI-loaded <code>SchemaValidator</code> obtained via <code>SchemaValidatorFactory</code>, replacing the previous direct use of the JPA <code>Persistence</code> bootstrap API.
-The task iterates over every configured tenant profile and validates each active persistence unit against that tenant&#8217;s database independently.
+<p>Validates that the JPA entity mappings align correctly with the database schema by executing an isolated worker action via Gradle&#8217;s Worker API.
+Validation is performed by an SPI-loaded <code>SchemaValidator</code> obtained via <code>SchemaValidatorFactory</code> (resolved across JPMS boot layers and classloaders via <code>PersistenceServiceResolver</code>).
+The task uses hybrid worker isolation (<code>JPMSWorkerSupport</code>): for modular projects (when a <code>module-info.class</code> descriptor is detected in the compiled output), the worker runs in a forked process using <code>processIsolation</code> configured with <code>--module-path</code>, <code>--add-modules</code>, dynamic <code>--add-opens</code> flags for Hibernate persistence tools, and bootstrap worker bridge files; for non-modular projects, it runs via fast in-process <code>classLoaderIsolation</code>. <em>(Since 1.9.0)</em>
+The task directly tracks Java compilation output directory changes (<code>compileJava.destinationDirectory</code>) and validates every active persistence unit across configured tenant profiles independently.
 Failures are collected across the entire tenant × unit matrix and reported in a single summary.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
@@ -1768,8 +1793,8 @@ The task is automatically skipped when no active persistence unit names are pres
 </div>
 <div class="paragraph">
 <p>Performs a static, compile-time AST verification pass over all <code>@NamedQuery</code> and <code>@NamedStoredProcedureQuery</code> definitions discovered in the compiled source set output.
-The task uses ASM bytecode scanning to locate query annotations, then validates JPQL/HQL syntax and parameter naming conventions using an ANTLR4-based parser loaded via SPI.
-Processing runs inside an isolated Gradle Worker classloader.</p>
+The task uses ASM bytecode scanning to locate query annotations, then validates JPQL/HQL syntax and parameter naming conventions using an ANTLR4-based parser loaded via SPI (resolved via <code>PersistenceServiceResolver</code>).
+Processing runs inside an isolated Gradle worker using hybrid execution isolation (<code>JPMSWorkerSupport</code>): for modular projects containing <code>module-info.class</code>, it runs in a forked process with <code>processIsolation</code> and module path configuration; for non-modular projects, it runs using <code>classLoaderIsolation</code>. <em>(Since 1.9.0)</em></p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -1804,6 +1829,12 @@ Processing runs inside an isolated Gradle Worker classloader.</p>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Property&lt;Boolean&gt;</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>false</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Whether sub-critical semantic validation warnings should be muted.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>settings</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>MapProperty&lt;String, Object&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>from extension</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Vendor-specific configuration settings forwarded to the underlying <code>NamedObjectParserFactory</code>. <em>(Since 1.9.0)</em></p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>sourceFiles</code></p></td>
@@ -1886,8 +1917,8 @@ This consolidated layout replaces the previous scattered report locations and ma
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.8.1<br>
-Last updated 2026-11-02 14:42:40 UTC
+Version 1.9.0<br>
+Last updated 2026-11-18 15:02:26 UTC
 </div>
 </div>
 </body>

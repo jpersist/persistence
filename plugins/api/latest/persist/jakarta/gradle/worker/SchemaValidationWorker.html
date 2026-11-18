@@ -111,10 +111,10 @@ extends <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/ja
 implements <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/workers/WorkAction.html' title='WorkAction'>WorkAction</a>&lt;<a href='../../../../persist/jakarta/gradle/worker/SchemaValidationParameters.html' title='SchemaValidationParameters'>SchemaValidationParameters</a>&gt;</pre>
 
     <p> Gradle <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/workers/WorkAction.html' title='WorkAction'>WorkAction</a> that validates JPA entity mappings against a
- database schema inside an isolated classloader.
+ database schema inside an isolated worker process.
  <p>
- The worker initializes an SPI-loaded persist.lint.api.spi.SchemaValidator via
- persist.lint.api.spi.SchemaValidatorFactory using the configured JPA version and the
+ The worker initializes an SPI-loaded persistence.tools.SchemaValidator via
+ persistence.tools.spi.SchemaValidatorFactory using the configured JPA version and the
  list of discovered entity class names. It then iterates over every
  serialized tenant profile and validates each active persistence unit
  against that tenant's database. If any tenant/unit combination produces
@@ -124,8 +124,9 @@ implements <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/workers/Wor
  <p>
  The worker is submitted by
  <a href='../../../../persist/jakarta/gradle/task/ValidatePersistenceSchema.html' title='ValidatePersistenceSchema'>ValidatePersistenceSchema</a> using
- classloader isolation so that the project's JPA provider, entity classes,
- and JDBC driver are loaded in a separate classloader, avoiding conflicts
+ <a href='../../../../persist/jakarta/gradle/util/JPMSWorkerSupport.html' title='JPMSWorkerSupport'>JPMSWorkerSupport</a> (process isolation for modular projects
+ or classloader isolation for traditional projects) so that the project's JPA provider,
+ entity classes, and JDBC driver are loaded in an isolated environment, avoiding conflicts
  with the Gradle daemon's own classpath.
  </p> <DL><DT><B>Since:</B></DT><DD>1.5.0</DD></DL><DL><DT><B>See Also:</B></DT><DD><a href='../../../../persist/jakarta/gradle/worker/SchemaValidationParameters.html' title='SchemaValidationParameters'>SchemaValidationParameters</a></DD><DD><a href='../../../../persist/jakarta/gradle/task/ValidatePersistenceSchema.html' title='ValidatePersistenceSchema'>ValidatePersistenceSchema</a></DD></DL></p>
 
@@ -268,7 +269,7 @@ implements <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/workers/Wor
                                 <h4>@<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Override.html' title='Override'>Override</a><br>void <strong>execute</strong>()</h4>
                                 <p> Executes the multi-tenant schema validation pipeline.
  <p>
- Initializes the SPI-loaded persist.lint.api.spi.SchemaValidator, iterates over every
+ Initializes the SPI-loaded persistence.tools.SchemaValidator, iterates over every
  serialized tenant profile, validates each active persistence unit against
  that tenant's database, and throws a <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/GradleException.html' title='GradleException'>GradleException</a> if any
  schema mismatches are detected.

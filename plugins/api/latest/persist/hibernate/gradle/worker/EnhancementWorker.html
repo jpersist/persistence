@@ -114,7 +114,7 @@ implements <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/workers/Wor
  inside a classloader-isolated worker process.
  <p>
  The worker resolves the appropriate Hibernate bytecode engine via the decoupled
- persist.hibernate.enhance.spi.HibernateEnhancerProvider SPI, which is loaded from the
+ persistence.tools.spi.EnhancerProvider SPI, which is loaded from the
  <CODE>persistence-tools-jakarta</CODE> or <CODE>persistence-tools-legacy</CODE> provider
  library depending on the active JPA specification version. It then iterates over
  every <CODE>.class</CODE> file in the compiled source directory, applies the two-pass
@@ -126,7 +126,7 @@ implements <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/workers/Wor
  using <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/workers/WorkerExecutor.html#classLoaderIsolation' title='classLoaderIsolation'>classLoaderIsolation</a>,
  ensuring that the Persistence Tools SPI factories and Hibernate core binaries are loaded
  in a separate classloader that does not pollute the Gradle daemon's own classpath.
- </p> <DL><DT><B>Since:</B></DT><DD>1.8.0</DD></DL><DL><DT><B>See Also:</B></DT><DD><a href='../../../../persist/hibernate/gradle/task/HibernateEnhancementTask.html' title='HibernateEnhancementTask'>HibernateEnhancementTask</a></DD><DD>persist.hibernate.enhance.spi.HibernateEnhancerProvider</DD></DL></p>
+ </p> <DL><DT><B>Since:</B></DT><DD>1.8.0</DD></DL><DL><DT><B>See Also:</B></DT><DD><a href='../../../../persist/hibernate/gradle/task/HibernateEnhancementTask.html' title='HibernateEnhancementTask'>HibernateEnhancementTask</a></DD><DD>persistence.tools.spi.EnhancerProvider</DD></DL></p>
 
           </li>
     </ul>
@@ -290,7 +290,7 @@ implements <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/workers/Wor
                                 <h4>@<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Override.html' title='Override'>Override</a><br>void <strong>execute</strong>()</h4>
                                 <p> Executes the two-pass bytecode enhancement cycle.
  <p>
- Resolves the persist.hibernate.enhance.spi.HibernateEnhancerProvider SPI for the configured JPA version,
+ Resolves the persistence.tools.spi.EnhancerProvider SPI for the configured JPA version,
  iterates over every <CODE>.class</CODE> file in the compiled source directory, applies
  the enhancement transformation, and writes the results (enhanced or original bytes)
  to the isolated target directory.
