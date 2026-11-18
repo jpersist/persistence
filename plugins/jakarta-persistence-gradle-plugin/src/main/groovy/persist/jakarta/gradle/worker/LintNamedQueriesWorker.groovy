@@ -6,6 +6,7 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
@@ -37,6 +38,9 @@ interface LintNamedQueriesParameters extends WorkParameters {
 
     /** Whether sub-critical style warnings should be suppressed. */
     Property<Boolean> getIgnoreWarnings()
+
+    /** Vendor-specific configuration settings forwarded to {@link NamedObjectParserFactory}. */
+    MapProperty<String, Object> getSettings()
 
     /** The directory containing compiled {@code .class} files to scan. */
     DirectoryProperty getCompiledClassesDir()
@@ -95,6 +99,7 @@ abstract class LintNamedQueriesWorker implements WorkAction<LintNamedQueriesPara
         String jpaVersion = parameters.jpaVersion.get()
         boolean failOnError = parameters.failOnError.get()
         boolean ignoreWarnings = parameters.ignoreWarnings.get()
+        Map<String, Object> providerSettings = parameters.settings.getOrElse([:])
 
         boolean isIncremental = parameters.incrementalPass.getOrElse(false)
         List<String> affectedFiles = parameters.affectedClassFiles.getOrElse([])
@@ -147,7 +152,7 @@ abstract class LintNamedQueriesWorker implements WorkAction<LintNamedQueriesPara
             def factory = Helper.resolveParserFactory(jpaVersion)
 
             // Open the closeable parser inside a safe container block
-            factory.newNamedObjectParser(discoveredClasses).withCloseable { namedObjectParser ->
+            factory.newNamedObjectParser(discoveredClasses, providerSettings).withCloseable { namedObjectParser ->
                 log.lifecycle("✅ In-memory verification metamodel generated successfully.")
 
                 // 3a. VALIDATE STANDARD QUERIES

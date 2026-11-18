@@ -221,6 +221,7 @@ abstract class ValidatePersistenceSchema extends DefaultTask {
 
         // Extract credentials lazily, fallback safely to standard H2 constants if absent
         def extension = validation.get()
+        Map<String, Object> providerSettings = extension.settings.getOrElse([:])
 
         // Serialize tenant configurations (Name|URL|Driver|User|Password) into a safe transport list
         List<String> profiles = []
@@ -250,6 +251,7 @@ abstract class ValidatePersistenceSchema extends DefaultTask {
             params.persistenceUnitNames.set(unitNames)
             params.tenantProfiles.set(profiles)
             params.discoveredEntityClasses.set(affectedEntities)
+            params.settings.set(providerSettings)
         }
 
         // 🌟 Write execution analytics details to the target report file

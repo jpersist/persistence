@@ -497,6 +497,7 @@ class JakartaPersistencePlugin implements Plugin<Project> {
             // Sync structural configuration boundaries from our new LinterExtension block
             task.failOnError.set(extension.linter.failOnError)
             task.ignoreWarnings.set(extension.linter.ignoreWarnings)
+            task.settings.set(extension.linter.settings)
 
             // Feed the live sourceDirectories tree container.
             // This is safe, entirely lazy, and supports multi-source directory layouts out of the box.
@@ -560,7 +561,7 @@ class JakartaPersistencePlugin implements Plugin<Project> {
         String providerArtifact = isLegacy ? "hibernate-persistence-tools" : "hibernate-orm-persistence-tools"
 
         // 🌟 STEP 1: Read the embedded tools version from the plugin's own resources context
-        String toolsVersion = "4.0.0" // Safe fallback standard
+        String toolsVersion = "4.1.0" // Safe fallback standard
 
         def props = new Properties()
         def resourceStream = JakartaPersistencePlugin.class.classLoader.getResourceAsStream("persistence-plugin-info.properties")

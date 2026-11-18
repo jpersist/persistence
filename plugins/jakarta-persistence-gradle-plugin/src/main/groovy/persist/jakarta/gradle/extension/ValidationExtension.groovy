@@ -3,6 +3,7 @@ package persist.jakarta.gradle.extension
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Nested
@@ -113,6 +114,20 @@ abstract class ValidationExtension {
     @Input
     @Optional
     abstract Property<String> getPassword()
+
+    /**
+     * Vendor-specific configuration settings forwarded to the underlying
+     * {@link persistence.tools.spi.SchemaValidatorFactory} (e.g.&nbsp;
+     * {@code hibernate.dialect}, {@code hibernate.default_schema},
+     * {@code hibernate.physical_naming_strategy}).
+     * <p>Defaults to an empty map.</p>
+     *
+     * @return The lazy map property tracking custom schema validator settings.
+     * @since 1.9.0
+     */
+    @Input
+    @Optional
+    abstract MapProperty<String, Object> getSettings()
 
     /**
      * The named container of multi-tenant database connection profiles.

@@ -607,6 +607,101 @@ class JakartaPersistencePluginFunctionalSpec extends Specification {
         assert result.output.contains("✅ All processed static metadata structures validated successfully!")
     }
 
+    def "should forward custom provider settings from linter.settings DSL to NamedObjectParserFactory"() {
+        given: "an entity using a JPQL reserved keyword as an entity alias (rejected under strict compliance)"
+        File moduleDir = new File(testProjectDir.toFile(), "test-lint-valid-persistence-module")
+        File javaSourceDir = new File(moduleDir, "src/main/java/com/example/model")
+        javaSourceDir.mkdirs()
+
+        File entityFile = new File(javaSourceDir, "ReservedAliasEntity.java")
+        entityFile.text = """
+            package com.example.model;
+
+            import jakarta.persistence.Entity;
+            import jakarta.persistence.Id;
+            import jakarta.persistence.NamedQuery;
+
+            @Entity
+            @NamedQuery(
+                name = "ReservedAliasEntity.findWithReservedAlias",
+                query = "SELECT count FROM ReservedAliasEntity count WHERE count.label = :label"
+            )
+            public class ReservedAliasEntity {
+                @Id
+                private Long id;
+                private String label;
+            }
+        """.stripIndent()
+
+        when: "running lintNamedQueries with default strict compliance settings"
+        def strictResult = createRunner()
+            .withArguments(":test-lint-valid-persistence-module:compileJava", ":test-lint-valid-persistence-module:lintNamedQueries", "--stacktrace")
+            .buildAndFail()
+
+        then: "the linter fails because strict JPA query compliance is enabled by default"
+        strictResult.task(":test-lint-valid-persistence-module:lintNamedQueries").outcome == TaskOutcome.FAILED
+
+        when: "configuring custom provider settings in the linter DSL block to relax query compliance"
+        File buildFile = new File(moduleDir, "build.gradle")
+        buildFile << """
+
+            persistence {
+                main {
+                    linter {
+                        settings = [
+                            'hibernate.dialect': 'org.hibernate.dialect.H2Dialect',
+                            'hibernate.jpa.compliance.query': 'false'
+                        ]
+                    }
+                }
+            }
+        """.stripIndent()
+
+        def relaxedResult = createRunner()
+            .withArguments(":test-lint-valid-persistence-module:lintNamedQueries", "--stacktrace")
+            .build()
+
+        then: "the custom linter.settings map is forwarded to the worker and validation succeeds"
+        relaxedResult.task(":test-lint-valid-persistence-module:lintNamedQueries").outcome == TaskOutcome.SUCCESS
+        assert relaxedResult.output.contains("Query 'ReservedAliasEntity.findWithReservedAlias' passed semantic compilation checks.")
+    }
+
+    def "should forward custom provider settings from validation.settings DSL to SchemaValidatorFactory"() {
+        given: "a module with an existing table in PUBLIC schema but configured with a custom hibernate.default_schema"
+        File moduleDir = new File(testProjectDir.toFile(), "test-validate-persistence-module")
+        File buildFile = new File(moduleDir, "build.gradle")
+
+        // Create the table in PUBLIC schema via H2 INIT script, while instructing Hibernate via
+        // validation.settings to validate against a different schema ('CUSTOM_UNMAPPED_SCHEMA')
+        buildFile << """
+
+            persistence {
+                main {
+                    validation {
+                        url = "jdbc:h2:mem:custom_settings_validate_db;DB_CLOSE_DELAY=-1;INIT=CREATE TABLE PUBLIC.VALIDATED_ITEM (ID BIGINT PRIMARY KEY, NAME VARCHAR(255))"
+                        driver = "org.h2.Driver"
+                        user = "sa"
+                        password = ""
+                        settings = [
+                            'hibernate.dialect': 'org.hibernate.dialect.H2Dialect',
+                            'hibernate.default_schema': 'CUSTOM_UNMAPPED_SCHEMA'
+                        ]
+                    }
+                }
+            }
+        """.stripIndent()
+
+        when: "executing validatePersistenceSchema"
+        def result = createRunner()
+            .withArguments(":test-validate-persistence-module:validatePersistenceSchema", "--stacktrace")
+            .buildAndFail()
+
+        then: "the custom validation.settings map is applied and schema validation targets CUSTOM_UNMAPPED_SCHEMA"
+        result.task(":test-validate-persistence-module:validatePersistenceSchema").outcome == TaskOutcome.FAILED
+        assert result.output.contains("❌ SCHEMA MISMATCH FAILURE inside Tenant [default]")
+        assert result.output.contains("missing table")
+    }
+
     private GradleRunner createRunner() {
         def jacocoAgentJvmArg = System.getProperty('jacocoAgentJvmArg')
         def jacocoDestFile = System.getProperty('jacocoDestFile')
