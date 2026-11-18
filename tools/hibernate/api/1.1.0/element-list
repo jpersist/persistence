@@ -1,0 +1,6 @@
+module:io.github.jpersist.tools.hibernate
+hibernate.javax.persistence.tools
+hibernate.javax.persistence.tools.internal
+hibernate.javax.persistence.tools.provider
+module:io.github.jpersist.tools.hibernate.base
+hibernate.base.persistence.tools
