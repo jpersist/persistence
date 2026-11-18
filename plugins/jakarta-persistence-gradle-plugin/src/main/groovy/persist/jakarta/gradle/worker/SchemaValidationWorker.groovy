@@ -4,6 +4,7 @@ import org.gradle.api.GradleException
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
@@ -55,6 +56,14 @@ interface SchemaValidationParameters extends WorkParameters {
      */
     ListProperty<String> getDiscoveredEntityClasses()
 
+    /**
+     * Vendor-specific configuration settings forwarded to {@link SchemaValidatorFactory}.
+     *
+     * @return The map property tracking custom schema validator settings.
+     * @since 1.9.0
+     */
+    MapProperty<String, Object> getSettings()
+
 }
 
 /**
@@ -102,12 +111,13 @@ abstract class SchemaValidationWorker implements WorkAction<SchemaValidationPara
         String unitNamesPayload = parameters.persistenceUnitNames.get()
         List<String> tenantProfiles = parameters.tenantProfiles.get()
         List<String> discoveredEntityClasses = parameters.discoveredEntityClasses.get()
+        Map<String, Object> providerSettings = parameters.settings.getOrElse([:])
 
         def log = logger
         SchemaValidator validator
         try {
             def validatorFactory = Helper.resolveValidatorFactory(jpaVersion)
-            validator = validatorFactory.newSchemaValidator(discoveredEntityClasses)
+            validator = validatorFactory.newSchemaValidator(discoveredEntityClasses, providerSettings)
         } catch (Exception e) {
             throw new GradleException("JPersist Schema Validation failed on setup configuration.", e)
         }

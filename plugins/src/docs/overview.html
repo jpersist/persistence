@@ -92,7 +92,7 @@
 <h2>What's New in v1.9.0</h2>
 <p>
     Version 1.9.0 introduces <strong>Java Platform Module System (JPMS) worker isolation</strong>,
-    <strong>centralized persistence SPI service resolution</strong>, and <strong>persistence-tools 4.0.0 alignment</strong>:
+    <strong>centralized persistence SPI service resolution</strong>, and <strong>persistence-tools 4.1.0 alignment</strong>:
 </p>
 <ul>
     <li><strong>Java Platform Module System (JPMS) Worker Support</strong> &mdash; Introduces hybrid
@@ -113,7 +113,7 @@
         across worker executions, seamlessly checking both the modular JPMS boot layer and the
         thread context classloader.
     </li>
-    <li><strong>Persistence Tools 4.0.0 Platform Alignment</strong> &mdash; Aligns with the
+    <li><strong>Persistence Tools 4.1.0 Platform Alignment</strong> &mdash; Aligns with the
         <code>persistence-tools-bom</code> platform and updated modular tool artifacts
         (<code>hibernate-persistence-tools</code> and <code>hibernate-orm-persistence-tools</code>),
         providing full JPMS modular runtime support across JPA providers.
@@ -122,6 +122,13 @@
         <a href="persist/jakarta/gradle/task/ValidatePersistenceSchema.html">ValidatePersistenceSchema</a>
         task now directly consumes <code>compileJava.destinationDirectory</code> and establishes explicit
         task dependencies on <code>compileJava</code>, ensuring accurate incremental bytecode scanning.
+    </li>
+    <li><strong>Custom Provider Settings for Query Linting & Schema Validation</strong> &mdash; Exposes settings
+        (<code>MapProperty&lt;String, Object&gt;</code>) inside both <code>LinterExtension</code>
+        (<code>persistence.main.linter.settings</code>) and <code>ValidationExtension</code>
+        (<code>persistence.main.validation.settings</code>), forwarding vendor-specific properties
+        (such as target SQL dialects, compliance flags, or default schemas) directly into
+        <code>NamedObjectParserFactory</code> and <code>SchemaValidatorFactory</code>.
     </li>
 </ul>
 

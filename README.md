@@ -170,18 +170,19 @@ The plugin automatically detects your entity classes and generates the appropria
 | `plugins/jakarta-persistence-gradle-plugin`   | Core plugin — generates/merges `persistence.xml`, validates schemas, generates GraalVM metadata, and lints named queries. |
 | `plugins/hibernate-persistence-gradle-plugin` | Hibernate aggregate plugin — metamodel generation and compile-time bytecode enhancement.                                  |
 | `plugins/eclipse-persistence-gradle-plugin`   | EclipseLink aggregate plugin — metamodel generation and compile-time static weaving.                                      |
-| `plugins/openjpa-persistence-gradle-plugin`    | OpenJPA aggregate plugin — metamodel generation and compile-time PCEnhancer bytecode enhancement.                         |
-| `libraries/persistence-tools-api`              | SPI contract and core interfaces for the named query linter (`io.github.jpersist.tools:persistence-tools-api`).           |
-| `libraries/hibernate-orm-persistence-tools`          | Jakarta Persistence (3.x) linter implementation (`io.github.jpersist.tools:persistence-tools-jakarta`).                   |
-| `libraries/hibernate-persistence-tools`           | Legacy JPA (2.x) linter implementation (`io.github.jpersist.tools:persistence-tools-legacy`).                             |
-| `libraries/persistence-tools-bom`              | BOM (Bill of Materials) for aligning all persistence-tools library versions.                                               |
+| `plugins/openjpa-persistence-gradle-plugin`   | OpenJPA aggregate plugin — metamodel generation and compile-time PCEnhancer bytecode enhancement.                         |
+| `libraries/persistence-tools-api`             | Defines the vendor-agnostic public contracts and Service Provider Interfaces (SPIs).                                      |
+| `libraries/hibernate-base-persistence-tools`  | Shared base module for Hibernate implementations.                                                                         |
+| `libraries/hibernate-orm-persistence-tools`   | Jakarta Persistence (3.x) tools implementation.                                                                           |
+| `libraries/hibernate-persistence-tools`       | Legacy JPA (2.x) tools implementation.                                                                                    |
+| `libraries/persistence-tools-bom`             | Bill of Materials (BOM) for convenient, aligned dependency management across all Persistence Tools modules                |
 | `examples/`                                   | Runnable example projects for Hibernate, EclipseLink, and standalone Jakarta Persistence.                                 |
 
 ---
 
 ## 📚 Further Information
 
-- 📖 **Libraries API Reference (Javadoc):** [jpersist.github.io/persistence/libraries/api/latest](https://jpersist.github.io/persistence/libraries/api/latest/)
+- 📖 **Libraries API Reference (Javadoc):** [jpersist.github.io/persistence/tools/specifications/api/latest](https://jpersist.github.io/persistence/tools/specifications/api/latest/)
 - 📖 **Plugins API Reference (Groovydoc):** [jpersist.github.io/persistence/plugins/api/latest](https://jpersist.github.io/persistence/plugins/api/latest/)
 - 📘 **User Guide:** [jpersist.github.io/persistence/plugins/guide/latest](https://jpersist.github.io/persistence/plugins/guide/latest/)
 - 🚀 **Examples:** Complete runnable project templates in the [`examples/`](examples/) directory.

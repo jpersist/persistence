@@ -1,7 +1,9 @@
 package persist.jakarta.gradle.extension
 
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 
 /**
  * Named DSL extension for managing the static compile-time query verification linter.
@@ -37,5 +39,18 @@ interface LinterExtension {
      */
     @Input
     Property<Boolean> getIgnoreWarnings()
+
+    /**
+     * Vendor-specific configuration settings forwarded to the underlying
+     * {@link persistence.tools.spi.NamedObjectParserFactory} (e.g.&nbsp;
+     * {@code hibernate.dialect}, {@code hibernate.jpa.compliance.query}).
+     * <p>Defaults to an empty map.</p>
+     *
+     * @return The lazy map property tracking custom linter provider settings.
+     * @since 1.9.0
+     */
+    @Input
+    @Optional
+    MapProperty<String, Object> getSettings()
 
 }

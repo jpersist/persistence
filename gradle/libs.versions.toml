@@ -1,5 +1,5 @@
 [versions]
-persistence-tools= "4.0.0"
+persistence-tools= "4.1.0"
 spock = "2.3-groovy-4.0"
 asm = "9.10.1"
 

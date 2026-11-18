@@ -6,6 +6,7 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
@@ -37,6 +38,9 @@ interface LintNamedQueriesParameters extends WorkParameters {
 
     /** Whether sub-critical style warnings should be suppressed. */
     Property<Boolean> getIgnoreWarnings()
+
+    /** Vendor-specific configuration settings forwarded to {@link NamedObjectParserFactory}. */
+    MapProperty<String, Object> getSettings()
 
     /** The directory containing compiled {@code .class} files to scan. */
     DirectoryProperty getCompiledClassesDir()
@@ -95,6 +99,7 @@ abstract class LintNamedQueriesWorker implements WorkAction<LintNamedQueriesPara
         String jpaVersion = parameters.jpaVersion.get()
         boolean failOnError = parameters.failOnError.get()
         boolean ignoreWarnings = parameters.ignoreWarnings.get()
+        Map<String, Object> providerSettings = parameters.settings.getOrElse([:])
 
         boolean isIncremental = parameters.incrementalPass.getOrElse(false)
         List<String> affectedFiles = parameters.affectedClassFiles.getOrElse([])
@@ -147,7 +152,7 @@ abstract class LintNamedQueriesWorker implements WorkAction<LintNamedQueriesPara
             def factory = Helper.resolveParserFactory(jpaVersion)
 
             // Open the closeable parser inside a safe container block
-            factory.newNamedObjectParser(discoveredClasses).withCloseable { namedObjectParser ->
+            factory.newNamedObjectParser(discoveredClasses, providerSettings).withCloseable { namedObjectParser ->
                 log.lifecycle("✅ In-memory verification metamodel generated successfully.")
 
                 // 3a. VALIDATE STANDARD QUERIES
@@ -182,6 +187,17 @@ abstract class LintNamedQueriesWorker implements WorkAction<LintNamedQueriesPara
      */
     private static class ComprehensiveMetadataScanner extends ClassVisitor {
 
+        private static final Set<String> JPA_CLASS_ANNOTATIONS = [
+            'Ljakarta/persistence/Entity;',
+            'Ljakarta/persistence/Embeddable;',
+            'Ljakarta/persistence/MappedSuperclass;',
+            'Ljakarta/persistence/Converter;',
+            'Ljavax/persistence/Entity;',
+            'Ljavax/persistence/Embeddable;',
+            'Ljavax/persistence/MappedSuperclass;',
+            'Ljavax/persistence/Converter;'
+        ] as Set<String>
+
         /** Collected named query definitions keyed by query name. */
         private final Map<String, String> queries
 
@@ -190,6 +206,8 @@ abstract class LintNamedQueriesWorker implements WorkAction<LintNamedQueriesPara
 
         /** Collected fully qualified entity class names discovered during the scan. */
         private final List<String> classes
+
+        private String currentClassName
 
         /**
          * Creates a new scanner targeting ASM API version {@link Opcodes#ASM9}.
@@ -208,15 +226,16 @@ abstract class LintNamedQueriesWorker implements WorkAction<LintNamedQueriesPara
         /** {@inheritDoc} */
         @Override
         void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-            if (name) {
-                classes.add(name.replace('/', '.'))
-            }
+            this.currentClassName = name ? name.replace('/', '.') : null
             super.visit(version, access, name, signature, superName, interfaces)
         }
 
         /** {@inheritDoc} */
         @Override
         AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
+            if (JPA_CLASS_ANNOTATIONS.contains(descriptor) && currentClassName) {
+                classes.add(currentClassName)
+            }
             if (descriptor in ['Ljakarta/persistence/NamedQuery;', 'Ljavax/persistence/NamedQuery;']) {
                 return new NamedQueryDataExtractor(queries)
             }

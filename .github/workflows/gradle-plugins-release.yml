@@ -124,15 +124,23 @@ jobs:
           git push origin main
           git push origin "v${{ steps.versions.outputs.release_version }}"
 
+      - name: Extract Release Notes from plugins/CHANGELOG.md
+        run: |
+          RELEASE_VERSION="${{ steps.versions.outputs.release_version }}"
+          awk "/^## \[?v?${RELEASE_VERSION}\]?/{flag=1; next} /^## /{flag=0} flag" plugins/CHANGELOG.md > release_notes.md
+          if [ ! -s release_notes.md ]; then
+            echo "Plugins Release v${RELEASE_VERSION}" > release_notes.md
+          fi
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v3
         with:
           tag_name: v${{ steps.versions.outputs.release_version }}
           name: Plugins Release v${{ steps.versions.outputs.release_version }}
+          body_path: release_notes.md
           draft: false
           prerelease: false
-          # Tells GitHub to automatically generate the Markdown notes using the release.yml categories
-          generate_release_notes: true
+          generate_release_notes: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

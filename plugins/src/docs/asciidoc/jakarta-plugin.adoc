@@ -352,6 +352,11 @@ persistence {
 | `""` _(empty)_
 | The database password.
 
+| `settings`
+| `MapProperty<String, Object>`
+| _empty_
+| Vendor-specific configuration settings forwarded to the underlying `SchemaValidatorFactory` (e.g. `hibernate.dialect`, `hibernate.default_schema`, `hibernate.physical_naming_strategy`). _(Since 1.9.0)_
+
 | `tenants`
 | `NamedDomainObjectContainer<TenantValidationExtension>`
 | _empty_
@@ -368,6 +373,10 @@ persistence {
             driver = 'org.h2.Driver'
             user = 'sa'
             password = ''
+            settings = [
+                'hibernate.dialect': 'org.hibernate.dialect.H2Dialect',
+                'hibernate.default_schema': 'PUBLIC'
+            ]
         }
     }
 }
@@ -383,6 +392,8 @@ persistence {
             driver.set("org.h2.Driver")
             user.set("sa")
             password.set("")
+            settings.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect")
+            settings.put("hibernate.default_schema", "PUBLIC")
         }
     }
 }
@@ -504,6 +515,11 @@ _Since 1.6.0_
 | `Property<Boolean>`
 | `false`
 | Whether sub-critical semantic validation warnings should be muted.
+
+| `settings`
+| `MapProperty<String, Object>`
+| _empty_
+| Vendor-specific configuration settings forwarded to the underlying `NamedObjectParserFactory` (e.g. `hibernate.dialect`, `hibernate.jpa.compliance.query`, or naming strategies). _(Since 1.9.0)_
 |===
 
 [source,groovy,indent=0,role="primary"]
@@ -515,6 +531,10 @@ persistence {
             enabled = true
             failOnError = true
             ignoreWarnings = false
+            settings = [
+                'hibernate.dialect': 'org.hibernate.dialect.PostgreSQLDialect',
+                'hibernate.jpa.compliance.query': 'false'
+            ]
         }
     }
 }
@@ -529,6 +549,8 @@ persistence {
             enabled.set(true)
             failOnError.set(true)
             ignoreWarnings.set(false)
+            settings.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect")
+            settings.put("hibernate.jpa.compliance.query", "false")
         }
     }
 }
@@ -857,6 +879,11 @@ Processing runs inside an isolated Gradle worker using hybrid execution isolatio
 | `Property<Boolean>`
 | `false`
 | Whether sub-critical semantic validation warnings should be muted.
+
+| `settings`
+| `MapProperty<String, Object>`
+| _from extension_
+| Vendor-specific configuration settings forwarded to the underlying `NamedObjectParserFactory`. _(Since 1.9.0)_
 
 | `sourceFiles`
 | `ConfigurableFileCollection`

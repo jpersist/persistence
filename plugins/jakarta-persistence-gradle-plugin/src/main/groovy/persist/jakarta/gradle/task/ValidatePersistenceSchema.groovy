@@ -7,7 +7,7 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.CompileClasspath
+import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.InputFiles
@@ -143,7 +143,7 @@ abstract class ValidatePersistenceSchema extends DefaultTask {
      *
      * @return The file collection managing the schema validation runtime classpath.
      */
-    @CompileClasspath
+    @Classpath
     abstract ConfigurableFileCollection getClasspath()
 
     /** The Gradle worker executor used to submit isolated schema validation work actions. */
@@ -221,6 +221,7 @@ abstract class ValidatePersistenceSchema extends DefaultTask {
 
         // Extract credentials lazily, fallback safely to standard H2 constants if absent
         def extension = validation.get()
+        Map<String, Object> providerSettings = extension.settings.getOrElse([:])
 
         // Serialize tenant configurations (Name|URL|Driver|User|Password) into a safe transport list
         List<String> profiles = []
@@ -250,6 +251,7 @@ abstract class ValidatePersistenceSchema extends DefaultTask {
             params.persistenceUnitNames.set(unitNames)
             params.tenantProfiles.set(profiles)
             params.discoveredEntityClasses.set(affectedEntities)
+            params.settings.set(providerSettings)
         }
 
         // 🌟 Write execution analytics details to the target report file

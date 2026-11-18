@@ -5,6 +5,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.work.ChangeType
@@ -55,6 +56,18 @@ abstract class LintNamedQueries extends DefaultTask {
     abstract Property<Boolean> getIgnoreWarnings()
 
     /**
+     * Vendor-specific configuration settings forwarded to the underlying
+     * {@link persistence.tools.spi.NamedObjectParserFactory}.
+     * <p>Defaults to an empty map.</p>
+     *
+     * @return The lazy map property tracking custom linter provider settings.
+     * @since 1.9.0
+     */
+    @Input
+    @Optional
+    abstract MapProperty<String, Object> getSettings()
+
+    /**
      * The input source directories tracking active Java source code files (.java).
      * Sourced from the active compilation source sets.
      *
@@ -80,7 +93,7 @@ abstract class LintNamedQueries extends DefaultTask {
      *
      * @return The file collection managing the linter's runtime classpath.
      */
-    @CompileClasspath
+    @Classpath
     abstract ConfigurableFileCollection getClasspath()
 
     /**
@@ -123,6 +136,7 @@ abstract class LintNamedQueries extends DefaultTask {
         File classesFolder = compiledClassesDir.get().asFile
         Set<File> runtimeClasspathFiles = classpath.getFiles()
 
+        Map<String, Object> providerSettings = settings.getOrElse([:])
         boolean failOnValidationError = failOnError.get()
         boolean skipWarnings = ignoreWarnings.get()
         String version = jpaVersion.get()
@@ -186,6 +200,7 @@ abstract class LintNamedQueries extends DefaultTask {
             params.compiledClassesDir.set(classesFolder)
             params.failOnError.set(failOnValidationError)
             params.ignoreWarnings.set(skipWarnings)
+            params.settings.set(providerSettings)
             params.jpaVersion.set(version)
             params.incrementalPass.set(isIncrementalPass)
             params.affectedClassFiles.set(affectedClassFiles)

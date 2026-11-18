@@ -448,9 +448,9 @@ class JakartaPersistencePlugin implements Plugin<Project> {
             // 1. Add pure compiled java entity classes directories ONLY (No resources included)
             task.getClasspath().from(sourceSet.output.classesDirs)
 
-            // 2. Add external framework dependencies from compileClasspath configuration
-            // compileClasspath contains Hibernate/EclipseLink but does NOT track processResources outputs!
-            task.getClasspath().from(project.configurations.named(sourceSet.compileClasspathConfigurationName))
+            // 2. Add external framework dependencies from runtimeClasspath configuration
+            // runtimeClasspath contains Hibernate/EclipseLink but does NOT track processResources outputs!
+            task.getClasspath().from(project.configurations.named(sourceSet.runtimeClasspathConfigurationName))
 
             // 3. 🌟 OPTIMIZED TOOLSET EXTRACTION: Direct extraction from active Plugin ClassLoader
             task.getClasspath().from(resolvePersistenceToolsFiles(project, extension.version))
@@ -497,6 +497,7 @@ class JakartaPersistencePlugin implements Plugin<Project> {
             // Sync structural configuration boundaries from our new LinterExtension block
             task.failOnError.set(extension.linter.failOnError)
             task.ignoreWarnings.set(extension.linter.ignoreWarnings)
+            task.settings.set(extension.linter.settings)
 
             // Feed the live sourceDirectories tree container.
             // This is safe, entirely lazy, and supports multi-source directory layouts out of the box.
@@ -510,7 +511,7 @@ class JakartaPersistencePlugin implements Plugin<Project> {
 
             // Feed compilation runtime configurations safely using execution views
             task.classpath.from(sourceSet.output.classesDirs)
-            task.classpath.from(project.configurations.named(sourceSet.compileClasspathConfigurationName))
+            task.classpath.from(project.configurations.named(sourceSet.runtimeClasspathConfigurationName))
 
             // Ensure the plugin's own compiled files directory is attached to locate the worker classes
             task.classpath.from(resolvePersistenceToolsFiles(project, extension.version))
@@ -560,7 +561,7 @@ class JakartaPersistencePlugin implements Plugin<Project> {
         String providerArtifact = isLegacy ? "hibernate-persistence-tools" : "hibernate-orm-persistence-tools"
 
         // 🌟 STEP 1: Read the embedded tools version from the plugin's own resources context
-        String toolsVersion = "4.0.0" // Safe fallback standard
+        String toolsVersion = "4.1.0" // Safe fallback standard
 
         def props = new Properties()
         def resourceStream = JakartaPersistencePlugin.class.classLoader.getResourceAsStream("persistence-plugin-info.properties")
