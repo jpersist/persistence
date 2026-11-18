@@ -25,7 +25,7 @@ loadScripts(document, 'script');</script>
 <!-- ========= START OF TOP NAVBAR ======= -->
 <div class="top-nav" id="navbar-top"><button id="navbar-toggle-button" aria-controls="navbar-top" aria-expanded="false" aria-label="Toggle navigation links"><span class="nav-bar-toggle-icon">&nbsp;</span><span class="nav-bar-toggle-icon">&nbsp;</span><span class="nav-bar-toggle-icon">&nbsp;</span></button>
 <div class="skip-nav"><a href="#skip-navbar-top" title="Skip navigation links">Skip navigation links</a></div>
-<div class="about-language"><div style='padding: 4px 10px; background: rgba(255,255,255,0.15); border-radius: 4px; font-weight: bold;'>JPersist Suite &bull; v4.0.0</div></div>
+<div class="about-language"><div style='padding: 4px 10px; background: rgba(255,255,255,0.15); border-radius: 4px; font-weight: bold;'>JPersist Suite &bull; v4.1.0</div></div>
 <ul id="navbar-top-firstrow" class="nav-list" title="Navigation">
 <li><a href="../../../../index.html">Overview</a></li>
 <li><a href="../../../module-summary.html">Module</a></li>
@@ -125,37 +125,44 @@ extends <a href="PersistenceLinterFactory.html" title="interface in persistence.
 <section class="method-summary" id="method-summary">
 <h2>Method Summary</h2>
 <div id="method-summary-table">
-<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab1" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab1', 3)" class="table-tab">Static Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab3" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab3', 3)" class="table-tab">Abstract Methods</button></div>
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab1" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab1', 3)" class="table-tab">Static Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab3" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab3', 3)" class="table-tab">Abstract Methods</button><button id="method-summary-table-tab5" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab5', 3)" class="table-tab">Default Methods</button></div>
 <div id="method-summary-table.tabpanel" role="tabpanel" aria-labelledby="method-summary-table-tab0">
 <div class="summary-table three-column-summary">
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../SchemaValidator.html" title="interface in persistence.tools">SchemaValidator</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#newSchemaValidator(java.util.List)" class="member-name-link">newSchemaValidator</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;discoveredClassNames)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="../SchemaValidator.html" title="interface in persistence.tools">SchemaValidator</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#newSchemaValidator(java.util.List)" class="member-name-link">newSchemaValidator</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;discoveredClassNames)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
 <div class="block">Creates a new <a href="../SchemaValidator.html" title="interface in persistence.tools"><code>SchemaValidator</code></a> configured with the given
- entity class names.</div>
+ entity class names and default validator settings.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static <a href="SchemaValidatorFactory.html" title="interface in persistence.tools.spi">SchemaValidatorFactory</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#newSchemaValidatorFactory(java.lang.String)" class="member-name-link">newSchemaValidatorFactory</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;jpaVersion)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../SchemaValidator.html" title="interface in persistence.tools">SchemaValidator</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#newSchemaValidator(java.util.List,java.util.Map)" class="member-name-link">newSchemaValidator</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;discoveredClassNames,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&nbsp;settings)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Creates a new <a href="../SchemaValidator.html" title="interface in persistence.tools"><code>SchemaValidator</code></a> configured with the given
+ entity class names and custom configuration settings.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static <a href="SchemaValidatorFactory.html" title="interface in persistence.tools.spi">SchemaValidatorFactory</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#newSchemaValidatorFactory(java.lang.String)" class="member-name-link">newSchemaValidatorFactory</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;jpaVersion)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
 <div class="block">Discovers and returns the <a href="SchemaValidatorFactory.html" title="interface in persistence.tools.spi"><code>SchemaValidatorFactory</code></a>
  implementation that matches the given JPA specification version using
  the thread context class loader.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static <a href="SchemaValidatorFactory.html" title="interface in persistence.tools.spi">SchemaValidatorFactory</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#newSchemaValidatorFactory(java.lang.String,java.lang.ClassLoader)" class="member-name-link">newSchemaValidatorFactory</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;jpaVersion,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static <a href="SchemaValidatorFactory.html" title="interface in persistence.tools.spi">SchemaValidatorFactory</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#newSchemaValidatorFactory(java.lang.String,java.lang.ClassLoader)" class="member-name-link">newSchemaValidatorFactory</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;jpaVersion,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/ClassLoader.html" title="class or interface in java.lang" class="external-link">ClassLoader</a>&nbsp;classLoader)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
 <div class="block">Discovers and returns the <a href="SchemaValidatorFactory.html" title="interface in persistence.tools.spi"><code>SchemaValidatorFactory</code></a>
  implementation that matches the given JPA specification version using
  the specified <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/ClassLoader.html" title="class or interface in java.lang" class="external-link"><code>ClassLoader</code></a>.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static <a href="SchemaValidatorFactory.html" title="interface in persistence.tools.spi">SchemaValidatorFactory</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#newSchemaValidatorFactory(java.lang.String,java.lang.ModuleLayer)" class="member-name-link">newSchemaValidatorFactory</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;jpaVersion,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static <a href="SchemaValidatorFactory.html" title="interface in persistence.tools.spi">SchemaValidatorFactory</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#newSchemaValidatorFactory(java.lang.String,java.lang.ModuleLayer)" class="member-name-link">newSchemaValidatorFactory</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;jpaVersion,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/ModuleLayer.html" title="class or interface in java.lang" class="external-link">ModuleLayer</a>&nbsp;layer)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
 <div class="block">Discovers and returns the <a href="SchemaValidatorFactory.html" title="interface in persistence.tools.spi"><code>SchemaValidatorFactory</code></a>
  implementation that matches the given JPA specification version within
  the specified <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/ModuleLayer.html" title="class or interface in java.lang" class="external-link"><code>ModuleLayer</code></a>.</div>
@@ -180,15 +187,35 @@ extends <a href="PersistenceLinterFactory.html" title="interface in persistence.
 <li>
 <section class="detail" id="newSchemaValidator(java.util.List)">
 <h3>newSchemaValidator</h3>
-<div class="member-signature"><span class="return-type"><a href="../SchemaValidator.html" title="interface in persistence.tools">SchemaValidator</a></span>&nbsp;<span class="element-name">newSchemaValidator</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;discoveredClassNames)</span></div>
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="../SchemaValidator.html" title="interface in persistence.tools">SchemaValidator</a></span>&nbsp;<span class="element-name">newSchemaValidator</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;discoveredClassNames)</span></div>
 <div class="block">Creates a new <a href="../SchemaValidator.html" title="interface in persistence.tools"><code>SchemaValidator</code></a> configured with the given
- entity class names.</div>
+ entity class names and default validator settings.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>discoveredClassNames</code> - fully qualified class names of the JPA
                              entities to register in the metamodel</dd>
 <dt>Returns:</dt>
 <dd>a ready-to-use schema validator</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="newSchemaValidator(java.util.List,java.util.Map)">
+<h3>newSchemaValidator</h3>
+<div class="member-signature"><span class="return-type"><a href="../SchemaValidator.html" title="interface in persistence.tools">SchemaValidator</a></span>&nbsp;<span class="element-name">newSchemaValidator</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;discoveredClassNames,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&nbsp;settings)</span></div>
+<div class="block">Creates a new <a href="../SchemaValidator.html" title="interface in persistence.tools"><code>SchemaValidator</code></a> configured with the given
+ entity class names and custom configuration settings.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>discoveredClassNames</code> - fully qualified class names of the JPA
+                             entities to register in the metamodel</dd>
+<dd><code>settings</code> - a map of configuration settings allowing consumers
+                             to override default service implementation settings</dd>
+<dt>Returns:</dt>
+<dd>a ready-to-use schema validator</dd>
+<dt>Since:</dt>
+<dd>4.1.0</dd>
 </dl>
 </section>
 </li>

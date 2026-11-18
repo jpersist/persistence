@@ -25,7 +25,7 @@ loadScripts(document, 'script');</script>
 <!-- ========= START OF TOP NAVBAR ======= -->
 <div class="top-nav" id="navbar-top"><button id="navbar-toggle-button" aria-controls="navbar-top" aria-expanded="false" aria-label="Toggle navigation links"><span class="nav-bar-toggle-icon">&nbsp;</span><span class="nav-bar-toggle-icon">&nbsp;</span><span class="nav-bar-toggle-icon">&nbsp;</span></button>
 <div class="skip-nav"><a href="#skip-navbar-top" title="Skip navigation links">Skip navigation links</a></div>
-<div class="about-language"><div style='padding: 4px 10px; background: rgba(255,255,255,0.15); border-radius: 4px; font-weight: bold;'>JPersist Suite &bull; v4.0.0</div></div>
+<div class="about-language"><div style='padding: 4px 10px; background: rgba(255,255,255,0.15); border-radius: 4px; font-weight: bold;'>JPersist Suite &bull; v4.1.0</div></div>
 <ul id="navbar-top-firstrow" class="nav-list" title="Navigation">
 <li class="nav-bar-cell1-rev">Overview</li>
 <li><a href="io.github.jpersist.tools.api/module-summary.html">Module</a></li>
@@ -112,15 +112,15 @@ loadScripts(document, 'script');</script>
     </li>
     <li>
         <strong><a href="io.github.jpersist.tools.api/persistence/tools/spi/EnhancerProvider.html" title="interface in persistence.tools.spi"><code>EnhancerProvider</code></a></strong> &mdash; Factory SPI for discovering
-        and instantiating namespace-specific bytecode enhancers.
+        and instantiating namespace-specific bytecode enhancers with default or customized enhancement settings.
     </li>
     <li>
         <strong><a href="io.github.jpersist.tools.api/persistence/tools/spi/NamedObjectParserFactory.html" title="interface in persistence.tools.spi"><code>NamedObjectParserFactory</code></a></strong> &mdash; Factory SPI for creating
-        named object query and procedure parsers.
+        named object query and procedure parsers with default or custom configuration settings.
     </li>
     <li>
         <strong><a href="io.github.jpersist.tools.api/persistence/tools/spi/SchemaValidatorFactory.html" title="interface in persistence.tools.spi"><code>SchemaValidatorFactory</code></a></strong> &mdash; Factory SPI for creating
-        database schema validators.
+        database schema validators with default or custom configuration settings.
     </li>
     <li>
         <strong><a href="io.github.jpersist.tools.api/persistence/tools/spi/PersistenceLinterFactory.html" title="interface in persistence.tools.spi"><code>PersistenceLinterFactory</code></a></strong> &mdash; Generic base factory SPI
@@ -129,6 +129,29 @@ loadScripts(document, 'script');</script>
 </ul>
 
 <h2 id="service-discovery-and-usage-heading">Service Discovery and Usage</h2>
+
+<h3 id="custom-configuration-settings-heading">Custom Configuration Settings</h3>
+<p>
+    Persistence service provider factories (<a href="io.github.jpersist.tools.api/persistence/tools/spi/EnhancerProvider.html" title="interface in persistence.tools.spi"><code>EnhancerProvider</code></a>,
+    <a href="io.github.jpersist.tools.api/persistence/tools/spi/NamedObjectParserFactory.html" title="interface in persistence.tools.spi"><code>NamedObjectParserFactory</code></a>, and <a href="io.github.jpersist.tools.api/persistence/tools/spi/SchemaValidatorFactory.html" title="interface in persistence.tools.spi"><code>SchemaValidatorFactory</code></a>)
+    overload their factory methods with a <code>Map&lt;String, Object&gt; settings</code> parameter. This feature enables
+    consumers to override default service implementation settings when instantiating tools, while also supporting
+    convenient overloads that use default settings when custom configuration is omitted:
+</p>
+<ul>
+    <li>
+        <a href="io.github.jpersist.tools.api/persistence/tools/spi/EnhancerProvider.html#getEnhancer(java.util.Collection,java.util.Map)"><code>EnhancerProvider.getEnhancer(java.util.Collection, java.util.Map)</code></a> and
+        <a href="io.github.jpersist.tools.api/persistence/tools/spi/EnhancerProvider.html#getEnhancer(java.util.Collection)"><code>EnhancerProvider.getEnhancer(java.util.Collection)</code></a>
+    </li>
+    <li>
+        <a href="io.github.jpersist.tools.api/persistence/tools/spi/NamedObjectParserFactory.html#newNamedObjectParser(java.util.List,java.util.Map)"><code>NamedObjectParserFactory.newNamedObjectParser(java.util.List, java.util.Map)</code></a> and
+        <a href="io.github.jpersist.tools.api/persistence/tools/spi/NamedObjectParserFactory.html#newNamedObjectParser(java.util.List)"><code>NamedObjectParserFactory.newNamedObjectParser(java.util.List)</code></a>
+    </li>
+    <li>
+        <a href="io.github.jpersist.tools.api/persistence/tools/spi/SchemaValidatorFactory.html#newSchemaValidator(java.util.List,java.util.Map)"><code>newSchemaValidator(java.util.List, java.util.Map)</code></a> and
+        <a href="io.github.jpersist.tools.api/persistence/tools/spi/SchemaValidatorFactory.html#newSchemaValidator(java.util.List)"><code>newSchemaValidator(java.util.List)</code></a>
+    </li>
+</ul>
 
 <h3 id="bytecode-enhancement-heading">Bytecode Enhancement</h3>
 <p>
@@ -148,11 +171,12 @@ byte[] enhancedBytes = enhancer.enhance("com.example.Order", originalBytecode);
 <h3 id="named-query-and-stored-procedure-validation-heading">Named Query and Stored Procedure Validation</h3>
 <p>
     Obtain a parser factory via
-    <a href="io.github.jpersist.tools.api/persistence/tools/spi/NamedObjectParserFactory.html#newNamedObjectParserFactory(java.lang.String)"><code>NamedObjectParserFactory.newNamedObjectParserFactory(String)</code></a>:
+    <a href="io.github.jpersist.tools.api/persistence/tools/spi/NamedObjectParserFactory.html#newNamedObjectParserFactory(java.lang.String)"><code>NamedObjectParserFactory.newNamedObjectParserFactory(String)</code></a>.
+    Parsers can be created with default settings or with custom configuration settings:
 </p>
 <pre><code>
 NamedObjectParserFactory factory = NamedObjectParserFactory.newNamedObjectParserFactory("3.1");
-try (NamedObjectParser parser = factory.newNamedObjectParser(entityClassNames)) {
+try (NamedObjectParser parser = factory.newNamedObjectParser(entityClassNames, settings)) {
     NamedObjectDescriptor queryDesc = parser.parseQuery(
         "Order.findByStatus", "SELECT o FROM Order o WHERE o.status = :status");
 
@@ -164,11 +188,12 @@ try (NamedObjectParser parser = factory.newNamedObjectParser(entityClassNames)) 
 <h3 id="database-schema-validation-heading">Database Schema Validation</h3>
 <p>
     Obtain a schema validator factory via
-    <a href="io.github.jpersist.tools.api/persistence/tools/spi/SchemaValidatorFactory.html#newSchemaValidatorFactory(java.lang.String)"><code>newSchemaValidatorFactory(String)</code></a>:
+    <a href="io.github.jpersist.tools.api/persistence/tools/spi/SchemaValidatorFactory.html#newSchemaValidatorFactory(java.lang.String)"><code>newSchemaValidatorFactory(String)</code></a>.
+    Validators can be created with default settings or configured with a settings map:
 </p>
 <pre><code>
 SchemaValidatorFactory factory = SchemaValidatorFactory.newSchemaValidatorFactory("3.1");
-SchemaValidator validator = factory.newSchemaValidator(entityClassNames);
+SchemaValidator validator = factory.newSchemaValidator(entityClassNames, settings);
 validator.validateSchema(Map.of(
     "driver",   "org.h2.Driver",
     "url",      "jdbc:h2:mem:testdb",
