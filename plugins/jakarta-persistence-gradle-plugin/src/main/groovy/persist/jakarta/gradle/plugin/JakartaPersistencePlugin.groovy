@@ -458,7 +458,7 @@ class JakartaPersistencePlugin implements Plugin<Project> {
             })
 
             // 4. Transparently inject the H2 driver file on-the-fly for the user
-            task.getClasspath().from(project.files(project.buildscript.configurations.detachedConfiguration(
+            task.getClasspath().from(project.files(project.configurations.detachedConfiguration(
                 project.dependencies.create("com.h2database:h2:2.2.224")
             )))
 
@@ -522,7 +522,7 @@ class JakartaPersistencePlugin implements Plugin<Project> {
 
             // Transparently inject the H2 driver dependency directly from a localized detached setup on-the-fly!
             // This provides 'org.h2.Driver' directly into the worker's classloader isolation sandbox.
-            task.classpath.from(project.files(project.buildscript.configurations.detachedConfiguration(
+            task.classpath.from(project.files(project.configurations.detachedConfiguration(
                 project.dependencies.create("com.h2database:h2:2.2.224")
             )))
 
