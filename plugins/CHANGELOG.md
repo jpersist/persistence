@@ -2,6 +2,15 @@
 
 All notable changes to the **JPersist Gradle Suite Plugins** are documented in this file.
 
+## v1.9.1 - 2026-11-19
+
+### 📦 Released Plugin Version
+* **JPersist Gradle Suite Plugins:** `1.9.1` (aligned with `persistence-tools-bom:4.1.0`)
+
+### 🐛 Bug Fixes
+* **Deferred Persistence Tools Resolution for Legacy JPA:** Wrapped `JakartaPersistencePlugin.resolvePersistenceToolsFiles` calls inside lazy `project.provider` blocks across `HibernateEnhancementPlugin`, `ValidatePersistenceSchema`, and `LintNamedQueries` so user-configured legacy JPA versions (`2.x`) are captured after build script evaluation when no template `persistence.xml` is present ([#165](https://github.com/jpersist/persistence/issues/165)).
+* **Detached H2 Driver Resolution Scope:** Switched H2 dependency resolution in `JakartaPersistencePlugin` from `project.buildscript.configurations` to `project.configurations.detachedConfiguration`, preventing missing repository errors in subprojects applying plugins via imperative `apply plugin:` syntax ([#166](https://github.com/jpersist/persistence/issues/166)).
+
 ## v1.9.0 - 2026-11-18
 
 ### 📌 Released Plugin Version

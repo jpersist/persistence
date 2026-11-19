@@ -453,10 +453,12 @@ class JakartaPersistencePlugin implements Plugin<Project> {
             task.getClasspath().from(project.configurations.named(sourceSet.runtimeClasspathConfigurationName))
 
             // 3. 🌟 OPTIMIZED TOOLSET EXTRACTION: Direct extraction from active Plugin ClassLoader
-            task.getClasspath().from(resolvePersistenceToolsFiles(project, extension.version))
+            task.getClasspath().from(project.provider {
+                resolvePersistenceToolsFiles(project, extension.version.get())
+            })
 
             // 4. Transparently inject the H2 driver file on-the-fly for the user
-            task.getClasspath().from(project.files(project.buildscript.configurations.detachedConfiguration(
+            task.getClasspath().from(project.files(project.configurations.detachedConfiguration(
                 project.dependencies.create("com.h2database:h2:2.2.224")
             )))
 
@@ -514,11 +516,13 @@ class JakartaPersistencePlugin implements Plugin<Project> {
             task.classpath.from(project.configurations.named(sourceSet.runtimeClasspathConfigurationName))
 
             // Ensure the plugin's own compiled files directory is attached to locate the worker classes
-            task.classpath.from(resolvePersistenceToolsFiles(project, extension.version))
+            task.classpath.from(project.provider {
+                resolvePersistenceToolsFiles(project, extension.version.get())
+            })
 
             // Transparently inject the H2 driver dependency directly from a localized detached setup on-the-fly!
             // This provides 'org.h2.Driver' directly into the worker's classloader isolation sandbox.
-            task.classpath.from(project.files(project.buildscript.configurations.detachedConfiguration(
+            task.classpath.from(project.files(project.configurations.detachedConfiguration(
                 project.dependencies.create("com.h2database:h2:2.2.224")
             )))
 
@@ -543,21 +547,19 @@ class JakartaPersistencePlugin implements Plugin<Project> {
      * {@code persistence-tools-jakarta}.  The tools version itself is read from
      * the {@code persistence-tools.version} property baked into the plugin JAR at
      * build time; if the property file is absent or empty a safe fallback version
-     * ({@code 3.0.0}) is used.
+     * ({@code 4.1.0}) is used.
      * </p>
      *
      * @param project            The Gradle project used to create the detached configuration.
-     * @param jpaVersionProvider A provider supplying the active JPA specification version
-     *                           string (e.g.&nbsp;{@code "2.2"} or {@code "3.1"}).
+     * @param jpaVersion         The active JPA specification version string
+     *                           (e.g.&nbsp;{@code "2.2"} or {@code "3.1"}).
      * @return A {@link ConfigurableFileCollection} containing the resolved persistence
      *         tools provider JAR and its transitive dependencies.
      *
      * @since 1.8.0
      */
-    static ConfigurableFileCollection resolvePersistenceToolsFiles(Project project,
-                                                                   Provider<String> jpaVersionProvider) {
-        def version = jpaVersionProvider.get()
-        boolean isLegacy = isLegacyJpaVersion(version)
+    static ConfigurableFileCollection resolvePersistenceToolsFiles(Project project, String jpaVersion) {
+        boolean isLegacy = isLegacyJpaVersion(jpaVersion)
         String providerArtifact = isLegacy ? "hibernate-persistence-tools" : "hibernate-orm-persistence-tools"
 
         // 🌟 STEP 1: Read the embedded tools version from the plugin's own resources context

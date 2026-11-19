@@ -127,10 +127,9 @@ class HibernateEnhancementPlugin implements Plugin<Project> {
                     // 🌟 THE FIX FOR GRADLE 7.x: Target the configuration directly and map the file provider natively
                     // We pass the lazy provider directly to project.dependencies.add() as a file collection
                     // without nesting it inside an outer project.files() block, keeping it safe for Gradle 7.6.6
-                    enhanceTask.enhanceClasspath.from(JakartaPersistencePlugin.resolvePersistenceToolsFiles(
-                        project,
-                        activeVersionProvider
-                    ))
+                    enhanceTask.enhanceClasspath.from(project.provider {
+                        JakartaPersistencePlugin.resolvePersistenceToolsFiles(project, activeVersionProvider.get())
+                    })
 
                     // Pass third-party structures and module dependencies separately via compilation boundaries
                     enhanceTask.compileClasspath.from(sourceSet.compileClasspath)
