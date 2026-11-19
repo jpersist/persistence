@@ -80,18 +80,18 @@ function windowTitle()
  managed by Gradle's <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/workers/WorkerExecutor.html' title='WorkerExecutor'>WorkerExecutor</a>.
  </p>
  <ul>
-     <li><a href='../../../../persist/jakarta/gradle/worker/SchemaValidationParameters.html' title='SchemaValidationParameters'>SchemaValidationParameters</a> &mdash;
+     <li>persist.jakarta.gradle.worker.SchemaValidationParameters &mdash;
          Parameter interface carrying the persistence unit names, multi-tenant
          connection profiles, and discovered entity class names into the isolated
          worker process.</li>
-     <li><a href='../../../../persist/jakarta/gradle/worker/SchemaValidationWorker.html' title='SchemaValidationWorker'>SchemaValidationWorker</a> &mdash;
+     <li>persist.jakarta.gradle.worker.SchemaValidationWorker &mdash;
          <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/workers/WorkAction.html' title='WorkAction'>WorkAction</a> that validates JPA entity
          mappings against the target database schemas across a multi-tenant matrix
          using an SPI-loaded persistence.tools.SchemaValidator.</li>
-     <li>persist.jakarta.gradle.worker.LintNamedQueriesParameters &mdash;
+     <li><a href='../../../../persist/jakarta/gradle/worker/LintNamedQueriesParameters.html' title='LintNamedQueriesParameters'>LintNamedQueriesParameters</a> &mdash;
          Parameter interface carrying the compiled classes directory, JPA
          version, and linter options into the isolated worker process.</li>
-     <li>persist.jakarta.gradle.worker.LintNamedQueriesWorker &mdash;
+     <li><a href='../../../../persist/jakarta/gradle/worker/LintNamedQueriesWorker.html' title='LintNamedQueriesWorker'>LintNamedQueriesWorker</a> &mdash;
          <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/workers/WorkAction.html' title='WorkAction'>WorkAction</a> that performs ASM bytecode
          scanning to discover <TT>@NamedQuery</TT> and
          <TT>@NamedStoredProcedureQuery</TT> annotations, then validates their

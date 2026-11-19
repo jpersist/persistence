@@ -321,7 +321,7 @@ implements <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/Plugin.
                         <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>static&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/file/ConfigurableFileCollection.html' title='ConfigurableFileCollection'>ConfigurableFileCollection</a></code></td>
-                            <td class="colLast"><code><strong><a href="#resolvePersistenceToolsFiles(org.gradle.api.Project, Provider)">resolvePersistenceToolsFiles</a></strong>(<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/Project.html' title='Project'>Project</a> project, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Provider.html' title='Provider'>Provider</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt; jpaVersionProvider)</code><br>Resolves the required persistence tools implementation JARs for the given JPA
+                            <td class="colLast"><code><strong><a href="#resolvePersistenceToolsFiles(org.gradle.api.Project, java.lang.String)">resolvePersistenceToolsFiles</a></strong>(<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/Project.html' title='Project'>Project</a> project, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a> jpaVersion)</code><br>Resolves the required persistence tools implementation JARs for the given JPA
  specification version by reading the tools version from the embedded
  <CODE>persistence-plugin-info.properties</CODE> resource and constructing a
  detached dependency configuration against Maven coordinates.</td>
@@ -429,10 +429,10 @@ implements <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/Plugin.
                             </li>
                         </ul>
                     
-                        <a name="resolvePersistenceToolsFiles(org.gradle.api.Project, Provider)"><!-- --></a>
+                        <a name="resolvePersistenceToolsFiles(org.gradle.api.Project, java.lang.String)"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>static&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/file/ConfigurableFileCollection.html' title='ConfigurableFileCollection'>ConfigurableFileCollection</a> <strong>resolvePersistenceToolsFiles</strong>(<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/Project.html' title='Project'>Project</a> project, <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/provider/Provider.html' title='Provider'>Provider</a>&lt;<a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a>&gt; jpaVersionProvider)</h4>
+                                <h4>static&nbsp;<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/file/ConfigurableFileCollection.html' title='ConfigurableFileCollection'>ConfigurableFileCollection</a> <strong>resolvePersistenceToolsFiles</strong>(<a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/Project.html' title='Project'>Project</a> project, <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html' title='String'>String</a> jpaVersion)</h4>
                                 <p> Resolves the required persistence tools implementation JARs for the given JPA
  specification version by reading the tools version from the embedded
  <CODE>persistence-plugin-info.properties</CODE> resource and constructing a
@@ -443,9 +443,9 @@ implements <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/Plugin.
  <CODE>persistence-tools-jakarta</CODE>.  The tools version itself is read from
  the <CODE>persistence-tools.version</CODE> property baked into the plugin JAR at
  build time; if the property file is absent or empty a safe fallback version
- (<CODE>3.0.0</CODE>) is used.
- </p> <DL><DT><B>Parameters:</B></DT><DD><code>project</code> -             The Gradle project used to create the detached configuration.</DD><DD><code>jpaVersionProvider</code> -  A provider supplying the active JPA specification version
-                           string (e.g.&nbsp;<CODE>"2.2"</CODE> or <CODE>"3.1"</CODE>).</DD></DL><DL><DT><B>Returns:</B></DT><DD>A <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/file/ConfigurableFileCollection.html' title='ConfigurableFileCollection'>ConfigurableFileCollection</a> containing the resolved persistence
+ (<CODE>4.1.0</CODE>) is used.
+ </p> <DL><DT><B>Parameters:</B></DT><DD><code>project</code> -             The Gradle project used to create the detached configuration.</DD><DD><code>jpaVersion</code> -          The active JPA specification version string
+                           (e.g.&nbsp;<CODE>"2.2"</CODE> or <CODE>"3.1"</CODE>).</DD></DL><DL><DT><B>Returns:</B></DT><DD>A <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/api/file/ConfigurableFileCollection.html' title='ConfigurableFileCollection'>ConfigurableFileCollection</a> containing the resolved persistence
          tools provider JAR and its transitive dependencies.</DD></DL><DL><DT><B>Since:</B></DT><DD>1.8.0</DD></DL></p>
                             </li>
                         </ul>

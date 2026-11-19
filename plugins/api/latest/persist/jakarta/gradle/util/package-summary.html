@@ -80,12 +80,12 @@ function windowTitle()
  JPMS modular runtime environments.
  </p>
  <ul>
-     <li><a href='../../../../persist/jakarta/gradle/util/JPMSWorkerSupport.html' title='JPMSWorkerSupport'>JPMSWorkerSupport</a> &mdash;
+     <li>persist.jakarta.gradle.util.JPMSWorkerSupport &mdash;
          Configures Gradle <a href='https://docs.gradle.org/9.8.0/javadoc/org/gradle/workers/WorkerExecutor.html' title='WorkerExecutor'>WorkerExecutor</a> work queues using either
          modular JPMS process isolation (when <TT>module-info.class</TT> is detected) or
          standard classloader isolation, dynamically configuring JVM module arguments,
          module paths, and reflective <TT>--add-opens</TT> flags.</li>
-     <li><a href='../../../../persist/jakarta/gradle/util/PersistenceServiceResolver.html' title='PersistenceServiceResolver'>PersistenceServiceResolver</a> &mdash;
+     <li>persist.jakarta.gradle.util.PersistenceServiceResolver &mdash;
          Resolves versioned persistence.tools.spi.PersistenceServiceProvider
          instances via <a href='https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/ServiceLoader.html' title='ServiceLoader'>ServiceLoader</a>, checking both modular JPMS boot layers
          and the current thread's context classloader.</li>

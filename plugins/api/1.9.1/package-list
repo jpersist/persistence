@@ -1,0 +1,17 @@
+persist.eclipse.gradle.extension
+persist.eclipse.gradle.plugin
+persist.eclipse.gradle.task
+persist.hibernate.gradle.extension
+persist.hibernate.gradle.plugin
+persist.hibernate.gradle.task
+persist.hibernate.gradle.worker
+persist.jakarta.gradle.extension
+persist.jakarta.gradle.plugin
+persist.jakarta.gradle.task
+persist.jakarta.gradle.task.delegate
+persist.jakarta.gradle.task.registry
+persist.jakarta.gradle.util
+persist.jakarta.gradle.worker
+persist.openjpa.gradle.extension
+persist.openjpa.gradle.plugin
+persist.openjpa.gradle.task
