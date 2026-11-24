@@ -25,6 +25,10 @@
  *       abstract base provider binding the {@code "jakarta"} namespace.</li>
  *   <li>{@link hibernate.jakarta.persistence.tools.provider.HibernatePersistenceLinterFactory} &ndash;
  *       abstract base linter factory binding the {@code "jakarta"} namespace.</li>
+ *   <li>{@link hibernate.jakarta.persistence.tools.provider.HibernateEntityModelLinterFactory} &ndash;
+ *       service provider for {@link persistence.tools.spi.EntityModelLinterFactory}.</li>
+ *   <li>{@link hibernate.jakarta.persistence.tools.provider.HibernateSchemaExporterFactory} &ndash;
+ *       service provider for {@link persistence.tools.spi.SchemaExporterFactory}.</li>
  *   <li>{@link hibernate.jakarta.persistence.tools.provider.HibernateEnhancerProvider} &ndash;
  *       service provider for {@link persistence.tools.spi.EnhancerProvider}.</li>
  *   <li>{@link hibernate.jakarta.persistence.tools.provider.HibernateNamedObjectParserFactory} &ndash;
@@ -36,5 +40,7 @@
  * @since 2.0.0
  * @see persistence.tools.spi
  * @see hibernate.jakarta.persistence.tools.HibernateEnhancer
+ * @see hibernate.jakarta.persistence.tools.HibernateEntityModelLinter
+ * @see hibernate.jakarta.persistence.tools.HibernateSchemaExporter
  */
 package hibernate.jakarta.persistence.tools.provider;

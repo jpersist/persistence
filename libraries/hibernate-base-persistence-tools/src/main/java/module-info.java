@@ -3,13 +3,14 @@
  *
  * <p>This module provides shared baseline contracts and utility methods used across version-specific
  * Hibernate persistence tooling providers (such as Hibernate&nbsp;5 and Hibernate ORM&nbsp;6).
- * It encapsulates shared enhancer option configuration and class loading helpers, while transitively
- * exposing the core persistence tools API.</p>
+ * It encapsulates bytecode enhancement option configuration, template entity model linting,
+ * shared lint rule definitions, class loading helpers, and offline DDL export utilities,
+ * while transitively exposing the core persistence tools API.</p>
  *
  * <h2>Exported Packages</h2>
  * <ul>
- *   <li>{@link hibernate.base.persistence.tools} &ndash; Common bytecode enhancement options
- *       and utility classes for Hibernate tool implementations.</li>
+ *   <li>{@link hibernate.base.persistence.tools} &ndash; Common bytecode enhancement options,
+ *       entity model linting rules, base linter implementations, and utility classes for Hibernate tool implementations.</li>
  * </ul>
  *
  * @since 1.0.0

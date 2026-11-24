@@ -5,9 +5,9 @@
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=jpersist_persistence_libraries&metric=coverage)](https://sonarcloud.io/summary/new_code?id=jpersist_persistence_libraries)
 ![GitHub License](https://img.shields.io/github/license/jpersist/persistence)
 
-The **Persistence Tools Libraries** (group `io.github.jpersist.tools`) provide a **vendor-agnostic API** and **reference implementations** for build-time validation, query parsing, schema verification, and bytecode enhancement of JPA persistence artifacts — without deploying the application or running dynamic bytecode agents.
+The **Persistence Tools Libraries** (group `io.github.jpersist.tools`) provide a **vendor-agnostic API** and **reference implementations** for build-time validation, entity class linting, query parsing, database schema verification, offline DDL schema generation, and bytecode enhancement of JPA persistence artifacts — without deploying the application or running dynamic bytecode agents.
 
-By decoupling tooling contracts from specific persistence providers, the core API enables consistent static analysis across JPA specification baselines. The libraries ship with complete reference implementations powered by **Hibernate ORM 6** (for Jakarta Persistence / JPA 3.x) and **Hibernate 5** (for legacy Java Persistence / JPA 2.x), backed by a shared base infrastructure module.
+By decoupling tooling contracts from specific persistence providers, the core API enables consistent static analysis and schema generation across JPA specification baselines. The libraries ship with complete reference implementations powered by **Hibernate ORM 6** (for Jakarta Persistence / JPA 3.x) and **Hibernate 5** (for legacy Java Persistence / JPA 2.x), backed by a shared base infrastructure module.
 
 ---
 
@@ -15,11 +15,11 @@ By decoupling tooling contracts from specific persistence providers, the core AP
 
 | Module | Artifact | Version | Description |
 |:---|:---|:---|:---|
-| **`persistence-tools-api`** | `io.github.jpersist.tools:persistence-tools-api` | `4.1.0` | Defines the vendor-agnostic public contracts and Service Provider Interfaces (SPIs): `PersistenceServiceProvider` (shared root), `PersistenceLinter` / `PersistenceLinterFactory` (linting contracts), `NamedObjectParser` / `NamedObjectParserFactory` (named query & stored procedure validation; `AutoCloseable`), `SchemaValidator` / `SchemaValidatorFactory` (database schema validation), and `Enhancer` / `EnhancerProvider` (bytecode enhancement). Contains no vendor-specific implementation; provider modules are discovered dynamically at runtime via the Java `ServiceLoader` mechanism. |
-| **`hibernate-base-persistence-tools`** | `io.github.jpersist.tools:hibernate-base-persistence-tools` | `1.1.0` | Shared base module for Hibernate implementations. Provides common enhancement configuration options (`HibernateEnhancerOption`) and shared reflection, URL, and class-loading utilities (`HibernateUtil`). Transitively exposes `persistence-tools-api`. |
-| **`hibernate-orm-persistence-tools`** | `io.github.jpersist.tools:hibernate-orm-persistence-tools` | `2.1.0` | Jakarta Persistence (JPA 3.x / `jakarta.*` namespace) reference implementation. Powered by **Hibernate ORM 6** to compile JPQL queries into Semantic Query Model (SQM) trees, validate persistence schemas against a live database, and enhance entity bytecode. |
-| **`hibernate-persistence-tools`** | `io.github.jpersist.tools:hibernate-persistence-tools` | `1.1.0` | Legacy Java Persistence (JPA 2.x / `javax.*` namespace) reference implementation. Powered by **Hibernate 5** to validate JPQL queries using AST query translation, validate database schemas, and enhance entity bytecode. |
-| **`persistence-tools-bom`** | `io.github.jpersist.tools:persistence-tools-bom` | `4.1.0` | Bill of Materials (BOM) for convenient, aligned dependency management across all Persistence Tools modules. |
+| **`persistence-tools-api`** | `io.github.jpersist.tools:persistence-tools-api` | `4.2.0` | Defines the vendor-agnostic public contracts and Service Provider Interfaces (SPIs): `PersistenceServiceProvider` (shared root), `PersistenceLinter` / `PersistenceLinterFactory` (generic linter base), `EntityModelLinter` / `EntityModelLinterFactory` (entity class linting), `NamedObjectParser` / `NamedObjectParserFactory` (named query & stored procedure validation; `AutoCloseable`), `SchemaValidator` / `SchemaValidatorFactory` (database schema validation), `SchemaExporter` / `SchemaExporterFactory` (offline DDL schema export), and `Enhancer` / `EnhancerProvider` (bytecode enhancement). Contains no vendor-specific implementation; provider modules are discovered dynamically at runtime via the Java `ServiceLoader` mechanism. |
+| **`hibernate-base-persistence-tools`** | `io.github.jpersist.tools:hibernate-base-persistence-tools` | `1.2.0` | Shared base module for Hibernate implementations. Provides base entity linting template (`AbstractEntityModelLinter`), standard linting rule catalog (`EntityLintRule`), common enhancement configuration options (`HibernateEnhancerOption`), and shared reflection, settings merging, DDL streaming, URL, and class-loading utilities (`HibernateUtil`). Transitively exposes `persistence-tools-api`. |
+| **`hibernate-orm-persistence-tools`** | `io.github.jpersist.tools:hibernate-orm-persistence-tools` | `2.2.0` | Jakarta Persistence (JPA 3.x / `jakarta.*` namespace) reference implementation. Powered by **Hibernate ORM 6** to inspect entity models for anti-patterns, export offline DDL schema scripts, compile JPQL queries into Semantic Query Model (SQM) trees, validate persistence schemas against a live database, and enhance entity bytecode. |
+| **`hibernate-persistence-tools`** | `io.github.jpersist.tools:hibernate-persistence-tools` | `1.2.0` | Legacy Java Persistence (JPA 2.x / `javax.*` namespace) reference implementation. Powered by **Hibernate 5** to inspect entity models for anti-patterns, export offline DDL schema scripts, validate JPQL queries using AST query translation, validate database schemas, and enhance entity bytecode. |
+| **`persistence-tools-bom`** | `io.github.jpersist.tools:persistence-tools-bom` | `4.2.0` | Bill of Materials (BOM) for convenient, aligned dependency management across all Persistence Tools modules. |
 
 ---
 
@@ -31,7 +31,7 @@ By decoupling tooling contracts from specific persistence providers, the core AP
 
 ```groovy
 dependencies {
-    implementation platform('io.github.jpersist.tools:persistence-tools-bom:4.1.0')
+    implementation platform('io.github.jpersist.tools:persistence-tools-bom:4.2.0')
 
     // Vendor-agnostic Persistence Tools API
     implementation 'io.github.jpersist.tools:persistence-tools-api'
@@ -45,7 +45,7 @@ dependencies {
 
 ```groovy
 dependencies {
-    implementation platform('io.github.jpersist.tools:persistence-tools-bom:4.1.0')
+    implementation platform('io.github.jpersist.tools:persistence-tools-bom:4.2.0')
 
     // Vendor-agnostic Persistence Tools API
     implementation 'io.github.jpersist.tools:persistence-tools-api'
@@ -79,7 +79,34 @@ byte[] enhancedBytes = enhancer.enhance("com.example.Order", originalBytes);
 Files.write(classFile, enhancedBytes);
 ```
 
-### 3. Validate named queries & stored procedures
+### 3. Lint entity classes
+
+Use `EntityModelLinterFactory.newEntityModelLinterFactory(String)` to obtain the linter factory for a given JPA specification version (e.g. `"3.1"`), then create an `EntityModelLinter` to inspect entity classes at build time for structural defects and association mapping anti-patterns:
+
+```java
+import persistence.tools.EntityModelLinter;
+import persistence.tools.LintDiagnostic;
+import persistence.tools.LintSeverity;
+import persistence.tools.spi.EntityModelLinterFactory;
+
+EntityModelLinterFactory factory = EntityModelLinterFactory.newEntityModelLinterFactory("3.1");
+
+// Create linter with entity class names (optional: custom settings map)
+EntityModelLinter linter = factory.newEntityModelLinter(entityClassNames);
+List<LintDiagnostic> findings = linter.lint();
+
+for (LintDiagnostic diagnostic : findings) {
+    if (diagnostic.severity() == LintSeverity.ERROR) {
+        System.err.printf("[%s] %s#%s: %s%n",
+            diagnostic.ruleId(),
+            diagnostic.className(),
+            diagnostic.attributeName(),
+            diagnostic.message());
+    }
+}
+```
+
+### 4. Validate named queries & stored procedures
 
 Use `NamedObjectParserFactory.newNamedObjectParserFactory(String)` to resolve the factory matching the JPA specification version, then create a `NamedObjectParser` to validate named queries and stored procedures against entity models:
 
@@ -111,7 +138,7 @@ try (NamedObjectParser parser = factory.newNamedObjectParser(entityClassNames, s
 
 > **Note:** `NamedObjectParser` implements `AutoCloseable`. Always use try-with-resources to ensure underlying provider resources and registries are properly released. See the [Hibernate ORM 6 API Docs](https://jpersist.github.io/persistence/tools/hibernate-orm/api/latest/) or [Hibernate 5 API Docs](https://jpersist.github.io/persistence/tools/hibernate/api/latest/) for full details on default, overridable, and enforced settings.
 
-### 4. Validate persistence schema against a live database
+### 5. Validate persistence schema against a live database
 
 Use `SchemaValidatorFactory.newSchemaValidatorFactory(String)` to obtain the factory, then create a `SchemaValidator` to compare the entity metamodel against a live database schema:
 
@@ -135,6 +162,30 @@ validator.validateSchema(Map.of(
     "username", "sa",
     "password", "secret"
 ));
+```
+
+### 6. Export offline DDL schema scripts
+
+Use `SchemaExporterFactory.newSchemaExporterFactory(String)` to obtain the factory matching the JPA specification version, then create a `SchemaExporter` to generate offline DDL scripts directly from entity mappings without requiring a live database connection:
+
+```java
+import persistence.tools.SchemaExporter;
+import persistence.tools.spi.SchemaExporterFactory;
+
+SchemaExporterFactory factory = SchemaExporterFactory.newSchemaExporterFactory("3.1");
+
+// Optional: customize provider settings (e.g. SQL dialect, formatting, statement delimiter)
+Map<String, Object> settings = Map.of(
+    "hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect",
+    "hibernate.format_sql", "true",
+    "hibernate.hbm2ddl.delimiter", ";"
+);
+
+SchemaExporter exporter = factory.newSchemaExporter(entityClassNames, settings);
+
+// Export CREATE, DROP, or BOTH DDL statements to a File, OutputStream, or Writer
+exporter.export(SchemaExporter.Action.CREATE, new File("build/schema/create-schema.sql"));
+exporter.export(SchemaExporter.Action.DROP, new File("build/schema/drop-schema.sql"));
 ```
 
 > **Tip:** Refer to the [Hibernate ORM 6 API Docs](https://jpersist.github.io/persistence/tools/hibernate-orm/api/latest/) and [Hibernate 5 API Docs](https://jpersist.github.io/persistence/tools/hibernate/api/latest/) for the complete configuration reference and precedence rules.
@@ -200,31 +251,43 @@ module com.example.myapp {
 persistence-tools-api  (Vendor-Agnostic SPI & Public Contracts)
  ├── persistence.tools
  │    ├── Enhancer                          — bytecode enhancement contract
+ │    ├── EntityModelLinter                 — entity class linting contract
+ │    ├── LintDiagnostic                    — immutable diagnostic finding record
+ │    ├── LintSeverity                      — diagnostic severity level (ERROR, WARNING, INFO)
  │    ├── NamedObjectParser                 — named query & stored procedure parser (AutoCloseable)
  │    ├── NamedObjectDescriptor             — immutable metadata result for parsed objects
  │    ├── NamedObjectType                   — QUERY or STORED_PROCEDURE
+ │    ├── SchemaExporter                    — offline DDL schema export contract
  │    ├── SchemaValidator                   — database schema validation contract
  │    └── PersistenceLinter                 — root marker interface for linting operations
  └── persistence.tools.spi
       ├── PersistenceServiceProvider        — root SPI; version-to-namespace mapping & ServiceLoader discovery
       ├── PersistenceLinterFactory          — generic base linter factory
+      ├── EntityModelLinterFactory          — factory SPI for EntityModelLinter
       ├── NamedObjectParserFactory          — factory SPI for NamedObjectParser
       ├── SchemaValidatorFactory            — factory SPI for SchemaValidator
+      ├── SchemaExporterFactory             — factory SPI for SchemaExporter
       └── EnhancerProvider                  — factory SPI for Enhancer
 
 hibernate-base-persistence-tools  (Shared Hibernate Infrastructure)
  └── hibernate.base.persistence.tools
+      ├── AbstractEntityModelLinter         — template class for structural and reflective entity linting
+      ├── EntityLintRule                    — standard catalog of JPA diagnostic rules and severities
       ├── HibernateEnhancerOption           — standardized enhancement configuration option keys
-      └── HibernateUtil                     — settings merging, connection mapping, URL & ClassLoader utilities
+      └── HibernateUtil                     — settings merging, connection mapping, DDL writers & ClassLoader utilities
 
 hibernate-orm-persistence-tools  (Reference Implementation — "jakarta" namespace / Hibernate ORM 6)
  ├── hibernate.jakarta.persistence.tools.provider
  │    ├── HibernatePersistenceServiceProvider
  │    ├── HibernatePersistenceLinterFactory
+ │    ├── HibernateEntityModelLinterFactory
  │    ├── HibernateNamedObjectParserFactory
  │    ├── HibernateSchemaValidatorFactory
+ │    ├── HibernateSchemaExporterFactory
  │    └── HibernateEnhancerProvider
  ├── hibernate.jakarta.persistence.tools
+ │    ├── HibernateEntityModelLinter        — Jakarta entity model linting
+ │    ├── HibernateSchemaExporter           — Hibernate 6 offline DDL schema generation
  │    ├── HibernateNamedObjectParser        — SQM-based query validation
  │    ├── HibernateSchemaValidator          — Hibernate 6 schema validation
  │    └── HibernateEnhancer                 — Hibernate 6 bytecode enhancement
@@ -235,10 +298,14 @@ hibernate-persistence-tools  (Reference Implementation — "javax" namespace / H
  ├── hibernate.javax.persistence.tools.provider
  │    ├── HibernatePersistenceServiceProvider
  │    ├── HibernatePersistenceLinterFactory
+ │    ├── HibernateEntityModelLinterFactory
  │    ├── HibernateNamedObjectParserFactory
  │    ├── HibernateSchemaValidatorFactory
+ │    ├── HibernateSchemaExporterFactory
  │    └── HibernateEnhancerProvider
  ├── hibernate.javax.persistence.tools
+ │    ├── HibernateEntityModelLinter        — JPA 2.x entity model linting
+ │    ├── HibernateSchemaExporter           — Hibernate 5 offline DDL schema generation
  │    ├── HibernateNamedObjectParser        — AST-based query validation
  │    ├── HibernateSchemaValidator          — Hibernate 5 schema validation
  │    └── HibernateEnhancer                 — Hibernate 5 bytecode enhancement

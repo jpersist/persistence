@@ -20,11 +20,12 @@
 <p>
     The <strong>Persistence Tools API</strong> module ({@code io.github.jpersist.tools.api}) provides
     vendor-agnostic abstractions and Service Provider Interfaces (SPI) for build-time validation,
-    query parsing, schema verification, and bytecode enhancement of JPA persistence artifacts.
+    entity model linting, query parsing, schema verification, offline DDL export, and bytecode enhancement
+    of JPA persistence artifacts.
 </p>
 <p>
     By decoupling application tooling and build plugins from specific JPA provider implementations,
-    this module enables consistent build-time analysis across different persistence specifications
+    this module enables consistent build-time analysis and schema management across different persistence specifications
     (e.g.&nbsp;Jakarta Persistence JPA&nbsp;3.x and legacy Java Persistence JPA&nbsp;2.x).
 </p>
 
@@ -44,12 +45,21 @@
         and bidirectional association management.
     </li>
     <li>
-        <strong>{@link persistence.tools.NamedObjectParser}</strong> &mdash; Validates named JPQL queries and
-        stored procedure declarations against the entity metamodel, returning rich metadata descriptors.
+        <strong>{@link persistence.tools.EntityModelLinter}</strong> &mdash; Statically inspects the JPA entity metamodel
+        at build time to detect mapping anti-patterns, structural errors, and performance pitfalls.
     </li>
     <li>
-        <strong>{@link persistence.tools.SchemaValidator}</strong> &mdash; Validates the entity metamodel against
-        a live database schema via JDBC connections.
+        <strong>{@link persistence.tools.LintDiagnostic}</strong> &mdash; Immutable diagnostic record encapsulating a single
+        linting finding (severity, rule ID, class name, attribute name, and descriptive message).
+    </li>
+    <li>
+        <strong>{@link persistence.tools.LintSeverity}</strong> &mdash; Enumeration classifying diagnostic severity levels
+        ({@link persistence.tools.LintSeverity#ERROR ERROR}, {@link persistence.tools.LintSeverity#WARNING WARNING},
+        or {@link persistence.tools.LintSeverity#INFO INFO}).
+    </li>
+    <li>
+        <strong>{@link persistence.tools.NamedObjectParser}</strong> &mdash; Validates named JPQL queries and
+        stored procedure declarations against the entity metamodel, returning rich metadata descriptors.
     </li>
     <li>
         <strong>{@link persistence.tools.NamedObjectDescriptor}</strong> &mdash; Immutable descriptor encapsulating
@@ -59,6 +69,18 @@
         <strong>{@link persistence.tools.NamedObjectType}</strong> &mdash; Enumeration classifying named persistence
         objects ({@link persistence.tools.NamedObjectType#QUERY QUERY} or
         {@link persistence.tools.NamedObjectType#STORED_PROCEDURE STORED_PROCEDURE}).
+    </li>
+    <li>
+        <strong>{@link persistence.tools.SchemaExporter}</strong> &mdash; Exports offline DDL scripts
+        ({@link persistence.tools.SchemaExporter.Action#CREATE CREATE}, {@link persistence.tools.SchemaExporter.Action#DROP DROP},
+        or {@link persistence.tools.SchemaExporter.Action#BOTH BOTH}) from entity metadata without requiring a live database connection.
+    </li>
+    <li>
+        <strong>{@link persistence.tools.SchemaExporter.Action}</strong> &mdash; Enumeration defining the DDL generation scope.
+    </li>
+    <li>
+        <strong>{@link persistence.tools.SchemaValidator}</strong> &mdash; Validates the entity metamodel against
+        a live database schema via JDBC connections.
     </li>
     <li>
         <strong>{@link persistence.tools.PersistenceLinter}</strong> &mdash; Common marker interface for all
@@ -80,12 +102,20 @@
         and instantiating namespace-specific bytecode enhancers with default or customized enhancement settings.
     </li>
     <li>
+        <strong>{@link persistence.tools.spi.EntityModelLinterFactory}</strong> &mdash; Factory SPI for discovering
+        and instantiating entity model linters with default or customized configuration settings.
+    </li>
+    <li>
         <strong>{@link persistence.tools.spi.NamedObjectParserFactory}</strong> &mdash; Factory SPI for creating
         named object query and procedure parsers with default or custom configuration settings.
     </li>
     <li>
         <strong>{@link persistence.tools.spi.SchemaValidatorFactory}</strong> &mdash; Factory SPI for creating
         database schema validators with default or custom configuration settings.
+    </li>
+    <li>
+        <strong>{@link persistence.tools.spi.SchemaExporterFactory}</strong> &mdash; Factory SPI for creating
+        offline DDL schema exporters with default or custom dialect and formatting settings.
     </li>
     <li>
         <strong>{@link persistence.tools.spi.PersistenceLinterFactory}</strong> &mdash; Generic base factory SPI
@@ -98,15 +128,20 @@
 <h3>Custom Configuration Settings</h3>
 <p>
     Persistence service provider factories ({@link persistence.tools.spi.EnhancerProvider},
-    {@link persistence.tools.spi.NamedObjectParserFactory}, and {@link persistence.tools.spi.SchemaValidatorFactory})
-    overload their factory methods with a {@code Map<String, Object> settings} parameter. This feature enables
-    consumers to override default service implementation settings when instantiating tools, while also supporting
-    convenient overloads that use default settings when custom configuration is omitted:
+    {@link persistence.tools.spi.EntityModelLinterFactory}, {@link persistence.tools.spi.NamedObjectParserFactory},
+    {@link persistence.tools.spi.SchemaValidatorFactory}, and {@link persistence.tools.spi.SchemaExporterFactory})
+    overload their factory methods with custom settings parameters. This feature enables consumers to override
+    default service implementation settings when instantiating tools, while also supporting convenient overloads
+    that use default settings when custom configuration is omitted:
 </p>
 <ul>
     <li>
         {@link persistence.tools.spi.EnhancerProvider#getEnhancer(java.util.Collection, java.util.Map)} and
         {@link persistence.tools.spi.EnhancerProvider#getEnhancer(java.util.Collection)}
+    </li>
+    <li>
+        {@link persistence.tools.spi.EntityModelLinterFactory#newEntityModelLinter(java.util.List, java.util.Map)} and
+        {@link persistence.tools.spi.EntityModelLinterFactory#newEntityModelLinter(java.util.List)}
     </li>
     <li>
         {@link persistence.tools.spi.NamedObjectParserFactory#newNamedObjectParser(java.util.List, java.util.Map)} and
@@ -115,6 +150,10 @@
     <li>
         {@link persistence.tools.spi.SchemaValidatorFactory#newSchemaValidator(java.util.List, java.util.Map)} and
         {@link persistence.tools.spi.SchemaValidatorFactory#newSchemaValidator(java.util.List)}
+    </li>
+    <li>
+        {@link persistence.tools.spi.SchemaExporterFactory#newSchemaExporter(java.util.List, java.util.Map)} and
+        {@link persistence.tools.spi.SchemaExporterFactory#newSchemaExporter(java.util.List)}
     </li>
 </ul>
 
@@ -131,6 +170,24 @@ Enhancer enhancer = provider.getEnhancer(
            "enhancement.option.dirty-tracking", true));
 
 byte[] enhancedBytes = enhancer.enhance("com.example.Order", originalBytecode);
+}</pre>
+
+<h3>Entity Model Linting</h3>
+<p>
+    Obtain an entity model linter factory via
+    {@link persistence.tools.spi.EntityModelLinterFactory#newEntityModelLinterFactory(String)}.
+    Linters statically inspect compiled entity classes and report diagnostics across mapping and performance rules:
+</p>
+<pre>{@code
+EntityModelLinterFactory factory = EntityModelLinterFactory.newEntityModelLinterFactory("3.1");
+EntityModelLinter linter = factory.newEntityModelLinter(entityClassNames, Map.of("linter.strict", "true"));
+List<LintDiagnostic> findings = linter.lint();
+
+for (LintDiagnostic diagnostic : findings) {
+    if (diagnostic.severity() == LintSeverity.ERROR) {
+        System.err.println(diagnostic.ruleId() + " [" + diagnostic.className() + "]: " + diagnostic.message());
+    }
+}
 }</pre>
 
 <h3>Named Query and Stored Procedure Validation</h3>
@@ -166,6 +223,25 @@ validator.validateSchema(Map.of(
     "password", ""));
 }</pre>
 
+<h3>Offline DDL Schema Export</h3>
+<p>
+    Obtain a schema exporter factory via
+    {@link persistence.tools.spi.SchemaExporterFactory#newSchemaExporterFactory(String)}.
+    Exporters generate DDL statements without a live database connection and write the resulting scripts
+    to a {@link java.io.File}, {@link java.io.OutputStream}, or {@link java.io.Writer}:
+</p>
+<pre>{@code
+SchemaExporterFactory factory = SchemaExporterFactory.newSchemaExporterFactory("3.1");
+SchemaExporter exporter = factory.newSchemaExporter(
+    entityClassNames,
+    Map.of("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect",
+           "hibernate.format_sql", "true")
+);
+
+// Export CREATE DDL statements to a destination file
+exporter.export(SchemaExporter.Action.CREATE, new File("build/schema/create.sql"));
+}</pre>
+
 <h2>Java Platform Module System (JPMS)</h2>
 <p>
     The {@code io.github.jpersist.tools.api} module descriptor exports its API packages and declares
@@ -176,15 +252,17 @@ validator.validateSchema(Map.of(
     <li>{@code exports persistence.tools.spi;}</li>
     <li>{@code uses persistence.tools.spi.PersistenceServiceProvider;}</li>
     <li>{@code uses persistence.tools.spi.PersistenceLinterFactory;}</li>
+    <li>{@code uses persistence.tools.spi.EntityModelLinterFactory;}</li>
     <li>{@code uses persistence.tools.spi.NamedObjectParserFactory;}</li>
     <li>{@code uses persistence.tools.spi.SchemaValidatorFactory;}</li>
+    <li>{@code uses persistence.tools.spi.SchemaExporterFactory;}</li>
     <li>{@code uses persistence.tools.spi.EnhancerProvider;}</li>
 </ul>
 
 <h2>Package Summary</h2>
 <dl>
     <dt>{@link persistence.tools}</dt>
-    <dd>Public contracts for persistence bytecode enhancement, query parsing, and schema validation.</dd>
+    <dd>Public contracts for persistence bytecode enhancement, entity model linting, query parsing, schema validation, and offline DDL schema export.</dd>
 
     <dt>{@link persistence.tools.spi}</dt>
     <dd>Service Provider Interfaces (SPI) and dynamic discovery mechanisms for persistence tooling providers.</dd>

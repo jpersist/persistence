@@ -17,11 +17,15 @@
 /**
  * Jakarta Persistence tool implementations backed by Hibernate ORM&nbsp;6.
  *
- * <p>This package provides bytecode enhancement, semantic query model (SQM) query parsing,
- * and database schema validation components targeting the {@code jakarta.persistence}
- * namespace (JPA&nbsp;3.x):</p>
+ * <p>This package provides bytecode enhancement, entity model linting, offline DDL schema export,
+ * semantic query model (SQM) query parsing, and database schema validation components targeting
+ * the {@code jakarta.persistence} namespace (JPA&nbsp;3.x):</p>
  *
  * <ul>
+ *   <li>{@link hibernate.jakarta.persistence.tools.HibernateEntityModelLinter} &ndash; inspects
+ *       Jakarta Persistence entities for structural defects, mapping anti-patterns, and bad practices.</li>
+ *   <li>{@link hibernate.jakarta.persistence.tools.HibernateSchemaExporter} &ndash; generates
+ *       offline database schema DDL scripts ({@code CREATE}, {@code DROP}, or {@code BOTH}) from entity mappings.</li>
  *   <li>{@link hibernate.jakarta.persistence.tools.HibernateEnhancer} &ndash; transforms
  *       compiled entity class bytes using Hibernate ORM&nbsp;6 bytecode enhancement.</li>
  *   <li>{@link hibernate.jakarta.persistence.tools.HibernateNamedObjectParser} &ndash; compiles

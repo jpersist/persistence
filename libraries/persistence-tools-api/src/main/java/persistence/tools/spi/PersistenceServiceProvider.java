@@ -24,8 +24,10 @@ import java.util.ServiceLoader;
  * <p>Each provider declares the JPA namespace it supports (e.g.&nbsp;{@code "jakarta"}
  * or {@code "javax"}) via {@link #getSupportedNamespace()}. Concrete provider
  * factory interfaces such as {@link EnhancerProvider},
- * {@link NamedObjectParserFactory}, and
- * {@link SchemaValidatorFactory} extend this interface (or
+ * {@link EntityModelLinterFactory},
+ * {@link NamedObjectParserFactory},
+ * {@link SchemaValidatorFactory}, and
+ * {@link SchemaExporterFactory} extend this interface (or
  * its subtype {@link PersistenceLinterFactory}) and are
  * discovered at runtime through the {@link java.util.ServiceLoader} mechanism.</p>
  *
@@ -42,8 +44,10 @@ import java.util.ServiceLoader;
  *
  * @since 1.0.0
  * @see PersistenceLinterFactory
+ * @see EntityModelLinterFactory
  * @see NamedObjectParserFactory
  * @see SchemaValidatorFactory
+ * @see SchemaExporterFactory
  * @see EnhancerProvider
  */
 public interface PersistenceServiceProvider {

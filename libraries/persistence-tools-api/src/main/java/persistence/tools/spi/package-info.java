@@ -27,10 +27,14 @@
  *       all persistence service providers, providing namespace resolution and version-based lookup.</li>
  *   <li>{@link persistence.tools.spi.PersistenceLinterFactory} &ndash; base factory contract for
  *       discovering persistence linter factories by JPA version.</li>
+ *   <li>{@link persistence.tools.spi.EntityModelLinterFactory} &ndash; factory SPI for creating
+ *       {@link persistence.tools.EntityModelLinter} instances.</li>
  *   <li>{@link persistence.tools.spi.NamedObjectParserFactory} &ndash; factory SPI for creating
  *       {@link persistence.tools.NamedObjectParser} instances.</li>
  *   <li>{@link persistence.tools.spi.SchemaValidatorFactory} &ndash; factory SPI for creating
  *       {@link persistence.tools.SchemaValidator} instances.</li>
+ *   <li>{@link persistence.tools.spi.SchemaExporterFactory} &ndash; factory SPI for creating
+ *       {@link persistence.tools.SchemaExporter} instances.</li>
  *   <li>{@link persistence.tools.spi.EnhancerProvider} &ndash; SPI for creating
  *       {@link persistence.tools.Enhancer} instances.</li>
  * </ul>

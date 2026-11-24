@@ -3,15 +3,19 @@
  *
  * <p>This module provides runtime and build-time persistence tooling for applications targeting
  * Jakarta Persistence specifications (JPA&nbsp;3.0, 3.1, and 3.2). It registers factory implementations
- * for bytecode enhancement, semantic query model (SQM) query parsing, and database schema validation
- * using Hibernate ORM&nbsp;6.</p>
+ * for entity model linting, offline DDL schema export, semantic query model (SQM) query parsing,
+ * database schema validation, and bytecode enhancement using Hibernate ORM&nbsp;6.</p>
  *
  * <h2>Provided Services</h2>
  * <ul>
+ *   <li>{@link persistence.tools.spi.EntityModelLinterFactory} &ndash; provided by
+ *       {@link hibernate.jakarta.persistence.tools.provider.HibernateEntityModelLinterFactory}</li>
  *   <li>{@link persistence.tools.spi.NamedObjectParserFactory} &ndash; provided by
  *       {@link hibernate.jakarta.persistence.tools.provider.HibernateNamedObjectParserFactory}</li>
  *   <li>{@link persistence.tools.spi.SchemaValidatorFactory} &ndash; provided by
  *       {@link hibernate.jakarta.persistence.tools.provider.HibernateSchemaValidatorFactory}</li>
+ *   <li>{@link persistence.tools.spi.SchemaExporterFactory} &ndash; provided by
+ *       {@link hibernate.jakarta.persistence.tools.provider.HibernateSchemaExporterFactory}</li>
  *   <li>{@link persistence.tools.spi.EnhancerProvider} &ndash; provided by
  *       {@link hibernate.jakarta.persistence.tools.provider.HibernateEnhancerProvider}</li>
  * </ul>
@@ -33,17 +37,24 @@ module io.github.jpersist.tools.hibernate.orm {
     requires jakarta.persistence;
 
     // 4. Register linter and validator factories into the native ServiceLoader
+    provides persistence.tools.spi.EntityModelLinterFactory
+        with hibernate.jakarta.persistence.tools.provider.HibernateEntityModelLinterFactory;
+
     provides persistence.tools.spi.NamedObjectParserFactory
         with hibernate.jakarta.persistence.tools.provider.HibernateNamedObjectParserFactory;
 
     provides persistence.tools.spi.SchemaValidatorFactory
         with hibernate.jakarta.persistence.tools.provider.HibernateSchemaValidatorFactory;
 
-    // 5. Register the bytecode enhancement provider into the native ServiceLoader
+    // 5. Register the schema exporter factory into the native ServiceLoader
+    provides persistence.tools.spi.SchemaExporterFactory
+        with hibernate.jakarta.persistence.tools.provider.HibernateSchemaExporterFactory;
+
+    // 6. Register the bytecode enhancement provider into the native ServiceLoader
     provides persistence.tools.spi.EnhancerProvider
         with hibernate.jakarta.persistence.tools.provider.HibernateEnhancerProvider;
 
-    // 6. Grant Hibernate 6 reflective access to instantiate internal SPI providers (e.g. NoOpConnectionProvider)
+    // 7. Grant Hibernate 6 reflective access to instantiate internal SPI providers (e.g. NoOpConnectionProvider)
     // without exporting the package at compile time
     opens hibernate.jakarta.persistence.tools.internal to org.hibernate.orm.core;
 }

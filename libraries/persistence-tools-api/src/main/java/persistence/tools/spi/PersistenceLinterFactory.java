@@ -22,7 +22,7 @@ import persistence.tools.PersistenceLinter;
  * Base factory interface for all persistence linter factories.
  *
  * <p>This interface defines the common contract shared by all linter
- * factory types ({@link NamedObjectParserFactory},
+ * factory types ({@link EntityModelLinterFactory}, {@link NamedObjectParserFactory},
  * {@link SchemaValidatorFactory}). Each implementation declares the
  * persistence namespace it supports (e.g.&nbsp;{@code "javax"} or
  * {@code "jakarta"}) so that the correct strategy can be resolved for
@@ -34,12 +34,14 @@ import persistence.tools.PersistenceLinter;
  * or {@link ModuleLayer} instances.</p>
  *
  * <p>In JPMS environments, provider modules declare implementations for
- * specific factory subtypes (e.g.&nbsp;{@code provides persistence.tools.spi.NamedObjectParserFactory}
- * and {@code provides persistence.tools.spi.SchemaValidatorFactory}) in
+ * specific factory subtypes (e.g.&nbsp;{@code provides persistence.tools.spi.EntityModelLinterFactory},
+ * {@code provides persistence.tools.spi.NamedObjectParserFactory}, and
+ * {@code provides persistence.tools.spi.SchemaValidatorFactory}) in
  * their {@code module-info.java}.</p>
  *
  * @since 2.1.0
  * @see PersistenceLinter
+ * @see EntityModelLinterFactory
  * @see NamedObjectParserFactory
  * @see SchemaValidatorFactory
  */
@@ -52,6 +54,56 @@ public interface PersistenceLinterFactory extends PersistenceServiceProvider {
      *         JPA&nbsp;2.x or {@code "jakarta"} for JPA&nbsp;3.x
      */
     String getSupportedNamespace();
+
+    /**
+     * Convenience method that discovers and returns the
+     * {@link EntityModelLinterFactory} for the given JPA version using
+     * the thread context class loader.
+     *
+     * @param jpaVersion the JPA specification version (e.g.&nbsp;{@code "3.1"})
+     * @return the matching {@link EntityModelLinterFactory}
+     * @throws IllegalArgumentException if the version is not recognized
+     * @throws IllegalStateException    if no provider is registered for
+     *                                  the resolved namespace
+     * @since 4.2.0
+     */
+    static EntityModelLinterFactory newEntityModelLinterFactory(String jpaVersion) {
+        return newPersistenceLinterFactory(jpaVersion, EntityModelLinterFactory.class);
+    }
+
+    /**
+     * Convenience method that discovers and returns the
+     * {@link EntityModelLinterFactory} for the given JPA version using
+     * the specified {@link ClassLoader}.
+     *
+     * @param jpaVersion  the JPA specification version (e.g.&nbsp;{@code "3.1"})
+     * @param classLoader the class loader used to discover the factory
+     * @return the matching {@link EntityModelLinterFactory}
+     * @throws IllegalArgumentException if the version is not recognized
+     * @throws IllegalStateException    if no provider is registered for
+     *                                  the resolved namespace
+     * @since 4.2.0
+     */
+    static EntityModelLinterFactory newEntityModelLinterFactory(String jpaVersion, ClassLoader classLoader) {
+        return newPersistenceLinterFactory(jpaVersion, EntityModelLinterFactory.class, classLoader);
+    }
+
+    /**
+     * Convenience method that discovers and returns the
+     * {@link EntityModelLinterFactory} for the given JPA version within
+     * the specified {@link ModuleLayer}.
+     *
+     * @param jpaVersion  the JPA specification version (e.g.&nbsp;{@code "3.1"})
+     * @param moduleLayer the module layer used to discover the factory
+     * @return the matching {@link EntityModelLinterFactory}
+     * @throws IllegalArgumentException if the version is not recognized
+     * @throws IllegalStateException    if no provider is registered for
+     *                                  the resolved namespace
+     * @since 4.2.0
+     */
+    static EntityModelLinterFactory newEntityModelLinterFactory(String jpaVersion, ModuleLayer moduleLayer) {
+        return newPersistenceLinterFactory(jpaVersion, EntityModelLinterFactory.class, moduleLayer);
+    }
 
     /**
      * Convenience method that discovers and returns the

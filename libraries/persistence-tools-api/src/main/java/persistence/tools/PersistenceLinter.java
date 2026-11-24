@@ -20,11 +20,12 @@ package persistence.tools;
  * Marker interface for all persistence linting operations.
  *
  * <p>This is the root type in the linter hierarchy. Concrete linter
- * contracts such as {@link NamedObjectParser} and {@link SchemaValidator}
- * extend this interface to declare specific build-time validation
- * capabilities.</p>
+ * contracts such as {@link EntityModelLinter}, {@link NamedObjectParser},
+ * and {@link SchemaValidator} extend this interface to declare specific
+ * build-time validation and static analysis capabilities.</p>
  *
  * @since 2.1.0
+ * @see EntityModelLinter
  * @see NamedObjectParser
  * @see SchemaValidator
  */
