@@ -25,8 +25,23 @@ import java.util.Map;
  * Service Provider Interface (SPI) factory for creating {@link EntityModelLinter}
  * instances bound to a specific JPA specification namespace.
  *
- * <p>Concrete provider implementations are discovered at runtime via {@link java.util.ServiceLoader}
- * using the static {@code newEntityModelLinterFactory} lookup methods.</p>
+ * <p>Implementations are discovered at runtime through the {@link java.util.ServiceLoader} mechanism.
+ * Each implementation declares the persistence namespace it supports (e.g.&nbsp;{@code "javax"}
+ * for JPA&nbsp;2.x or {@code "jakarta"} for JPA&nbsp;3.x) so that the correct model linting strategy can be
+ * resolved for the target JPA specification version.</p>
+ *
+ * <p>In JPMS environments, provider modules register their implementation with
+ * {@code provides persistence.tools.spi.EntityModelLinterFactory} in {@code module-info.java}.</p>
+ *
+ * <h2>Usage Example</h2>
+ * <pre>{@code
+ * EntityModelLinterFactory factory = EntityModelLinterFactory.newEntityModelLinterFactory("3.1");
+ * EntityModelLinter linter = factory.newEntityModelLinter(
+ *     List.of("com.example.model.Customer", "com.example.model.Order"),
+ *     Map.of("linter.strict", "true")
+ * );
+ * List<LintDiagnostic> findings = linter.lint();
+ * }</pre>
  *
  * @since 4.2.0
  * @see EntityModelLinter
@@ -59,7 +74,8 @@ public interface EntityModelLinterFactory extends PersistenceLinterFactory {
      *
      * @param jpaVersion the target JPA version string (e.g., {@code "2.2"}, {@code "3.1"})
      * @return the matching {@link EntityModelLinterFactory} provider
-     * @throws IllegalArgumentException if the JPA version is unsupported or no matching provider is found
+     * @throws IllegalArgumentException if {@code jpaVersion} is not recognized
+     * @throws IllegalStateException    if no provider is registered for the resolved namespace
      */
     static EntityModelLinterFactory newEntityModelLinterFactory(String jpaVersion) {
         return PersistenceLinterFactory.newPersistenceLinterFactory(jpaVersion, EntityModelLinterFactory.class);
@@ -72,7 +88,8 @@ public interface EntityModelLinterFactory extends PersistenceLinterFactory {
      * @param jpaVersion  the target JPA version string (e.g., {@code "2.2"}, {@code "3.1"})
      * @param classLoader the class loader used to locate provider implementations
      * @return the matching {@link EntityModelLinterFactory} provider
-     * @throws IllegalArgumentException if the JPA version is unsupported or no matching provider is found
+     * @throws IllegalArgumentException if {@code jpaVersion} is not recognized
+     * @throws IllegalStateException    if no provider is registered for the resolved namespace
      */
     static EntityModelLinterFactory newEntityModelLinterFactory(String jpaVersion, ClassLoader classLoader) {
         return PersistenceLinterFactory.newPersistenceLinterFactory(jpaVersion, EntityModelLinterFactory.class, classLoader);
@@ -85,7 +102,8 @@ public interface EntityModelLinterFactory extends PersistenceLinterFactory {
      * @param jpaVersion  the target JPA version string (e.g., {@code "2.2"}, {@code "3.1"})
      * @param moduleLayer the module layer used to locate provider implementations
      * @return the matching {@link EntityModelLinterFactory} provider
-     * @throws IllegalArgumentException if the JPA version is unsupported or no matching provider is found
+     * @throws IllegalArgumentException if {@code jpaVersion} is not recognized
+     * @throws IllegalStateException    if no provider is registered for the resolved namespace
      */
     static EntityModelLinterFactory newEntityModelLinterFactory(String jpaVersion, ModuleLayer moduleLayer) {
         return PersistenceLinterFactory.newPersistenceLinterFactory(jpaVersion, EntityModelLinterFactory.class, moduleLayer);

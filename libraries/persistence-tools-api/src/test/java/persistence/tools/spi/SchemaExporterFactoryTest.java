@@ -50,7 +50,7 @@ class SchemaExporterFactoryTest {
         public void export(Action action, File file) {}
 
         @Override
-        public void export(Action action, OutputStream out) {}
+        public void export(Action action, OutputStream stream) {}
 
         @Override
         public void export(Action action, Writer writer) {}

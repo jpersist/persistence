@@ -38,6 +38,8 @@
  *       persistence objects.</li>
  *   <li>{@link persistence.tools.SchemaExporter} &ndash; exports offline DDL scripts
  *       ({@code CREATE}, {@code DROP}, or {@code BOTH}) without a live database connection.</li>
+ *   <li>{@link persistence.tools.SchemaExporter.Action} &ndash; defines the scope of DDL
+ *       statements to generate during schema export.</li>
  *   <li>{@link persistence.tools.SchemaValidator} &ndash; validates the entity metamodel
  *       against a live database schema.</li>
  *   <li>{@link persistence.tools.PersistenceLinter} &ndash; marker interface for all

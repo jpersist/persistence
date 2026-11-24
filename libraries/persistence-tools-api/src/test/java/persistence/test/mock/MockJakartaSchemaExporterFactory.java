@@ -38,7 +38,7 @@ public class MockJakartaSchemaExporterFactory extends MockJakartaPersistenceServ
             }
 
             @Override
-            public void export(Action action, OutputStream out) {
+            public void export(Action action, OutputStream stream) {
             }
 
             @Override

@@ -25,8 +25,24 @@ import java.util.Map;
  * Service Provider Interface (SPI) factory for creating {@link SchemaExporter}
  * instances capable of generating offline DDL scripts at build time.
  *
- * <p>Concrete provider implementations are discovered at runtime via {@link java.util.ServiceLoader}
- * using the static {@code newSchemaExporterFactory} lookup methods.</p>
+ * <p>Implementations are discovered at runtime through the {@link java.util.ServiceLoader} mechanism.
+ * Each implementation declares the persistence namespace it supports (e.g.&nbsp;{@code "javax"}
+ * for JPA&nbsp;2.x or {@code "jakarta"} for JPA&nbsp;3.x) so that the correct schema export strategy can be
+ * resolved for the target JPA specification version.</p>
+ *
+ * <p>In JPMS environments, provider modules register their implementation with
+ * {@code provides persistence.tools.spi.SchemaExporterFactory} in {@code module-info.java}.</p>
+ *
+ * <h2>Usage Example</h2>
+ * <pre>{@code
+ * SchemaExporterFactory factory = SchemaExporterFactory.newSchemaExporterFactory("3.1");
+ * SchemaExporter exporter = factory.newSchemaExporter(
+ *     List.of("com.example.model.Customer", "com.example.model.Order"),
+ *     Map.of("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect",
+ *            "hibernate.format_sql", "true")
+ * );
+ * exporter.export(SchemaExporter.Action.BOTH, new File("build/schema/ddl.sql"));
+ * }</pre>
  *
  * @since 4.2.0
  * @see SchemaExporter
@@ -60,7 +76,8 @@ public interface SchemaExporterFactory extends PersistenceServiceProvider {
      *
      * @param jpaVersion the target JPA version string (e.g., {@code "2.2"}, {@code "3.1"})
      * @return the matching {@link SchemaExporterFactory} provider
-     * @throws IllegalArgumentException if the JPA version is unsupported or no matching provider is found
+     * @throws IllegalArgumentException if {@code jpaVersion} is not recognized
+     * @throws IllegalStateException    if no provider is registered for the resolved namespace
      */
     static SchemaExporterFactory newSchemaExporterFactory(String jpaVersion) {
         return PersistenceServiceProvider.getServiceProvider(jpaVersion, SchemaExporterFactory.class);
@@ -73,7 +90,8 @@ public interface SchemaExporterFactory extends PersistenceServiceProvider {
      * @param jpaVersion  the target JPA version string (e.g., {@code "2.2"}, {@code "3.1"})
      * @param classLoader the class loader used to locate provider implementations
      * @return the matching {@link SchemaExporterFactory} provider
-     * @throws IllegalArgumentException if the JPA version is unsupported or no matching provider is found
+     * @throws IllegalArgumentException if {@code jpaVersion} is not recognized
+     * @throws IllegalStateException    if no provider is registered for the resolved namespace
      */
     static SchemaExporterFactory newSchemaExporterFactory(String jpaVersion, ClassLoader classLoader) {
         return PersistenceServiceProvider.getServiceProvider(jpaVersion, SchemaExporterFactory.class, classLoader);
@@ -86,7 +104,8 @@ public interface SchemaExporterFactory extends PersistenceServiceProvider {
      * @param jpaVersion  the target JPA version string (e.g., {@code "2.2"}, {@code "3.1"})
      * @param moduleLayer the module layer used to locate provider implementations
      * @return the matching {@link SchemaExporterFactory} provider
-     * @throws IllegalArgumentException if the JPA version is unsupported or no matching provider is found
+     * @throws IllegalArgumentException if {@code jpaVersion} is not recognized
+     * @throws IllegalStateException    if no provider is registered for the resolved namespace
      */
     static SchemaExporterFactory newSchemaExporterFactory(String jpaVersion, ModuleLayer moduleLayer) {
         return PersistenceServiceProvider.getServiceProvider(jpaVersion, SchemaExporterFactory.class, moduleLayer);

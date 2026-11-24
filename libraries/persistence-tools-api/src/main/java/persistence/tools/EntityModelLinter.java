@@ -22,13 +22,36 @@ import java.util.List;
  * Contract for statically inspecting a JPA entity metamodel to detect mapping,
  * structural, and performance anti-patterns at build time.
  *
- * <p>Implementations analyze compiled entity definitions and report all discovered
- * rule violations as structured {@link LintDiagnostic} instances without requiring
- * a live database connection or application deployment.</p>
+ * <p>Implementations analyze compiled entity class bytecode and reflection metadata to report
+ * potential design and performance issues without requiring a live database connection or application
+ * deployment. Typical checks include:</p>
+ * <ul>
+ *   <li><strong>Structural checks:</strong> Missing default no-arg constructors, final entity classes
+ *       or methods, non-getter/setter method signatures, and missing identifier definitions.</li>
+ *   <li><strong>Relationship mapping checks:</strong> Eager fetching on associations (e.g., {@code @OneToMany},
+ *       {@code @ManyToMany}, {@code @ManyToOne}, or {@code @OneToOne}), missing {@code mappedBy} attributes
+ *       on bidirectional relationships, and unordered {@code @ManyToMany} list collections.</li>
+ * </ul>
+ *
+ * <h2>Usage Example</h2>
+ * <pre>{@code
+ * EntityModelLinterFactory factory = EntityModelLinterFactory.newEntityModelLinterFactory("3.1");
+ * EntityModelLinter linter = factory.newEntityModelLinter(
+ *     List.of("com.example.model.Order", "com.example.model.OrderItem")
+ * );
+ *
+ * List<LintDiagnostic> diagnostics = linter.lint();
+ * for (LintDiagnostic diagnostic : diagnostics) {
+ *     if (diagnostic.severity() == LintSeverity.ERROR) {
+ *         System.err.println(diagnostic.ruleId() + " [" + diagnostic.className() + "]: " + diagnostic.message());
+ *     }
+ * }
+ * }</pre>
  *
  * @since 4.2.0
  * @see LintDiagnostic
  * @see LintSeverity
+ * @see PersistenceLinter
  * @see persistence.tools.spi.EntityModelLinterFactory
  */
 public interface EntityModelLinter extends PersistenceLinter {

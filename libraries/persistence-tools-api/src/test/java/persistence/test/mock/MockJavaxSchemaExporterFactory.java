@@ -38,7 +38,7 @@ public class MockJavaxSchemaExporterFactory extends MockJavaxPersistenceServiceP
             }
 
             @Override
-            public void export(Action action, OutputStream out) {
+            public void export(Action action, OutputStream stream) {
             }
 
             @Override
