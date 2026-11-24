@@ -16,10 +16,12 @@
 
 package hibernate.base.persistence.tools;
 
-import java.io.File;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -191,6 +193,47 @@ public class HibernateUtil {
                 .map(HibernateUtil::toURL)
                 .toArray(URL[]::new);
         return new URLClassLoader(urls, parent);
+    }
+
+    /**
+     * Returns common offline DDL generation defaults shared across Hibernate providers.
+     *
+     * @return an unmodifiable map of baseline offline DDL export properties
+     * @since 1.2.0
+     */
+    public static Map<String, Object> defaultOfflineDDLSettings() {
+        return Map.of(
+            "hibernate.hbm2ddl.delimiter", ";",
+            "hibernate.format_sql", "true"
+        );
+    }
+
+    /**
+     * Creates a buffered {@link Writer} for writing UTF-8 encoded text to the specified destination {@link File}.
+     *
+     * @param file the destination file to write to
+     * @return a buffered {@link Writer} targeting the specified file
+     * @throws IOException          if an I/O error occurs opening or creating the file
+     * @throws NullPointerException if {@code file} is {@code null}
+     * @since 1.2.0
+     */
+    public static Writer toWriter(File file) throws IOException {
+        Objects.requireNonNull(file, "File must not be null");
+        return Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8);
+    }
+
+    /**
+     * Bridges an {@link OutputStream} to a UTF-8 {@link Writer}
+     * without closing the underlying stream when flushed.
+     *
+     * @param stream the target output stream
+     * @return a UTF-8 {@link OutputStreamWriter}
+     * @throws NullPointerException if {@code stream} is {@code null}
+     * @since 1.2.0
+     */
+    public static Writer toWriter(OutputStream stream) {
+        Objects.requireNonNull(stream, "OutputStream must not be null");
+        return new OutputStreamWriter(stream, StandardCharsets.UTF_8);
     }
 
 }

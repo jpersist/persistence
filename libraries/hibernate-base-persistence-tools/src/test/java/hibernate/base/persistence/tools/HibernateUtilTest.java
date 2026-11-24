@@ -19,12 +19,12 @@ package hibernate.base.persistence.tools;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.*;
 
@@ -409,5 +409,33 @@ class HibernateUtilTest {
             assertThat(classLoader).isNotNull();
             assertThat(classLoader.getURLs()).containsExactly(jar.toURI().toURL());
         }
+    }
+
+    @Test
+    void shouldReturnDefaultOfflineDDLSettings() {
+        Map<String, Object> defaults = HibernateUtil.defaultOfflineDDLSettings();
+
+        assertThat(defaults)
+            .containsEntry("hibernate.hbm2ddl.delimiter", ";")
+            .containsEntry("hibernate.format_sql", "true");
+    }
+
+    @Test
+    void shouldBridgeOutputStreamToUTF8WriterWithoutClosingStream() throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Writer writer = HibernateUtil.toWriter(out);
+
+        writer.write("CREATE TABLE orders (id BIGINT PRIMARY KEY);");
+        writer.flush();
+
+        assertThat(out.toString(StandardCharsets.UTF_8))
+            .isEqualTo("CREATE TABLE orders (id BIGINT PRIMARY KEY);");
+    }
+
+    @Test
+    void shouldRejectNullOutputStreamInToUTF8Writer() {
+        assertThatNullPointerException()
+            .isThrownBy(() -> HibernateUtil.toWriter((OutputStream) null))
+            .withMessage("OutputStream must not be null");
     }
 }
