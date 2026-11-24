@@ -25,7 +25,7 @@ loadScripts(document, 'script');</script>
 <!-- ========= START OF TOP NAVBAR ======= -->
 <div class="top-nav" id="navbar-top"><button id="navbar-toggle-button" aria-controls="navbar-top" aria-expanded="false" aria-label="Toggle navigation links"><span class="nav-bar-toggle-icon">&nbsp;</span><span class="nav-bar-toggle-icon">&nbsp;</span><span class="nav-bar-toggle-icon">&nbsp;</span></button>
 <div class="skip-nav"><a href="#skip-navbar-top" title="Skip navigation links">Skip navigation links</a></div>
-<div class="about-language"><div style='padding: 4px 10px; background: rgba(255,255,255,0.15); border-radius: 4px; font-weight: bold;'>JPersist Suite &bull; v1.1.0</div></div>
+<div class="about-language"><div style='padding: 4px 10px; background: rgba(255,255,255,0.15); border-radius: 4px; font-weight: bold;'>JPersist Suite &bull; v1.2.0</div></div>
 <ul id="navbar-top-firstrow" class="nav-list" title="Navigation">
 <li><a href="../../../../../index.html">Overview</a></li>
 <li><a href="../../../../module-summary.html">Module</a></li>
@@ -78,11 +78,16 @@ loadScripts(document, 'script');</script>
  provider implementations (such as Hibernate&nbsp;5 and Hibernate ORM&nbsp;6):</p>
 
  <ul>
+   <li><a href="AbstractEntityModelLinter.html" title="class in hibernate.base.persistence.tools"><code>AbstractEntityModelLinter</code></a> &ndash; Base template
+       implementation for entity model linting that executes reflection-based structural checks and
+       delegates JPA-specific metamodel inspection to concrete provider subclasses.</li>
+   <li><a href="EntityLintRule.html" title="enum class in hibernate.base.persistence.tools"><code>EntityLintRule</code></a> &ndash; Enumeration of standard JPA
+       entity mapping, structural, and performance anti-pattern rules.</li>
    <li><a href="HibernateEnhancerOption.html" title="enum class in hibernate.base.persistence.tools"><code>HibernateEnhancerOption</code></a> &ndash; Enumeration of
        bytecode enhancement configuration options and their associated property keys.</li>
    <li><a href="HibernateUtil.html" title="class in hibernate.base.persistence.tools"><code>HibernateUtil</code></a> &ndash; Shared utility methods for
-       merging configuration settings, class loader creation, file-to-URL conversion, and enhancer
-       setting mapping.</li>
+       merging configuration settings, class loader creation, file-to-URL conversion, enhancer
+       setting mapping, and offline DDL writer bridging.</li>
  </ul></div>
 <dl class="notes">
 <dt>Since:</dt>
@@ -90,7 +95,7 @@ loadScripts(document, 'script');</script>
 <dt>See Also:</dt>
 <dd>
 <ul class="tag-list">
-<li><a href="https://jpersist.github.io/persistence/tools/specifications/api/4.1.0/io.github.jpersist.tools.api/persistence/tools/package-summary.html" class="external-link"><code>persistence.tools</code></a></li>
+<li><a href="https://jpersist.github.io/persistence/tools/specifications/api/4.2.0/io.github.jpersist.tools.api/persistence/tools/package-summary.html" class="external-link"><code>persistence.tools</code></a></li>
 </ul>
 </dd>
 </dl>
@@ -104,6 +109,17 @@ loadScripts(document, 'script');</script>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Class</div>
 <div class="table-header col-last">Description</div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="AbstractEntityModelLinter.html" title="class in hibernate.base.persistence.tools">AbstractEntityModelLinter</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block">Base template implementation of <a href="https://jpersist.github.io/persistence/tools/specifications/api/4.2.0/io.github.jpersist.tools.api/persistence/tools/EntityModelLinter.html" title="class or interface in persistence.tools" class="external-link"><code>EntityModelLinter</code></a> that executes
+ namespace-agnostic Java reflection rules and delegates JPA-specific metamodel
+ inspection to concrete Hibernate provider subclasses.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab3"><a href="EntityLintRule.html" title="enum class in hibernate.base.persistence.tools">EntityLintRule</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab3">
+<div class="block">Enumerates standard JPA entity mapping, structural, and performance anti-pattern rules
+ shared across Hibernate reference implementations.</div>
+</div>
 <div class="col-first even-row-color class-summary class-summary-tab3"><a href="HibernateEnhancerOption.html" title="enum class in hibernate.base.persistence.tools">HibernateEnhancerOption</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab3">
 <div class="block">Enhancement options that control which bytecode transformations
