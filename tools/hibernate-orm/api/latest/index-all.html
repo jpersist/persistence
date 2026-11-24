@@ -25,7 +25,7 @@ loadScripts(document, 'script');</script>
 <!-- ========= START OF TOP NAVBAR ======= -->
 <div class="top-nav" id="navbar-top"><button id="navbar-toggle-button" aria-controls="navbar-top" aria-expanded="false" aria-label="Toggle navigation links"><span class="nav-bar-toggle-icon">&nbsp;</span><span class="nav-bar-toggle-icon">&nbsp;</span><span class="nav-bar-toggle-icon">&nbsp;</span></button>
 <div class="skip-nav"><a href="#skip-navbar-top" title="Skip navigation links">Skip navigation links</a></div>
-<div class="about-language"><div style='padding: 4px 10px; background: rgba(255,255,255,0.15); border-radius: 4px; font-weight: bold;'>JPersist Suite &bull; v2.1.0</div></div>
+<div class="about-language"><div style='padding: 4px 10px; background: rgba(255,255,255,0.15); border-radius: 4px; font-weight: bold;'>JPersist Suite &bull; v2.2.0</div></div>
 <ul id="navbar-top-firstrow" class="nav-list" title="Navigation">
 <li><a href="index.html">Overview</a></li>
 <li>Module</li>
@@ -51,9 +51,20 @@ loadScripts(document, 'script');</script>
 <div class="header">
 <h1>Index</h1>
 </div>
-<a href="#I:A">A</a>&nbsp;<a href="#I:B">B</a>&nbsp;<a href="#I:C">C</a>&nbsp;<a href="#I:D">D</a>&nbsp;<a href="#I:E">E</a>&nbsp;<a href="#I:F">F</a>&nbsp;<a href="#I:G">G</a>&nbsp;<a href="#I:H">H</a>&nbsp;<a href="#I:I">I</a>&nbsp;<a href="#I:J">J</a>&nbsp;<a href="#I:K">K</a>&nbsp;<a href="#I:L">L</a>&nbsp;<a href="#I:M">M</a>&nbsp;<a href="#I:N">N</a>&nbsp;<a href="#I:O">O</a>&nbsp;<a href="#I:P">P</a>&nbsp;<a href="#I:S">S</a>&nbsp;<a href="#I:T">T</a>&nbsp;<a href="#I:U">U</a>&nbsp;<a href="#I:V">V</a>&nbsp;<br><a href="allclasses-index.html">All&nbsp;Classes&nbsp;and&nbsp;Interfaces</a><span class="vertical-separator">|</span><a href="allpackages-index.html">All&nbsp;Packages</a><span class="vertical-separator">|</span><a href="serialized-form.html">Serialized&nbsp;Form</a>
+<a href="#I:A">A</a>&nbsp;<a href="#I:B">B</a>&nbsp;<a href="#I:C">C</a>&nbsp;<a href="#I:D">D</a>&nbsp;<a href="#I:E">E</a>&nbsp;<a href="#I:F">F</a>&nbsp;<a href="#I:G">G</a>&nbsp;<a href="#I:H">H</a>&nbsp;<a href="#I:I">I</a>&nbsp;<a href="#I:J">J</a>&nbsp;<a href="#I:K">K</a>&nbsp;<a href="#I:L">L</a>&nbsp;<a href="#I:M">M</a>&nbsp;<a href="#I:N">N</a>&nbsp;<a href="#I:O">O</a>&nbsp;<a href="#I:P">P</a>&nbsp;<a href="#I:R">R</a>&nbsp;<a href="#I:S">S</a>&nbsp;<a href="#I:T">T</a>&nbsp;<a href="#I:U">U</a>&nbsp;<a href="#I:V">V</a>&nbsp;<br><a href="allclasses-index.html">All&nbsp;Classes&nbsp;and&nbsp;Interfaces</a><span class="vertical-separator">|</span><a href="allpackages-index.html">All&nbsp;Packages</a><span class="vertical-separator">|</span><a href="serialized-form.html">Serialized&nbsp;Form</a>
 <h2 class="title" id="I:A">A</h2>
 <dl class="index">
+<dt><a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/AbstractEntityModelLinter.html" class="type-name-link" title="class in hibernate.base.persistence.tools">AbstractEntityModelLinter</a> - Class in <a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/package-summary.html">hibernate.base.persistence.tools</a></dt>
+<dd>
+<div class="block">Base template implementation of <a href="https://jpersist.github.io/persistence/tools/specifications/api/4.2.0/io.github.jpersist.tools.api/persistence/tools/EntityModelLinter.html" title="class or interface in persistence.tools" class="external-link"><code>EntityModelLinter</code></a> that executes
+ namespace-agnostic Java reflection rules and delegates JPA-specific metamodel
+ inspection to concrete Hibernate provider subclasses.</div>
+</dd>
+<dt><a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/AbstractEntityModelLinter.html#%3Cinit%3E(java.util.List,java.lang.ClassLoader)" class="member-name-link">AbstractEntityModelLinter(List&lt;String&gt;, ClassLoader)</a> - Constructor for class hibernate.base.persistence.tools.<a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/AbstractEntityModelLinter.html" title="class in hibernate.base.persistence.tools">AbstractEntityModelLinter</a></dt>
+<dd>
+<div class="block">Constructs a new <code>AbstractEntityModelLinter</code> with the specified entity class names
+ and class loader.</div>
+</dd>
 <dt><a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/HibernateEnhancerOption.html#ASSOCIATION_MANAGEMENT" class="member-name-link">ASSOCIATION_MANAGEMENT</a> - Enum constant in enum class hibernate.base.persistence.tools.<a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/HibernateEnhancerOption.html" title="enum class in hibernate.base.persistence.tools">HibernateEnhancerOption</a></dt>
 <dd>
 <div class="block">Enable automatic bidirectional association management.</div>
@@ -88,6 +99,30 @@ loadScripts(document, 'script');</script>
 <dl class="index">
 <dt><a href="index.html#3-database-schema-validation-heading" class="search-tag-link">3. Database Schema Validation</a> - Search tag in Overview</dt>
 <dd>Section</dd>
+<dt><a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/EntityLintRule.html#defaultMessage()" class="member-name-link">defaultMessage()</a> - Method in enum class hibernate.base.persistence.tools.<a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/EntityLintRule.html" title="enum class in hibernate.base.persistence.tools">EntityLintRule</a></dt>
+<dd>
+<div class="block">Returns the default diagnostic explanation message for this rule.</div>
+</dd>
+<dt><a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/HibernateUtil.html#defaultOfflineDDLSettings()" class="member-name-link">defaultOfflineDDLSettings()</a> - Static method in class hibernate.base.persistence.tools.<a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/HibernateUtil.html" title="class in hibernate.base.persistence.tools">HibernateUtil</a></dt>
+<dd>
+<div class="block">Returns common offline DDL generation defaults shared across Hibernate providers.</div>
+</dd>
+<dt><a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/EntityLintRule.html#defaultSeverity()" class="member-name-link">defaultSeverity()</a> - Method in enum class hibernate.base.persistence.tools.<a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/EntityLintRule.html" title="enum class in hibernate.base.persistence.tools">EntityLintRule</a></dt>
+<dd>
+<div class="block">Returns the default severity level assigned to violations of this rule.</div>
+</dd>
+<dt><a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/EntityLintRule.html#diagnostic(java.lang.String)" class="member-name-link">diagnostic(String)</a> - Method in enum class hibernate.base.persistence.tools.<a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/EntityLintRule.html" title="enum class in hibernate.base.persistence.tools">EntityLintRule</a></dt>
+<dd>
+<div class="block">Creates a class-level <a href="https://jpersist.github.io/persistence/tools/specifications/api/4.2.0/io.github.jpersist.tools.api/persistence/tools/LintDiagnostic.html" title="class or interface in persistence.tools" class="external-link"><code>LintDiagnostic</code></a> for this rule using the default message and severity.</div>
+</dd>
+<dt><a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/EntityLintRule.html#diagnostic(java.lang.String,java.lang.String)" class="member-name-link">diagnostic(String, String)</a> - Method in enum class hibernate.base.persistence.tools.<a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/EntityLintRule.html" title="enum class in hibernate.base.persistence.tools">EntityLintRule</a></dt>
+<dd>
+<div class="block">Creates an attribute-level <a href="https://jpersist.github.io/persistence/tools/specifications/api/4.2.0/io.github.jpersist.tools.api/persistence/tools/LintDiagnostic.html" title="class or interface in persistence.tools" class="external-link"><code>LintDiagnostic</code></a> for this rule using the default message and severity.</div>
+</dd>
+<dt><a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/EntityLintRule.html#diagnostic(java.lang.String,java.lang.String,java.lang.String)" class="member-name-link">diagnostic(String, String, String)</a> - Method in enum class hibernate.base.persistence.tools.<a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/EntityLintRule.html" title="enum class in hibernate.base.persistence.tools">EntityLintRule</a></dt>
+<dd>
+<div class="block">Creates an attribute-level <a href="https://jpersist.github.io/persistence/tools/specifications/api/4.2.0/io.github.jpersist.tools.api/persistence/tools/LintDiagnostic.html" title="class or interface in persistence.tools" class="external-link"><code>LintDiagnostic</code></a> for this rule with a custom message.</div>
+</dd>
 <dt><a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/HibernateEnhancerOption.html#DIRTY_TRACKING" class="member-name-link">DIRTY_TRACKING</a> - Enum constant in enum class hibernate.base.persistence.tools.<a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/HibernateEnhancerOption.html" title="enum class in hibernate.base.persistence.tools">HibernateEnhancerOption</a></dt>
 <dd>
 <div class="block">Enable inline dirty tracking to avoid snapshot comparisons.</div>
@@ -95,7 +130,27 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:E">E</h2>
 <dl class="index">
+<dt><a href="index.html#4-entity-model-linting-heading" class="search-tag-link">4. Entity Model Linting</a> - Search tag in Overview</dt>
+<dd>Section</dd>
+<dt><a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/EntityLintRule.html#EAGER_TO_MANY_ASSOCIATION" class="member-name-link">EAGER_TO_MANY_ASSOCIATION</a> - Enum constant in enum class hibernate.base.persistence.tools.<a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/EntityLintRule.html" title="enum class in hibernate.base.persistence.tools">EntityLintRule</a></dt>
+<dd>
+<div class="block">Using <code>FetchType.EAGER</code> on to-many associations (<code>@OneToMany</code>,
+ <code>@ManyToMany</code>) leads to N+1 queries and Cartesian product issues.</div>
+</dd>
+<dt><a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/EntityLintRule.html#EAGER_TO_ONE_ASSOCIATION" class="member-name-link">EAGER_TO_ONE_ASSOCIATION</a> - Enum constant in enum class hibernate.base.persistence.tools.<a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/EntityLintRule.html" title="enum class in hibernate.base.persistence.tools">EntityLintRule</a></dt>
+<dd>
+<div class="block">Using <code>FetchType.EAGER</code> on to-one associations (<code>@ManyToOne</code>,
+ <code>@OneToOne</code>) causes unnecessary joins or extra select statements.</div>
+</dd>
 <dt><a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/HibernateEnhancer.html#enhance(java.lang.String,byte%5B%5D)" class="member-name-link">enhance(String, byte[])</a> - Method in class hibernate.jakarta.persistence.tools.<a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/HibernateEnhancer.html" title="class in hibernate.jakarta.persistence.tools">HibernateEnhancer</a></dt>
+<dt><a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/EntityLintRule.html" class="type-name-link" title="enum class in hibernate.base.persistence.tools">EntityLintRule</a> - Enum Class in <a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/package-summary.html">hibernate.base.persistence.tools</a></dt>
+<dd>
+<div class="block">Enumerates standard JPA entity mapping, structural, and performance anti-pattern rules
+ shared across Hibernate reference implementations.</div>
+</dd>
+<dt><a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/HibernateSchemaExporter.html#export(persistence.tools.SchemaExporter.Action,java.io.File)" class="member-name-link">export(SchemaExporter.Action, File)</a> - Method in class hibernate.jakarta.persistence.tools.<a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/HibernateSchemaExporter.html" title="class in hibernate.jakarta.persistence.tools">HibernateSchemaExporter</a></dt>
+<dt><a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/HibernateSchemaExporter.html#export(persistence.tools.SchemaExporter.Action,java.io.OutputStream)" class="member-name-link">export(SchemaExporter.Action, OutputStream)</a> - Method in class hibernate.jakarta.persistence.tools.<a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/HibernateSchemaExporter.html" title="class in hibernate.jakarta.persistence.tools">HibernateSchemaExporter</a></dt>
+<dt><a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/HibernateSchemaExporter.html#export(persistence.tools.SchemaExporter.Action,java.io.Writer)" class="member-name-link">export(SchemaExporter.Action, Writer)</a> - Method in class hibernate.jakarta.persistence.tools.<a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/HibernateSchemaExporter.html" title="class in hibernate.jakarta.persistence.tools">HibernateSchemaExporter</a></dt>
 <dt><a href="io.github.jpersist.tools.hibernate.base/module-summary.html#exported-packages-heading" class="search-tag-link">Exported Packages</a> - Search tag in module io.github.jpersist.tools.hibernate.base</dt>
 <dd>Section</dd>
 <dt><a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/HibernateEnhancerOption.html#EXTENDED_ENHANCEMENT" class="member-name-link">EXTENDED_ENHANCEMENT</a> - Enum constant in enum class hibernate.base.persistence.tools.<a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/HibernateEnhancerOption.html" title="enum class in hibernate.base.persistence.tools">HibernateEnhancerOption</a></dt>
@@ -105,6 +160,16 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:F">F</h2>
 <dl class="index">
+<dt><a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/EntityLintRule.html#FINAL_ENTITY_CLASS" class="member-name-link">FINAL_ENTITY_CLASS</a> - Enum constant in enum class hibernate.base.persistence.tools.<a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/EntityLintRule.html" title="enum class in hibernate.base.persistence.tools">EntityLintRule</a></dt>
+<dd>
+<div class="block">JPA specification forbids entity classes and persistent methods/fields
+ from being declared <code>final</code> (prevents lazy proxy generation).</div>
+</dd>
+<dt><a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/EntityLintRule.html#FINAL_PERSISTENT_METHOD" class="member-name-link">FINAL_PERSISTENT_METHOD</a> - Enum constant in enum class hibernate.base.persistence.tools.<a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/EntityLintRule.html" title="enum class in hibernate.base.persistence.tools">EntityLintRule</a></dt>
+<dd>
+<div class="block">Final persistent methods prevent Hibernate from generating runtime proxies
+ for lazy-loaded associations.</div>
+</dd>
 <dt><a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/HibernateEnhancer.html#from(java.lang.ClassLoader,java.util.Map)" class="member-name-link">from(ClassLoader, Map&lt;String, Object&gt;)</a> - Static method in class hibernate.jakarta.persistence.tools.<a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/HibernateEnhancer.html" title="class in hibernate.jakarta.persistence.tools">HibernateEnhancer</a></dt>
 <dd>
 <div class="block">Creates a new <code>HibernateEnhancer</code> using the supplied
@@ -134,8 +199,16 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:G">G</h2>
 <dl class="index">
+<dt><a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/AbstractEntityModelLinter.html#getClassLoader()" class="member-name-link">getClassLoader()</a> - Method in class hibernate.base.persistence.tools.<a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/AbstractEntityModelLinter.html" title="class in hibernate.base.persistence.tools">AbstractEntityModelLinter</a></dt>
+<dd>
+<div class="block">Returns the <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/ClassLoader.html" title="class or interface in java.lang" class="external-link"><code>ClassLoader</code></a> used to load entity classes for inspection.</div>
+</dd>
 <dt><a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/internal/NoOpConnectionProvider.html#getConnection()" class="member-name-link">getConnection()</a> - Method in class hibernate.jakarta.persistence.tools.internal.<a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/internal/NoOpConnectionProvider.html" title="class in hibernate.jakarta.persistence.tools.internal">NoOpConnectionProvider</a></dt>
 <dt><a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/provider/HibernateEnhancerProvider.html#getEnhancer(java.util.Collection,java.util.Map)" class="member-name-link">getEnhancer(Collection&lt;Set&lt;File&gt;&gt;, Map&lt;String, Object&gt;)</a> - Method in class hibernate.jakarta.persistence.tools.provider.<a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/provider/HibernateEnhancerProvider.html" title="class in hibernate.jakarta.persistence.tools.provider">HibernateEnhancerProvider</a></dt>
+<dt><a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/AbstractEntityModelLinter.html#getEntityClassNames()" class="member-name-link">getEntityClassNames()</a> - Method in class hibernate.base.persistence.tools.<a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/AbstractEntityModelLinter.html" title="class in hibernate.base.persistence.tools">AbstractEntityModelLinter</a></dt>
+<dd>
+<div class="block">Returns the unmodifiable list of fully-qualified entity class names to be inspected.</div>
+</dd>
 <dt><a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/provider/HibernatePersistenceServiceProvider.html#getSupportedNamespace()" class="member-name-link">getSupportedNamespace()</a> - Method in class hibernate.jakarta.persistence.tools.provider.<a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/provider/HibernatePersistenceServiceProvider.html" title="class in hibernate.jakarta.persistence.tools.provider">HibernatePersistenceServiceProvider</a></dt>
 <dd>&nbsp;</dd>
 </dl>
@@ -160,7 +233,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/HibernateEnhancer.html" class="type-name-link" title="class in hibernate.jakarta.persistence.tools">HibernateEnhancer</a> - Class in <a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/package-summary.html">hibernate.jakarta.persistence.tools</a></dt>
 <dd>
-<div class="block"><a href="https://jpersist.github.io/persistence/tools/specifications/api/4.1.0/io.github.jpersist.tools.api/persistence/tools/Enhancer.html" title="class or interface in persistence.tools" class="external-link"><code>Enhancer</code></a> implementation for the Jakarta Persistence
+<div class="block"><a href="https://jpersist.github.io/persistence/tools/specifications/api/4.2.0/io.github.jpersist.tools.api/persistence/tools/Enhancer.html" title="class or interface in persistence.tools" class="external-link"><code>Enhancer</code></a> implementation for the Jakarta Persistence
  namespace (<code>"jakarta"</code>).</div>
 </dd>
 <dt><a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/HibernateEnhancerOption.html" class="type-name-link" title="enum class in hibernate.base.persistence.tools">HibernateEnhancerOption</a> - Enum Class in <a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/package-summary.html">hibernate.base.persistence.tools</a></dt>
@@ -170,20 +243,32 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/provider/HibernateEnhancerProvider.html" class="type-name-link" title="class in hibernate.jakarta.persistence.tools.provider">HibernateEnhancerProvider</a> - Class in <a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/provider/package-summary.html">hibernate.jakarta.persistence.tools.provider</a></dt>
 <dd>
-<div class="block"><a href="https://jpersist.github.io/persistence/tools/specifications/api/4.1.0/io.github.jpersist.tools.api/persistence/tools/spi/EnhancerProvider.html" title="class or interface in persistence.tools.spi" class="external-link"><code>EnhancerProvider</code></a> implementation for the Jakarta
+<div class="block"><a href="https://jpersist.github.io/persistence/tools/specifications/api/4.2.0/io.github.jpersist.tools.api/persistence/tools/spi/EnhancerProvider.html" title="class or interface in persistence.tools.spi" class="external-link"><code>EnhancerProvider</code></a> implementation for the Jakarta
  Persistence namespace (<code>"jakarta"</code>).</div>
 </dd>
 <dt><a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/provider/HibernateEnhancerProvider.html#%3Cinit%3E()" class="member-name-link">HibernateEnhancerProvider()</a> - Constructor for class hibernate.jakarta.persistence.tools.provider.<a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/provider/HibernateEnhancerProvider.html" title="class in hibernate.jakarta.persistence.tools.provider">HibernateEnhancerProvider</a></dt>
 <dd>
 <div class="block">Creates a new <code>HibernateEnhancerProvider</code>.</div>
 </dd>
+<dt><a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/HibernateEntityModelLinter.html" class="type-name-link" title="class in hibernate.jakarta.persistence.tools">HibernateEntityModelLinter</a> - Class in <a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/package-summary.html">hibernate.jakarta.persistence.tools</a></dt>
+<dd>
+<div class="block">Hibernate ORM&nbsp;6 and Jakarta Persistence implementation of <a href="https://jpersist.github.io/persistence/tools/specifications/api/4.2.0/io.github.jpersist.tools.api/persistence/tools/EntityModelLinter.html" title="class or interface in persistence.tools" class="external-link"><code>EntityModelLinter</code></a>.</div>
+</dd>
+<dt><a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/provider/HibernateEntityModelLinterFactory.html" class="type-name-link" title="class in hibernate.jakarta.persistence.tools.provider">HibernateEntityModelLinterFactory</a> - Class in <a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/provider/package-summary.html">hibernate.jakarta.persistence.tools.provider</a></dt>
+<dd>
+<div class="block">Hibernate ORM&nbsp;6 provider factory for <a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/HibernateEntityModelLinter.html" title="class in hibernate.jakarta.persistence.tools"><code>HibernateEntityModelLinter</code></a>.</div>
+</dd>
+<dt><a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/provider/HibernateEntityModelLinterFactory.html#%3Cinit%3E()" class="member-name-link">HibernateEntityModelLinterFactory()</a> - Constructor for class hibernate.jakarta.persistence.tools.provider.<a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/provider/HibernateEntityModelLinterFactory.html" title="class in hibernate.jakarta.persistence.tools.provider">HibernateEntityModelLinterFactory</a></dt>
+<dd>
+<div class="block">Creates a new <code>HibernateEntityModelLinterFactory</code>.</div>
+</dd>
 <dt><a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/HibernateNamedObjectParser.html" class="type-name-link" title="class in hibernate.jakarta.persistence.tools">HibernateNamedObjectParser</a> - Class in <a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/package-summary.html">hibernate.jakarta.persistence.tools</a></dt>
 <dd>
-<div class="block"><a href="https://jpersist.github.io/persistence/tools/specifications/api/4.1.0/io.github.jpersist.tools.api/persistence/tools/NamedObjectParser.html" title="class or interface in persistence.tools" class="external-link"><code>NamedObjectParser</code></a> implementation for the Jakarta Persistence namespace.</div>
+<div class="block"><a href="https://jpersist.github.io/persistence/tools/specifications/api/4.2.0/io.github.jpersist.tools.api/persistence/tools/NamedObjectParser.html" title="class or interface in persistence.tools" class="external-link"><code>NamedObjectParser</code></a> implementation for the Jakarta Persistence namespace.</div>
 </dd>
 <dt><a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/provider/HibernateNamedObjectParserFactory.html" class="type-name-link" title="class in hibernate.jakarta.persistence.tools.provider">HibernateNamedObjectParserFactory</a> - Class in <a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/provider/package-summary.html">hibernate.jakarta.persistence.tools.provider</a></dt>
 <dd>
-<div class="block"><a href="https://jpersist.github.io/persistence/tools/specifications/api/4.1.0/io.github.jpersist.tools.api/persistence/tools/spi/NamedObjectParserFactory.html" title="class or interface in persistence.tools.spi" class="external-link"><code>NamedObjectParserFactory</code></a> implementation for the Jakarta Persistence
+<div class="block"><a href="https://jpersist.github.io/persistence/tools/specifications/api/4.2.0/io.github.jpersist.tools.api/persistence/tools/spi/NamedObjectParserFactory.html" title="class or interface in persistence.tools.spi" class="external-link"><code>NamedObjectParserFactory</code></a> implementation for the Jakarta Persistence
  namespace (<code>"jakarta"</code>).</div>
 </dd>
 <dt><a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/provider/HibernateNamedObjectParserFactory.html#%3Cinit%3E()" class="member-name-link">HibernateNamedObjectParserFactory()</a> - Constructor for class hibernate.jakarta.persistence.tools.provider.<a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/provider/HibernateNamedObjectParserFactory.html" title="class in hibernate.jakarta.persistence.tools.provider">HibernateNamedObjectParserFactory</a></dt>
@@ -207,14 +292,28 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Creates a new <code>HibernatePersistenceServiceProvider</code>.</div>
 </dd>
+<dt><a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/HibernateSchemaExporter.html" class="type-name-link" title="class in hibernate.jakarta.persistence.tools">HibernateSchemaExporter</a> - Class in <a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/package-summary.html">hibernate.jakarta.persistence.tools</a></dt>
+<dd>
+<div class="block">Hibernate ORM&nbsp;6 implementation of <a href="https://jpersist.github.io/persistence/tools/specifications/api/4.2.0/io.github.jpersist.tools.api/persistence/tools/SchemaExporter.html" title="class or interface in persistence.tools" class="external-link"><code>SchemaExporter</code></a> that generates offline DDL
+ scripts (<code>CREATE</code>, <code>DROP</code>, or <code>BOTH</code>) from Jakarta Persistence
+ entity metadata without requiring an active database connection.</div>
+</dd>
+<dt><a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/provider/HibernateSchemaExporterFactory.html" class="type-name-link" title="class in hibernate.jakarta.persistence.tools.provider">HibernateSchemaExporterFactory</a> - Class in <a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/provider/package-summary.html">hibernate.jakarta.persistence.tools.provider</a></dt>
+<dd>
+<div class="block">Hibernate ORM&nbsp;6 provider factory for <a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/HibernateSchemaExporter.html" title="class in hibernate.jakarta.persistence.tools"><code>HibernateSchemaExporter</code></a>.</div>
+</dd>
+<dt><a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/provider/HibernateSchemaExporterFactory.html#%3Cinit%3E()" class="member-name-link">HibernateSchemaExporterFactory()</a> - Constructor for class hibernate.jakarta.persistence.tools.provider.<a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/provider/HibernateSchemaExporterFactory.html" title="class in hibernate.jakarta.persistence.tools.provider">HibernateSchemaExporterFactory</a></dt>
+<dd>
+<div class="block">Creates a new <code>HibernateSchemaExporterFactory</code>.</div>
+</dd>
 <dt><a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/HibernateSchemaValidator.html" class="type-name-link" title="class in hibernate.jakarta.persistence.tools">HibernateSchemaValidator</a> - Class in <a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/package-summary.html">hibernate.jakarta.persistence.tools</a></dt>
 <dd>
-<div class="block"><a href="https://jpersist.github.io/persistence/tools/specifications/api/4.1.0/io.github.jpersist.tools.api/persistence/tools/SchemaValidator.html" title="class or interface in persistence.tools" class="external-link"><code>SchemaValidator</code></a> implementation for the Jakarta Persistence
+<div class="block"><a href="https://jpersist.github.io/persistence/tools/specifications/api/4.2.0/io.github.jpersist.tools.api/persistence/tools/SchemaValidator.html" title="class or interface in persistence.tools" class="external-link"><code>SchemaValidator</code></a> implementation for the Jakarta Persistence
  namespace (<code>"jakarta"</code>).</div>
 </dd>
 <dt><a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/provider/HibernateSchemaValidatorFactory.html" class="type-name-link" title="class in hibernate.jakarta.persistence.tools.provider">HibernateSchemaValidatorFactory</a> - Class in <a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/provider/package-summary.html">hibernate.jakarta.persistence.tools.provider</a></dt>
 <dd>
-<div class="block"><a href="https://jpersist.github.io/persistence/tools/specifications/api/4.1.0/io.github.jpersist.tools.api/persistence/tools/spi/SchemaValidatorFactory.html" title="class or interface in persistence.tools.spi" class="external-link"><code>SchemaValidatorFactory</code></a> implementation for the Jakarta Persistence
+<div class="block"><a href="https://jpersist.github.io/persistence/tools/specifications/api/4.2.0/io.github.jpersist.tools.api/persistence/tools/spi/SchemaValidatorFactory.html" title="class or interface in persistence.tools.spi" class="external-link"><code>SchemaValidatorFactory</code></a> implementation for the Jakarta Persistence
  namespace (<code>"jakarta"</code>).</div>
 </dd>
 <dt><a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/provider/HibernateSchemaValidatorFactory.html#%3Cinit%3E()" class="member-name-link">HibernateSchemaValidatorFactory()</a> - Constructor for class hibernate.jakarta.persistence.tools.provider.<a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/provider/HibernateSchemaValidatorFactory.html" title="class in hibernate.jakarta.persistence.tools.provider">HibernateSchemaValidatorFactory</a></dt>
@@ -254,6 +353,17 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Enable lazy-loading of persistent attributes.</div>
 </dd>
+<dt><a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/AbstractEntityModelLinter.html#lint()" class="member-name-link">lint()</a> - Method in class hibernate.base.persistence.tools.<a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/AbstractEntityModelLinter.html" title="class in hibernate.base.persistence.tools">AbstractEntityModelLinter</a></dt>
+<dt><a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/AbstractEntityModelLinter.html#lintEntityModel(java.lang.Class,java.util.List)" class="member-name-link">lintEntityModel(Class&lt;?&gt;, List&lt;LintDiagnostic&gt;)</a> - Method in class hibernate.base.persistence.tools.<a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/AbstractEntityModelLinter.html" title="class in hibernate.base.persistence.tools">AbstractEntityModelLinter</a></dt>
+<dd>
+<div class="block">Hook for concrete Hibernate 5 (<code>javax</code>) and Hibernate ORM 6 (<code>jakarta</code>)
+ implementations to inspect JPA annotations and Hibernate boot metadata.</div>
+</dd>
+<dt><a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/HibernateEntityModelLinter.html#lintEntityModel(java.lang.Class,java.util.List)" class="member-name-link">lintEntityModel(Class&lt;?&gt;, List&lt;LintDiagnostic&gt;)</a> - Method in class hibernate.jakarta.persistence.tools.<a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/HibernateEntityModelLinter.html" title="class in hibernate.jakarta.persistence.tools">HibernateEntityModelLinter</a></dt>
+<dd>
+<div class="block">Hook for concrete Hibernate 5 (<code>javax</code>) and Hibernate ORM 6 (<code>jakarta</code>)
+ implementations to inspect JPA annotations and Hibernate boot metadata.</div>
+</dd>
 </dl>
 <h2 class="title" id="I:M">M</h2>
 <dl class="index">
@@ -273,6 +383,16 @@ loadScripts(document, 'script');</script>
        and cannot be overwritten by consumer input.
  </div>
 </dd>
+<dt><a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/EntityLintRule.html#MISSING_MAPPED_BY" class="member-name-link">MISSING_MAPPED_BY</a> - Enum constant in enum class hibernate.base.persistence.tools.<a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/EntityLintRule.html" title="enum class in hibernate.base.persistence.tools">EntityLintRule</a></dt>
+<dd>
+<div class="block">Bidirectional associations should specify <code>mappedBy</code> on the inverse side
+ to avoid redundant join tables or duplicate foreign key updates.</div>
+</dd>
+<dt><a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/EntityLintRule.html#MISSING_NO_ARG_CONSTRUCTOR" class="member-name-link">MISSING_NO_ARG_CONSTRUCTOR</a> - Enum constant in enum class hibernate.base.persistence.tools.<a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/EntityLintRule.html" title="enum class in hibernate.base.persistence.tools">EntityLintRule</a></dt>
+<dd>
+<div class="block">JPA specification requires entity and embeddable classes to have a
+ <code>public</code> or <code>protected</code> no-argument constructor.</div>
+</dd>
 </dl>
 <h2 class="title" id="I:N">N</h2>
 <dl class="index">
@@ -280,7 +400,9 @@ loadScripts(document, 'script');</script>
 <dd>Section</dd>
 <dt><a href="index.html#named-object-parser-settings-heading" class="search-tag-link">Named Object Parser Settings</a> - Search tag in Overview</dt>
 <dd>Section</dd>
+<dt><a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/provider/HibernateEntityModelLinterFactory.html#newEntityModelLinter(java.util.List,java.util.Map)" class="member-name-link">newEntityModelLinter(List&lt;String&gt;, Map&lt;String, String&gt;)</a> - Method in class hibernate.jakarta.persistence.tools.provider.<a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/provider/HibernateEntityModelLinterFactory.html" title="class in hibernate.jakarta.persistence.tools.provider">HibernateEntityModelLinterFactory</a></dt>
 <dt><a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/provider/HibernateNamedObjectParserFactory.html#newNamedObjectParser(java.util.List,java.util.Map)" class="member-name-link">newNamedObjectParser(List&lt;String&gt;, Map&lt;String, Object&gt;)</a> - Method in class hibernate.jakarta.persistence.tools.provider.<a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/provider/HibernateNamedObjectParserFactory.html" title="class in hibernate.jakarta.persistence.tools.provider">HibernateNamedObjectParserFactory</a></dt>
+<dt><a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/provider/HibernateSchemaExporterFactory.html#newSchemaExporter(java.util.List,java.util.Map)" class="member-name-link">newSchemaExporter(List&lt;String&gt;, Map&lt;String, Object&gt;)</a> - Method in class hibernate.jakarta.persistence.tools.provider.<a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/provider/HibernateSchemaExporterFactory.html" title="class in hibernate.jakarta.persistence.tools.provider">HibernateSchemaExporterFactory</a></dt>
 <dt><a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/provider/HibernateSchemaValidatorFactory.html#newSchemaValidator(java.util.List,java.util.Map)" class="member-name-link">newSchemaValidator(List&lt;String&gt;, Map&lt;String, Object&gt;)</a> - Method in class hibernate.jakarta.persistence.tools.provider.<a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/provider/HibernateSchemaValidatorFactory.html" title="class in hibernate.jakarta.persistence.tools.provider">HibernateSchemaValidatorFactory</a></dt>
 <dt><a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/internal/NoOpConnectionProvider.html" class="type-name-link" title="class in hibernate.jakarta.persistence.tools.internal">NoOpConnectionProvider</a> - Class in <a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/internal/package-summary.html">hibernate.jakarta.persistence.tools.internal</a></dt>
 <dd>
@@ -294,15 +416,27 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:O">O</h2>
 <dl class="index">
+<dt><a href="index.html#5-offline-ddl-schema-export-heading" class="search-tag-link">5. Offline DDL Schema Export</a> - Search tag in Overview</dt>
+<dd>Section</dd>
 <dt><a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/HibernateSchemaValidator.html#of(java.util.List)" class="member-name-link">of(List&lt;String&gt;)</a> - Static method in class hibernate.jakarta.persistence.tools.<a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/HibernateSchemaValidator.html" title="class in hibernate.jakarta.persistence.tools">HibernateSchemaValidator</a></dt>
 <dd>
 <div class="block">Creates a new <code>HibernateSchemaValidator</code> for the given entity
  class names and default validator settings.</div>
 </dd>
+<dt><a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/HibernateEntityModelLinter.html#of(java.util.List,java.lang.ClassLoader)" class="member-name-link">of(List&lt;String&gt;, ClassLoader)</a> - Static method in class hibernate.jakarta.persistence.tools.<a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/HibernateEntityModelLinter.html" title="class in hibernate.jakarta.persistence.tools">HibernateEntityModelLinter</a></dt>
+<dd>
+<div class="block">Creates a new <code>HibernateEntityModelLinter</code> for the given entity class names
+ and class loader.</div>
+</dd>
 <dt><a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/HibernateSchemaValidator.html#of(java.util.List,java.util.Map)" class="member-name-link">of(List&lt;String&gt;, Map&lt;String, Object&gt;)</a> - Static method in class hibernate.jakarta.persistence.tools.<a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/HibernateSchemaValidator.html" title="class in hibernate.jakarta.persistence.tools">HibernateSchemaValidator</a></dt>
 <dd>
 <div class="block">Creates a new <code>HibernateSchemaValidator</code> for the given entity
  class names and custom configuration settings.</div>
+</dd>
+<dt><a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/HibernateSchemaExporter.html#of(java.util.List,java.util.Map,java.lang.ClassLoader)" class="member-name-link">of(List&lt;String&gt;, Map&lt;String, Object&gt;, ClassLoader)</a> - Static method in class hibernate.jakarta.persistence.tools.<a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/HibernateSchemaExporter.html" title="class in hibernate.jakarta.persistence.tools">HibernateSchemaExporter</a></dt>
+<dd>
+<div class="block">Creates a new <code>HibernateSchemaExporter</code> for the specified entity class names,
+ configuration settings, and class loader.</div>
 </dd>
 </dl>
 <h2 class="title" id="I:P">P</h2>
@@ -316,8 +450,17 @@ loadScripts(document, 'script');</script>
 <dt><a href="io.github.jpersist.tools.hibernate.orm/module-summary.html#provided-services-heading" class="search-tag-link">Provided Services</a> - Search tag in module io.github.jpersist.tools.hibernate.orm</dt>
 <dd>Section</dd>
 </dl>
+<h2 class="title" id="I:R">R</h2>
+<dl class="index">
+<dt><a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/EntityLintRule.html#ruleId()" class="member-name-link">ruleId()</a> - Method in enum class hibernate.base.persistence.tools.<a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/EntityLintRule.html" title="enum class in hibernate.base.persistence.tools">EntityLintRule</a></dt>
+<dd>
+<div class="block">Returns the unique identifier for this lint rule (e.g.&nbsp;<code>"JPA001"</code>).</div>
+</dd>
+</dl>
 <h2 class="title" id="I:S">S</h2>
 <dl class="index">
+<dt><a href="index.html#schema-exporter-settings-heading" class="search-tag-link">Schema Exporter Settings</a> - Search tag in Overview</dt>
+<dd>Section</dd>
 <dt><a href="index.html#schema-validator-settings-heading" class="search-tag-link">Schema Validator Settings</a> - Search tag in Overview</dt>
 <dd>Section</dd>
 <dt><a href="index.html#service-provider-registrations-heading" class="search-tag-link">Service Provider Registrations</a> - Search tag in Overview</dt>
@@ -335,9 +478,23 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Converts a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/File.html" title="class or interface in java.io" class="external-link"><code>File</code></a> to a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/net/URL.html" title="class or interface in java.net" class="external-link"><code>URL</code></a>.</div>
 </dd>
+<dt><a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/HibernateUtil.html#toWriter(java.io.File)" class="member-name-link">toWriter(File)</a> - Static method in class hibernate.base.persistence.tools.<a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/HibernateUtil.html" title="class in hibernate.base.persistence.tools">HibernateUtil</a></dt>
+<dd>
+<div class="block">Creates a buffered <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/Writer.html" title="class or interface in java.io" class="external-link"><code>Writer</code></a> for writing UTF-8 encoded text to the specified destination <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/File.html" title="class or interface in java.io" class="external-link"><code>File</code></a>.</div>
+</dd>
+<dt><a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/HibernateUtil.html#toWriter(java.io.OutputStream)" class="member-name-link">toWriter(OutputStream)</a> - Static method in class hibernate.base.persistence.tools.<a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/HibernateUtil.html" title="class in hibernate.base.persistence.tools">HibernateUtil</a></dt>
+<dd>
+<div class="block">Bridges an <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/OutputStream.html" title="class or interface in java.io" class="external-link"><code>OutputStream</code></a> to a UTF-8 <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/Writer.html" title="class or interface in java.io" class="external-link"><code>Writer</code></a>
+ without closing the underlying stream when flushed.</div>
+</dd>
 </dl>
 <h2 class="title" id="I:U">U</h2>
 <dl class="index">
+<dt><a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/EntityLintRule.html#UNORDERED_MANY_TO_MANY_LIST" class="member-name-link">UNORDERED_MANY_TO_MANY_LIST</a> - Enum constant in enum class hibernate.base.persistence.tools.<a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/EntityLintRule.html" title="enum class in hibernate.base.persistence.tools">EntityLintRule</a></dt>
+<dd>
+<div class="block">Using <code>java.util.List</code> without <code>@OrderColumn</code> on <code>@ManyToMany</code>
+ associations causes Hibernate to delete and re-insert all rows on modification.</div>
+</dd>
 <dt><a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/internal/NoOpConnectionProvider.html#unwrap(java.lang.Class)" class="member-name-link">unwrap(Class&lt;T&gt;)</a> - Method in class hibernate.jakarta.persistence.tools.internal.<a href="io.github.jpersist.tools.hibernate.orm/hibernate/jakarta/persistence/tools/internal/NoOpConnectionProvider.html" title="class in hibernate.jakarta.persistence.tools.internal">NoOpConnectionProvider</a></dt>
 </dl>
 <h2 class="title" id="I:V">V</h2>
@@ -347,9 +504,18 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns the string configuration property key associated with this option.</div>
 </dd>
+<dt><a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/EntityLintRule.html#valueOf(java.lang.String)" class="member-name-link">valueOf(String)</a> - Static method in enum class hibernate.base.persistence.tools.<a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/EntityLintRule.html" title="enum class in hibernate.base.persistence.tools">EntityLintRule</a></dt>
+<dd>
+<div class="block">Returns the enum constant of this class with the specified name.</div>
+</dd>
 <dt><a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/HibernateEnhancerOption.html#valueOf(java.lang.String)" class="member-name-link">valueOf(String)</a> - Static method in enum class hibernate.base.persistence.tools.<a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/HibernateEnhancerOption.html" title="enum class in hibernate.base.persistence.tools">HibernateEnhancerOption</a></dt>
 <dd>
 <div class="block">Returns the enum constant of this class with the specified name.</div>
+</dd>
+<dt><a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/EntityLintRule.html#values()" class="member-name-link">values()</a> - Static method in enum class hibernate.base.persistence.tools.<a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/EntityLintRule.html" title="enum class in hibernate.base.persistence.tools">EntityLintRule</a></dt>
+<dd>
+<div class="block">Returns an array containing the constants of this enum class, in
+the order they are declared.</div>
 </dd>
 <dt><a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/HibernateEnhancerOption.html#values()" class="member-name-link">values()</a> - Static method in enum class hibernate.base.persistence.tools.<a href="io.github.jpersist.tools.hibernate.base/hibernate/base/persistence/tools/HibernateEnhancerOption.html" title="enum class in hibernate.base.persistence.tools">HibernateEnhancerOption</a></dt>
 <dd>
@@ -357,7 +523,7 @@ loadScripts(document, 'script');</script>
 the order they are declared.</div>
 </dd>
 </dl>
-<a href="#I:A">A</a>&nbsp;<a href="#I:B">B</a>&nbsp;<a href="#I:C">C</a>&nbsp;<a href="#I:D">D</a>&nbsp;<a href="#I:E">E</a>&nbsp;<a href="#I:F">F</a>&nbsp;<a href="#I:G">G</a>&nbsp;<a href="#I:H">H</a>&nbsp;<a href="#I:I">I</a>&nbsp;<a href="#I:J">J</a>&nbsp;<a href="#I:K">K</a>&nbsp;<a href="#I:L">L</a>&nbsp;<a href="#I:M">M</a>&nbsp;<a href="#I:N">N</a>&nbsp;<a href="#I:O">O</a>&nbsp;<a href="#I:P">P</a>&nbsp;<a href="#I:S">S</a>&nbsp;<a href="#I:T">T</a>&nbsp;<a href="#I:U">U</a>&nbsp;<a href="#I:V">V</a>&nbsp;<br><a href="allclasses-index.html">All&nbsp;Classes&nbsp;and&nbsp;Interfaces</a><span class="vertical-separator">|</span><a href="allpackages-index.html">All&nbsp;Packages</a><span class="vertical-separator">|</span><a href="serialized-form.html">Serialized&nbsp;Form</a></main>
+<a href="#I:A">A</a>&nbsp;<a href="#I:B">B</a>&nbsp;<a href="#I:C">C</a>&nbsp;<a href="#I:D">D</a>&nbsp;<a href="#I:E">E</a>&nbsp;<a href="#I:F">F</a>&nbsp;<a href="#I:G">G</a>&nbsp;<a href="#I:H">H</a>&nbsp;<a href="#I:I">I</a>&nbsp;<a href="#I:J">J</a>&nbsp;<a href="#I:K">K</a>&nbsp;<a href="#I:L">L</a>&nbsp;<a href="#I:M">M</a>&nbsp;<a href="#I:N">N</a>&nbsp;<a href="#I:O">O</a>&nbsp;<a href="#I:P">P</a>&nbsp;<a href="#I:R">R</a>&nbsp;<a href="#I:S">S</a>&nbsp;<a href="#I:T">T</a>&nbsp;<a href="#I:U">U</a>&nbsp;<a href="#I:V">V</a>&nbsp;<br><a href="allclasses-index.html">All&nbsp;Classes&nbsp;and&nbsp;Interfaces</a><span class="vertical-separator">|</span><a href="allpackages-index.html">All&nbsp;Packages</a><span class="vertical-separator">|</span><a href="serialized-form.html">Serialized&nbsp;Form</a></main>
 <footer role="contentinfo">
 <hr>
 <p class="legal-copy"><small><div style='text-align: center; padding: 10px 0; color: #555; font-size: 0.9em;'>Copyright &copy; 2024-2026 <a href='https://github.com/jpersist/persistence' target='_blank'>JPersist Project</a>. Licensed under the <a href='https://www.apache.org/licenses/LICENSE-2.0.txt' target='_blank'>Apache License, Version 2.0</a>.</div><script>document.addEventListener("DOMContentLoaded",function(){var links=document.getElementsByTagName("link");var hasFavicon=false;var relPrefix="";for(var i=0;i<links.length;i++){if(links[i].rel==="icon"||links[i].rel==="shortcut icon"){hasFavicon=true;}if(links[i].href&&links[i].href.indexOf("stylesheet.css")!==-1){var parts=links[i].getAttribute("href").split("stylesheet.css");if(parts.length>0){relPrefix=parts[0];}}}if(!hasFavicon){var link=document.createElement("link");link.rel="icon";link.type="image/svg+xml";link.href=relPrefix+"resources/favicon.svg";document.getElementsByTagName("head")[0].appendChild(link);}});</script></small></p>

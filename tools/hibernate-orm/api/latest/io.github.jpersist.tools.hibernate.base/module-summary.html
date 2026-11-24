@@ -25,7 +25,7 @@ loadScripts(document, 'script');</script>
 <!-- ========= START OF TOP NAVBAR ======= -->
 <div class="top-nav" id="navbar-top"><button id="navbar-toggle-button" aria-controls="navbar-top" aria-expanded="false" aria-label="Toggle navigation links"><span class="nav-bar-toggle-icon">&nbsp;</span><span class="nav-bar-toggle-icon">&nbsp;</span><span class="nav-bar-toggle-icon">&nbsp;</span></button>
 <div class="skip-nav"><a href="#skip-navbar-top" title="Skip navigation links">Skip navigation links</a></div>
-<div class="about-language"><div style='padding: 4px 10px; background: rgba(255,255,255,0.15); border-radius: 4px; font-weight: bold;'>JPersist Suite &bull; v2.1.0</div></div>
+<div class="about-language"><div style='padding: 4px 10px; background: rgba(255,255,255,0.15); border-radius: 4px; font-weight: bold;'>JPersist Suite &bull; v2.2.0</div></div>
 <ul id="navbar-top-firstrow" class="nav-list" title="Navigation">
 <li><a href="../index.html">Overview</a></li>
 <li class="nav-bar-cell1-rev">Module</li>
@@ -78,13 +78,14 @@ loadScripts(document, 'script');</script>
 
  <p>This module provides shared baseline contracts and utility methods used across version-specific
  Hibernate persistence tooling providers (such as Hibernate&nbsp;5 and Hibernate ORM&nbsp;6).
- It encapsulates shared enhancer option configuration and class loading helpers, while transitively
- exposing the core persistence tools API.</p>
+ It encapsulates bytecode enhancement option configuration, template entity model linting,
+ shared lint rule definitions, class loading helpers, and offline DDL export utilities,
+ while transitively exposing the core persistence tools API.</p>
 
  <h2 id="exported-packages-heading">Exported Packages</h2>
  <ul>
-   <li><a href="hibernate/base/persistence/tools/package-summary.html"><code>hibernate.base.persistence.tools</code></a> &ndash; Common bytecode enhancement options
-       and utility classes for Hibernate tool implementations.</li>
+   <li><a href="hibernate/base/persistence/tools/package-summary.html"><code>hibernate.base.persistence.tools</code></a> &ndash; Common bytecode enhancement options,
+       entity model linting rules, base linter implementations, and utility classes for Hibernate tool implementations.</li>
  </ul></div>
 <dl class="notes">
 <dt>Since:</dt>
@@ -92,7 +93,7 @@ loadScripts(document, 'script');</script>
 <dt>See Also:</dt>
 <dd>
 <ul class="tag-list-long">
-<li><a href="https://jpersist.github.io/persistence/tools/specifications/api/4.1.0/io.github.jpersist.tools.api/module-summary.html" class="external-link"><code>io.github.jpersist.tools.api</code></a></li>
+<li><a href="https://jpersist.github.io/persistence/tools/specifications/api/4.2.0/io.github.jpersist.tools.api/module-summary.html" class="external-link"><code>io.github.jpersist.tools.api</code></a></li>
 <li><a href="hibernate/base/persistence/tools/package-summary.html"><code>hibernate.base.persistence.tools</code></a></li>
 </ul>
 </dd>

@@ -25,7 +25,7 @@ loadScripts(document, 'script');</script>
 <!-- ========= START OF TOP NAVBAR ======= -->
 <div class="top-nav" id="navbar-top"><button id="navbar-toggle-button" aria-controls="navbar-top" aria-expanded="false" aria-label="Toggle navigation links"><span class="nav-bar-toggle-icon">&nbsp;</span><span class="nav-bar-toggle-icon">&nbsp;</span><span class="nav-bar-toggle-icon">&nbsp;</span></button>
 <div class="skip-nav"><a href="#skip-navbar-top" title="Skip navigation links">Skip navigation links</a></div>
-<div class="about-language"><div style='padding: 4px 10px; background: rgba(255,255,255,0.15); border-radius: 4px; font-weight: bold;'>JPersist Suite &bull; v2.1.0</div></div>
+<div class="about-language"><div style='padding: 4px 10px; background: rgba(255,255,255,0.15); border-radius: 4px; font-weight: bold;'>JPersist Suite &bull; v2.2.0</div></div>
 <ul id="navbar-top-firstrow" class="nav-list" title="Navigation">
 <li><a href="../../../../../index.html">Overview</a></li>
 <li><a href="../../../../module-summary.html">Module</a></li>
@@ -93,13 +93,13 @@ loadScripts(document, 'script');</script>
 <section class="class-description" id="class-description">
 <dl class="notes">
 <dt>All Implemented Interfaces:</dt>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/AutoCloseable.html" title="class or interface in java.lang" class="external-link">AutoCloseable</a></code>, <code><a href="https://jpersist.github.io/persistence/tools/specifications/api/4.1.0/io.github.jpersist.tools.api/persistence/tools/NamedObjectParser.html" title="class or interface in persistence.tools" class="external-link">NamedObjectParser</a></code>, <code><a href="https://jpersist.github.io/persistence/tools/specifications/api/4.1.0/io.github.jpersist.tools.api/persistence/tools/PersistenceLinter.html" title="class or interface in persistence.tools" class="external-link">PersistenceLinter</a></code></dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/AutoCloseable.html" title="class or interface in java.lang" class="external-link">AutoCloseable</a></code>, <code><a href="https://jpersist.github.io/persistence/tools/specifications/api/4.2.0/io.github.jpersist.tools.api/persistence/tools/NamedObjectParser.html" title="class or interface in persistence.tools" class="external-link">NamedObjectParser</a></code>, <code><a href="https://jpersist.github.io/persistence/tools/specifications/api/4.2.0/io.github.jpersist.tools.api/persistence/tools/PersistenceLinter.html" title="class or interface in persistence.tools" class="external-link">PersistenceLinter</a></code></dd>
 </dl>
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">HibernateNamedObjectParser</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>
-implements <a href="https://jpersist.github.io/persistence/tools/specifications/api/4.1.0/io.github.jpersist.tools.api/persistence/tools/NamedObjectParser.html" title="class or interface in persistence.tools" class="external-link">NamedObjectParser</a></span></div>
-<div class="block"><a href="https://jpersist.github.io/persistence/tools/specifications/api/4.1.0/io.github.jpersist.tools.api/persistence/tools/NamedObjectParser.html" title="class or interface in persistence.tools" class="external-link"><code>NamedObjectParser</code></a> implementation for the Jakarta Persistence namespace.
+implements <a href="https://jpersist.github.io/persistence/tools/specifications/api/4.2.0/io.github.jpersist.tools.api/persistence/tools/NamedObjectParser.html" title="class or interface in persistence.tools" class="external-link">NamedObjectParser</a></span></div>
+<div class="block"><a href="https://jpersist.github.io/persistence/tools/specifications/api/4.2.0/io.github.jpersist.tools.api/persistence/tools/NamedObjectParser.html" title="class or interface in persistence.tools" class="external-link"><code>NamedObjectParser</code></a> implementation for the Jakarta Persistence namespace.
 
  <p>This parser uses Hibernate ORM&nbsp;6 to compile JPQL query strings
  into a Semantic Query Model (SQM) tree. The compilation verifies grammar,
@@ -107,7 +107,7 @@ implements <a href="https://jpersist.github.io/persistence/tools/specifications/
  — no live database connection is required.</p>
 
  <p>Stored procedure declarations are validated by recording the procedure
- name and its parameter names into a <a href="https://jpersist.github.io/persistence/tools/specifications/api/4.1.0/io.github.jpersist.tools.api/persistence/tools/NamedObjectDescriptor.html" title="class or interface in persistence.tools" class="external-link"><code>NamedObjectDescriptor</code></a>.</p>
+ name and its parameter names into a <a href="https://jpersist.github.io/persistence/tools/specifications/api/4.2.0/io.github.jpersist.tools.api/persistence/tools/NamedObjectDescriptor.html" title="class or interface in persistence.tools" class="external-link"><code>NamedObjectDescriptor</code></a>.</p>
 
  <p>Instances are created through the <a href="#from(java.util.List)"><code>from(List)</code></a> or
  <a href="#from(java.util.List,java.util.Map)"><code>from(List, Map)</code></a> factory methods. This class implements
@@ -158,11 +158,11 @@ implements <a href="https://jpersist.github.io/persistence/tools/specifications/
  supplied entity class names and custom settings merged on top of
  predefined offline defaults.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://jpersist.github.io/persistence/tools/specifications/api/4.1.0/io.github.jpersist.tools.api/persistence/tools/NamedObjectDescriptor.html" title="class or interface in persistence.tools" class="external-link">NamedObjectDescriptor</a></code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://jpersist.github.io/persistence/tools/specifications/api/4.2.0/io.github.jpersist.tools.api/persistence/tools/NamedObjectDescriptor.html" title="class or interface in persistence.tools" class="external-link">NamedObjectDescriptor</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#parseQuery(java.lang.String,java.lang.String)" class="member-name-link">parseQuery</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;queryString)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"></div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://jpersist.github.io/persistence/tools/specifications/api/4.1.0/io.github.jpersist.tools.api/persistence/tools/NamedObjectDescriptor.html" title="class or interface in persistence.tools" class="external-link">NamedObjectDescriptor</a></code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://jpersist.github.io/persistence/tools/specifications/api/4.2.0/io.github.jpersist.tools.api/persistence/tools/NamedObjectDescriptor.html" title="class or interface in persistence.tools" class="external-link">NamedObjectDescriptor</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#parseStoredProcedure(java.lang.String,java.lang.String,java.util.Set)" class="member-name-link">parseStoredProcedure</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;procedureName,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;parameterNames)</code></div>
@@ -223,23 +223,23 @@ implements <a href="https://jpersist.github.io/persistence/tools/specifications/
 <li>
 <section class="detail" id="parseQuery(java.lang.String,java.lang.String)">
 <h3>parseQuery</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://jpersist.github.io/persistence/tools/specifications/api/4.1.0/io.github.jpersist.tools.api/persistence/tools/NamedObjectDescriptor.html" title="class or interface in persistence.tools" class="external-link">NamedObjectDescriptor</a></span>&nbsp;<span class="element-name">parseQuery</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://jpersist.github.io/persistence/tools/specifications/api/4.2.0/io.github.jpersist.tools.api/persistence/tools/NamedObjectDescriptor.html" title="class or interface in persistence.tools" class="external-link">NamedObjectDescriptor</a></span>&nbsp;<span class="element-name">parseQuery</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;queryString)</span></div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="https://jpersist.github.io/persistence/tools/specifications/api/4.1.0/io.github.jpersist.tools.api/persistence/tools/NamedObjectParser.html#parseQuery(java.lang.String,java.lang.String)" title="class or interface in persistence.tools" class="external-link">parseQuery</a></code>&nbsp;in interface&nbsp;<code><a href="https://jpersist.github.io/persistence/tools/specifications/api/4.1.0/io.github.jpersist.tools.api/persistence/tools/NamedObjectParser.html" title="class or interface in persistence.tools" class="external-link">NamedObjectParser</a></code></dd>
+<dd><code><a href="https://jpersist.github.io/persistence/tools/specifications/api/4.2.0/io.github.jpersist.tools.api/persistence/tools/NamedObjectParser.html#parseQuery(java.lang.String,java.lang.String)" title="class or interface in persistence.tools" class="external-link">parseQuery</a></code>&nbsp;in interface&nbsp;<code><a href="https://jpersist.github.io/persistence/tools/specifications/api/4.2.0/io.github.jpersist.tools.api/persistence/tools/NamedObjectParser.html" title="class or interface in persistence.tools" class="external-link">NamedObjectParser</a></code></dd>
 </dl>
 </section>
 </li>
 <li>
 <section class="detail" id="parseStoredProcedure(java.lang.String,java.lang.String,java.util.Set)">
 <h3>parseStoredProcedure</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://jpersist.github.io/persistence/tools/specifications/api/4.1.0/io.github.jpersist.tools.api/persistence/tools/NamedObjectDescriptor.html" title="class or interface in persistence.tools" class="external-link">NamedObjectDescriptor</a></span>&nbsp;<span class="element-name">parseStoredProcedure</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://jpersist.github.io/persistence/tools/specifications/api/4.2.0/io.github.jpersist.tools.api/persistence/tools/NamedObjectDescriptor.html" title="class or interface in persistence.tools" class="external-link">NamedObjectDescriptor</a></span>&nbsp;<span class="element-name">parseStoredProcedure</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;procedureName,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;parameterNames)</span></div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="https://jpersist.github.io/persistence/tools/specifications/api/4.1.0/io.github.jpersist.tools.api/persistence/tools/NamedObjectParser.html#parseStoredProcedure(java.lang.String,java.lang.String,java.util.Set)" title="class or interface in persistence.tools" class="external-link">parseStoredProcedure</a></code>&nbsp;in interface&nbsp;<code><a href="https://jpersist.github.io/persistence/tools/specifications/api/4.1.0/io.github.jpersist.tools.api/persistence/tools/NamedObjectParser.html" title="class or interface in persistence.tools" class="external-link">NamedObjectParser</a></code></dd>
+<dd><code><a href="https://jpersist.github.io/persistence/tools/specifications/api/4.2.0/io.github.jpersist.tools.api/persistence/tools/NamedObjectParser.html#parseStoredProcedure(java.lang.String,java.lang.String,java.util.Set)" title="class or interface in persistence.tools" class="external-link">parseStoredProcedure</a></code>&nbsp;in interface&nbsp;<code><a href="https://jpersist.github.io/persistence/tools/specifications/api/4.2.0/io.github.jpersist.tools.api/persistence/tools/NamedObjectParser.html" title="class or interface in persistence.tools" class="external-link">NamedObjectParser</a></code></dd>
 </dl>
 </section>
 </li>

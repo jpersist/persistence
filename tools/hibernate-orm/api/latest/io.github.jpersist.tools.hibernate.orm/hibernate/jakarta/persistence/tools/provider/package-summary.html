@@ -25,7 +25,7 @@ loadScripts(document, 'script');</script>
 <!-- ========= START OF TOP NAVBAR ======= -->
 <div class="top-nav" id="navbar-top"><button id="navbar-toggle-button" aria-controls="navbar-top" aria-expanded="false" aria-label="Toggle navigation links"><span class="nav-bar-toggle-icon">&nbsp;</span><span class="nav-bar-toggle-icon">&nbsp;</span><span class="nav-bar-toggle-icon">&nbsp;</span></button>
 <div class="skip-nav"><a href="#skip-navbar-top" title="Skip navigation links">Skip navigation links</a></div>
-<div class="about-language"><div style='padding: 4px 10px; background: rgba(255,255,255,0.15); border-radius: 4px; font-weight: bold;'>JPersist Suite &bull; v2.1.0</div></div>
+<div class="about-language"><div style='padding: 4px 10px; background: rgba(255,255,255,0.15); border-radius: 4px; font-weight: bold;'>JPersist Suite &bull; v2.2.0</div></div>
 <ul id="navbar-top-firstrow" class="nav-list" title="Navigation">
 <li><a href="../../../../../../index.html">Overview</a></li>
 <li><a href="../../../../../module-summary.html">Module</a></li>
@@ -82,12 +82,16 @@ loadScripts(document, 'script');</script>
        abstract base provider binding the <code>"jakarta"</code> namespace.</li>
    <li><a href="HibernatePersistenceLinterFactory.html" title="class in hibernate.jakarta.persistence.tools.provider"><code>HibernatePersistenceLinterFactory</code></a> &ndash;
        abstract base linter factory binding the <code>"jakarta"</code> namespace.</li>
+   <li><a href="HibernateEntityModelLinterFactory.html" title="class in hibernate.jakarta.persistence.tools.provider"><code>HibernateEntityModelLinterFactory</code></a> &ndash;
+       service provider for <a href="https://jpersist.github.io/persistence/tools/specifications/api/4.2.0/io.github.jpersist.tools.api/persistence/tools/spi/EntityModelLinterFactory.html" title="class or interface in persistence.tools.spi" class="external-link"><code>EntityModelLinterFactory</code></a>.</li>
+   <li><a href="HibernateSchemaExporterFactory.html" title="class in hibernate.jakarta.persistence.tools.provider"><code>HibernateSchemaExporterFactory</code></a> &ndash;
+       service provider for <a href="https://jpersist.github.io/persistence/tools/specifications/api/4.2.0/io.github.jpersist.tools.api/persistence/tools/spi/SchemaExporterFactory.html" title="class or interface in persistence.tools.spi" class="external-link"><code>SchemaExporterFactory</code></a>.</li>
    <li><a href="HibernateEnhancerProvider.html" title="class in hibernate.jakarta.persistence.tools.provider"><code>HibernateEnhancerProvider</code></a> &ndash;
-       service provider for <a href="https://jpersist.github.io/persistence/tools/specifications/api/4.1.0/io.github.jpersist.tools.api/persistence/tools/spi/EnhancerProvider.html" title="class or interface in persistence.tools.spi" class="external-link"><code>EnhancerProvider</code></a>.</li>
+       service provider for <a href="https://jpersist.github.io/persistence/tools/specifications/api/4.2.0/io.github.jpersist.tools.api/persistence/tools/spi/EnhancerProvider.html" title="class or interface in persistence.tools.spi" class="external-link"><code>EnhancerProvider</code></a>.</li>
    <li><a href="HibernateNamedObjectParserFactory.html" title="class in hibernate.jakarta.persistence.tools.provider"><code>HibernateNamedObjectParserFactory</code></a> &ndash;
-       service provider for <a href="https://jpersist.github.io/persistence/tools/specifications/api/4.1.0/io.github.jpersist.tools.api/persistence/tools/spi/NamedObjectParserFactory.html" title="class or interface in persistence.tools.spi" class="external-link"><code>NamedObjectParserFactory</code></a>.</li>
+       service provider for <a href="https://jpersist.github.io/persistence/tools/specifications/api/4.2.0/io.github.jpersist.tools.api/persistence/tools/spi/NamedObjectParserFactory.html" title="class or interface in persistence.tools.spi" class="external-link"><code>NamedObjectParserFactory</code></a>.</li>
    <li><a href="HibernateSchemaValidatorFactory.html" title="class in hibernate.jakarta.persistence.tools.provider"><code>HibernateSchemaValidatorFactory</code></a> &ndash;
-       service provider for <a href="https://jpersist.github.io/persistence/tools/specifications/api/4.1.0/io.github.jpersist.tools.api/persistence/tools/spi/SchemaValidatorFactory.html" title="class or interface in persistence.tools.spi" class="external-link"><code>SchemaValidatorFactory</code></a>.</li>
+       service provider for <a href="https://jpersist.github.io/persistence/tools/specifications/api/4.2.0/io.github.jpersist.tools.api/persistence/tools/spi/SchemaValidatorFactory.html" title="class or interface in persistence.tools.spi" class="external-link"><code>SchemaValidatorFactory</code></a>.</li>
  </ul></div>
 <dl class="notes">
 <dt>Since:</dt>
@@ -95,8 +99,10 @@ loadScripts(document, 'script');</script>
 <dt>See Also:</dt>
 <dd>
 <ul class="tag-list">
-<li><a href="https://jpersist.github.io/persistence/tools/specifications/api/4.1.0/io.github.jpersist.tools.api/persistence/tools/spi/package-summary.html" class="external-link"><code>persistence.tools.spi</code></a></li>
+<li><a href="https://jpersist.github.io/persistence/tools/specifications/api/4.2.0/io.github.jpersist.tools.api/persistence/tools/spi/package-summary.html" class="external-link"><code>persistence.tools.spi</code></a></li>
 <li><a href="../HibernateEnhancer.html" title="class in hibernate.jakarta.persistence.tools"><code>HibernateEnhancer</code></a></li>
+<li><a href="../HibernateEntityModelLinter.html" title="class in hibernate.jakarta.persistence.tools"><code>HibernateEntityModelLinter</code></a></li>
+<li><a href="../HibernateSchemaExporter.html" title="class in hibernate.jakarta.persistence.tools"><code>HibernateSchemaExporter</code></a></li>
 </ul>
 </dd>
 </dl>
@@ -129,26 +135,34 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="HibernateEnhancerProvider.html" title="class in hibernate.jakarta.persistence.tools.provider">HibernateEnhancerProvider</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab2">
-<div class="block"><a href="https://jpersist.github.io/persistence/tools/specifications/api/4.1.0/io.github.jpersist.tools.api/persistence/tools/spi/EnhancerProvider.html" title="class or interface in persistence.tools.spi" class="external-link"><code>EnhancerProvider</code></a> implementation for the Jakarta
+<div class="block"><a href="https://jpersist.github.io/persistence/tools/specifications/api/4.2.0/io.github.jpersist.tools.api/persistence/tools/spi/EnhancerProvider.html" title="class or interface in persistence.tools.spi" class="external-link"><code>EnhancerProvider</code></a> implementation for the Jakarta
  Persistence namespace (<code>"jakarta"</code>).</div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="HibernateNamedObjectParserFactory.html" title="class in hibernate.jakarta.persistence.tools.provider">HibernateNamedObjectParserFactory</a></div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="HibernateEntityModelLinterFactory.html" title="class in hibernate.jakarta.persistence.tools.provider">HibernateEntityModelLinterFactory</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">
-<div class="block"><a href="https://jpersist.github.io/persistence/tools/specifications/api/4.1.0/io.github.jpersist.tools.api/persistence/tools/spi/NamedObjectParserFactory.html" title="class or interface in persistence.tools.spi" class="external-link"><code>NamedObjectParserFactory</code></a> implementation for the Jakarta Persistence
+<div class="block">Hibernate ORM&nbsp;6 provider factory for <a href="../HibernateEntityModelLinter.html" title="class in hibernate.jakarta.persistence.tools"><code>HibernateEntityModelLinter</code></a>.</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="HibernateNamedObjectParserFactory.html" title="class in hibernate.jakarta.persistence.tools.provider">HibernateNamedObjectParserFactory</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block"><a href="https://jpersist.github.io/persistence/tools/specifications/api/4.2.0/io.github.jpersist.tools.api/persistence/tools/spi/NamedObjectParserFactory.html" title="class or interface in persistence.tools.spi" class="external-link"><code>NamedObjectParserFactory</code></a> implementation for the Jakarta Persistence
  namespace (<code>"jakarta"</code>).</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="HibernatePersistenceLinterFactory.html" title="class in hibernate.jakarta.persistence.tools.provider">HibernatePersistenceLinterFactory</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="HibernatePersistenceLinterFactory.html" title="class in hibernate.jakarta.persistence.tools.provider">HibernatePersistenceLinterFactory</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block">Abstract base class for Jakarta Persistence linter factories.</div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="HibernatePersistenceServiceProvider.html" title="class in hibernate.jakarta.persistence.tools.provider">HibernatePersistenceServiceProvider</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="HibernatePersistenceServiceProvider.html" title="class in hibernate.jakarta.persistence.tools.provider">HibernatePersistenceServiceProvider</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
 <div class="block">Base class for Jakarta Persistence (<code>"jakarta"</code> namespace)
  service providers.</div>
 </div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="HibernateSchemaExporterFactory.html" title="class in hibernate.jakarta.persistence.tools.provider">HibernateSchemaExporterFactory</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="block">Hibernate ORM&nbsp;6 provider factory for <a href="../HibernateSchemaExporter.html" title="class in hibernate.jakarta.persistence.tools"><code>HibernateSchemaExporter</code></a>.</div>
+</div>
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="HibernateSchemaValidatorFactory.html" title="class in hibernate.jakarta.persistence.tools.provider">HibernateSchemaValidatorFactory</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab2">
-<div class="block"><a href="https://jpersist.github.io/persistence/tools/specifications/api/4.1.0/io.github.jpersist.tools.api/persistence/tools/spi/SchemaValidatorFactory.html" title="class or interface in persistence.tools.spi" class="external-link"><code>SchemaValidatorFactory</code></a> implementation for the Jakarta Persistence
+<div class="block"><a href="https://jpersist.github.io/persistence/tools/specifications/api/4.2.0/io.github.jpersist.tools.api/persistence/tools/spi/SchemaValidatorFactory.html" title="class or interface in persistence.tools.spi" class="external-link"><code>SchemaValidatorFactory</code></a> implementation for the Jakarta Persistence
  namespace (<code>"jakarta"</code>).</div>
 </div>
 </div>
