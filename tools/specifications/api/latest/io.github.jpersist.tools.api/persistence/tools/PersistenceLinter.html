@@ -25,7 +25,7 @@ loadScripts(document, 'script');</script>
 <!-- ========= START OF TOP NAVBAR ======= -->
 <div class="top-nav" id="navbar-top"><button id="navbar-toggle-button" aria-controls="navbar-top" aria-expanded="false" aria-label="Toggle navigation links"><span class="nav-bar-toggle-icon">&nbsp;</span><span class="nav-bar-toggle-icon">&nbsp;</span><span class="nav-bar-toggle-icon">&nbsp;</span></button>
 <div class="skip-nav"><a href="#skip-navbar-top" title="Skip navigation links">Skip navigation links</a></div>
-<div class="about-language"><div style='padding: 4px 10px; background: rgba(255,255,255,0.15); border-radius: 4px; font-weight: bold;'>JPersist Suite &bull; v4.1.0</div></div>
+<div class="about-language"><div style='padding: 4px 10px; background: rgba(255,255,255,0.15); border-radius: 4px; font-weight: bold;'>JPersist Suite &bull; v4.2.0</div></div>
 <ul id="navbar-top-firstrow" class="nav-list" title="Navigation">
 <li><a href="../../../index.html">Overview</a></li>
 <li><a href="../../module-summary.html">Module</a></li>
@@ -90,22 +90,23 @@ loadScripts(document, 'script');</script>
 <section class="class-description" id="class-description">
 <dl class="notes">
 <dt>All Known Subinterfaces:</dt>
-<dd><code><a href="NamedObjectParser.html" title="interface in persistence.tools">NamedObjectParser</a></code>, <code><a href="SchemaValidator.html" title="interface in persistence.tools">SchemaValidator</a></code></dd>
+<dd><code><a href="EntityModelLinter.html" title="interface in persistence.tools">EntityModelLinter</a></code>, <code><a href="NamedObjectParser.html" title="interface in persistence.tools">NamedObjectParser</a></code>, <code><a href="SchemaValidator.html" title="interface in persistence.tools">SchemaValidator</a></code></dd>
 </dl>
 <hr>
 <div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">PersistenceLinter</span></div>
 <div class="block">Marker interface for all persistence linting operations.
 
  <p>This is the root type in the linter hierarchy. Concrete linter
- contracts such as <a href="NamedObjectParser.html" title="interface in persistence.tools"><code>NamedObjectParser</code></a> and <a href="SchemaValidator.html" title="interface in persistence.tools"><code>SchemaValidator</code></a>
- extend this interface to declare specific build-time validation
- capabilities.</p></div>
+ contracts such as <a href="EntityModelLinter.html" title="interface in persistence.tools"><code>EntityModelLinter</code></a>, <a href="NamedObjectParser.html" title="interface in persistence.tools"><code>NamedObjectParser</code></a>,
+ and <a href="SchemaValidator.html" title="interface in persistence.tools"><code>SchemaValidator</code></a> extend this interface to declare specific
+ build-time validation and static analysis capabilities.</p></div>
 <dl class="notes">
 <dt>Since:</dt>
 <dd>2.1.0</dd>
 <dt>See Also:</dt>
 <dd>
 <ul class="tag-list">
+<li><a href="EntityModelLinter.html" title="interface in persistence.tools"><code>EntityModelLinter</code></a></li>
 <li><a href="NamedObjectParser.html" title="interface in persistence.tools"><code>NamedObjectParser</code></a></li>
 <li><a href="SchemaValidator.html" title="interface in persistence.tools"><code>SchemaValidator</code></a></li>
 </ul>

@@ -25,7 +25,7 @@ loadScripts(document, 'script');</script>
 <!-- ========= START OF TOP NAVBAR ======= -->
 <div class="top-nav" id="navbar-top"><button id="navbar-toggle-button" aria-controls="navbar-top" aria-expanded="false" aria-label="Toggle navigation links"><span class="nav-bar-toggle-icon">&nbsp;</span><span class="nav-bar-toggle-icon">&nbsp;</span><span class="nav-bar-toggle-icon">&nbsp;</span></button>
 <div class="skip-nav"><a href="#skip-navbar-top" title="Skip navigation links">Skip navigation links</a></div>
-<div class="about-language"><div style='padding: 4px 10px; background: rgba(255,255,255,0.15); border-radius: 4px; font-weight: bold;'>JPersist Suite &bull; v4.1.0</div></div>
+<div class="about-language"><div style='padding: 4px 10px; background: rgba(255,255,255,0.15); border-radius: 4px; font-weight: bold;'>JPersist Suite &bull; v4.2.0</div></div>
 <ul id="navbar-top-firstrow" class="nav-list" title="Navigation">
 <li><a href="../../../index.html">Overview</a></li>
 <li><a href="../../module-summary.html">Module</a></li>
@@ -75,18 +75,28 @@ loadScripts(document, 'script');</script>
 <div class="block">Core public API contracts and data types for JPersist Persistence Tools.
 
  <p>This package defines vendor-agnostic interfaces and descriptors for build-time
- persistence validation, bytecode enhancement, schema verification, and named query
- parsing:</p>
+ persistence validation, entity model linting, bytecode enhancement, schema verification,
+ offline DDL export, and named query parsing:</p>
 
  <ul>
    <li><a href="Enhancer.html" title="interface in persistence.tools"><code>Enhancer</code></a> &ndash; contract for performing build-time bytecode
        enhancement on compiled JPA entity classes.</li>
+   <li><a href="EntityModelLinter.html" title="interface in persistence.tools"><code>EntityModelLinter</code></a> &ndash; inspects the JPA entity metamodel
+       to statically detect mapping and performance anti-patterns.</li>
+   <li><a href="LintDiagnostic.html" title="class in persistence.tools"><code>LintDiagnostic</code></a> &ndash; immutable record capturing a single
+       entity model linting finding.</li>
+   <li><a href="LintSeverity.html" title="enum class in persistence.tools"><code>LintSeverity</code></a> &ndash; defines severity levels for entity model
+       linting diagnostics.</li>
    <li><a href="NamedObjectParser.html" title="interface in persistence.tools"><code>NamedObjectParser</code></a> &ndash; parses and validates named JPQL
        queries and stored procedure declarations against the entity metamodel.</li>
    <li><a href="NamedObjectDescriptor.html" title="class in persistence.tools"><code>NamedObjectDescriptor</code></a> &ndash; immutable descriptor representing
        a parsed named query or stored procedure.</li>
    <li><a href="NamedObjectType.html" title="enum class in persistence.tools"><code>NamedObjectType</code></a> &ndash; enumerates the types of parsed
        persistence objects.</li>
+   <li><a href="SchemaExporter.html" title="interface in persistence.tools"><code>SchemaExporter</code></a> &ndash; exports offline DDL scripts
+       (<code>CREATE</code>, <code>DROP</code>, or <code>BOTH</code>) without a live database connection.</li>
+   <li><a href="SchemaExporter.Action.html" title="enum class in persistence.tools"><code>SchemaExporter.Action</code></a> &ndash; defines the scope of DDL
+       statements to generate during schema export.</li>
    <li><a href="SchemaValidator.html" title="interface in persistence.tools"><code>SchemaValidator</code></a> &ndash; validates the entity metamodel
        against a live database schema.</li>
    <li><a href="PersistenceLinter.html" title="interface in persistence.tools"><code>PersistenceLinter</code></a> &ndash; marker interface for all
@@ -129,26 +139,50 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color class-summary class-summary-tab1">
 <div class="block">Public API contract for bytecode enhancement and instrumentation of persistence entity classes.</div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab4"><a href="NamedObjectDescriptor.html" title="class in persistence.tools">NamedObjectDescriptor</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab4">
+<div class="col-first odd-row-color class-summary class-summary-tab1"><a href="EntityModelLinter.html" title="interface in persistence.tools">EntityModelLinter</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab1">
+<div class="block">Contract for statically inspecting a JPA entity metamodel to detect mapping,
+ structural, and performance anti-patterns at build time.</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab4"><a href="LintDiagnostic.html" title="class in persistence.tools">LintDiagnostic</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab4">
+<div class="block">Immutable diagnostic record representing a single JPA mapping or performance
+ issue detected by an <a href="EntityModelLinter.html" title="interface in persistence.tools"><code>EntityModelLinter</code></a>.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab3"><a href="LintSeverity.html" title="enum class in persistence.tools">LintSeverity</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab3">
+<div class="block">Enumerates the severity levels assigned to <a href="LintDiagnostic.html" title="class in persistence.tools"><code>LintDiagnostic</code></a> findings
+ reported by an <a href="EntityModelLinter.html" title="interface in persistence.tools"><code>EntityModelLinter</code></a>.</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab4"><a href="NamedObjectDescriptor.html" title="class in persistence.tools">NamedObjectDescriptor</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab4">
 <div class="block">Immutable descriptor returned after a named object (query or stored
  procedure) has been successfully parsed and validated.</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab1"><a href="NamedObjectParser.html" title="interface in persistence.tools">NamedObjectParser</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab1">
+<div class="col-first odd-row-color class-summary class-summary-tab1"><a href="NamedObjectParser.html" title="interface in persistence.tools">NamedObjectParser</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab1">
 <div class="block">Service provider interface for parsing and validating named JPA objects
  (queries and stored procedures) at build time.</div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab3"><a href="NamedObjectType.html" title="enum class in persistence.tools">NamedObjectType</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab3">
+<div class="col-first even-row-color class-summary class-summary-tab3"><a href="NamedObjectType.html" title="enum class in persistence.tools">NamedObjectType</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab3">
 <div class="block">Enumerates the kinds of named objects that can be validated at build time.</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab1"><a href="PersistenceLinter.html" title="interface in persistence.tools">PersistenceLinter</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab1">
+<div class="col-first odd-row-color class-summary class-summary-tab1"><a href="PersistenceLinter.html" title="interface in persistence.tools">PersistenceLinter</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab1">
 <div class="block">Marker interface for all persistence linting operations.</div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab1"><a href="SchemaValidator.html" title="interface in persistence.tools">SchemaValidator</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab1">
+<div class="col-first even-row-color class-summary class-summary-tab1"><a href="SchemaExporter.html" title="interface in persistence.tools">SchemaExporter</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab1">
+<div class="block">Contract for generating and exporting offline DDL scripts from a JPA entity metamodel
+ at build time without requiring a live database connection or running database server.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab3"><a href="SchemaExporter.Action.html" title="enum class in persistence.tools">SchemaExporter.Action</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab3">
+<div class="block">Defines the scope of DDL statements to generate during schema export.</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab1"><a href="SchemaValidator.html" title="interface in persistence.tools">SchemaValidator</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab1">
 <div class="block">Service provider interface for validating a JPA persistence schema
  against a live database at build time.</div>
 </div>

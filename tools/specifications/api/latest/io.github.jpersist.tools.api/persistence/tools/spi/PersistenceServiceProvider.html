@@ -25,7 +25,7 @@ loadScripts(document, 'script');</script>
 <!-- ========= START OF TOP NAVBAR ======= -->
 <div class="top-nav" id="navbar-top"><button id="navbar-toggle-button" aria-controls="navbar-top" aria-expanded="false" aria-label="Toggle navigation links"><span class="nav-bar-toggle-icon">&nbsp;</span><span class="nav-bar-toggle-icon">&nbsp;</span><span class="nav-bar-toggle-icon">&nbsp;</span></button>
 <div class="skip-nav"><a href="#skip-navbar-top" title="Skip navigation links">Skip navigation links</a></div>
-<div class="about-language"><div style='padding: 4px 10px; background: rgba(255,255,255,0.15); border-radius: 4px; font-weight: bold;'>JPersist Suite &bull; v4.1.0</div></div>
+<div class="about-language"><div style='padding: 4px 10px; background: rgba(255,255,255,0.15); border-radius: 4px; font-weight: bold;'>JPersist Suite &bull; v4.2.0</div></div>
 <ul id="navbar-top-firstrow" class="nav-list" title="Navigation">
 <li><a href="../../../../index.html">Overview</a></li>
 <li><a href="../../../module-summary.html">Module</a></li>
@@ -90,7 +90,7 @@ loadScripts(document, 'script');</script>
 <section class="class-description" id="class-description">
 <dl class="notes">
 <dt>All Known Subinterfaces:</dt>
-<dd><code><a href="EnhancerProvider.html" title="interface in persistence.tools.spi">EnhancerProvider</a></code>, <code><a href="NamedObjectParserFactory.html" title="interface in persistence.tools.spi">NamedObjectParserFactory</a></code>, <code><a href="PersistenceLinterFactory.html" title="interface in persistence.tools.spi">PersistenceLinterFactory</a></code>, <code><a href="SchemaValidatorFactory.html" title="interface in persistence.tools.spi">SchemaValidatorFactory</a></code></dd>
+<dd><code><a href="EnhancerProvider.html" title="interface in persistence.tools.spi">EnhancerProvider</a></code>, <code><a href="EntityModelLinterFactory.html" title="interface in persistence.tools.spi">EntityModelLinterFactory</a></code>, <code><a href="NamedObjectParserFactory.html" title="interface in persistence.tools.spi">NamedObjectParserFactory</a></code>, <code><a href="PersistenceLinterFactory.html" title="interface in persistence.tools.spi">PersistenceLinterFactory</a></code>, <code><a href="SchemaExporterFactory.html" title="interface in persistence.tools.spi">SchemaExporterFactory</a></code>, <code><a href="SchemaValidatorFactory.html" title="interface in persistence.tools.spi">SchemaValidatorFactory</a></code></dd>
 </dl>
 <hr>
 <div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">PersistenceServiceProvider</span></div>
@@ -99,8 +99,10 @@ loadScripts(document, 'script');</script>
  <p>Each provider declares the JPA namespace it supports (e.g.&nbsp;<code>"jakarta"</code>
  or <code>"javax"</code>) via <a href="#getSupportedNamespace()"><code>getSupportedNamespace()</code></a>. Concrete provider
  factory interfaces such as <a href="EnhancerProvider.html" title="interface in persistence.tools.spi"><code>EnhancerProvider</code></a>,
- <a href="NamedObjectParserFactory.html" title="interface in persistence.tools.spi"><code>NamedObjectParserFactory</code></a>, and
- <a href="SchemaValidatorFactory.html" title="interface in persistence.tools.spi"><code>SchemaValidatorFactory</code></a> extend this interface (or
+ <a href="EntityModelLinterFactory.html" title="interface in persistence.tools.spi"><code>EntityModelLinterFactory</code></a>,
+ <a href="NamedObjectParserFactory.html" title="interface in persistence.tools.spi"><code>NamedObjectParserFactory</code></a>,
+ <a href="SchemaValidatorFactory.html" title="interface in persistence.tools.spi"><code>SchemaValidatorFactory</code></a>, and
+ <a href="SchemaExporterFactory.html" title="interface in persistence.tools.spi"><code>SchemaExporterFactory</code></a> extend this interface (or
  its subtype <a href="PersistenceLinterFactory.html" title="interface in persistence.tools.spi"><code>PersistenceLinterFactory</code></a>) and are
  discovered at runtime through the <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/ServiceLoader.html" title="class or interface in java.util" class="external-link"><code>ServiceLoader</code></a> mechanism.</p>
 
@@ -121,8 +123,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <ul class="tag-list">
 <li><a href="PersistenceLinterFactory.html" title="interface in persistence.tools.spi"><code>PersistenceLinterFactory</code></a></li>
+<li><a href="EntityModelLinterFactory.html" title="interface in persistence.tools.spi"><code>EntityModelLinterFactory</code></a></li>
 <li><a href="NamedObjectParserFactory.html" title="interface in persistence.tools.spi"><code>NamedObjectParserFactory</code></a></li>
 <li><a href="SchemaValidatorFactory.html" title="interface in persistence.tools.spi"><code>SchemaValidatorFactory</code></a></li>
+<li><a href="SchemaExporterFactory.html" title="interface in persistence.tools.spi"><code>SchemaExporterFactory</code></a></li>
 <li><a href="EnhancerProvider.html" title="interface in persistence.tools.spi"><code>EnhancerProvider</code></a></li>
 </ul>
 </dd>

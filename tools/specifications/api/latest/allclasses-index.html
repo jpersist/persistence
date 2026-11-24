@@ -25,7 +25,7 @@ loadScripts(document, 'script');</script>
 <!-- ========= START OF TOP NAVBAR ======= -->
 <div class="top-nav" id="navbar-top"><button id="navbar-toggle-button" aria-controls="navbar-top" aria-expanded="false" aria-label="Toggle navigation links"><span class="nav-bar-toggle-icon">&nbsp;</span><span class="nav-bar-toggle-icon">&nbsp;</span><span class="nav-bar-toggle-icon">&nbsp;</span></button>
 <div class="skip-nav"><a href="#skip-navbar-top" title="Skip navigation links">Skip navigation links</a></div>
-<div class="about-language"><div style='padding: 4px 10px; background: rgba(255,255,255,0.15); border-radius: 4px; font-weight: bold;'>JPersist Suite &bull; v4.1.0</div></div>
+<div class="about-language"><div style='padding: 4px 10px; background: rgba(255,255,255,0.15); border-radius: 4px; font-weight: bold;'>JPersist Suite &bull; v4.2.0</div></div>
 <ul id="navbar-top-firstrow" class="nav-list" title="Navigation">
 <li><a href="index.html">Overview</a></li>
 <li><a href="io.github.jpersist.tools.api/module-summary.html">Module</a></li>
@@ -66,6 +66,26 @@ loadScripts(document, 'script');</script>
 <div class="block">Service-provider interface for obtaining a namespace-specific
  <a href="io.github.jpersist.tools.api/persistence/tools/Enhancer.html" title="interface in persistence.tools"><code>Enhancer</code></a>.</div>
 </div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="io.github.jpersist.tools.api/persistence/tools/EntityModelLinter.html" title="interface in persistence.tools">EntityModelLinter</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab1">
+<div class="block">Contract for statically inspecting a JPA entity metamodel to detect mapping,
+ structural, and performance anti-patterns at build time.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="io.github.jpersist.tools.api/persistence/tools/spi/EntityModelLinterFactory.html" title="interface in persistence.tools.spi">EntityModelLinterFactory</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab1">
+<div class="block">Service Provider Interface (SPI) factory for creating <a href="io.github.jpersist.tools.api/persistence/tools/EntityModelLinter.html" title="interface in persistence.tools"><code>EntityModelLinter</code></a>
+ instances bound to a specific JPA specification namespace.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab4"><a href="io.github.jpersist.tools.api/persistence/tools/LintDiagnostic.html" title="class in persistence.tools">LintDiagnostic</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab4">
+<div class="block">Immutable diagnostic record representing a single JPA mapping or performance
+ issue detected by an <a href="io.github.jpersist.tools.api/persistence/tools/EntityModelLinter.html" title="interface in persistence.tools"><code>EntityModelLinter</code></a>.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab3"><a href="io.github.jpersist.tools.api/persistence/tools/LintSeverity.html" title="enum class in persistence.tools">LintSeverity</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab3">
+<div class="block">Enumerates the severity levels assigned to <a href="io.github.jpersist.tools.api/persistence/tools/LintDiagnostic.html" title="class in persistence.tools"><code>LintDiagnostic</code></a> findings
+ reported by an <a href="io.github.jpersist.tools.api/persistence/tools/EntityModelLinter.html" title="interface in persistence.tools"><code>EntityModelLinter</code></a>.</div>
+</div>
 <div class="col-first even-row-color all-classes-table all-classes-table-tab4"><a href="io.github.jpersist.tools.api/persistence/tools/NamedObjectDescriptor.html" title="class in persistence.tools">NamedObjectDescriptor</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab4">
 <div class="block">Immutable descriptor returned after a named object (query or stored
@@ -96,13 +116,27 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab1">
 <div class="block">Root service-provider interface for all persistence tool providers.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="io.github.jpersist.tools.api/persistence/tools/SchemaValidator.html" title="interface in persistence.tools">SchemaValidator</a></div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="io.github.jpersist.tools.api/persistence/tools/SchemaExporter.html" title="interface in persistence.tools">SchemaExporter</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab1">
+<div class="block">Contract for generating and exporting offline DDL scripts from a JPA entity metamodel
+ at build time without requiring a live database connection or running database server.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab3"><a href="io.github.jpersist.tools.api/persistence/tools/SchemaExporter.Action.html" title="enum class in persistence.tools">SchemaExporter.Action</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab3">
+<div class="block">Defines the scope of DDL statements to generate during schema export.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="io.github.jpersist.tools.api/persistence/tools/spi/SchemaExporterFactory.html" title="interface in persistence.tools.spi">SchemaExporterFactory</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab1">
+<div class="block">Service Provider Interface (SPI) factory for creating <a href="io.github.jpersist.tools.api/persistence/tools/SchemaExporter.html" title="interface in persistence.tools"><code>SchemaExporter</code></a>
+ instances capable of generating offline DDL scripts at build time.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="io.github.jpersist.tools.api/persistence/tools/SchemaValidator.html" title="interface in persistence.tools">SchemaValidator</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab1">
 <div class="block">Service provider interface for validating a JPA persistence schema
  against a live database at build time.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="io.github.jpersist.tools.api/persistence/tools/spi/SchemaValidatorFactory.html" title="interface in persistence.tools.spi">SchemaValidatorFactory</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab1">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="io.github.jpersist.tools.api/persistence/tools/spi/SchemaValidatorFactory.html" title="interface in persistence.tools.spi">SchemaValidatorFactory</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab1">
 <div class="block">Factory for creating <a href="io.github.jpersist.tools.api/persistence/tools/SchemaValidator.html" title="interface in persistence.tools"><code>SchemaValidator</code></a> instances.</div>
 </div>
 </div>

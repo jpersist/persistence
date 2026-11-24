@@ -25,7 +25,7 @@ loadScripts(document, 'script');</script>
 <!-- ========= START OF TOP NAVBAR ======= -->
 <div class="top-nav" id="navbar-top"><button id="navbar-toggle-button" aria-controls="navbar-top" aria-expanded="false" aria-label="Toggle navigation links"><span class="nav-bar-toggle-icon">&nbsp;</span><span class="nav-bar-toggle-icon">&nbsp;</span><span class="nav-bar-toggle-icon">&nbsp;</span></button>
 <div class="skip-nav"><a href="#skip-navbar-top" title="Skip navigation links">Skip navigation links</a></div>
-<div class="about-language"><div style='padding: 4px 10px; background: rgba(255,255,255,0.15); border-radius: 4px; font-weight: bold;'>JPersist Suite &bull; v4.1.0</div></div>
+<div class="about-language"><div style='padding: 4px 10px; background: rgba(255,255,255,0.15); border-radius: 4px; font-weight: bold;'>JPersist Suite &bull; v4.2.0</div></div>
 <ul id="navbar-top-firstrow" class="nav-list" title="Navigation">
 <li><a href="../../../../index.html">Overview</a></li>
 <li><a href="../../../module-summary.html">Module</a></li>
@@ -84,10 +84,14 @@ loadScripts(document, 'script');</script>
        all persistence service providers, providing namespace resolution and version-based lookup.</li>
    <li><a href="PersistenceLinterFactory.html" title="interface in persistence.tools.spi"><code>PersistenceLinterFactory</code></a> &ndash; base factory contract for
        discovering persistence linter factories by JPA version.</li>
+   <li><a href="EntityModelLinterFactory.html" title="interface in persistence.tools.spi"><code>EntityModelLinterFactory</code></a> &ndash; factory SPI for creating
+       <a href="../EntityModelLinter.html" title="interface in persistence.tools"><code>EntityModelLinter</code></a> instances.</li>
    <li><a href="NamedObjectParserFactory.html" title="interface in persistence.tools.spi"><code>NamedObjectParserFactory</code></a> &ndash; factory SPI for creating
        <a href="../NamedObjectParser.html" title="interface in persistence.tools"><code>NamedObjectParser</code></a> instances.</li>
    <li><a href="SchemaValidatorFactory.html" title="interface in persistence.tools.spi"><code>SchemaValidatorFactory</code></a> &ndash; factory SPI for creating
        <a href="../SchemaValidator.html" title="interface in persistence.tools"><code>SchemaValidator</code></a> instances.</li>
+   <li><a href="SchemaExporterFactory.html" title="interface in persistence.tools.spi"><code>SchemaExporterFactory</code></a> &ndash; factory SPI for creating
+       <a href="../SchemaExporter.html" title="interface in persistence.tools"><code>SchemaExporter</code></a> instances.</li>
    <li><a href="EnhancerProvider.html" title="interface in persistence.tools.spi"><code>EnhancerProvider</code></a> &ndash; SPI for creating
        <a href="../Enhancer.html" title="interface in persistence.tools"><code>Enhancer</code></a> instances.</li>
  </ul></div>
@@ -128,17 +132,27 @@ loadScripts(document, 'script');</script>
 <div class="block">Service-provider interface for obtaining a namespace-specific
  <a href="../Enhancer.html" title="interface in persistence.tools"><code>Enhancer</code></a>.</div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab1"><a href="NamedObjectParserFactory.html" title="interface in persistence.tools.spi">NamedObjectParserFactory</a></div>
+<div class="col-first odd-row-color class-summary class-summary-tab1"><a href="EntityModelLinterFactory.html" title="interface in persistence.tools.spi">EntityModelLinterFactory</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab1">
+<div class="block">Service Provider Interface (SPI) factory for creating <a href="../EntityModelLinter.html" title="interface in persistence.tools"><code>EntityModelLinter</code></a>
+ instances bound to a specific JPA specification namespace.</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab1"><a href="NamedObjectParserFactory.html" title="interface in persistence.tools.spi">NamedObjectParserFactory</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab1">
 <div class="block">Factory for creating <a href="../NamedObjectParser.html" title="interface in persistence.tools"><code>NamedObjectParser</code></a> instances.</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab1"><a href="PersistenceLinterFactory.html" title="interface in persistence.tools.spi">PersistenceLinterFactory</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab1">
+<div class="col-first odd-row-color class-summary class-summary-tab1"><a href="PersistenceLinterFactory.html" title="interface in persistence.tools.spi">PersistenceLinterFactory</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab1">
 <div class="block">Base factory interface for all persistence linter factories.</div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab1"><a href="PersistenceServiceProvider.html" title="interface in persistence.tools.spi">PersistenceServiceProvider</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab1">
+<div class="col-first even-row-color class-summary class-summary-tab1"><a href="PersistenceServiceProvider.html" title="interface in persistence.tools.spi">PersistenceServiceProvider</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab1">
 <div class="block">Root service-provider interface for all persistence tool providers.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab1"><a href="SchemaExporterFactory.html" title="interface in persistence.tools.spi">SchemaExporterFactory</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab1">
+<div class="block">Service Provider Interface (SPI) factory for creating <a href="../SchemaExporter.html" title="interface in persistence.tools"><code>SchemaExporter</code></a>
+ instances capable of generating offline DDL scripts at build time.</div>
 </div>
 <div class="col-first even-row-color class-summary class-summary-tab1"><a href="SchemaValidatorFactory.html" title="interface in persistence.tools.spi">SchemaValidatorFactory</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab1">

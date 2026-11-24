@@ -25,7 +25,7 @@ loadScripts(document, 'script');</script>
 <!-- ========= START OF TOP NAVBAR ======= -->
 <div class="top-nav" id="navbar-top"><button id="navbar-toggle-button" aria-controls="navbar-top" aria-expanded="false" aria-label="Toggle navigation links"><span class="nav-bar-toggle-icon">&nbsp;</span><span class="nav-bar-toggle-icon">&nbsp;</span><span class="nav-bar-toggle-icon">&nbsp;</span></button>
 <div class="skip-nav"><a href="#skip-navbar-top" title="Skip navigation links">Skip navigation links</a></div>
-<div class="about-language"><div style='padding: 4px 10px; background: rgba(255,255,255,0.15); border-radius: 4px; font-weight: bold;'>JPersist Suite &bull; v4.1.0</div></div>
+<div class="about-language"><div style='padding: 4px 10px; background: rgba(255,255,255,0.15); border-radius: 4px; font-weight: bold;'>JPersist Suite &bull; v4.2.0</div></div>
 <ul id="navbar-top-firstrow" class="nav-list" title="Navigation">
 <li><a href="../../../../index.html">Overview</a></li>
 <li><a href="../../../module-summary.html">Module</a></li>
@@ -94,7 +94,7 @@ loadScripts(document, 'script');</script>
 </dl>
 <dl class="notes">
 <dt>All Known Subinterfaces:</dt>
-<dd><code><a href="NamedObjectParserFactory.html" title="interface in persistence.tools.spi">NamedObjectParserFactory</a></code>, <code><a href="SchemaValidatorFactory.html" title="interface in persistence.tools.spi">SchemaValidatorFactory</a></code></dd>
+<dd><code><a href="EntityModelLinterFactory.html" title="interface in persistence.tools.spi">EntityModelLinterFactory</a></code>, <code><a href="NamedObjectParserFactory.html" title="interface in persistence.tools.spi">NamedObjectParserFactory</a></code>, <code><a href="SchemaValidatorFactory.html" title="interface in persistence.tools.spi">SchemaValidatorFactory</a></code></dd>
 </dl>
 <hr>
 <div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">PersistenceLinterFactory</span><span class="extends-implements">
@@ -102,7 +102,7 @@ extends <a href="PersistenceServiceProvider.html" title="interface in persistenc
 <div class="block">Base factory interface for all persistence linter factories.
 
  <p>This interface defines the common contract shared by all linter
- factory types (<a href="NamedObjectParserFactory.html" title="interface in persistence.tools.spi"><code>NamedObjectParserFactory</code></a>,
+ factory types (<a href="EntityModelLinterFactory.html" title="interface in persistence.tools.spi"><code>EntityModelLinterFactory</code></a>, <a href="NamedObjectParserFactory.html" title="interface in persistence.tools.spi"><code>NamedObjectParserFactory</code></a>,
  <a href="SchemaValidatorFactory.html" title="interface in persistence.tools.spi"><code>SchemaValidatorFactory</code></a>). Each implementation declares the
  persistence namespace it supports (e.g.&nbsp;<code>"javax"</code> or
  <code>"jakarta"</code>) so that the correct strategy can be resolved for
@@ -114,8 +114,9 @@ extends <a href="PersistenceServiceProvider.html" title="interface in persistenc
  or <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/ModuleLayer.html" title="class or interface in java.lang" class="external-link"><code>ModuleLayer</code></a> instances.</p>
 
  <p>In JPMS environments, provider modules declare implementations for
- specific factory subtypes (e.g.&nbsp;<code>provides persistence.tools.spi.NamedObjectParserFactory</code>
- and <code>provides persistence.tools.spi.SchemaValidatorFactory</code>) in
+ specific factory subtypes (e.g.&nbsp;<code>provides persistence.tools.spi.EntityModelLinterFactory</code>,
+ <code>provides persistence.tools.spi.NamedObjectParserFactory</code>, and
+ <code>provides persistence.tools.spi.SchemaValidatorFactory</code>) in
  their <code>module-info.java</code>.</p></div>
 <dl class="notes">
 <dt>Since:</dt>
@@ -124,6 +125,7 @@ extends <a href="PersistenceServiceProvider.html" title="interface in persistenc
 <dd>
 <ul class="tag-list">
 <li><a href="../PersistenceLinter.html" title="interface in persistence.tools"><code>PersistenceLinter</code></a></li>
+<li><a href="EntityModelLinterFactory.html" title="interface in persistence.tools.spi"><code>EntityModelLinterFactory</code></a></li>
 <li><a href="NamedObjectParserFactory.html" title="interface in persistence.tools.spi"><code>NamedObjectParserFactory</code></a></li>
 <li><a href="SchemaValidatorFactory.html" title="interface in persistence.tools.spi"><code>SchemaValidatorFactory</code></a></li>
 </ul>
@@ -148,74 +150,97 @@ extends <a href="PersistenceServiceProvider.html" title="interface in persistenc
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Returns the persistence namespace supported by this factory.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static <a href="NamedObjectParserFactory.html" title="interface in persistence.tools.spi">NamedObjectParserFactory</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#newNamedObjectParserFactory(java.lang.String)" class="member-name-link">newNamedObjectParserFactory</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;jpaVersion)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static <a href="EntityModelLinterFactory.html" title="interface in persistence.tools.spi">EntityModelLinterFactory</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#newEntityModelLinterFactory(java.lang.String)" class="member-name-link">newEntityModelLinterFactory</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;jpaVersion)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Convenience method that discovers and returns the
+ <a href="EntityModelLinterFactory.html" title="interface in persistence.tools.spi"><code>EntityModelLinterFactory</code></a> for the given JPA version using
+ the thread context class loader.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static <a href="EntityModelLinterFactory.html" title="interface in persistence.tools.spi">EntityModelLinterFactory</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#newEntityModelLinterFactory(java.lang.String,java.lang.ClassLoader)" class="member-name-link">newEntityModelLinterFactory</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;jpaVersion,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/ClassLoader.html" title="class or interface in java.lang" class="external-link">ClassLoader</a>&nbsp;classLoader)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Convenience method that discovers and returns the
+ <a href="EntityModelLinterFactory.html" title="interface in persistence.tools.spi"><code>EntityModelLinterFactory</code></a> for the given JPA version using
+ the specified <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/ClassLoader.html" title="class or interface in java.lang" class="external-link"><code>ClassLoader</code></a>.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static <a href="EntityModelLinterFactory.html" title="interface in persistence.tools.spi">EntityModelLinterFactory</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#newEntityModelLinterFactory(java.lang.String,java.lang.ModuleLayer)" class="member-name-link">newEntityModelLinterFactory</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;jpaVersion,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/ModuleLayer.html" title="class or interface in java.lang" class="external-link">ModuleLayer</a>&nbsp;moduleLayer)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Convenience method that discovers and returns the
+ <a href="EntityModelLinterFactory.html" title="interface in persistence.tools.spi"><code>EntityModelLinterFactory</code></a> for the given JPA version within
+ the specified <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/ModuleLayer.html" title="class or interface in java.lang" class="external-link"><code>ModuleLayer</code></a>.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static <a href="NamedObjectParserFactory.html" title="interface in persistence.tools.spi">NamedObjectParserFactory</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#newNamedObjectParserFactory(java.lang.String)" class="member-name-link">newNamedObjectParserFactory</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;jpaVersion)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
 <div class="block">Convenience method that discovers and returns the
  <a href="NamedObjectParserFactory.html" title="interface in persistence.tools.spi"><code>NamedObjectParserFactory</code></a> for the given JPA version using
  the thread context class loader.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static <a href="NamedObjectParserFactory.html" title="interface in persistence.tools.spi">NamedObjectParserFactory</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#newNamedObjectParserFactory(java.lang.String,java.lang.ClassLoader)" class="member-name-link">newNamedObjectParserFactory</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;jpaVersion,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static <a href="NamedObjectParserFactory.html" title="interface in persistence.tools.spi">NamedObjectParserFactory</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#newNamedObjectParserFactory(java.lang.String,java.lang.ClassLoader)" class="member-name-link">newNamedObjectParserFactory</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;jpaVersion,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/ClassLoader.html" title="class or interface in java.lang" class="external-link">ClassLoader</a>&nbsp;classLoader)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
 <div class="block">Convenience method that discovers and returns the
  <a href="NamedObjectParserFactory.html" title="interface in persistence.tools.spi"><code>NamedObjectParserFactory</code></a> for the given JPA version using
  the specified <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/ClassLoader.html" title="class or interface in java.lang" class="external-link"><code>ClassLoader</code></a>.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static <a href="NamedObjectParserFactory.html" title="interface in persistence.tools.spi">NamedObjectParserFactory</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#newNamedObjectParserFactory(java.lang.String,java.lang.ModuleLayer)" class="member-name-link">newNamedObjectParserFactory</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;jpaVersion,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static <a href="NamedObjectParserFactory.html" title="interface in persistence.tools.spi">NamedObjectParserFactory</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#newNamedObjectParserFactory(java.lang.String,java.lang.ModuleLayer)" class="member-name-link">newNamedObjectParserFactory</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;jpaVersion,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/ModuleLayer.html" title="class or interface in java.lang" class="external-link">ModuleLayer</a>&nbsp;layer)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
 <div class="block">Convenience method that discovers and returns the
  <a href="NamedObjectParserFactory.html" title="interface in persistence.tools.spi"><code>NamedObjectParserFactory</code></a> for the given JPA version within
  the specified <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/ModuleLayer.html" title="class or interface in java.lang" class="external-link"><code>ModuleLayer</code></a>.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static &lt;T extends <a href="PersistenceLinterFactory.html" title="interface in persistence.tools.spi">PersistenceLinterFactory</a>&gt;<br>T</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#newPersistenceLinterFactory(java.lang.String,java.lang.Class)" class="member-name-link">newPersistenceLinterFactory</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;jpaVersion,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static &lt;T extends <a href="PersistenceLinterFactory.html" title="interface in persistence.tools.spi">PersistenceLinterFactory</a>&gt;<br>T</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#newPersistenceLinterFactory(java.lang.String,java.lang.Class)" class="member-name-link">newPersistenceLinterFactory</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;jpaVersion,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;factoryClass)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
 <div class="block">Generic factory-discovery method that resolves a
  <a href="PersistenceLinterFactory.html" title="interface in persistence.tools.spi"><code>PersistenceLinterFactory</code></a> subtype for the given JPA version using
  the thread context class loader.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static &lt;T extends <a href="PersistenceLinterFactory.html" title="interface in persistence.tools.spi">PersistenceLinterFactory</a>&gt;<br>T</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#newPersistenceLinterFactory(java.lang.String,java.lang.Class,java.lang.ClassLoader)" class="member-name-link">newPersistenceLinterFactory</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;jpaVersion,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static &lt;T extends <a href="PersistenceLinterFactory.html" title="interface in persistence.tools.spi">PersistenceLinterFactory</a>&gt;<br>T</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#newPersistenceLinterFactory(java.lang.String,java.lang.Class,java.lang.ClassLoader)" class="member-name-link">newPersistenceLinterFactory</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;jpaVersion,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;factoryClass,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/ClassLoader.html" title="class or interface in java.lang" class="external-link">ClassLoader</a>&nbsp;classLoader)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
 <div class="block">Generic factory-discovery method that resolves a
  <a href="PersistenceLinterFactory.html" title="interface in persistence.tools.spi"><code>PersistenceLinterFactory</code></a> subtype for the given JPA version using
  the specified <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/ClassLoader.html" title="class or interface in java.lang" class="external-link"><code>ClassLoader</code></a>.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static &lt;T extends <a href="PersistenceLinterFactory.html" title="interface in persistence.tools.spi">PersistenceLinterFactory</a>&gt;<br>T</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#newPersistenceLinterFactory(java.lang.String,java.lang.Class,java.lang.ModuleLayer)" class="member-name-link">newPersistenceLinterFactory</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;jpaVersion,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static &lt;T extends <a href="PersistenceLinterFactory.html" title="interface in persistence.tools.spi">PersistenceLinterFactory</a>&gt;<br>T</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#newPersistenceLinterFactory(java.lang.String,java.lang.Class,java.lang.ModuleLayer)" class="member-name-link">newPersistenceLinterFactory</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;jpaVersion,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;factoryClass,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/ModuleLayer.html" title="class or interface in java.lang" class="external-link">ModuleLayer</a>&nbsp;layer)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
 <div class="block">Generic factory-discovery method that resolves a
  <a href="PersistenceLinterFactory.html" title="interface in persistence.tools.spi"><code>PersistenceLinterFactory</code></a> subtype for the given JPA version within
  the specified <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/ModuleLayer.html" title="class or interface in java.lang" class="external-link"><code>ModuleLayer</code></a>.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static <a href="SchemaValidatorFactory.html" title="interface in persistence.tools.spi">SchemaValidatorFactory</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#newSchemaValidatorFactory(java.lang.String)" class="member-name-link">newSchemaValidatorFactory</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;jpaVersion)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static <a href="SchemaValidatorFactory.html" title="interface in persistence.tools.spi">SchemaValidatorFactory</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#newSchemaValidatorFactory(java.lang.String)" class="member-name-link">newSchemaValidatorFactory</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;jpaVersion)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
 <div class="block">Convenience method that discovers and returns the
  <a href="SchemaValidatorFactory.html" title="interface in persistence.tools.spi"><code>SchemaValidatorFactory</code></a> for the given JPA version using
  the thread context class loader.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static <a href="SchemaValidatorFactory.html" title="interface in persistence.tools.spi">SchemaValidatorFactory</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#newSchemaValidatorFactory(java.lang.String,java.lang.ClassLoader)" class="member-name-link">newSchemaValidatorFactory</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;jpaVersion,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static <a href="SchemaValidatorFactory.html" title="interface in persistence.tools.spi">SchemaValidatorFactory</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#newSchemaValidatorFactory(java.lang.String,java.lang.ClassLoader)" class="member-name-link">newSchemaValidatorFactory</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;jpaVersion,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/ClassLoader.html" title="class or interface in java.lang" class="external-link">ClassLoader</a>&nbsp;classLoader)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
 <div class="block">Convenience method that discovers and returns the
  <a href="SchemaValidatorFactory.html" title="interface in persistence.tools.spi"><code>SchemaValidatorFactory</code></a> for the given JPA version using
  the specified <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/ClassLoader.html" title="class or interface in java.lang" class="external-link"><code>ClassLoader</code></a>.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static <a href="SchemaValidatorFactory.html" title="interface in persistence.tools.spi">SchemaValidatorFactory</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#newSchemaValidatorFactory(java.lang.String,java.lang.ModuleLayer)" class="member-name-link">newSchemaValidatorFactory</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;jpaVersion,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static <a href="SchemaValidatorFactory.html" title="interface in persistence.tools.spi">SchemaValidatorFactory</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#newSchemaValidatorFactory(java.lang.String,java.lang.ModuleLayer)" class="member-name-link">newSchemaValidatorFactory</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;jpaVersion,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/ModuleLayer.html" title="class or interface in java.lang" class="external-link">ModuleLayer</a>&nbsp;layer)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
 <div class="block">Convenience method that discovers and returns the
  <a href="SchemaValidatorFactory.html" title="interface in persistence.tools.spi"><code>SchemaValidatorFactory</code></a> for the given JPA version within
  the specified <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/ModuleLayer.html" title="class or interface in java.lang" class="external-link"><code>ModuleLayer</code></a>.</div>
@@ -245,6 +270,73 @@ extends <a href="PersistenceServiceProvider.html" title="interface in persistenc
 <dt>Returns:</dt>
 <dd>the namespace identifier, for example <code>"javax"</code> for
          JPA&nbsp;2.x or <code>"jakarta"</code> for JPA&nbsp;3.x</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="newEntityModelLinterFactory(java.lang.String)">
+<h3>newEntityModelLinterFactory</h3>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type"><a href="EntityModelLinterFactory.html" title="interface in persistence.tools.spi">EntityModelLinterFactory</a></span>&nbsp;<span class="element-name">newEntityModelLinterFactory</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;jpaVersion)</span></div>
+<div class="block">Convenience method that discovers and returns the
+ <a href="EntityModelLinterFactory.html" title="interface in persistence.tools.spi"><code>EntityModelLinterFactory</code></a> for the given JPA version using
+ the thread context class loader.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>jpaVersion</code> - the JPA specification version (e.g.&nbsp;<code>"3.1"</code>)</dd>
+<dt>Returns:</dt>
+<dd>the matching <a href="EntityModelLinterFactory.html" title="interface in persistence.tools.spi"><code>EntityModelLinterFactory</code></a></dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the version is not recognized</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/IllegalStateException.html" title="class or interface in java.lang" class="external-link">IllegalStateException</a></code> - if no provider is registered for
+                                  the resolved namespace</dd>
+<dt>Since:</dt>
+<dd>4.2.0</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="newEntityModelLinterFactory(java.lang.String,java.lang.ClassLoader)">
+<h3>newEntityModelLinterFactory</h3>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type"><a href="EntityModelLinterFactory.html" title="interface in persistence.tools.spi">EntityModelLinterFactory</a></span>&nbsp;<span class="element-name">newEntityModelLinterFactory</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;jpaVersion,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/ClassLoader.html" title="class or interface in java.lang" class="external-link">ClassLoader</a>&nbsp;classLoader)</span></div>
+<div class="block">Convenience method that discovers and returns the
+ <a href="EntityModelLinterFactory.html" title="interface in persistence.tools.spi"><code>EntityModelLinterFactory</code></a> for the given JPA version using
+ the specified <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/ClassLoader.html" title="class or interface in java.lang" class="external-link"><code>ClassLoader</code></a>.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>jpaVersion</code> - the JPA specification version (e.g.&nbsp;<code>"3.1"</code>)</dd>
+<dd><code>classLoader</code> - the class loader used to discover the factory</dd>
+<dt>Returns:</dt>
+<dd>the matching <a href="EntityModelLinterFactory.html" title="interface in persistence.tools.spi"><code>EntityModelLinterFactory</code></a></dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the version is not recognized</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/IllegalStateException.html" title="class or interface in java.lang" class="external-link">IllegalStateException</a></code> - if no provider is registered for
+                                  the resolved namespace</dd>
+<dt>Since:</dt>
+<dd>4.2.0</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="newEntityModelLinterFactory(java.lang.String,java.lang.ModuleLayer)">
+<h3>newEntityModelLinterFactory</h3>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type"><a href="EntityModelLinterFactory.html" title="interface in persistence.tools.spi">EntityModelLinterFactory</a></span>&nbsp;<span class="element-name">newEntityModelLinterFactory</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;jpaVersion,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/ModuleLayer.html" title="class or interface in java.lang" class="external-link">ModuleLayer</a>&nbsp;moduleLayer)</span></div>
+<div class="block">Convenience method that discovers and returns the
+ <a href="EntityModelLinterFactory.html" title="interface in persistence.tools.spi"><code>EntityModelLinterFactory</code></a> for the given JPA version within
+ the specified <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/ModuleLayer.html" title="class or interface in java.lang" class="external-link"><code>ModuleLayer</code></a>.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>jpaVersion</code> - the JPA specification version (e.g.&nbsp;<code>"3.1"</code>)</dd>
+<dd><code>moduleLayer</code> - the module layer used to discover the factory</dd>
+<dt>Returns:</dt>
+<dd>the matching <a href="EntityModelLinterFactory.html" title="interface in persistence.tools.spi"><code>EntityModelLinterFactory</code></a></dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the version is not recognized</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/IllegalStateException.html" title="class or interface in java.lang" class="external-link">IllegalStateException</a></code> - if no provider is registered for
+                                  the resolved namespace</dd>
+<dt>Since:</dt>
+<dd>4.2.0</dd>
 </dl>
 </section>
 </li>

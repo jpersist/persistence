@@ -25,7 +25,7 @@ loadScripts(document, 'script');</script>
 <!-- ========= START OF TOP NAVBAR ======= -->
 <div class="top-nav" id="navbar-top"><button id="navbar-toggle-button" aria-controls="navbar-top" aria-expanded="false" aria-label="Toggle navigation links"><span class="nav-bar-toggle-icon">&nbsp;</span><span class="nav-bar-toggle-icon">&nbsp;</span><span class="nav-bar-toggle-icon">&nbsp;</span></button>
 <div class="skip-nav"><a href="#skip-navbar-top" title="Skip navigation links">Skip navigation links</a></div>
-<div class="about-language"><div style='padding: 4px 10px; background: rgba(255,255,255,0.15); border-radius: 4px; font-weight: bold;'>JPersist Suite &bull; v4.1.0</div></div>
+<div class="about-language"><div style='padding: 4px 10px; background: rgba(255,255,255,0.15); border-radius: 4px; font-weight: bold;'>JPersist Suite &bull; v4.2.0</div></div>
 <ul id="navbar-top-firstrow" class="nav-list" title="Navigation">
 <li class="nav-bar-cell1-rev">Overview</li>
 <li><a href="io.github.jpersist.tools.api/module-summary.html">Module</a></li>
@@ -55,11 +55,12 @@ loadScripts(document, 'script');</script>
 <p>
     The <strong>Persistence Tools API</strong> module (<code>io.github.jpersist.tools.api</code>) provides
     vendor-agnostic abstractions and Service Provider Interfaces (SPI) for build-time validation,
-    query parsing, schema verification, and bytecode enhancement of JPA persistence artifacts.
+    entity model linting, query parsing, schema verification, offline DDL export, and bytecode enhancement
+    of JPA persistence artifacts.
 </p>
 <p>
     By decoupling application tooling and build plugins from specific JPA provider implementations,
-    this module enables consistent build-time analysis across different persistence specifications
+    this module enables consistent build-time analysis and schema management across different persistence specifications
     (e.g.&nbsp;Jakarta Persistence JPA&nbsp;3.x and legacy Java Persistence JPA&nbsp;2.x).
 </p>
 
@@ -79,12 +80,21 @@ loadScripts(document, 'script');</script>
         and bidirectional association management.
     </li>
     <li>
-        <strong><a href="io.github.jpersist.tools.api/persistence/tools/NamedObjectParser.html" title="interface in persistence.tools"><code>NamedObjectParser</code></a></strong> &mdash; Validates named JPQL queries and
-        stored procedure declarations against the entity metamodel, returning rich metadata descriptors.
+        <strong><a href="io.github.jpersist.tools.api/persistence/tools/EntityModelLinter.html" title="interface in persistence.tools"><code>EntityModelLinter</code></a></strong> &mdash; Statically inspects the JPA entity metamodel
+        at build time to detect mapping anti-patterns, structural errors, and performance pitfalls.
     </li>
     <li>
-        <strong><a href="io.github.jpersist.tools.api/persistence/tools/SchemaValidator.html" title="interface in persistence.tools"><code>SchemaValidator</code></a></strong> &mdash; Validates the entity metamodel against
-        a live database schema via JDBC connections.
+        <strong><a href="io.github.jpersist.tools.api/persistence/tools/LintDiagnostic.html" title="class in persistence.tools"><code>LintDiagnostic</code></a></strong> &mdash; Immutable diagnostic record encapsulating a single
+        linting finding (severity, rule ID, class name, attribute name, and descriptive message).
+    </li>
+    <li>
+        <strong><a href="io.github.jpersist.tools.api/persistence/tools/LintSeverity.html" title="enum class in persistence.tools"><code>LintSeverity</code></a></strong> &mdash; Enumeration classifying diagnostic severity levels
+        (<a href="io.github.jpersist.tools.api/persistence/tools/LintSeverity.html#ERROR"><code>ERROR</code></a>, <a href="io.github.jpersist.tools.api/persistence/tools/LintSeverity.html#WARNING"><code>WARNING</code></a>,
+        or <a href="io.github.jpersist.tools.api/persistence/tools/LintSeverity.html#INFO"><code>INFO</code></a>).
+    </li>
+    <li>
+        <strong><a href="io.github.jpersist.tools.api/persistence/tools/NamedObjectParser.html" title="interface in persistence.tools"><code>NamedObjectParser</code></a></strong> &mdash; Validates named JPQL queries and
+        stored procedure declarations against the entity metamodel, returning rich metadata descriptors.
     </li>
     <li>
         <strong><a href="io.github.jpersist.tools.api/persistence/tools/NamedObjectDescriptor.html" title="class in persistence.tools"><code>NamedObjectDescriptor</code></a></strong> &mdash; Immutable descriptor encapsulating
@@ -94,6 +104,18 @@ loadScripts(document, 'script');</script>
         <strong><a href="io.github.jpersist.tools.api/persistence/tools/NamedObjectType.html" title="enum class in persistence.tools"><code>NamedObjectType</code></a></strong> &mdash; Enumeration classifying named persistence
         objects (<a href="io.github.jpersist.tools.api/persistence/tools/NamedObjectType.html#QUERY"><code>QUERY</code></a> or
         <a href="io.github.jpersist.tools.api/persistence/tools/NamedObjectType.html#STORED_PROCEDURE"><code>STORED_PROCEDURE</code></a>).
+    </li>
+    <li>
+        <strong><a href="io.github.jpersist.tools.api/persistence/tools/SchemaExporter.html" title="interface in persistence.tools"><code>SchemaExporter</code></a></strong> &mdash; Exports offline DDL scripts
+        (<a href="io.github.jpersist.tools.api/persistence/tools/SchemaExporter.Action.html#CREATE"><code>CREATE</code></a>, <a href="io.github.jpersist.tools.api/persistence/tools/SchemaExporter.Action.html#DROP"><code>DROP</code></a>,
+        or <a href="io.github.jpersist.tools.api/persistence/tools/SchemaExporter.Action.html#BOTH"><code>BOTH</code></a>) from entity metadata without requiring a live database connection.
+    </li>
+    <li>
+        <strong><a href="io.github.jpersist.tools.api/persistence/tools/SchemaExporter.Action.html" title="enum class in persistence.tools"><code>SchemaExporter.Action</code></a></strong> &mdash; Enumeration defining the DDL generation scope.
+    </li>
+    <li>
+        <strong><a href="io.github.jpersist.tools.api/persistence/tools/SchemaValidator.html" title="interface in persistence.tools"><code>SchemaValidator</code></a></strong> &mdash; Validates the entity metamodel against
+        a live database schema via JDBC connections.
     </li>
     <li>
         <strong><a href="io.github.jpersist.tools.api/persistence/tools/PersistenceLinter.html" title="interface in persistence.tools"><code>PersistenceLinter</code></a></strong> &mdash; Common marker interface for all
@@ -115,12 +137,20 @@ loadScripts(document, 'script');</script>
         and instantiating namespace-specific bytecode enhancers with default or customized enhancement settings.
     </li>
     <li>
+        <strong><a href="io.github.jpersist.tools.api/persistence/tools/spi/EntityModelLinterFactory.html" title="interface in persistence.tools.spi"><code>EntityModelLinterFactory</code></a></strong> &mdash; Factory SPI for discovering
+        and instantiating entity model linters with default or customized configuration settings.
+    </li>
+    <li>
         <strong><a href="io.github.jpersist.tools.api/persistence/tools/spi/NamedObjectParserFactory.html" title="interface in persistence.tools.spi"><code>NamedObjectParserFactory</code></a></strong> &mdash; Factory SPI for creating
         named object query and procedure parsers with default or custom configuration settings.
     </li>
     <li>
         <strong><a href="io.github.jpersist.tools.api/persistence/tools/spi/SchemaValidatorFactory.html" title="interface in persistence.tools.spi"><code>SchemaValidatorFactory</code></a></strong> &mdash; Factory SPI for creating
         database schema validators with default or custom configuration settings.
+    </li>
+    <li>
+        <strong><a href="io.github.jpersist.tools.api/persistence/tools/spi/SchemaExporterFactory.html" title="interface in persistence.tools.spi"><code>SchemaExporterFactory</code></a></strong> &mdash; Factory SPI for creating
+        offline DDL schema exporters with default or custom dialect and formatting settings.
     </li>
     <li>
         <strong><a href="io.github.jpersist.tools.api/persistence/tools/spi/PersistenceLinterFactory.html" title="interface in persistence.tools.spi"><code>PersistenceLinterFactory</code></a></strong> &mdash; Generic base factory SPI
@@ -133,15 +163,20 @@ loadScripts(document, 'script');</script>
 <h3 id="custom-configuration-settings-heading">Custom Configuration Settings</h3>
 <p>
     Persistence service provider factories (<a href="io.github.jpersist.tools.api/persistence/tools/spi/EnhancerProvider.html" title="interface in persistence.tools.spi"><code>EnhancerProvider</code></a>,
-    <a href="io.github.jpersist.tools.api/persistence/tools/spi/NamedObjectParserFactory.html" title="interface in persistence.tools.spi"><code>NamedObjectParserFactory</code></a>, and <a href="io.github.jpersist.tools.api/persistence/tools/spi/SchemaValidatorFactory.html" title="interface in persistence.tools.spi"><code>SchemaValidatorFactory</code></a>)
-    overload their factory methods with a <code>Map&lt;String, Object&gt; settings</code> parameter. This feature enables
-    consumers to override default service implementation settings when instantiating tools, while also supporting
-    convenient overloads that use default settings when custom configuration is omitted:
+    <a href="io.github.jpersist.tools.api/persistence/tools/spi/EntityModelLinterFactory.html" title="interface in persistence.tools.spi"><code>EntityModelLinterFactory</code></a>, <a href="io.github.jpersist.tools.api/persistence/tools/spi/NamedObjectParserFactory.html" title="interface in persistence.tools.spi"><code>NamedObjectParserFactory</code></a>,
+    <a href="io.github.jpersist.tools.api/persistence/tools/spi/SchemaValidatorFactory.html" title="interface in persistence.tools.spi"><code>SchemaValidatorFactory</code></a>, and <a href="io.github.jpersist.tools.api/persistence/tools/spi/SchemaExporterFactory.html" title="interface in persistence.tools.spi"><code>SchemaExporterFactory</code></a>)
+    overload their factory methods with custom settings parameters. This feature enables consumers to override
+    default service implementation settings when instantiating tools, while also supporting convenient overloads
+    that use default settings when custom configuration is omitted:
 </p>
 <ul>
     <li>
         <a href="io.github.jpersist.tools.api/persistence/tools/spi/EnhancerProvider.html#getEnhancer(java.util.Collection,java.util.Map)"><code>EnhancerProvider.getEnhancer(java.util.Collection, java.util.Map)</code></a> and
         <a href="io.github.jpersist.tools.api/persistence/tools/spi/EnhancerProvider.html#getEnhancer(java.util.Collection)"><code>EnhancerProvider.getEnhancer(java.util.Collection)</code></a>
+    </li>
+    <li>
+        <a href="io.github.jpersist.tools.api/persistence/tools/spi/EntityModelLinterFactory.html#newEntityModelLinter(java.util.List,java.util.Map)"><code>EntityModelLinterFactory.newEntityModelLinter(java.util.List, java.util.Map)</code></a> and
+        <a href="io.github.jpersist.tools.api/persistence/tools/spi/EntityModelLinterFactory.html#newEntityModelLinter(java.util.List)"><code>EntityModelLinterFactory.newEntityModelLinter(java.util.List)</code></a>
     </li>
     <li>
         <a href="io.github.jpersist.tools.api/persistence/tools/spi/NamedObjectParserFactory.html#newNamedObjectParser(java.util.List,java.util.Map)"><code>NamedObjectParserFactory.newNamedObjectParser(java.util.List, java.util.Map)</code></a> and
@@ -150,6 +185,10 @@ loadScripts(document, 'script');</script>
     <li>
         <a href="io.github.jpersist.tools.api/persistence/tools/spi/SchemaValidatorFactory.html#newSchemaValidator(java.util.List,java.util.Map)"><code>newSchemaValidator(java.util.List, java.util.Map)</code></a> and
         <a href="io.github.jpersist.tools.api/persistence/tools/spi/SchemaValidatorFactory.html#newSchemaValidator(java.util.List)"><code>newSchemaValidator(java.util.List)</code></a>
+    </li>
+    <li>
+        <a href="io.github.jpersist.tools.api/persistence/tools/spi/SchemaExporterFactory.html#newSchemaExporter(java.util.List,java.util.Map)"><code>SchemaExporterFactory.newSchemaExporter(java.util.List, java.util.Map)</code></a> and
+        <a href="io.github.jpersist.tools.api/persistence/tools/spi/SchemaExporterFactory.html#newSchemaExporter(java.util.List)"><code>SchemaExporterFactory.newSchemaExporter(java.util.List)</code></a>
     </li>
 </ul>
 
@@ -166,6 +205,24 @@ Enhancer enhancer = provider.getEnhancer(
            "enhancement.option.dirty-tracking", true));
 
 byte[] enhancedBytes = enhancer.enhance("com.example.Order", originalBytecode);
+</code></pre>
+
+<h3 id="entity-model-linting-heading">Entity Model Linting</h3>
+<p>
+    Obtain an entity model linter factory via
+    <a href="io.github.jpersist.tools.api/persistence/tools/spi/EntityModelLinterFactory.html#newEntityModelLinterFactory(java.lang.String)"><code>EntityModelLinterFactory.newEntityModelLinterFactory(String)</code></a>.
+    Linters statically inspect compiled entity classes and report diagnostics across mapping and performance rules:
+</p>
+<pre><code>
+EntityModelLinterFactory factory = EntityModelLinterFactory.newEntityModelLinterFactory("3.1");
+EntityModelLinter linter = factory.newEntityModelLinter(entityClassNames, Map.of("linter.strict", "true"));
+List&lt;LintDiagnostic&gt; findings = linter.lint();
+
+for (LintDiagnostic diagnostic : findings) {
+    if (diagnostic.severity() == LintSeverity.ERROR) {
+        System.err.println(diagnostic.ruleId() + " [" + diagnostic.className() + "]: " + diagnostic.message());
+    }
+}
 </code></pre>
 
 <h3 id="named-query-and-stored-procedure-validation-heading">Named Query and Stored Procedure Validation</h3>
@@ -201,6 +258,25 @@ validator.validateSchema(Map.of(
     "password", ""));
 </code></pre>
 
+<h3 id="offline-ddl-schema-export-heading">Offline DDL Schema Export</h3>
+<p>
+    Obtain a schema exporter factory via
+    <a href="io.github.jpersist.tools.api/persistence/tools/spi/SchemaExporterFactory.html#newSchemaExporterFactory(java.lang.String)"><code>SchemaExporterFactory.newSchemaExporterFactory(String)</code></a>.
+    Exporters generate DDL statements without a live database connection and write the resulting scripts
+    to a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/File.html" title="class or interface in java.io" class="external-link"><code>File</code></a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/OutputStream.html" title="class or interface in java.io" class="external-link"><code>OutputStream</code></a>, or <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/Writer.html" title="class or interface in java.io" class="external-link"><code>Writer</code></a>:
+</p>
+<pre><code>
+SchemaExporterFactory factory = SchemaExporterFactory.newSchemaExporterFactory("3.1");
+SchemaExporter exporter = factory.newSchemaExporter(
+    entityClassNames,
+    Map.of("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect",
+           "hibernate.format_sql", "true")
+);
+
+// Export CREATE DDL statements to a destination file
+exporter.export(SchemaExporter.Action.CREATE, new File("build/schema/create.sql"));
+</code></pre>
+
 <h2 id="java-platform-module-system-jpms--heading">Java Platform Module System (JPMS)</h2>
 <p>
     The <code>io.github.jpersist.tools.api</code> module descriptor exports its API packages and declares
@@ -211,15 +287,17 @@ validator.validateSchema(Map.of(
     <li><code>exports persistence.tools.spi;</code></li>
     <li><code>uses persistence.tools.spi.PersistenceServiceProvider;</code></li>
     <li><code>uses persistence.tools.spi.PersistenceLinterFactory;</code></li>
+    <li><code>uses persistence.tools.spi.EntityModelLinterFactory;</code></li>
     <li><code>uses persistence.tools.spi.NamedObjectParserFactory;</code></li>
     <li><code>uses persistence.tools.spi.SchemaValidatorFactory;</code></li>
+    <li><code>uses persistence.tools.spi.SchemaExporterFactory;</code></li>
     <li><code>uses persistence.tools.spi.EnhancerProvider;</code></li>
 </ul>
 
 <h2 id="package-summary-heading">Package Summary</h2>
 <dl>
     <dt><a href="io.github.jpersist.tools.api/persistence/tools/package-summary.html"><code>persistence.tools</code></a></dt>
-    <dd>Public contracts for persistence bytecode enhancement, query parsing, and schema validation.</dd>
+    <dd>Public contracts for persistence bytecode enhancement, entity model linting, query parsing, schema validation, and offline DDL schema export.</dd>
 
     <dt><a href="io.github.jpersist.tools.api/persistence/tools/spi/package-summary.html"><code>persistence.tools.spi</code></a></dt>
     <dd>Service Provider Interfaces (SPI) and dynamic discovery mechanisms for persistence tooling providers.</dd>
