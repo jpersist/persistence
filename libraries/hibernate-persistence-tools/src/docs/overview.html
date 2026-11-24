@@ -23,8 +23,9 @@
     {@code "javax"} namespace) using <strong>Hibernate&nbsp;5</strong>.
 </p>
 <p>
-    This module provides build-time bytecode enhancement, AST-based query and stored procedure validation,
-    and JDBC database schema verification for applications running on Java EE / {@code javax.persistence} baselines.
+    This module provides build-time bytecode enhancement, entity model linting, offline DDL schema export,
+    AST-based query and stored procedure validation, and JDBC database schema verification for applications
+    running on Java EE / {@code javax.persistence} baselines.
 </p>
 
 <h2>Key Capabilities &amp; Implementations</h2>
@@ -59,11 +60,29 @@
     constraints conform to JPA mappings.
 </p>
 
+<h3>4. Entity Model Linting</h3>
+<p>
+    <strong>{@link io.github.jpersist.tools.hibernate/hibernate.javax.persistence.tools.HibernateEntityModelLinter}</strong> inspects
+    Java Persistence entity classes for structural defects, mapping anti-patterns, and bad practices.
+    It combines reflection-based class structure checks (e.g.&nbsp;non-final class/method rules, accessible no-arg constructors)
+    with JPA association checks (detecting eager fetching on relationships, missing <code>mappedBy</code> attributes,
+    and unordered <code>@ManyToMany</code> list collections).
+</p>
+
+<h3>5. Offline DDL Schema Export</h3>
+<p>
+    <strong>{@link io.github.jpersist.tools.hibernate/hibernate.javax.persistence.tools.HibernateSchemaExporter}</strong> generates
+    offline database schema DDL scripts (<code>CREATE</code>, <code>DROP</code>, or <code>BOTH</code>) directly from
+    Java Persistence entity mappings targeting {@link java.io.File}, {@link java.io.OutputStream}, or {@link java.io.Writer}
+    destinations without requiring an active database connection.
+</p>
+
 <h2>Configuration &amp; Settings Reference</h2>
 <p>
-    Both {@link io.github.jpersist.tools.hibernate/hibernate.javax.persistence.tools.HibernateNamedObjectParser} and
-    {@link io.github.jpersist.tools.hibernate/hibernate.javax.persistence.tools.HibernateSchemaValidator} accept consumer-supplied configuration
-    maps via their factory overloads (<code>Map&lt;String, Object&gt;</code>), merged using
+    {@link io.github.jpersist.tools.hibernate/hibernate.javax.persistence.tools.HibernateNamedObjectParser},
+    {@link io.github.jpersist.tools.hibernate/hibernate.javax.persistence.tools.HibernateSchemaValidator}, and
+    {@link io.github.jpersist.tools.hibernate/hibernate.javax.persistence.tools.HibernateSchemaExporter} accept
+    consumer-supplied configuration maps via their factory overloads (<code>Map&lt;String, Object&gt;</code>), merged using
     {@link hibernate.base.persistence.tools.HibernateUtil#mergeSettings}.
 </p>
 
@@ -178,6 +197,66 @@
     </tbody>
 </table>
 
+<h3>Schema Exporter Settings</h3>
+<p>
+    Consumer settings override predefined defaults, while connection-blocking invariants
+    cannot be overwritten:
+</p>
+
+<table class="striped">
+    <caption>Schema Exporter Configuration Properties</caption>
+    <thead>
+    <tr>
+        <th>Property Key</th>
+        <th>Tier</th>
+        <th>Value</th>
+        <th>Purpose</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td><code>javax.persistence.schema-generation.database.action</code></td>
+        <td>Default</td>
+        <td><code>"none"</code></td>
+        <td>
+            Guarantees live database execution remains disabled during export.
+        </td>
+    </tr>
+    <tr>
+        <td><code>hibernate.dialect</code></td>
+        <td>Default</td>
+        <td><code>org.hibernate.dialect.H2Dialect</code></td>
+        <td>
+            Baseline SQL dialect for schema DDL generation (overridable).
+        </td>
+    </tr>
+    <tr>
+        <td><code>hibernate.hbm2ddl.delimiter</code></td>
+        <td>Default</td>
+        <td><code>";"</code></td>
+        <td>
+            SQL statement delimiter separating exported DDL commands.
+        </td>
+    </tr>
+    <tr>
+        <td><code>hibernate.format_sql</code></td>
+        <td>Default</td>
+        <td><code>"true"</code></td>
+        <td>
+            Formats exported SQL statements for readability.
+        </td>
+    </tr>
+    <tr>
+        <td><code>hibernate.connection.provider_class</code></td>
+        <td><b>Enforced</b></td>
+        <td><code>...internal.NoOpConnectionProvider</code></td>
+        <td>
+            Suppresses connection startup logs and prevents live database connectivity.
+        </td>
+    </tr>
+    </tbody>
+</table>
+
 <h2>Service Provider Registrations</h2>
 <p>
     The module implements and registers the following Service Provider Interfaces (SPI) declared in
@@ -185,12 +264,20 @@
 </p>
 <ul>
     <li>
+        {@link persistence.tools.spi.EntityModelLinterFactory} &mdash; implemented by
+        {@link io.github.jpersist.tools.hibernate/hibernate.javax.persistence.tools.provider.HibernateEntityModelLinterFactory}
+    </li>
+    <li>
         {@link persistence.tools.spi.NamedObjectParserFactory} &mdash; implemented by
         {@link io.github.jpersist.tools.hibernate/hibernate.javax.persistence.tools.provider.HibernateNamedObjectParserFactory}
     </li>
     <li>
         {@link persistence.tools.spi.SchemaValidatorFactory} &mdash; implemented by
         {@link io.github.jpersist.tools.hibernate/hibernate.javax.persistence.tools.provider.HibernateSchemaValidatorFactory}
+    </li>
+    <li>
+        {@link persistence.tools.spi.SchemaExporterFactory} &mdash; implemented by
+        {@link io.github.jpersist.tools.hibernate/hibernate.javax.persistence.tools.provider.HibernateSchemaExporterFactory}
     </li>
     <li>
         {@link persistence.tools.spi.EnhancerProvider} &mdash; implemented by
@@ -226,7 +313,7 @@ module com.example.domain {
 <h2>Package Summary</h2>
 <dl>
     <dt>{@link io.github.jpersist.tools.hibernate/hibernate.javax.persistence.tools}</dt>
-    <dd>Hibernate&nbsp;5 implementations of bytecode enhancement, query parsing, and schema validation.</dd>
+    <dd>Hibernate&nbsp;5 implementations of bytecode enhancement, entity model linting, offline schema export, query parsing, and schema validation.</dd>
 
     <dt>{@link io.github.jpersist.tools.hibernate/hibernate.javax.persistence.tools.provider}</dt>
     <dd>ServiceLoader provider factories for Java Persistence tooling under Hibernate&nbsp;5.</dd>

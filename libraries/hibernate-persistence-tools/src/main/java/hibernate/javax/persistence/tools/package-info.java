@@ -17,10 +17,15 @@
 /**
  * Legacy {@code javax.persistence} tool implementations backed by Hibernate&nbsp;5.
  *
- * <p>This package provides bytecode enhancement, AST query parsing, and database schema
- * validation components targeting the legacy {@code javax.persistence} namespace (JPA&nbsp;2.x):</p>
+ * <p>This package provides bytecode enhancement, entity model linting, offline DDL schema export,
+ * AST query parsing, and database schema validation components targeting the legacy {@code javax.persistence}
+ * namespace (JPA&nbsp;2.x):</p>
  *
  * <ul>
+ *   <li>{@link hibernate.javax.persistence.tools.HibernateEntityModelLinter} &ndash; inspects
+ *       Java Persistence entities for structural defects, mapping anti-patterns, and bad practices.</li>
+ *   <li>{@link hibernate.javax.persistence.tools.HibernateSchemaExporter} &ndash; generates
+ *       offline database schema DDL scripts ({@code CREATE}, {@code DROP}, or {@code BOTH}) from entity mappings.</li>
  *   <li>{@link hibernate.javax.persistence.tools.HibernateEnhancer} &ndash; transforms
  *       compiled entity class bytes using Hibernate&nbsp;5 bytecode enhancement.</li>
  *   <li>{@link hibernate.javax.persistence.tools.HibernateNamedObjectParser} &ndash; compiles

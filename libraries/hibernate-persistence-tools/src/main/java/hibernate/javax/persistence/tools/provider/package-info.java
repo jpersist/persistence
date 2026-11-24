@@ -25,6 +25,10 @@
  *       abstract base provider binding the {@code "javax"} namespace.</li>
  *   <li>{@link hibernate.javax.persistence.tools.provider.HibernatePersistenceLinterFactory} &ndash;
  *       abstract base linter factory binding the {@code "javax"} namespace.</li>
+ *   <li>{@link hibernate.javax.persistence.tools.provider.HibernateEntityModelLinterFactory} &ndash;
+ *       service provider for {@link persistence.tools.spi.EntityModelLinterFactory}.</li>
+ *   <li>{@link hibernate.javax.persistence.tools.provider.HibernateSchemaExporterFactory} &ndash;
+ *       service provider for {@link persistence.tools.spi.SchemaExporterFactory}.</li>
  *   <li>{@link hibernate.javax.persistence.tools.provider.HibernateEnhancerProvider} &ndash;
  *       service provider for {@link persistence.tools.spi.EnhancerProvider}.</li>
  *   <li>{@link hibernate.javax.persistence.tools.provider.HibernateNamedObjectParserFactory} &ndash;
@@ -36,5 +40,7 @@
  * @since 1.0.0
  * @see persistence.tools.spi
  * @see hibernate.javax.persistence.tools.HibernateEnhancer
+ * @see hibernate.javax.persistence.tools.HibernateEntityModelLinter
+ * @see hibernate.javax.persistence.tools.HibernateSchemaExporter
  */
 package hibernate.javax.persistence.tools.provider;

@@ -56,4 +56,47 @@ class HibernatePersistenceServiceProviderTest {
         assertThat(PersistenceServiceProvider.class).isAssignableFrom(HibernatePersistenceLinterFactory.class);
     }
 
+    @Test
+    void legacyEntityModelLinterFactory_isPersistenceServiceProvider() {
+        var provider = new HibernateEntityModelLinterFactory();
+
+        assertThat(provider).isInstanceOf(PersistenceServiceProvider.class);
+    }
+
+    @Test
+    void legacyEntityModelLinterFactory_getSupportedNamespace_returnsJavax() {
+        var provider = new HibernateEntityModelLinterFactory();
+
+        assertThat(provider.getSupportedNamespace()).isEqualTo("javax");
+    }
+
+    @Test
+    void legacyEntityModelLinterFactory_extendsLegacyPersistenceLinterFactory() {
+        var factory = new HibernateEntityModelLinterFactory();
+
+        assertThat(factory).isInstanceOf(HibernatePersistenceLinterFactory.class);
+        assertThat(HibernateEntityModelLinterFactory.class.getSuperclass()).isEqualTo(HibernatePersistenceLinterFactory.class);
+    }
+
+    @Test
+    void legacySchemaExporterFactory_isPersistenceServiceProvider() {
+        var provider = new HibernateSchemaExporterFactory();
+
+        assertThat(provider).isInstanceOf(PersistenceServiceProvider.class);
+    }
+
+    @Test
+    void legacySchemaExporterFactory_isLegacyPersistenceServiceProvider() {
+        var provider = new HibernateSchemaExporterFactory();
+
+        assertThat(provider).isInstanceOf(HibernatePersistenceServiceProvider.class);
+    }
+
+    @Test
+    void legacySchemaExporterFactory_getSupportedNamespace_returnsJavax() {
+        var provider = new HibernateSchemaExporterFactory();
+
+        assertThat(provider.getSupportedNamespace()).isEqualTo("javax");
+    }
+
 }
