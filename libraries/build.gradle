@@ -64,7 +64,7 @@ sonar {
 
 // 🌟 REUSABLE TYPE-SAFE JPMS JAVADOC CONFIGURATION HELPER
 // Configures independent, native modular Javadoc for each project node.
-void configureModularJavadoc(Javadoc task, List<Project> targetProjects, Project apiProject, String docTitle, String windowTitle, String destSubFolder) {
+void configureModularJavadoc(Javadoc task, List<Project> targetProjects, Project apiProject, String docTitle, String windowTitle, String destSubFolder, String... externalLinks) {
     task.group = 'documentation'
 
     // Ensure bytecode compilation is complete across all target modules before documenting
@@ -102,6 +102,11 @@ void configureModularJavadoc(Javadoc task, List<Project> targetProjects, Project
 
         // Cross-reference link to the standard JDK 17 Platform APIs
         links('https://docs.oracle.com/en/java/javase/17/docs/api/')
+
+        // Cross-reference link to external API (Jakarta Persistence API Docs)
+        if (externalLinks) {
+            externalLinks.each { links(it) }
+        }
 
         // Dynamic cross-reference link mapping for implementation modules
         if (targetProject.name != apiProject.name) {
@@ -179,13 +184,13 @@ tasks.register('aggregateApiJavadoc', Javadoc) {
 // 2. Hibernate Legacy Module Javadoc (Modular / Bound to Hibernate 5 & javax)
 tasks.register('aggregateLegacyHibernateJavadoc', Javadoc) {
     description = 'Generates native modular JPMS Javadoc for the Hibernate 5 Legacy reference implementation.'
-    configureModularJavadoc(it, [hibernateBaseProject, project(':hibernate-persistence-tools')], apiProject, 'JPersist Persistence Tools - Hibernate 5 Core Reference', 'JPersist Tools - Hibernate 5', 'hibernate')
+    configureModularJavadoc(it, [hibernateBaseProject, project(':hibernate-persistence-tools')], apiProject, 'JPersist Persistence Tools - Hibernate 5 Core Reference', 'JPersist Tools - Hibernate 5', 'hibernate', 'https://jakarta.ee/specifications/persistence/2.2/apidocs/')
 }
 
 // 3. Hibernate Modern Module Javadoc (Modular / Bound to Hibernate 6 & jakarta)
 tasks.register('aggregateModernHibernateJavadoc', Javadoc) {
     description = 'Generates native modular JPMS Javadoc for the Hibernate 6 Modern reference implementation.'
-    configureModularJavadoc(it, [hibernateBaseProject, project(':hibernate-orm-persistence-tools')], apiProject, 'JPersist Persistence Tools - Hibernate 6 ORM Reference', 'JPersist Tools - Hibernate 6', 'hibernate-orm')
+    configureModularJavadoc(it, [hibernateBaseProject, project(':hibernate-orm-persistence-tools')], apiProject, 'JPersist Persistence Tools - Hibernate 6 ORM Reference', 'JPersist Tools - Hibernate 6', 'hibernate-orm', 'https://jakarta.ee/specifications/persistence/3.1/apidocs/')
 }
 
 // ------------------------------------------------------------------------------------------------
