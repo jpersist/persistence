@@ -73,4 +73,54 @@ class HibernatePersistenceServiceProviderTest {
         assertThat(HibernatePersistenceLinterFactory.class.getSuperclass()).isEqualTo(HibernatePersistenceServiceProvider.class);
     }
 
+    @Test
+    void jakartaEntityModelLinterFactory_isPersistenceServiceProvider() {
+        var provider = new HibernateEntityModelLinterFactory();
+
+        assertThat(provider).isInstanceOf(PersistenceServiceProvider.class);
+    }
+
+    @Test
+    void jakartaEntityModelLinterFactory_isJakartaPersistenceServiceProvider() {
+        var provider = new HibernateEntityModelLinterFactory();
+
+        assertThat(provider).isInstanceOf(HibernatePersistenceServiceProvider.class);
+    }
+
+    @Test
+    void jakartaEntityModelLinterFactory_getSupportedNamespace_returnsJakarta() {
+        var provider = new HibernateEntityModelLinterFactory();
+
+        assertThat(provider.getSupportedNamespace()).isEqualTo("jakarta");
+    }
+
+    @Test
+    void jakartaEntityModelLinterFactory_extendsJakartaPersistenceLinterFactory() {
+        var factory = new HibernateEntityModelLinterFactory();
+
+        assertThat(factory).isInstanceOf(HibernatePersistenceLinterFactory.class);
+        assertThat(HibernateEntityModelLinterFactory.class.getSuperclass()).isEqualTo(HibernatePersistenceLinterFactory.class);
+    }
+
+    @Test
+    void jakartaSchemaExporterFactory_isPersistenceServiceProvider() {
+        var provider = new HibernateSchemaExporterFactory();
+
+        assertThat(provider).isInstanceOf(PersistenceServiceProvider.class);
+    }
+
+    @Test
+    void jakartaSchemaExporterFactory_isJakartaPersistenceServiceProvider() {
+        var provider = new HibernateSchemaExporterFactory();
+
+        assertThat(provider).isInstanceOf(HibernatePersistenceServiceProvider.class);
+    }
+
+    @Test
+    void jakartaSchemaExporterFactory_getSupportedNamespace_returnsJakarta() {
+        var provider = new HibernateSchemaExporterFactory();
+
+        assertThat(provider.getSupportedNamespace()).isEqualTo("jakarta");
+    }
+
 }
